@@ -1,0 +1,86 @@
+version: "3.9" # Docker Compose syntax version
+
+services:
+  # Frontend service (React + Vite)
+  frontend:
+    build:
+      context: ./app/frontend # Directory where the Dockerfile is located
+      dockerfile: Dockerfile # Name of the Dockerfile to use
+    ports:
+      - "5173:5173" # Exposes port 5173 to access Vite from the host
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
+    volumes:
+      - ./app/frontend/index.html:/app/index.html
+      - ./app/frontend/src:/app/src
+      - ./app/frontend/public:/app/public
+      - ./app/frontend/vite.config.ts:/app/vite.config.ts
+    command: ["npm", "run", "dev", "--host"] # Start Vite in development mode (hot reload enabled)
+
+    # Unused options, but useful in other cases
+    # restart: always # Recreate the container in case of failure
+    # depends_on:
+    #   - backend # Wait for the backend to be ready (useful if necessary)
+    networks:
+      - front_network # To be configured if a specific network is required
+
+  # Backend service (Express.js)
+  backend:
+    build:
+      context: ./app/backend # Directory where the Dockerfile is located
+      dockerfile: Dockerfile # Name of the Dockerfile to use
+    ports:
+      - "3310:3310" # Exposes port 3310 to access the backend from the host
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
+      - DB_HOST=db
+    env_file:
+      - ./app/backend/.env # Loads environment variables from a file
+    volumes:
+      - ./app/backend/src:/app/src
+    command: ["npm", "start"] # Start the Express.js server (hot reload enabled with nodemon if configured)
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - front_network
+      - app_network
+
+    # Unused options, but useful in other cases
+    # restart: always # Recreate the container in case of failure
+
+  db:
+    image: postgres:15
+    restart: always # Recreate the container in case of failure
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=the_good_corner
+      - POSTGRES_USER=the_good_corner
+      - POSTGRES_PASSWORD=the_good_corner_password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    healthcheck: # To ensure that PostgreSQL is ready before starting the backend.
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U the_good_corner -d the_good_corner -h localhost",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+# Networks (useful for isolating services)
+networks:
+  app_network:
+    driver: bridge
+  front_network:
+    driver: bridge
+
+# Volumes (to persist data like databases)
+volumes:
+  db_data: # Volume for the database
+    driver: local
