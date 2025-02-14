@@ -3,7 +3,7 @@ FROM node:23-alpine3.21
 WORKDIR /app
 
 # COPY only necessary files
-COPY package.json npm-lock.yaml ./
+COPY package.json ./
 
 # Install dependencies
 RUN npm install
