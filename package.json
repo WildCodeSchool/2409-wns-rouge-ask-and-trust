@@ -12,6 +12,7 @@
     "scripts": "scripts"
   },
   "scripts": {
+    "start": "docker compose up --build"
   },
   "devDependencies": {
     "prettier": "3.5.0"

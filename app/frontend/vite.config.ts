@@ -9,4 +9,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    watch: {
+        usePolling: true, // Verify changes on the host machine
+    },
+    hmr: { path: "hmr" }, // Hot Module Replacement (HMR) updates in realtime on the host machine
+    host: true, // needed for the Docker Container port mapping to work
+  },
 })

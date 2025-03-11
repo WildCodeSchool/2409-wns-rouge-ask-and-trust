@@ -1,0 +1,23 @@
+# Node modules
+node_modules
+
+# Files build
+dist
+build
+
+# Configuration files
+.env.local
+.vscode/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+.DS_Store
+
+# Ignore Git files and metadata
+.gitignore
+
+# Ignore IDE and editor config files
+.vscode
+.idea
+*.swp
