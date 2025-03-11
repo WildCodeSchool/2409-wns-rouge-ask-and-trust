@@ -10,3 +10,11 @@ export interface User {
 	email: string
 	// ... other user properties
 }
+
+export type FooterLinkType = {
+	href: string;
+	label: string;
+	category?: string;
+	ariaLabel?: string;
+  };
+  
