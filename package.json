@@ -1,25 +1,25 @@
 {
-  "name": "ask-and-trust",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Development of an online survey platform",
-  "workspaces": [
-    "app/frontend",
-    "app/backend"
-  ],
-  "directories": {
-    "doc": "docs",
-    "scripts": "scripts"
-  },
-  "scripts": {
-    "start": "docker compose up --build"
-  },
-  "devDependencies": {
-    "prettier": "3.5.0"
-  },
-  "keywords": [
-    "survey"
-  ],
-  "author": "YohanGH, AlexDDevv, ArthurVS05, corenthin95",
-  "license": "GPL-2.0"
+	"name": "ask-and-trust",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Development of an online survey platform",
+	"workspaces": [
+		"app/frontend",
+		"app/backend"
+	],
+	"directories": {
+		"doc": "docs",
+		"scripts": "scripts"
+	},
+	"scripts": {
+		"start": "docker compose up --build"
+	},
+	"devDependencies": {
+		"prettier": "3.5.3"
+	},
+	"keywords": [
+		"survey"
+	],
+	"author": "YohanGH, AlexDDevv, ArthurVS05, corenthin95",
+	"license": "GPL-2.0"
 }

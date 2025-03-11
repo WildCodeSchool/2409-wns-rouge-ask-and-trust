@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@import "@/styles/theme.css";
+
+* {
+	font-family: var(--font-family);
+}
