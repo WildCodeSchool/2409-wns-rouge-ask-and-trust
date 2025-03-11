@@ -12,7 +12,7 @@ RUN npm install
 COPY tsconfig.json tsconfig.app.json tsconfig.node.json ./
 
 # COPY vite and other config files
-COPY vite.config.ts tailwind.config.js components.json ./
+COPY vite.config.ts postcss.config.mjs components.json ./
 
 # COPY HTML and public files
 COPY index.html ./index.html
