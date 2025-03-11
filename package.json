@@ -21,8 +21,5 @@
 		"survey"
 	],
 	"author": "YohanGH, AlexDDevv, ArthurVS05, corenthin95",
-	"license": "GPL-2.0",
-	"dependencies": {
-		"frontend": "^0.0.0"
-	}
+	"license": "GPL-2.0"
 }
