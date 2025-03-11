@@ -1,11 +1,6 @@
-import { House, SquarePlus, Bell, User, LucideIcon } from "lucide-react";
+import { FooterItem } from "@/types/types";
+import { House, SquarePlus, Bell, User } from "lucide-react";
 import { Link } from "react-router-dom";
-
-interface FooterItem {
-    Icon: LucideIcon;
-    content: string;
-    url: string;
-}
 
 export default function MobileFooter() {
     const footerItems: FooterItem[] = [
