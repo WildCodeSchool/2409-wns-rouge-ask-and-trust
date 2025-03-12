@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react"
+
 export type AuthContextProps = {
 	user: User | null
 	isLoading: boolean
@@ -11,10 +13,10 @@ export interface User {
 	// ... other user properties
 }
 
-export type FooterLinkType = {
-	href: string;
-	label: string;
-	category?: string;
-	ariaLabel?: string;
-  };
-  
+export interface FooterLinkType {
+	href: string
+	label: string
+	category: string
+	ariaLabel: string
+    Icon?: LucideIcon;
+}
