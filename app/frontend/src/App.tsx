@@ -1,20 +1,19 @@
-import { Outlet } from "react-router-dom"
-import Footer from "./components/sections/footer/Footer"
-import Header from "./components/sections/header/Header"
+import { Outlet } from "react-router-dom";
+import Navigation from "@/components/sections/Navigation";
+import Footer from "@/components/sections/Footer";
 
 function App() {
-	return (
-		<>
-			<Header />
-			{/* @TODO calc height : fill screen minus Header height. On mobile : minus Header height and Navbar height. */}
-			<main className="bg-bg">
-				<div className="h-[100%]">
-					<Outlet />
-				</div>
-			</main>
-			<Footer />
-		</>
-	)
+  return (
+    <>
+      <Navigation />
+      <main>
+        <div>
+          <Outlet />
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
 }
 
-export default App
+export default App;
