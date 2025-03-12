@@ -2,5 +2,5 @@
 @import "@/styles/theme.css";
 
 * {
-	font-family: var(--font-family);
+    font-family: var(--font-family);
 }
