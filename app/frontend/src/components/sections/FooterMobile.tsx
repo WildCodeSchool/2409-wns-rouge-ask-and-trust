@@ -35,7 +35,7 @@ const FOOTER_LINKS: readonly FooterLinkType[] = [
 
 export default function FooterMobile() {
     return (
-        <footer className="flex justify-between px-5 py-2.5 bg-primary-600 fixed bottom-0 min-w-[20vw] w-full sm:justify-around">
+        <footer className="flex justify-between px-5 py-2.5 bg-primary-600 fixed bottom-0 w-full sm:justify-around">
             {FOOTER_LINKS.map((link) => (
                 <FooterLinkLink
                     key={link.href}
