@@ -33,9 +33,9 @@ const FOOTER_LINKS: readonly FooterLinkType[] = [
     },
 ] as const;
 
-export default function FooterLink() {
+export default function FooterMobile() {
     return (
-        <footer className="flex justify-between px-5 py-2.5 bg-primary-600 fixed bottom-0 min-w-[375px] w-full sm:justify-around">
+        <footer className="flex justify-between px-5 py-2.5 bg-primary-600 fixed bottom-0 min-w-[20vw] w-full sm:justify-around">
             {FOOTER_LINKS.map((link) => (
                 <FooterLinkLink
                     key={link.href}
@@ -87,7 +87,7 @@ function FooterLinkLink({ href, label, category, ariaLabel, Icon }: FooterLinkTy
             // data attribute for analytics tracking
             data-category={category}
         >
-            {Icon && <Icon className="transition-transform duration-200 ease-in-out group-hover:scale-110 text-button-primary-fg h-5 w-5" />}
+            {Icon && <Icon className="transition-transform duration-200 ease-in-out group-hover:scale-110 text-button-primary-fg h-5 w-5" aria-hidden />}
             {label}
         </Link>
     )
