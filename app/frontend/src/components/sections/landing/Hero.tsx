@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/Button.tsx"
 
-const Presentation = () => {
+const Hero = () => {
 	return (
 		<section className="mt-3 mb-16 flex flex-col justify-center px-5 lg:mx-10 lg:my-20 lg:flex-row-reverse lg:items-center lg:px-20">
 			<div className="pb-6 lg:m-4 lg:max-w-[45rem]">
 				<img
-					src="../../../public/assets/illustration-presentation.svg"
+					src="../../../../public/assets/illustration-presentation.svg"
 					alt="img-presentation"
 				/>
 			</div>
@@ -42,4 +42,4 @@ const Presentation = () => {
 	)
 }
 
-export default Presentation
+export default Hero
