@@ -13,8 +13,10 @@ export interface User {
 	// ... other user properties
 }
 
-export interface FooterItem {
-    Icon: LucideIcon;
-    content: string;
-    url: string;
+export interface FooterLinkType {
+	href: string
+	label: string
+	category: string
+	ariaLabel: string
+    Icon?: LucideIcon;
 }
