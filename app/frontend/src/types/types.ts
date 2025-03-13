@@ -13,10 +13,20 @@ export interface User {
 	// ... other user properties
 }
 
+export interface UserAuth {
+	firstname: string
+	lastname: string
+	email: string
+	password: string
+}
+
+export type UserSignUp = UserAuth
+export type UserSignIn = Pick<UserAuth, "email" | "password">
+
 export interface FooterLinkType {
 	href: string
 	label: string
 	category: string
 	ariaLabel: string
-    Icon?: LucideIcon;
+	Icon?: LucideIcon
 }
