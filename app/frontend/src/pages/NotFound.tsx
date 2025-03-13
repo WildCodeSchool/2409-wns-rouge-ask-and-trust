@@ -53,7 +53,7 @@ export default function NotFound() {
 			<main
 				lang="fr"
 				role="main"
-				className="bg--color-bg relative flex min-h-screen items-center justify-center"
+				className="bg-bg relative flex min-h-screen items-center justify-center"
 			>
 				<div className="p-8 text-center">
 					<img
