@@ -9,7 +9,8 @@
 	],
 	"directories": {
 		"doc": "docs",
-		"scripts": "scripts"
+		"scripts": "scripts",
+		"format": "npx prettier --write ."
 	},
 	"scripts": {
 		"start": "docker compose up --build"
