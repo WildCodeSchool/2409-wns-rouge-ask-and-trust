@@ -1,47 +1,47 @@
 import { Link } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
-import { FooterLinkType } from "@/types/types"
+import { LinksType } from "@/types/types"
 import logoFooter from "../../../public/logos/logo-footer.svg"
 
-const FOOTER_LINKS: readonly FooterLinkType[] = [
+const FOOTER_LINKS: readonly LinksType[] = [
 	{
-		href: "/register",
+		href: '/register',
 		label: "S'inscrire",
 		category: "Compte",
-		ariaLabel: "Créer un compte",
+		ariaLabel: "Créer un compte"
 	},
 	{
-		href: "/login",
+		href: '/login',
 		label: "Se connecter",
 		category: "Compte",
-		ariaLabel: "Se connecter à votre compte",
+		ariaLabel: "Se connecter à votre compte"
 	},
 	{
-		href: "/surveys",
+		href: '/surveys',
 		label: "Liste des enquêtes",
 		category: "Enquêtes",
-		ariaLabel: "Voir la liste des enquêtes disponibles",
+		ariaLabel: "Voir la liste des enquêtes disponibles"
 	},
 	{
-		href: "/packs",
+		href: '/packs',
 		label: "Achat de packs d'enquêtes",
 		category: "Enquêtes",
-		ariaLabel: "Acheter des packs d'enquêtes",
+		ariaLabel: "Acheter des packs d'enquêtes"
 	},
 	{
-		href: "/legal",
+		href: '/legal',
 		label: "Mentions légales",
 		category: "Informations",
-		ariaLabel: "Consulter les mentions légales",
+		ariaLabel: "Consulter les mentions légales"
 	},
 	{
-		href: "/contact",
+		href: '/contact',
 		label: "Contact",
 		category: "Informations",
-		ariaLabel: "Nous contacter",
-	},
-] as const
+		ariaLabel: "Nous contacter"
+	}
+] as const;
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -160,13 +160,9 @@ export default function Footer() {
  * @param {string} props.ariaLabel - The personalized ARIA label for accessibility
  * @returns {JSX.Element} A Link component with appropriate safety and accessibility attributes
  */
-export function FooterLink({
-	href,
-	label,
-	category,
-	ariaLabel,
-}: FooterLinkType) {
-	const isExternal = href.startsWith("http")
+
+function FooterLink({ href, label, category, ariaLabel }: LinksType) {
+	const isExternal = href.startsWith('http');
 
 	// Security: check allowed protocols
 	if (isExternal && !href.startsWith("https://")) {
