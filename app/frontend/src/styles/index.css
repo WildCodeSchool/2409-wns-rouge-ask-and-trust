@@ -4,3 +4,12 @@
 * {
 	font-family: var(--font-family);
 }
+
+body {
+	position: relative;
+	overflow-x: hidden;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
