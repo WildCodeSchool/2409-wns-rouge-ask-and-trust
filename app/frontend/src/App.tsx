@@ -1,12 +1,14 @@
 import Navigation from "@/components/sections/Navigation"
 import Footer from "@/components/sections/Footer"
-import Presentation from "@/components/sections/Presentation.tsx"
+import Hero from "@/components/sections/landing/Hero.tsx"
+import Information from "@/components/sections/landing/Information.tsx"
 
 function App() {
 	return (
 		<>
 			<Navigation />
-			<Presentation />
+			<Hero />
+			<Information />
 			<Footer />
 		</>
 	)
