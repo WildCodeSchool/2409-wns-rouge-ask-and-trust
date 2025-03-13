@@ -13,10 +13,21 @@ export interface User {
 	// ... other user properties
 }
 
-export interface FooterLinkType {
+export interface LinksType {
 	href: string
 	label: string
 	category: string
 	ariaLabel: string
     Icon?: LucideIcon;
 }
+
+export interface HeaderMobileMenuProps {
+    showMenu: boolean;
+    handleShowMenu: () => void;
+    headerLinks: readonly LinksType[];
+}
+
+export interface NavAndAuthButtonsProps {
+	headerLinks: readonly LinksType[];
+	isMobile: boolean;
+  }
