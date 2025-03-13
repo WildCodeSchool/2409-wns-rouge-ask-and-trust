@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { Button } from "@/components/ui/Button"
 import { useNavigate } from "react-router-dom"
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet"
 
 export default function NotFound() {
 	const navigate = useNavigate()
@@ -28,9 +28,30 @@ export default function NotFound() {
 					content="La page que vous recherchez n'existe pas ou a été déplacée."
 				/>
 				<meta name="robots" content="noindex, nofollow" />
+				{/* Open Graph */}
+				<meta
+					property="og:title"
+					content="404 - Page non trouvée | Ask&Trust"
+				/>
+				<meta
+					property="og:description"
+					content="La page que vous recherchez n'existe pas ou a été déplacée."
+				/>
+				<meta property="og:type" content="website" />
+				{/* Twitter Card */}
+				<meta name="twitter:card" content="summary" />
+				<meta
+					name="twitter:title"
+					content="404 - Page non trouvée | Ask&Trust"
+				/>
+				<meta
+					name="twitter:description"
+					content="La page que vous recherchez n'existe pas ou a été déplacée."
+				/>
 			</Helmet>
 
 			<main
+				lang="fr"
 				role="main"
 				className="bg--color-bg relative flex min-h-screen items-center justify-center"
 			>
@@ -40,6 +61,8 @@ export default function NotFound() {
 						alt="Illustration page non trouvée"
 						className="mx-auto mb-8 h-auto w-96"
 						role="presentation"
+						aria-label="Illustration page non trouvée"
+						aria-hidden="false"
 					/>
 					<h1 className="mb-4 text-xl sm:text-3xl">
 						<span className="font-bold">Erreur</span> 404 : Page non
