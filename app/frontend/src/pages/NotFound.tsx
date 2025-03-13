@@ -22,7 +22,7 @@ export default function NotFound() {
 		<>
 			{/* Update of the metadata */}
 			<Helmet>
-				<title>404 - Page non trouvée | Nom de votre site</title>
+				<title>404 - Page non trouvée | Ask&Trust</title>
 				<meta
 					name="description"
 					content="La page que vous recherchez n'existe pas ou a été déplacée."
