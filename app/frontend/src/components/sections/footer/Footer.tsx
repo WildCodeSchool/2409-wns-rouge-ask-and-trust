@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { LinksType } from "@/types/types"
-import logoFooter from "../../../public/logos/logo-footer.svg"
+import logoFooter from "../../../../public/logos/logo-footer.svg"
 
 const FOOTER_LINKS: readonly LinksType[] = [
 	{
@@ -196,3 +196,5 @@ function FooterLink({ href, label, category, ariaLabel }: LinksType) {
 		</Link>
 	)
 }
+
+export { FooterLink }
