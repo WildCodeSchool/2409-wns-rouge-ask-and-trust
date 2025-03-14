@@ -29,3 +29,10 @@
         top: 26%
     }
 }
+
+.company-box-name {
+    width: 183px;
+    height: 92px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 24px;
+}

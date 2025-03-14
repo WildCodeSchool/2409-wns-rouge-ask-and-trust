@@ -2,6 +2,7 @@ import Navigation from "@/components/sections/Navigation"
 import Footer from "@/components/sections/Footer"
 import Hero from "@/components/sections/landing/Hero.tsx"
 import Information from "@/components/sections/landing/Information.tsx"
+import Poll from "@/components/sections/landing/Poll.tsx"
 
 function App() {
 	return (
@@ -9,6 +10,7 @@ function App() {
 			<Navigation />
 			<Hero />
 			<Information />
+			<Poll />
 			<Footer />
 		</>
 	)
