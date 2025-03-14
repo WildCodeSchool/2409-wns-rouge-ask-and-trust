@@ -47,9 +47,7 @@ export default function HeaderMobileMenu({ showMenu, handleShowMenu, headerLinks
                         exit="closed"
                         variants={menuVariants}
                     >
-                        <div className="flex flex-col gap-20">
-                            <NavAndAuthButtons headerLinks={headerLinks} isMobile />
-                        </div>
+                        <NavAndAuthButtons headerLinks={headerLinks} isMobile />
                         <div className="flex items-center justify-center">
                             <Link to="/" className="max-w-36">
                                 <img src={logoHeader} alt="Logo AskTrust" className="w-full" aria-hidden />
