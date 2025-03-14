@@ -18,7 +18,11 @@ export interface LinksType {
 	label: string
 	category: string
 	ariaLabel: string
-    Icon?: LucideIcon;
+	Icon?: LucideIcon
+}
+
+export interface ErrorLayoutProps {
+	children: React.ReactNode
 }
 
 export interface HeaderMobileMenuProps {
