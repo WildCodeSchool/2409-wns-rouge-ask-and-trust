@@ -1,13 +1,12 @@
-import * as React from "react"
-
 import { cn } from "@/lib/utils"
+import { forwardRef, ComponentProps } from "react"
 import ErrorInput from "./ErrorInput"
 
-type InputProps = React.ComponentProps<"input"> & {
+type InputProps = ComponentProps<"input"> & {
 	errorMessage: string | undefined
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
+const Input = forwardRef<HTMLInputElement, InputProps>(
 	({ className, type, errorMessage, ...props }, ref) => {
 		const classError = errorMessage
 			? "border-destructive-medium-dark focus-visible:border-destructive-medium "
