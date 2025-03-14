@@ -13,7 +13,7 @@ export interface User {
 	// ... other user properties
 }
 
-export interface FooterLinkType {
+export interface LinksType {
 	href: string
 	label: string
 	category: string
@@ -24,3 +24,14 @@ export interface FooterLinkType {
 export interface ErrorLayoutProps {
 	children: React.ReactNode
 }
+
+export interface HeaderMobileMenuProps {
+    showMenu: boolean;
+    handleShowMenu: () => void;
+    headerLinks: readonly LinksType[];
+}
+
+export interface NavAndAuthButtonsProps {
+	headerLinks: readonly LinksType[];
+	isMobile: boolean;
+  }
