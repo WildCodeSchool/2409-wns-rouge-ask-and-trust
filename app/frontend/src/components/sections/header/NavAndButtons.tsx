@@ -1,4 +1,4 @@
-import { Button } from "../ui/Button";
+import { Button } from "../../ui/Button";
 import { NavAndAuthButtonsProps } from "@/types/types";
 import { HeaderLink } from "./Header";
 
@@ -8,7 +8,9 @@ export default function NavAndAuthButtons({ headerLinks, isMobile }: NavAndAuthB
             <nav>
                 <ul className={isMobile ? "flex flex-col gap-5" : "flex items-center justify-center gap-20"}>
                     {headerLinks.map((link) => (
-                        <HeaderLink key={link.href} {...link} />
+                        <li key={link.href}>
+                            <HeaderLink {...link} />
+                        </li>
                     ))}
                 </ul>
             </nav>

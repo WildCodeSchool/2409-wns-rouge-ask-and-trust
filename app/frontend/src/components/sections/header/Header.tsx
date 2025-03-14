@@ -1,10 +1,11 @@
 import { LinksType } from "@/types/types"
-import logoHeader from "../../../public/logos/logo-header.svg"
+import logoHeader from "../../../../public/logos/logo-header.svg"
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react"
 import { useEffect, useState } from "react";
 import HeaderMobileMenu from "./HeaderMobileMenu";
 import NavAndAuthButtons from "./NavAndButtons";
+import { Button } from "@/components/ui/Button";
 
 const HEADER_LINKS: readonly LinksType[] = [
     {
@@ -57,14 +58,15 @@ export default function Header() {
     }, []);
 
     return (
-        // <>
         <header lang="fr" className="flex items-center justify-between gap-10 px-5 pt-4 mb-20" role="contentinfo" aria-label="En-tête de page">
             <Link to="/" className="max-w-36">
                 <img src={logoHeader} alt="Logo AskTrust" className="w-full" aria-hidden />
             </Link>
             {isMobile ? (
                 <>
-                    <Menu className="h-12 w-12 text-primary-default cursor-pointer" aria-label="Ouvrir le menu" onClick={handleShowMenu} />
+                    <Button size="square" variant="tertiary" className="bg-transparent border-0 hover:bg-transparent" ariaLabel="Ouvrir le menu" onClick={handleShowMenu}>
+                        <Menu className="h-12 w-12 text-primary-default cursor-pointer" aria-hidden />
+                    </Button>
                     <HeaderMobileMenu
                         showMenu={showMenu}
                         handleShowMenu={handleShowMenu}
@@ -77,7 +79,6 @@ export default function Header() {
                 </>
             )}
         </header>
-        // </>
     )
 }
 
