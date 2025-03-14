@@ -31,6 +31,11 @@ ask-and-trust/
 
 ## Getting Started
 
+```sh
+npm run prepare
+npx husky add .husky/pre-commit "npx lint-staged"
+```
+
 ## License
 
 This project is licensed under the GPL-2.0 license. See the [LICENSE](LICENSE) file for details.

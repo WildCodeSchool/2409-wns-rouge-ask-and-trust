@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils"
-import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { LucideIcon } from "lucide-react"
 import * as React from "react"
 import { ButtonHTMLAttributes } from "react"
+import { Link } from "react-router-dom"
 
 const buttonVariants = cva(
 	"inline-flex items-center gap-2 w-fit justify-center rounded-lg transition-colors font-bold focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer border-2",
@@ -44,8 +44,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
 	extends ButtonHTMLAttributes<HTMLButtonElement>,
-		VariantProps<typeof buttonVariants> {
-	asChild?: boolean
+	VariantProps<typeof buttonVariants> {
 	icon?: LucideIcon
 	iconPosition?: "left" | "right"
 	ariaLabel: string
@@ -53,15 +52,15 @@ export interface ButtonProps
 	isNavBtnSelected?: boolean
 	onClick?: React.MouseEventHandler
 	role?: "button" | "submit" | "link"
+	to?: string
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = React.forwardRef<HTMLElement, ButtonProps>(
 	(
 		{
 			className,
 			variant,
 			size,
-			asChild = false,
 			icon: Icon,
 			iconPosition = "left",
 			ariaLabel,
@@ -69,34 +68,24 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 			isNavBtnSelected = false,
 			role = "button",
 			children,
-			...props
+			to,
+			onClick,
 		},
 		ref
 	) => {
-		const Comp = asChild ? Slot : "button"
+		const classNameContent = cn(
+			buttonVariants({
+				variant,
+				size,
+			}),
+			isNavBtnSelected &&
+			"text-primary-700 hover:bg-primary-default bg-white hover:text-white",
+			fullWidth && "w-full",
+			className
+		)
 
-		// If asChild is true, Comp takes its children type
-		// Example : here Button is a Link.
-		// <Button asChild>
-		// 	<Link href="/dashboard">Aller au Dashboard</Link>
-		// </Button>
-		return (
-			<Comp
-				className={cn(
-					buttonVariants({
-						variant,
-						size,
-					}),
-					isNavBtnSelected &&
-						"text-primary-700 hover:bg-primary-default bg-white hover:text-white",
-					fullWidth && "w-full",
-					className
-				)}
-				ref={ref}
-				aria-label={ariaLabel}
-				role={role}
-				{...props}
-			>
+		const childrenContent =
+			<>
 				{Icon && iconPosition === "left" && (
 					<Icon className="h-5 w-5" aria-hidden />
 				)}
@@ -104,11 +93,24 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				{Icon && iconPosition === "right" && (
 					<Icon className="h-5 w-5" aria-hidden />
 				)}
-			</Comp>
-		)
+			</>
+
+		if (to) {
+			return <Link to={to} ref={ref as React.Ref<HTMLAnchorElement>}
+				aria-label={ariaLabel}
+				role={role}
+				className={classNameContent}
+			>{childrenContent}</Link>
+		} else {
+			return <button ref={ref as React.Ref<HTMLButtonElement>}
+				aria-label={ariaLabel}
+				role={role}
+				onClick={onClick}
+				className={classNameContent}>{childrenContent}</button>
+		}
 	}
 )
 
 Button.displayName = "Button"
 
-export { Button }
+export { Button, buttonVariants }
