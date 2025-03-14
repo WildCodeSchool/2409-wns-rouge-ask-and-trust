@@ -1,6 +1,6 @@
-import Header from "./components/sections/Header";
+import Header from "@/components/sections/header/Header";
 import { Outlet } from "react-router-dom";
-import Footer from "@/components/sections/Footer";
+import Footer from "@/components/sections/footer/Footer";
 
 function App() {
     return (
