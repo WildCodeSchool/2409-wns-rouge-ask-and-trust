@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest"
 import { BrowserRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
-import Footer, { FooterLink } from "@/components/sections/Footer"
+import Footer, { FooterLink } from "@/components/sections/footer/Footer"
 import userEvent from "@testing-library/user-event"
 
 // Wrapper require in react router
@@ -87,7 +87,7 @@ describe("footer Components", () => {
 	})
 
 	it.only("should warn for no-HTTPS external links", () => {
-		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {})
+		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => { })
 		const noHttpsLink = {
 			href: "http://example.com",
 			label: "No HTTPS Link",
@@ -108,7 +108,7 @@ describe("footer Components", () => {
 	})
 
 	it.only("should not warn for HTTPS external links", () => {
-		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {})
+		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => { })
 		const httpsLink = {
 			href: "https://example.com",
 			label: "HTTPS Link",
