@@ -18,5 +18,9 @@ export interface FooterLinkType {
 	label: string
 	category: string
 	ariaLabel: string
-    Icon?: LucideIcon;
+	Icon?: LucideIcon
+}
+
+export interface ErrorLayoutProps {
+	children: React.ReactNode
 }
