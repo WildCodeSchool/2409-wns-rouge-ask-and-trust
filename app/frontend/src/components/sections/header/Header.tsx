@@ -64,7 +64,7 @@ export default function Header() {
             </Link>
             {isMobile ? (
                 <>
-                    <Button size="square" variant="tertiary" className="bg-transparent border-0 hover:bg-transparent" ariaLabel="Ouvrir le menu" onClick={handleShowMenu}>
+                    <Button size="square" variant="tertiary" className="bg-transparent border-0 hover:bg-transparent" ariaLabel="Ouvrir le menu" onClick={handleShowMenu} aria-expanded={showMenu}>
                         <Menu className="h-12 w-12 text-primary-default cursor-pointer" aria-hidden />
                     </Button>
                     <HeaderMobileMenu

@@ -5,10 +5,10 @@ import { HeaderLink } from "./Header";
 export default function NavAndAuthButtons({ headerLinks, isMobile }: NavAndAuthButtonsProps) {
     return (
         <>
-            <nav className={isMobile ? "flex flex-col gap-20" : "flex items-center justify-between flex-1"}>
-                <ul className={isMobile ? "flex flex-col gap-5" : "flex items-center justify-center gap-20 flex-1"}>
+            <nav className={isMobile ? "flex flex-col gap-20" : "flex items-center justify-between flex-1"} role="navigation">
+                <ul className={isMobile ? "flex flex-col gap-5" : "flex items-center justify-center gap-20 flex-1"} role="list">
                     {headerLinks.map((link) => (
-                        <li key={link.href}>
+                        <li key={link.href} role="listitem">
                             <HeaderLink {...link} />
                         </li>
                     ))}
