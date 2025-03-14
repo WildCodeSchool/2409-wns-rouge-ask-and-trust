@@ -24,14 +24,31 @@ const router = createBrowserRouter([
 					</Suspense>
 				),
 			},
+			// {
+			// 	path: "auth",
+			// 	element: (
+			// 		//<ProtectedRoute> # example the use protected route here
+			// 		<Suspense fallback={<Loader />}>
+			// 			<Auth />
+			// 		</Suspense>
+			// 		//</ProtectedRoute>
+			// 	),
+			// },
+			// @TODO If user is connected, block access to Signin and Signup
 			{
-				path: "auth",
+				path: "register",
 				element: (
-					//<ProtectedRoute> # example the use protected route here
 					<Suspense fallback={<Loader />}>
 						<Auth />
 					</Suspense>
-					//</ProtectedRoute>
+				),
+			},
+			{
+				path: "connexion",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<Auth />
+					</Suspense>
 				),
 			},
 		],

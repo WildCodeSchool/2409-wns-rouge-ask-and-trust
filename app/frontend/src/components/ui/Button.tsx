@@ -1,8 +1,7 @@
 import { cn } from "@/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority"
 import { LucideIcon } from "lucide-react"
-import * as React from "react"
-import { ButtonHTMLAttributes } from "react"
+import { ButtonHTMLAttributes, forwardRef, Ref } from "react"
 import { Link } from "react-router-dom"
 
 const buttonVariants = cva(
@@ -44,7 +43,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
 	extends ButtonHTMLAttributes<HTMLButtonElement>,
-	VariantProps<typeof buttonVariants> {
+		VariantProps<typeof buttonVariants> {
 	icon?: LucideIcon
 	iconPosition?: "left" | "right"
 	ariaLabel: string
@@ -55,7 +54,7 @@ export interface ButtonProps
 	to?: string
 }
 
-const Button = React.forwardRef<HTMLElement, ButtonProps>(
+const Button = forwardRef<HTMLElement, ButtonProps>(
 	(
 		{
 			className,
@@ -79,12 +78,12 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 				size,
 			}),
 			isNavBtnSelected &&
-			"text-primary-700 hover:bg-primary-default bg-white hover:text-white",
+				"text-primary-700 hover:bg-primary-default bg-white hover:text-white",
 			fullWidth && "w-full",
 			className
 		)
 
-		const childrenContent =
+		const childrenContent = (
 			<>
 				{Icon && iconPosition === "left" && (
 					<Icon className="h-5 w-5" aria-hidden />
@@ -94,19 +93,32 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>(
 					<Icon className="h-5 w-5" aria-hidden />
 				)}
 			</>
+		)
 
 		if (to) {
-			return <Link to={to} ref={ref as React.Ref<HTMLAnchorElement>}
-				aria-label={ariaLabel}
-				role={role}
-				className={classNameContent}
-			>{childrenContent}</Link>
+			return (
+				<Link
+					to={to}
+					ref={ref as Ref<HTMLAnchorElement>}
+					aria-label={ariaLabel}
+					role={role}
+					className={classNameContent}
+				>
+					{childrenContent}
+				</Link>
+			)
 		} else {
-			return <button ref={ref as React.Ref<HTMLButtonElement>}
-				aria-label={ariaLabel}
-				role={role}
-				onClick={onClick}
-				className={classNameContent}>{childrenContent}</button>
+			return (
+				<button
+					ref={ref as Ref<HTMLButtonElement>}
+					aria-label={ariaLabel}
+					role={role}
+					onClick={onClick}
+					className={classNameContent}
+				>
+					{childrenContent}
+				</button>
+			)
 		}
 	}
 )
