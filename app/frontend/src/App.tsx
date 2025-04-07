@@ -1,19 +1,19 @@
-import Navigation from "@/components/sections/Navigation"
-import Footer from "@/components/sections/Footer"
-import Hero from "@/components/sections/landing/Hero.tsx"
-import Information from "@/components/sections/landing/Information.tsx"
-import Poll from "@/components/sections/landing/Poll.tsx"
+import Header from "@/components/sections/header/Header";
+import { Outlet } from "react-router-dom";
+import Footer from "@/components/sections/footer/Footer";
 
 function App() {
-	return (
-		<>
-			<Navigation />
-			<Hero />
-			<Information />
-			<Poll />
-			<Footer />
-		</>
-	)
+    return (
+        <>
+            <Header />
+            <main>
+                <div>
+                    <Outlet />
+                </div>
+            </main>
+            <Footer />
+        </>
+    );
 }
 
-export default App
+export default App;
