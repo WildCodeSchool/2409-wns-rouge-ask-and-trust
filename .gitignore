@@ -30,7 +30,6 @@ bin/
 *.sln.docstates
 
 # Fichiers de package et de verrouillage (dépend du gestionnaire de package utilisé)
-package-lock.json
 yarn.lock
 composer.lock
 Gemfile.lock

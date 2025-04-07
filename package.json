@@ -1,24 +1,29 @@
 {
-  "name": "ask-and-trust",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Development of an online survey platform",
-  "workspaces": [
-    "app/frontend",
-    "app/backend"
-  ],
-  "directories": {
-    "doc": "docs",
-    "scripts": "scripts"
-  },
-  "scripts": {
-  },
-  "devDependencies": {
-    "prettier": "3.5.0"
-  },
-  "keywords": [
-    "survey"
-  ],
-  "author": "YohanGH, AlexDDevv, ArthurVS05, corenthin95",
-  "license": "GPL-2.0"
+	"name": "ask-and-trust",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Development of an online survey platform",
+	"workspaces": [
+		"app/frontend",
+		"app/backend"
+	],
+	"directories": {
+		"doc": "docs",
+		"scripts": "scripts",
+		"format": "npx prettier --write ."
+	},
+	"scripts": {
+		"start": "docker compose up --build",
+		"prepare": "husky install"
+	},
+	"devDependencies": {
+		"husky": "^9.1.7",
+		"lint-staged": "^15.5.0",
+		"prettier": "3.5.3"
+	},
+	"keywords": [
+		"survey"
+	],
+	"author": "YohanGH, AlexDDevv, ArthurVS05, corenthin95",
+	"license": "GPL-2.0"
 }

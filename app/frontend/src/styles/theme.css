@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@font-face {
+	font-family: "Roboto";
+	/* src: url("../public/fonts/Roboto-VariableFont_wdth,wght.woff2"); */
+	src:
+		url("/fonts/Roboto-VariableFont_wdth,wght.woff2") format("woff2"),
+		url("/fonts/Roboto-VariableFont_wdth,wght.woff") format("woff"),
+		url("/fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype"),
+		url("/fonts/Roboto-VariableFont_wdth,wght.eot") format("eot");
+	font-weight: 100 900;
+	font-style: normal;
+}
+
+@theme {
+	--font-family: "Roboto", sans-serif;
+
+	/* colors shades */
+	--color-primary-50: #f1f2ff;
+	--color-primary-100: #eeefff;
+	--color-primary-200: #e0e2f9;
+	--color-primary-300: #c1c4f4;
+	--color-primary-400: #a1a7ee;
+	--color-primary-default: #636ce3;
+	--color-primary-600: #3039b0;
+	--color-primary-700: #00067d;
+	--color-primary-800: #000030;
+	--color-black-50: #eaeef2;
+	--color-black-100: #cbd5e1;
+	--color-black-200: #aab3be;
+	--color-black-300: #878f98;
+	--color-black-400: #767d85;
+	--color-black-default: #0d0d0e;
+	--color-white: #fafafa;
+	--color-destructive-light: #ffd7d7;
+	--color-destructive-medium: #d84241;
+	--color-destructive-medium-dark: rgb(201, 25, 25);
+	--color-destructive-dark: #6d0a09;
+	--color-warning-light: #ffddc5;
+	--color-warning-medium: #e37323;
+	--color-warning-dark: #90430b;
+	--color-validate-light: #bbecc1;
+	--color-validate-medium: #3f7a50;
+	--color-validate-dark: #1a3823;
+	--color-disabled: #82828a;
+
+	/* components colors */
+	--color-bg: var(--color-white);
+	--color-fg: var(--color-black-default);
+	--color-pop-bg: var(--color-primary-200);
+	--color-pop-fg: var(--color-black-default);
+	--color-card-bg: var(--color-primary-300);
+	--color-card-fg: var(--color-black-default);
+	--color-border: var(--color-primary-default);
+	--color-input-bg: var(--color-primary-200);
+	--color-input-fg: var(--color-primary-800);
+	--color-button-destructive-bg: var(--color-destructive-medium);
+	--color-button-destructive-fg: var(--color-white);
+	--color-button-primary-bg: var(--color-primary-default);
+	--color-button-primary-fg: var(--color-white);
+	--color-button-secondary-bg: var(--color-primary-700);
+	--color-button-secondary-fg: var(--color-white);
+	--color-button-line-border: var(--color-primary-700);
+	--color-button-line-fg: var(--color-primary-700);
+	--color-ring: var(--color-primary-default);
+	--color-chart-1: var(--color-primary-400);
+	--color-chart-2: var(--color-primary-default);
+	--color-chart-3: var(--color-primary-600);
+	--color-chart-4: var(--color-primary-700);
+	--color-chart-5: var(--color-primary-800);
+}
