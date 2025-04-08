@@ -7,7 +7,7 @@ function App() {
 		<>
 			<Header />
 			{/* @TODO calc height : fill screen minus Header height. On mobile : minus Header height and Navbar height. */}
-			<main className="h-screen bg-white">
+			<main className="bg-bg">
 				<div className="h-[100%]">
 					<Outlet />
 				</div>

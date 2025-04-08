@@ -9,6 +9,7 @@ import ErrorElement from "@/components/ui/ErrorElement"
 // Using lazy loading for pages
 const Home = lazy(() => import("@/pages/Home"))
 const Auth = lazy(() => import("@/pages/Auth"))
+const TermsOfUse = lazy(() => import("@/pages/TermsOfUse"))
 
 const router = createBrowserRouter([
 	{
@@ -48,6 +49,14 @@ const router = createBrowserRouter([
 				element: (
 					<Suspense fallback={<Loader />}>
 						<Auth />
+					</Suspense>
+				),
+			},
+			{
+				path: "terms-of-use",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<TermsOfUse />
 					</Suspense>
 				),
 			},

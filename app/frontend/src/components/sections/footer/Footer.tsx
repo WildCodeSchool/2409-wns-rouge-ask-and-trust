@@ -30,7 +30,7 @@ const FOOTER_LINKS: readonly LinksType[] = [
 		ariaLabel: "Acheter des packs d'enquêtes"
 	},
 	{
-		href: '/legal',
+		href: '/terms-of-use',
 		label: "Mentions légales",
 		category: "Informations",
 		ariaLabel: "Consulter les mentions légales"
@@ -68,7 +68,7 @@ export default function Footer() {
 				>
 					<path
 						d="M0 0H1440V100C1440 100 1082.5 0 720 0C357.5 0 0 100 0 100V0Z"
-						fill="white"
+						fill="#fafafa"
 					/>
 				</svg>
 			</div>
