@@ -1,13 +1,14 @@
 {
     "entryPoints": [
-        "app/frontend",
-        "app/backend"
+        "app/frontend/src",
+        "app/backend/src"
     ],
     "out": "docs/build",
-    "exclude": ["**/*.spec.ts"],
+    "exclude": ["**/*.spec.ts", "**/*.test.ts"],
     "includeVersion": true,
     "excludePrivate": true,
     "excludeProtected": true,
     "hideGenerator": false,
-    "readme": "README.md"
-  }
+    "readme": "README.md",
+    "entryPointStrategy": "expand"
+}
