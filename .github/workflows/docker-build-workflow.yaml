@@ -43,4 +43,4 @@ jobs:
           # Indicate where is the app to build
          context: "{{defaultContext}}:client"
           # DockerHub user's name and app's name
-         tags: ${{ secrets.DOCKERHUB_USERNAME }}/AskAndTrust:latest
+         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust:${{ github.sha }}
