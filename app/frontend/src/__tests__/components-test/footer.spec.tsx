@@ -87,7 +87,7 @@ describe("footer Components", () => {
 	})
 
 	it("should warn for no-HTTPS external links", () => {
-		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => { })
+		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {})
 		const noHttpsLink = {
 			href: "http://example.com",
 			label: "No HTTPS Link",
@@ -108,7 +108,7 @@ describe("footer Components", () => {
 	})
 
 	it("should not warn for HTTPS external links", () => {
-		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => { })
+		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {})
 		const httpsLink = {
 			href: "https://example.com",
 			label: "HTTPS Link",
