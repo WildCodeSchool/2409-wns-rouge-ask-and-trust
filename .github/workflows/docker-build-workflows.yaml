@@ -1,9 +1,9 @@
 name: Docker Build Workflow
 
 # When this workflow is activated
-on:
 # Run this workflow if "Client Tests Workflows" is completed
 # workflow_run can only check one workflow
+on:
   workflow_run:
     workflows: ["Client Tests Workflows"]
     types:
