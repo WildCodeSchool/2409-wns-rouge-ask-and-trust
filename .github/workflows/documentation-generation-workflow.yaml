@@ -1,7 +1,7 @@
 name: Documentation Generation
 
 on:
-  push:
+  pull_request:
     branches:
       - main
       - develop
@@ -9,26 +9,27 @@ on:
 jobs:
   docs:
     runs-on: ubuntu-latest
+    steps:
       # Retrieves source code from repository
-      - uses: actions/checkout@v4
+     - uses: actions/checkout@v4
 
       # Configures the version of Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '23'
+     - name: Setup Node.js
+       uses: actions/setup-node@v4
+       with:
+         node-version: '23'
 
       # Installe les dépendances
-      - name: Install dependencies
-        run: npm install
+     - name: Install dependencies
+       run: npm ci
 
       # Generates documentation
-      - name: Generate Documentation
-        run: npm run docs
+     - name: Generate Documentation
+       run: npm run docs
 
       # Deploying documentation, for example to GitHub Pages
-      - name: Deploy Documentation
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GIT_TOKEN_DOCS }}
-          publish_dir: ./docs/build
+     - name: Deploy Documentation
+       uses: peaceiris/actions-gh-pages@v3
+       with:
+         github_token: ${{ secrets.GIT_TOKEN }}
+         publish_dir: ./docs/build
