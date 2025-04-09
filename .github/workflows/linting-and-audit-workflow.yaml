@@ -55,8 +55,23 @@ jobs:
 
     # Run dependency security audit
     - name: Run npm audit
+      id: npm-audit
       run: npm audit
       continue-on-error: false
+
+    # Fix Prettier formatting if check failed
+    - name: Fix npm audit fix
+      if: steps.npm-audit.outcome == 'failure'
+      run: npm audit fix
+      continue-on-error: false
+
+    # Commit the changes if any files were modified
+    - name: Commit changes
+      if: steps.npm-audit.outcome == 'failure'
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "security: fix npm audit"
+        branch: ${{ github.head_ref }}
 
     # Notify on failure
     - name: Notify on failure
