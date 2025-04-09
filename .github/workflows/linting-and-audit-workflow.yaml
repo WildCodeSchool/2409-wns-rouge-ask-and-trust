@@ -3,6 +3,11 @@ name: Lint & Format Check Workflow
 on:
   pull_request:
 
+# Add permissions for the GitHub token
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -45,6 +50,7 @@ jobs:
       with:
         commit_message: "style: fix prettier formatting"
         branch: ${{ github.head_ref }}
+        token: ${{ secrets.GIT_TOKEN_DOCS }}
 
     # Run dependency security audit
     - name: Run npm audit
