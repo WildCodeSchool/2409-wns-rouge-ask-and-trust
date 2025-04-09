@@ -1,0 +1,10 @@
+{
+    "entryPoints": ["src"],
+    "out": "docs/build",
+    "exclude": ["**/*.spec.ts"],
+    "includeVersion": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "hideGenerator": false,
+    "readme": "README.md"
+  }

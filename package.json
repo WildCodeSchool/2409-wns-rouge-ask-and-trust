@@ -16,12 +16,14 @@
 		"prepare": "if [ \"$CI\" != \"true\" ]; then husky install; fi",
 		"format": "npx prettier --write \"**/*.{js,jsx,ts,tsx}\"",
 		"prettier:check": "npx prettier --check \"**/*.{js,jsx,ts,tsx}\"",
-		"lint": "cd app/frontend && npm run lint"
+		"lint": "cd app/frontend && npm run lint",
+		"docs": "typedoc --out docs/build src"
 	},
 	"devDependencies": {
 		"husky": "^9.1.7",
 		"lint-staged": "^15.5.0",
-		"prettier": "3.5.3"
+		"prettier": "3.5.3",
+		"typedoc": "^0.28.2"
 	},
 	"keywords": [
 		"survey"
