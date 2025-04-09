@@ -1,0 +1,44 @@
+name: Lint & Format Check Workflow
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    # Retrieves source code from repository
+    - uses: actions/checkout@v4
+
+    # Configures the version of Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+
+    # 
+    - name: Install dependencies
+      run: npm install
+      continue-on-error: false
+
+    # Runs ESLint to detect code errors and check style
+    - name: Run Eslint
+      run: npm run lint
+      continue-on-error: false
+
+    # Checks that Prettier correctly formats the code
+    - name: Run Prettier check
+      run: npm run prettier:check
+      continue-on-error: false
+
+    # Run dependency security audit
+    - name: Run npm audit
+      run: npm audit
+      continue-on-error: false
+
+    # Notify on failure
+    - name: Notify on failure
+      if: failure()
+      run: |
+        echo "::error::Workflow failed! Please check the logs for details."
+        exit 1
