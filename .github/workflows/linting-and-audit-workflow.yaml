@@ -26,10 +26,25 @@ jobs:
       run: npm run lint
       continue-on-error: false
 
-    # Checks that Prettier correctly formats the code
-    - name: Run Prettier check
+    # Check Prettier formatting
+    - name: Check Prettier formatting
+      id: prettier-check
       run: npm run prettier:check
+      continue-on-error: true
+
+    # Fix Prettier formatting if check failed
+    - name: Fix Prettier formatting
+      if: steps.prettier-check.outcome == 'failure'
+      run: npx prettier --write "**/*.{js,jsx,ts,tsx}"
       continue-on-error: false
+
+    # Commit the changes if any files were modified
+    - name: Commit changes
+      if: steps.prettier-check.outcome == 'failure'
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "style: fix prettier formatting"
+        branch: ${{ github.head_ref }}
 
     # Run dependency security audit
     - name: Run npm audit
