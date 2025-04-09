@@ -9,12 +9,14 @@
 	],
 	"directories": {
 		"doc": "docs",
-		"scripts": "scripts",
-		"format": "npx prettier --write ."
+		"scripts": "scripts"
 	},
 	"scripts": {
 		"start": "docker compose up --build",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"format": "npx prettier --write \"**/*.{js,jsx,ts,tsx}\"",
+		"prettier:check": "npx prettier --check \"**/*.{js,jsx,ts,tsx}\"",
+		"lint": "cd app/frontend && npm run lint"
 	},
 	"devDependencies": {
 		"husky": "^9.1.7",
