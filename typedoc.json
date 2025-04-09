@@ -4,11 +4,12 @@
         "app/backend/src"
     ],
     "out": "docs/build",
-    "exclude": ["**/*.spec.ts", "**/*.test.ts"],
+    "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"],
     "includeVersion": true,
     "excludePrivate": true,
     "excludeProtected": true,
     "hideGenerator": false,
     "readme": "README.md",
-    "entryPointStrategy": "expand"
+    "entryPointStrategy": "expand",
+    "tsconfig": "tsconfig.docs.json"
 }
