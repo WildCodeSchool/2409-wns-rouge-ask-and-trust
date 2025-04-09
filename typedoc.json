@@ -1,5 +1,8 @@
 {
-    "entryPoints": ["src"],
+    "entryPoints": [
+        "app/frontend",
+        "app/backend"
+    ],
     "out": "docs/build",
     "exclude": ["**/*.spec.ts"],
     "includeVersion": true,

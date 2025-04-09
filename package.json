@@ -17,7 +17,7 @@
 		"format": "npx prettier --write \"**/*.{js,jsx,ts,tsx}\"",
 		"prettier:check": "npx prettier --check \"**/*.{js,jsx,ts,tsx}\"",
 		"lint": "cd app/frontend && npm run lint",
-		"docs": "typedoc --out docs/build app/"
+		"docs": "typedoc"
 	},
 	"devDependencies": {
 		"husky": "^9.1.7",
