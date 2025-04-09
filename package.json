@@ -13,7 +13,7 @@
 	},
 	"scripts": {
 		"start": "docker compose up --build",
-		"prepare": "husky install",
+		"prepare": "if [ \"$CI\" != \"true\" ]; then husky install; fi",
 		"format": "npx prettier --write \"**/*.{js,jsx,ts,tsx}\"",
 		"prettier:check": "npx prettier --check \"**/*.{js,jsx,ts,tsx}\"",
 		"lint": "cd app/frontend && npm run lint"
