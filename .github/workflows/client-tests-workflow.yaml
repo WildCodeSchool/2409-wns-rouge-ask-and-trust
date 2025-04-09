@@ -1,0 +1,22 @@
+name: Client Tests Workflows
+
+# When this workflow is activated
+on: 
+  pull_request:
+
+jobs:
+  test-client:
+    # Execution Environment
+    runs-on: ubuntu-latest
+    steps:
+      # Clone the GitHub repository in GitHub Actions Virtual Machine
+      # Make the files available by the workflow
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # Go to frontend directory, install packages and run test
+      - name: Goto client and run tests
+        run: |
+          cd ./app/frontend
+          npm install
+          npm test
