@@ -18,5 +18,9 @@ jobs:
       - name: Goto client and run tests
         run: |
           cd ./app/frontend
-          npm install
+          # Disable the prepare script temporarily
+          npm set-script prepare ""
+          # Install dependencies
+          npm ci
+          # Run tests
           npm test
