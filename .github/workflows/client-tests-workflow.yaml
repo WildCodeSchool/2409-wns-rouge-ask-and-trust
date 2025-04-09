@@ -16,11 +16,9 @@ jobs:
 
       # Go to frontend directory, install packages and run test
       - name: Goto client and run tests
+        # set-script prepare ""Disable the prepare script temporarily (set-script prepare "" => husky...)
         run: |
           cd ./app/frontend
-          # Disable the prepare script temporarily
           npm set-script prepare ""
-          # Install dependencies
           npm ci
-          # Run tests
           npm test
