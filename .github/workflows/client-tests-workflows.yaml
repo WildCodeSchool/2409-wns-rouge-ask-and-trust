@@ -19,5 +19,5 @@ jobs:
         # set-script prepare ""Disable the prepare script temporarily (=> husky...)
         run: |
           cd ./app/frontend
-          HUSKY=0 npm ci
+          npm ci
           npm test
