@@ -41,7 +41,7 @@ jobs:
         with:
          push: true
           # Indicate where is the app to build
-         context: "{{defaultContext}}:frontend"
+         context: "{{defaultContext}}:app/frontend"
           # DockerHub user's name and app's name
          tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-frontend:${{ github.sha }}
 
@@ -51,6 +51,6 @@ jobs:
         with:
          push: true
           # Indicate where is the app to build
-         context: "{{defaultContext}}:backend"
+         context: "{{defaultContext}}:app/backend"
           # DockerHub user's name and app's name
          tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-backend:${{ github.sha }}
