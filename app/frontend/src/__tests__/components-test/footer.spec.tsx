@@ -12,7 +12,7 @@ const FooterWrapper = () => (
 )
 
 describe("footer Components", () => {
-	it.only("should render all essential elements", () => {
+	it("should render all essential elements", () => {
 		render(<FooterWrapper />)
 
 		expect(screen.getByRole("contentinfo")).toBeInTheDocument()
@@ -27,7 +27,7 @@ describe("footer Components", () => {
 		expect(screen.getByRole("separator")).toBeInTheDocument()
 	})
 
-	it.only("should render all navigation links correctly", () => {
+	it("should render all navigation links correctly", () => {
 		render(<FooterWrapper />)
 
 		const links = screen.getAllByRole("link").length
@@ -35,7 +35,7 @@ describe("footer Components", () => {
 		expect(links).toEqual(6)
 	})
 
-	it.only("should have proper ARIA attributes", () => {
+	it("should have proper ARIA attributes", () => {
 		render(<FooterWrapper />)
 
 		expect(screen.getByRole("contentinfo")).toHaveAttribute(
@@ -49,14 +49,14 @@ describe("footer Components", () => {
 		).toHaveAttribute("aria-label", "Navigation du pied de page")
 	})
 
-	it.only("should display current year in copyright", () => {
+	it("should display current year in copyright", () => {
 		render(<FooterWrapper />)
 
 		const currentYear = new Date().getFullYear().toString()
 		expect(screen.getByText(RegExp(currentYear))).toBeInTheDocument()
 	})
 
-	it.only("should handle internal links correctly", async () => {
+	it("should handle internal links correctly", async () => {
 		render(<FooterWrapper />)
 
 		const user = userEvent.setup()
@@ -67,7 +67,7 @@ describe("footer Components", () => {
 		expect(window.location.pathname).toBe("/register")
 	})
 
-	it.only("should handle external links correctly", () => {
+	it("should handle external links correctly", () => {
 		const externalLink = {
 			href: "https://example.com",
 			label: "External Link",
@@ -86,7 +86,7 @@ describe("footer Components", () => {
 		expect(link).toHaveAttribute("target", "_blank")
 	})
 
-	it.only("should warn for no-HTTPS external links", () => {
+	it("should warn for no-HTTPS external links", () => {
 		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => { })
 		const noHttpsLink = {
 			href: "http://example.com",
@@ -107,7 +107,7 @@ describe("footer Components", () => {
 		warnSpy.mockRestore()
 	})
 
-	it.only("should not warn for HTTPS external links", () => {
+	it("should not warn for HTTPS external links", () => {
 		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => { })
 		const httpsLink = {
 			href: "https://example.com",
