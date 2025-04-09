@@ -35,12 +35,22 @@ jobs:
          username: ${{ secrets.DOCKERHUB_USERNAME }}
          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Build Docker image anbd push it in DockerHub
-      - name: Build and push
+      # Build Docker image and push it in DockerHub
+      - name: Build and push frontend
         uses: docker/build-push-action@v6
         with:
          push: true
           # Indicate where is the app to build
-         context: "{{defaultContext}}"
+         context: "{{defaultContext}}:frontend"
           # DockerHub user's name and app's name
-         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust:${{ github.sha }}
+         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-frontend:${{ github.sha }}
+
+      # Build Docker image and push it in DockerHub
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+         push: true
+          # Indicate where is the app to build
+         context: "{{defaultContext}}:backend"
+          # DockerHub user's name and app's name
+         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-backend:${{ github.sha }}
