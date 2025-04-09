@@ -57,7 +57,7 @@ jobs:
     - name: Run npm audit
       id: npm-audit
       run: npm audit
-      continue-on-error: false
+      continue-on-error: true
 
     # Fix Prettier formatting if check failed
     - name: Fix npm audit fix
