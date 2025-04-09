@@ -1,13 +1,14 @@
-name: Docker Build Workflow
+name: Docker Build Workflows
 
 # When this workflow is activated
 # Run this workflow if "Client Tests Workflows" is completed
 # workflow_run can only check one workflow
+# on:
+#   workflow_run:
+#     workflows: ["Client Tests Workflows"]
+#     types:
+#         - completed
 on:
-  workflow_run:
-    workflows: ["Client Tests Workflows"]
-    types:
-        - completed
   pull_request:
       branches:
         - main
@@ -15,12 +16,13 @@ on:
 jobs:
   docker-build:
   # Run if client test is a success
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    # for existing actions, we need the keyword "uses"
     steps:
-      #### for existing actions, we need the keyword "uses"
-      - name: Debug workflow_run event
-        run: echo "Workflow Run Conclusion: ${{ github.event.workflow_run.conclusion }}"
+      # - name: Debug workflow_run event
+      #   run: |
+      #     echo "Workflow Run Conclusion: ${{ github.event.workflow_run.conclusion }}"
       # Clone the GitHub repository in GitHub Actions Virtual Machine
       # Make the files available by the workflow
       - name: Check out code
