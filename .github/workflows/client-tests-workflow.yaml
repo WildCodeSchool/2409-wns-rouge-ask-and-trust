@@ -1,4 +1,4 @@
-name: Client Tests Workflows
+name: Client Tests Workflow
 
 # When this workflow is activated
 on: 
