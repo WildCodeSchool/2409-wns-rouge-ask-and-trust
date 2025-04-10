@@ -5,7 +5,7 @@ import { ButtonHTMLAttributes, forwardRef, Ref } from "react"
 import { Link } from "react-router-dom"
 
 const buttonVariants = cva(
-	"inline-flex items-center gap-2 w-fit justify-center rounded-lg transition-colors font-bold focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer border-2",
+	"inline-flex items-center gap-2 w-fit justify-center rounded-lg transition-colors duration-200 ease-in-out font-bold focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer border-2",
 	{
 		variants: {
 			variant: {
@@ -17,8 +17,12 @@ const buttonVariants = cva(
 					"bg-white border-white text-primary-700 hover:bg-primary-700 hover:border-primary-700 hover:text-white focus:ring-primary-700",
 				navbar_btn:
 					"bg-primary-default text-white hover:bg-white font-semibold hover:text-primary-700 focus:ring-primary-default border-none",
+				pagination_btn:
+					"bg-transparent text-fg border-none hover:bg-fg hover:text-white focus:ring-primary-700 rounded-md",
 				outline:
 					"border-primary-700 text-primary-700 hover:bg-primary-700 hover:text-white focus:ring-primary-700",
+				transparent:
+					"bg-transparent border-white text-white hover:bg-primary-700 hover:text-white focus:ring-primary-700 hover:border-transparent",
 				destructive:
 					"bg-destructive-medium border-destructive-medium text-white hover:bg-white hover:text-destructive-medium focus:ring-destructive-medium",
 				disabled:
@@ -32,6 +36,9 @@ const buttonVariants = cva(
 			},
 			nav: {
 				selected: "bg-white text-primary-700",
+			},
+			pagination: {
+				selected: "bg-fg text-white",
 			},
 		},
 		defaultVariants: {
