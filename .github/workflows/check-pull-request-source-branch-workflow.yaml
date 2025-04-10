@@ -1,0 +1,29 @@
+name: Check Pull Request Source Branch Workflows
+
+# When this workflow is activated
+# When a pull request is opened
+# When a pull request is reopened
+# When a pull request is updated with new commits
+# When a pull request is modified
+on:
+  pull_request:
+    types: 
+      - opened 
+      - reopened 
+      - synchronize
+      - edited
+
+jobs:
+  check-branches:
+    # Only build docker image when merging on main
+    if: github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify branch naming conventions
+        # Run only if the pr is from develop to main
+        # Others branches are not allowed to be merged in main
+        run: |
+          if [ "${{ github.head_ref }} != "develop" ] && [ "${{ github.base_ref }}" = "main" ]; then
+            echo "Error: Merge requests to the main branch are allowed only from the 'develop' branch."
+            exit 1
+          fi

@@ -13,10 +13,10 @@ export default function TermsOfUse() {
 				<link rel="canonical" href="/terms-of-use" />
 			</Helmet>
 
-			<main className="container mx-auto max-w-4xl px-4 py-8 bg-bg">
+			<main className="bg-bg container mx-auto max-w-4xl px-4 py-8">
 				<section className="mb-10">
 					<h1
-						className="mb-6 text-3xl font-bold text-primary"
+						className="text-primary mb-6 text-3xl font-bold"
 						id="main-heading"
 					>
 						Mentions Légales
@@ -41,17 +41,17 @@ export default function TermsOfUse() {
 								Les présentes Conditions Générales d'Utilisation
 								et de Services (ci-après les "Conditions
 								Générales") des sites wildcodeschool.com et
-								odyssey.wildcodeschool.com (ci-après le "Site
-									") sont éditées par la société INNOV'EDUC
-								(ci-après la "Société"), société par actions
-								simplifiées au capital social de 14 250 €, dont
-								le siège social est situé au 44 rue Alphonse
-								Penaud, 75020 Paris (RCS Chartres 794 926 063),
-								société éditrice du site wildcodeschool.com,
-								dont le numéro de TVA intracommunautaire est FR
-								27 794 926 063. Organisme de formation
-								enregistré auprès du Préfet de la région Centre
-								le 23 juin 2014 sous le n° 24 28 0154228.
+								odyssey.wildcodeschool.com (ci-après le "Site ")
+								sont éditées par la société INNOV'EDUC (ci-après
+								la "Société"), société par actions simplifiées
+								au capital social de 14 250 €, dont le siège
+								social est situé au 44 rue Alphonse Penaud,
+								75020 Paris (RCS Chartres 794 926 063), société
+								éditrice du site wildcodeschool.com, dont le
+								numéro de TVA intracommunautaire est FR 27 794
+								926 063. Organisme de formation enregistré
+								auprès du Préfet de la région Centre le 23 juin
+								2014 sous le n° 24 28 0154228.
 							</p>
 						</article>
 
@@ -59,7 +59,7 @@ export default function TermsOfUse() {
 							className="mb-8"
 							title="Informations légales et coordonnées de l'entreprise"
 						>
-							<h2 className="mb-4 text-2xl font-semibold text-primary">
+							<h2 className="text-primary mb-4 text-2xl font-semibold">
 								1. Informations légales
 							</h2>
 							<p className="mb-4">
@@ -71,7 +71,7 @@ export default function TermsOfUse() {
 								informations suivantes :
 							</p>
 
-							<div className="mb-4 border-l-4 border-primary/20 py-2 pl-4 bg-bg">
+							<div className="border-primary/20 bg-bg mb-4 border-l-4 py-2 pl-4">
 								<p className="mb-2">
 									<strong>Raison sociale :</strong> [Nom de
 									votre entreprise]
@@ -107,11 +107,11 @@ export default function TermsOfUse() {
 							className="mb-8"
 							title="Informations sur l'hébergement du site"
 						>
-							<h2 className="mb-4 text-2xl font-semibold text-primary">
+							<h2 className="text-primary mb-4 text-2xl font-semibold">
 								2. Hébergement
 							</h2>
 							<p className="mb-4">Le site est hébergé par :</p>
-							<div className="mb-4 border-l-4 border-primary/20 py-2 pl-4 bg-bg">
+							<div className="border-primary/20 bg-bg mb-4 border-l-4 py-2 pl-4">
 								<p className="mb-2">
 									<strong>Société :</strong> [Nom de
 									l'hébergeur]
@@ -131,7 +131,7 @@ export default function TermsOfUse() {
 							className="mb-8"
 							title="Droits de propriété intellectuelle et conditions d'utilisation"
 						>
-							<h2 className="mb-4 text-2xl font-semibold text-primary">
+							<h2 className="text-primary mb-4 text-2xl font-semibold">
 								3. Propriété intellectuelle
 							</h2>
 							<p className="mb-4">
@@ -155,7 +155,7 @@ export default function TermsOfUse() {
 							className="mb-8"
 							title="Politique de collecte et protection des données personnelles"
 						>
-							<h2 className="mb-4 text-2xl font-semibold text-primary">
+							<h2 className="text-primary mb-4 text-2xl font-semibold">
 								4. Collecte des données personnelles
 							</h2>
 							<p className="mb-4">
@@ -182,7 +182,7 @@ export default function TermsOfUse() {
 							className="mb-8"
 							title="Politique d'utilisation des cookies"
 						>
-							<h2 className="mb-4 text-2xl font-semibold text-primary">
+							<h2 className="text-primary mb-4 text-2xl font-semibold">
 								5. Cookies
 							</h2>
 							<p className="mb-4">
@@ -203,7 +203,7 @@ export default function TermsOfUse() {
 							className="mb-8"
 							title="Clauses de limitation de responsabilité"
 						>
-							<h2 className="mb-4 text-2xl font-semibold text-primary">
+							<h2 className="text-primary mb-4 text-2xl font-semibold">
 								6. Limitation de responsabilité
 							</h2>
 							<p className="mb-4">
@@ -222,10 +222,8 @@ export default function TermsOfUse() {
 							</p>
 						</article>
 
-						<article
-							title="Droit applicable et coordonnées de contact"
-						>
-							<h2 className="mb-4 text-2xl font-semibold text-primary">
+						<article title="Droit applicable et coordonnées de contact">
+							<h2 className="text-primary mb-4 text-2xl font-semibold">
 								7. Droit applicable et juridiction compétente
 							</h2>
 							<p className="mb-4">

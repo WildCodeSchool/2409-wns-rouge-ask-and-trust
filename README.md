@@ -27,6 +27,10 @@ ask-and-trust/
 └── package.json            # Global configuration file if you are using a monorepo manager
 ```
 
+## Docs
+
+https://wildcodeschool.github.io/2409-wns-rouge-ask-and-trust/
+
 ## Technologies used
 
 ## Getting Started

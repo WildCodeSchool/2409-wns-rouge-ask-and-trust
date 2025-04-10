@@ -1,0 +1,15 @@
+{
+    "entryPoints": [
+        "app/frontend/src",
+        "app/backend/src"
+    ],
+    "out": "docs/build",
+    "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"],
+    "includeVersion": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "hideGenerator": false,
+    "readme": "README.md",
+    "entryPointStrategy": "expand",
+    "tsconfig": "tsconfig.docs.json"
+}

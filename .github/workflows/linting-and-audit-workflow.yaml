@@ -1,0 +1,81 @@
+name: Lint & Format Check Workflow
+
+on:
+  pull_request:
+
+# Add permissions for the GitHub token
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    # Retrieves source code from repository
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GIT_TOKEN_DOCS }}
+
+    # Configures the version of Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+
+    # Installs dependencies
+    - name: Install dependencies
+      run: npm ci
+      continue-on-error: false
+
+    # Runs ESLint to detect code errors and check style
+    - name: Run Eslint
+      run: npm run lint
+      continue-on-error: false
+
+    # Check Prettier formatting
+    - name: Check Prettier formatting
+      id: prettier-check
+      run: npm run prettier:check
+      continue-on-error: true
+
+    # Fix Prettier formatting if check failed
+    - name: Fix Prettier formatting
+      if: steps.prettier-check.outcome == 'failure'
+      run: npx prettier --write "**/*.{js,jsx,ts,tsx}"
+      continue-on-error: false
+
+    # Commit the changes if any files were modified
+    - name: Commit changes
+      if: steps.prettier-check.outcome == 'failure'
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "style: fix prettier formatting"
+        branch: ${{ github.head_ref }}
+
+    # Run dependency security audit
+    - name: Run npm audit
+      id: npm-audit
+      run: npm audit
+      continue-on-error: true
+
+    # Fix Prettier formatting if check failed
+    - name: Fix npm audit fix
+      if: steps.npm-audit.outcome == 'failure'
+      run: npm audit fix
+      continue-on-error: false
+
+    # Commit the changes if any files were modified
+    - name: Commit changes
+      if: steps.npm-audit.outcome == 'failure'
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "security: fix npm audit"
+        branch: ${{ github.head_ref }}
+
+    # Notify on failure
+    - name: Notify on failure
+      if: failure()
+      run: |
+        echo "::error::Workflow failed! Please check the logs for details."
+        exit 1

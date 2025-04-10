@@ -125,4 +125,4 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 
 Button.displayName = "Button"
 
-export { Button, buttonVariants }
+export { Button }
