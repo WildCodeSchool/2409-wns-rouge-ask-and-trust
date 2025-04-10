@@ -14,7 +14,7 @@ function App() {
 			<Information />
 			<Poll />
 			<Package />
-			<div className="flex flex-row justify-center px-5 pt-4 pb-30 lg:pt-10 lg:pb-60">
+			<div className="flex flex-row justify-center px-5 pt-4 pb-30 lg:pt-15 lg:pb-55">
 				<Button
 					variant="secondary"
 					fullWidth

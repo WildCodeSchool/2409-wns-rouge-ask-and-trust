@@ -1,13 +1,13 @@
 const Information = () => {
 	return (
 		<section
-			className="relative flex items-center justify-center overflow-hidden px-5 py-12 lg:py-35"
+			className="relative flex items-center justify-center overflow-hidden px-5 py-25 lg:py-35"
 			role="information"
 			aria-label="Deuxieme section"
 		>
-			<div className="py-12 lg:py-30" aria-hidden="true">
+			<div className="py-12 lg:py-70" aria-hidden="true">
 				<svg
-					className="absolute top-0 left-0 z-0 h-[30rem] w-auto lg:h-[50rem]"
+					className="absolute top-0 left-0 z-0 h-[32rem] w-auto lg:h-[54rem]"
 					viewBox="100 0 1920 791"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +19,7 @@ const Information = () => {
 				</svg>
 			</div>
 			<div className="relative" aria-label="Fenetres expliquatives">
-				<div className="flex flex-col items-center lg:flex-row xl:gap-x-10">
+				<div className="flex flex-col items-center gap-12 lg:flex-row lg:gap-28">
 					<div className="relative flex max-w-[394px] flex-col rounded-xl shadow-lg shadow-black/10 lg:max-w-[466px]">
 						<div className="bg-primary-default flex gap-2.5 rounded-t-xl px-4 py-3">
 							<div className="flex h-[15px] w-[15px] flex-row rounded-xl bg-white"></div>
