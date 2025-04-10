@@ -8,8 +8,8 @@ on:
 
 jobs:
   docker-build:
-  # Run if client test is a success
-  # On build seulement l'image docker au merge sur main
+    # Run if client test is a success
+    # Only build docker image when merging on main
     if: github.base_ref == 'main'
     runs-on: ubuntu-latest
     # for existing actions, we need the keyword "uses"

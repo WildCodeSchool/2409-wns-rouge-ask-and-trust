@@ -23,9 +23,9 @@ jobs:
       with:
         node-version: '23'
 
-    # 
+    # Installs dependencies
     - name: Install dependencies
-      run: npm install
+      run: npm ci
       continue-on-error: false
 
     # Runs ESLint to detect code errors and check style

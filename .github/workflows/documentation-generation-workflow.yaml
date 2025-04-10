@@ -8,7 +8,7 @@ on:
 jobs:
   docs:
     # Run if client test is a success
-    # On build seulement l'image docker au merge sur main
+    # Only build docker image when merging on main
     if: github.base_ref == 'main'
     runs-on: ubuntu-latest
     steps:
@@ -21,7 +21,7 @@ jobs:
        with:
          node-version: '23'
 
-      # Installe les dépendances
+      # Installs dependencies
      - name: Install dependencies
        run: npm ci
 
@@ -29,7 +29,7 @@ jobs:
      - name: Generate Documentation
        run: npm run docs
 
-      # Deploying documentation, for example to GitHub Pages
+      # Deploying documentation, to GitHub Pages
      - name: Deploy Documentation
        uses: peaceiris/actions-gh-pages@v3
        with:

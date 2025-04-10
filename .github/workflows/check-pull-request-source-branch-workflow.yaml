@@ -15,6 +15,7 @@ on:
 
 jobs:
   check-branches:
+    # Only build docker image when merging on main
     if: github.base_ref == 'main'
     runs-on: ubuntu-latest
     steps:
