@@ -1,12 +1,15 @@
-import { InputType, Field } from "type-graphql"
-import { Length, IsEmail, IsStrongPassword } from "class-validator"
+import { IsEmail, IsIn, IsStrongPassword, Length } from "class-validator"
+import { Field, InputType } from "type-graphql"
+import { Roles, UserRole } from "../../../types/types"
 
 @InputType()
 export class CreateUserInput {
+	// EMAIL
 	@Field()
 	@IsEmail({}, { message: "The email must be valid." })
 	email!: string
 
+	// PASSWORD
 	@Field()
 	@Length(6, 255, {
 		message: "The password must contain between 6 and 255 characters.",
@@ -25,4 +28,25 @@ export class CreateUserInput {
 		}
 	)
 	password!: string
+
+	// FIRSTNAME
+	@Field()
+	@Length(2, 100, {
+		message: "The firstname must contain between 2 and 100 characters.",
+	})
+	firstname!: string
+
+	// LASTNAME
+	@Field()
+	@Length(2, 100, {
+		message: "The lastname must contain between 2 and 100 characters.",
+	})
+	lastname!: string
+
+	// ROLE
+	@Field()
+	@IsIn(Object.values(Roles), {
+		message: "The lastname must contain between 2 and 100 characters.",
+	})
+	role!: UserRole
 }
