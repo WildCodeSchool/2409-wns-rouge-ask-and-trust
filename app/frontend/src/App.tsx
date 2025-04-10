@@ -1,9 +1,9 @@
 import { Outlet, useLocation } from "react-router-dom"
 import Footer from "./components/sections/footer/Footer"
 import Header from "./components/sections/header/Header"
-import HeaderSurveys from "./components/sections/header/Header"
+import HeaderSurveys from "@/components/sections/surveys/Header"
 import { useEffect, useState } from "react"
-import FooterMobile from "@/components/sections/footer/FooterMobile.tsx"
+import FooterMobile from "@/components/sections/footer/FooterMobile"
 
 function App() {
 	const location = useLocation()
