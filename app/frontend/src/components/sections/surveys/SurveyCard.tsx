@@ -1,7 +1,7 @@
 import { SurveyCardType } from "@/types/types"
 import { Link } from "react-router-dom"
 import { Timer, Hourglass } from "lucide-react"
-import { Chipset } from "../ui/Chipset"
+import { Chipset } from "../../ui/Chipset"
 
 /**
  * SurveyCard component with external link management and accessibility
@@ -30,7 +30,7 @@ export default function SurveyCard({
 	return (
 		<Link
 			to={href}
-			className="font-roboto flex w-96 flex-col gap-5 overflow-hidden rounded-xl bg-white shadow-[0_7px_29px_rgba(100,100,111,0.2)]"
+			className="font-roboto flex max-w-96 flex-col gap-5 overflow-hidden rounded-xl bg-white shadow-[0_7px_29px_rgba(100,100,111,0.2)] transition-shadow duration-200 ease-in-out hover:shadow-[0_7px_29px_rgba(99,107,227,0.5)]"
 			// Indicates to assistive technologies the current page
 			aria-current={
 				href === window.location.pathname ? "page" : undefined
@@ -53,24 +53,26 @@ export default function SurveyCard({
 				/>
 			</div>
 			<div className="flex flex-col gap-3 px-5">
-				<h2 className="font-bold">{title}</h2>
-				<p className="text-xs">{content}</p>
+				<h2 className="text-card-fg font-bold">{title}</h2>
+				<p className="text-card-fg text-xs">{content}</p>
 				<Chipset
 					ariaLabel={`Cette annonce concerne la catégorie ${tag}`}
 					children={tag}
 					rounded
 				/>
 			</div>
-			<div className="bg-border flex items-center justify-between px-5 py-3">
+			<div className="bg-primary-default flex items-center justify-between px-5 py-3">
 				<div className="flex items-center gap-1">
 					<Timer className="h-4 w-4 text-white" aria-hidden />
-					<span className="text-xs text-white">
+					<span className="text-xs leading-none font-semibold text-white">
 						{estimateTime} minutes
 					</span>
 				</div>
 				<div className="flex items-center gap-1">
 					<Hourglass className="h-4 w-4 text-white" aria-hidden />
-					<span className="text-xs text-white">{timeLeft}</span>
+					<span className="text-xs leading-none font-semibold text-white">
+						{timeLeft}
+					</span>
 				</div>
 			</div>
 		</Link>
