@@ -3,8 +3,11 @@ name: Docker Build Workflow
 # When this workflow is activated
 on:
   pull_request:
-     branches:
-       - main
+    types: 
+      - opened 
+      - reopened 
+      - synchronize
+      - edited
 
 jobs:
   docker-build:
