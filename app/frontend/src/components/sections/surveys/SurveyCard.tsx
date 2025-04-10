@@ -1,7 +1,7 @@
 import { SurveyCardType } from "@/types/types"
 import { Link } from "react-router-dom"
 import { Timer, Hourglass } from "lucide-react"
-import { Chipset } from "../../ui/Chipset"
+import { Chipset } from "@/components/ui/Chipset"
 
 /**
  * SurveyCard component with external link management and accessibility
