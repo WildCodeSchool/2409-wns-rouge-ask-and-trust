@@ -8,6 +8,7 @@ import ErrorElement from "@/components/ui/ErrorElement"
 
 // Using lazy loading for pages
 const Home = lazy(() => import("@/pages/Home"))
+const Surveys = lazy(() => import("@/pages/Surveys"))
 const Auth = lazy(() => import("@/pages/Auth"))
 const TermsOfUse = lazy(() => import("@/pages/TermsOfUse"))
 
@@ -57,6 +58,14 @@ const router = createBrowserRouter([
 				element: (
 					<Suspense fallback={<Loader />}>
 						<TermsOfUse />
+					</Suspense>
+				),
+			},
+			{
+				path: "/surveys",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<Surveys />
 					</Suspense>
 				),
 			},
