@@ -8,7 +8,7 @@ const AllPackages = () => {
 				to="/"
 				className="rounded-xl shadow-lg shadow-black/10 duration-200 hover:scale-[1.05]"
 			>
-				<div className="secondary max-w-[271px] rounded-t-xl bg-[var(--color-button-primary-bg)] py-3 text-center text-white">
+				<div className="secondary bg-primary-default max-w-[271px] rounded-t-xl py-3 text-center text-white">
 					<span className="text-xl font-semibold">Gratuit</span>
 				</div>
 				<div className="flex flex-col justify-start rounded-b-xl bg-white px-4.5 py-4">
@@ -39,7 +39,7 @@ const AllPackages = () => {
 							enquêtes en illimité
 						</p>
 					</div>
-					<div className="flex flex-col rounded-md bg-[var(--color-button-primary-bg)] py-1.5 text-center text-white">
+					<div className="bg-primary-default flex flex-col rounded-md py-1.5 text-center text-white">
 						<span className="font-medium">Offert</span>
 					</div>
 				</div>
@@ -49,7 +49,7 @@ const AllPackages = () => {
 				to="/"
 				className="scale-[1.3] rounded-xl shadow-lg shadow-black/10 duration-200 hover:scale-[1.35]"
 			>
-				<div className="secondary max-w-[271px] rounded-t-xl bg-[var(--color-button-primary-bg)] py-3 text-center text-white">
+				<div className="secondary bg-primary-default max-w-[271px] rounded-t-xl py-3 text-center text-white">
 					<span className="text-xl font-semibold">
 						Pack 50 enquêtes
 					</span>
@@ -82,7 +82,7 @@ const AllPackages = () => {
 							enquêtes en illimité
 						</p>
 					</div>
-					<div className="flex flex-col rounded-md bg-[var(--color-button-primary-bg)] py-1.5 text-center text-white">
+					<div className="bg-primary-default flex flex-col rounded-md py-1.5 text-center text-white">
 						<span className="font-medium">29,99 €</span>
 					</div>
 				</div>
@@ -92,7 +92,7 @@ const AllPackages = () => {
 				className="rounded-xl shadow-lg shadow-black/10 duration-200 hover:scale-[1.05]"
 				to="/"
 			>
-				<div className="secondary max-w-[271px] rounded-t-xl bg-[var(--color-button-primary-bg)] py-3 text-center text-white">
+				<div className="secondary bg-primary-default max-w-[271px] rounded-t-xl py-3 text-center text-white">
 					<span className="text-xl font-semibold">
 						Pack 100 enquêtes
 					</span>
@@ -125,7 +125,7 @@ const AllPackages = () => {
 							enquêtes en illimité
 						</p>
 					</div>
-					<div className="flex flex-col rounded-md bg-[var(--color-button-primary-bg)] py-1.5 text-center text-white">
+					<div className="bg-primary-default flex flex-col rounded-md py-1.5 text-center text-white">
 						<span className="font-medium">59,99 €</span>
 					</div>
 				</div>

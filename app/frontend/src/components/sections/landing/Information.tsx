@@ -1,7 +1,7 @@
 const Information = () => {
 	return (
 		<section
-			className="relative flex items-center justify-center overflow-hidden py-12 lg:py-35"
+			className="relative flex items-center justify-center overflow-hidden px-5 py-12 lg:py-35"
 			role="information"
 			aria-label="Deuxieme section"
 		>
@@ -20,30 +20,33 @@ const Information = () => {
 			</div>
 			<div className="relative" aria-label="Fenetres expliquatives">
 				<div className="flex flex-col items-center lg:flex-row xl:gap-x-10">
-					<div className="relative">
-						<img
-							src="../../../public/assets/window-text.svg"
-							alt="img-window"
-						/>
-						<div className="text-on-img absolute items-center px-2">
-							<h4 className="pb-2 text-2xl font-bold">
+					<div className="relative flex max-w-[394px] flex-col rounded-xl shadow-lg shadow-black/10 lg:max-w-[466px]">
+						<div className="bg-primary-default flex gap-2.5 rounded-t-xl px-4 py-3">
+							<div className="flex h-[15px] w-[15px] flex-row rounded-xl bg-white"></div>
+							<div className="flex h-[15px] w-[15px] flex-row rounded-xl bg-white"></div>
+							<div className="flex h-[15px] w-[15px] flex-row rounded-xl bg-white"></div>
+						</div>
+						<div className="items-center rounded-b-xl bg-white px-7 pt-6 pb-8">
+							<h4 className="pb-2 pb-6 text-2xl font-bold">
 								Une enquête personnalisée et adaptée à vos
 								besoins
 							</h4>
-							<h5 className="font-regular pb-2 text-sm sm:text-lg lg:text-lg">
+							<p className="font-regular pb-4 text-sm sm:text-lg lg:text-lg">
 								Une fois votre enquête terminée, recevez les
 								résultats et analyser les réponses.
-							</h5>
-							<h5 className="font-regular text-sm sm:text-lg lg:text-lg">
+							</p>
+							<p className="font-regular text-sm sm:text-lg lg:text-lg">
 								Choisissez vos questions et comment peuvent
 								répondre les participants.
-							</h5>
+							</p>
 						</div>
 					</div>
-					<img
-						src="../../../public/assets/window-group-icons.svg"
-						alt="img-window-content"
-					/>
+					<div className="rounded-xl shadow-lg shadow-black/10">
+						<img
+							src="public/assets/window-group-icons.svg"
+							alt="img-window-content"
+						/>
+					</div>
 				</div>
 			</div>
 		</section>
