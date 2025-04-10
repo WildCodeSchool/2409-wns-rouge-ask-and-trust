@@ -4,10 +4,12 @@ on:
   pull_request:
     branches:
       - main
-      - develop
 
 jobs:
   docs:
+    # Run if client test is a success
+    # On build seulement l'image docker au merge sur main
+    if: github.base_ref == 'main'
     runs-on: ubuntu-latest
     steps:
       # Retrieves source code from repository
