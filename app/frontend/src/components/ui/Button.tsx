@@ -4,7 +4,7 @@ import { LucideIcon } from "lucide-react"
 import { ButtonHTMLAttributes, forwardRef, Ref } from "react"
 import { Link } from "react-router-dom"
 
-export const buttonVariants = cva(
+const buttonVariants = cva(
 	"inline-flex items-center gap-2 w-fit justify-center rounded-lg transition-colors duration-200 ease-in-out font-bold focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer border-2",
 	{
 		variants: {
@@ -132,4 +132,4 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 
 Button.displayName = "Button"
 
-export { Button }
+export { Button, buttonVariants }
