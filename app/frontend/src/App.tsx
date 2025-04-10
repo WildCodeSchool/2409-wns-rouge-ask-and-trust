@@ -20,7 +20,11 @@ function App() {
 
 	return (
 		<>
-			{location.pathname === "/surveys" ? <HeaderSurveys /> : <Header />}
+			{location.pathname.startsWith("/surveys") ? (
+				<HeaderSurveys />
+			) : (
+				<Header />
+			)}
 			{/* @TODO calc height : fill screen minus Header height. On mobile : minus Header height and Navbar height. */}
 			<main className="bg-bg mb-20">
 				<div className="h-full">
