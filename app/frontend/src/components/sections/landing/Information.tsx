@@ -7,7 +7,7 @@ const Information = () => {
 		>
 			<div className="py-12 lg:py-30" aria-hidden="true">
 				<svg
-					className="absolute top-0 left-0 z-0 h-[30rem] w-auto lg:h-[45rem] 2xl:h-auto"
+					className="absolute top-0 left-0 z-0 h-[30rem] w-auto lg:h-[50rem]"
 					viewBox="100 0 1920 791"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"

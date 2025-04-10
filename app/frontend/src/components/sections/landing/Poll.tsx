@@ -10,7 +10,7 @@ const Poll = () => {
 			aria-label="Troisieme section"
 		>
 			<div
-				className="flex flex-col items-center justify-center text-center"
+				className="flex flex-col items-center justify-center pt-10 text-center lg:py-15"
 				aria-label="Resulats des enquetes"
 			>
 				<div className="flex flex-col px-10">
