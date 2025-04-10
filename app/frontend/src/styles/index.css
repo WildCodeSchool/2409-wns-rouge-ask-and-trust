@@ -30,6 +30,7 @@
 body {
     position: relative;
     overflow-x: hidden;
+    background: #fafafa;
 }
 
 .no-scroll {
