@@ -20,16 +20,6 @@
     }
 }
 
-.text-on-img {
-    top: 22%;
-    left: 10%;
-    width: 80%;
-
-    @media (min-width: 500px) {
-        top: 26%
-    }
-}
-
 .company-box-name {
     width: 183px;
     height: 92px;
