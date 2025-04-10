@@ -26,6 +26,7 @@ const Hero = () => {
 					possibles, partagez-le... et c’est parti !
 				</h5>
 				<Button
+					to="register"
 					variant="secondary"
 					fullWidth
 					role="link"

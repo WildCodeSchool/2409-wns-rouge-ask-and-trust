@@ -12,7 +12,7 @@ const FOOTER_LINKS: readonly LinksType[] = [
 		ariaLabel: "Créer un compte",
 	},
 	{
-		href: "/login",
+		href: "/connexion",
 		label: "Se connecter",
 		category: "Compte",
 		ariaLabel: "Se connecter à votre compte",
