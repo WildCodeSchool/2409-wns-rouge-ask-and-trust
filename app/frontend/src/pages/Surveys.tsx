@@ -1,9 +1,10 @@
 import SurveyCard from "@/components/sections/surveys/SurveyCard"
-import img from "../../public/img/perso.jpg"
+import img from "../../public/img/dev.webp"
 import Pagination from "@/components/ui/Pagination"
 import { Button } from "@/components/ui/Button"
 import { useEffect, useState } from "react"
 import clsx from "clsx"
+import { Helmet } from "react-helmet"
 
 export default function Surveys() {
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
@@ -31,6 +32,35 @@ export default function Surveys() {
 
 	return (
 		<>
+			{/* Update of the metadata */}
+			<Helmet>
+				<title>Liste des enquêtes disponibles</title>
+				<meta
+					name="description"
+					content="Page présentant toutes les enquêtes disponibles sur Ask$Trust."
+				/>
+				<meta name="robots" content="noindex, nofollow" />
+				{/* Open Graph */}
+				<meta
+					property="og:title"
+					content="Liste des enquêtes disponibles"
+				/>
+				<meta
+					property="og:description"
+					content="Page présentant toutes les enquêtes disponibles sur Ask$Trust."
+				/>
+				<meta property="og:type" content="website" />
+				{/* Twitter Card */}
+				<meta name="twitter:card" content="summary" />
+				<meta
+					name="twitter:title"
+					content="Liste des enquêtes disponibles"
+				/>
+				<meta
+					name="twitter:description"
+					content="Page présentant toutes les enquêtes disponibles sur Ask$Trust."
+				/>
+			</Helmet>
 			<section className={clsx("px-20 max-sm:px-5", isMobile && "pb-10")}>
 				<h1
 					className={clsx(
