@@ -1,5 +1,5 @@
-import { User } from "../database/entities/user"
 import Cookies from "cookies"
+import { User } from "../database/entities/user"
 
 export type Context = {
 	cookies: Cookies
@@ -7,9 +7,9 @@ export type Context = {
 }
 
 export const Roles = {
+	User: "user",
+	Moderator: "moderator",
 	Admin: "admin",
-	Writer: "writer",
-	Reader: "reader",
 } as const
 
 export type UserRole = (typeof Roles)[keyof typeof Roles]
