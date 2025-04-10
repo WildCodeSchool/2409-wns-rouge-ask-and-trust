@@ -12,14 +12,14 @@ const Landing = () => {
 				<title>Accueil | Ask&Trust</title>
 				<meta
 					name="description"
-					content="Page d'accueil du site Ark$Trust"
+					content="Page d'accueil du site Ark&Trust"
 				/>
 				<meta name="robots" content="noindex, nofollow" />
 				{/* Open Graph */}
 				<meta property="og:title" content="Accueil | Ask&Trust" />
 				<meta
 					property="og:description"
-					content="Page d'accueil du site Ark$Trust"
+					content="Page d'accueil du site Ark&Trust"
 				/>
 				<meta property="og:type" content="website" />
 				{/* Twitter Card */}
@@ -27,7 +27,7 @@ const Landing = () => {
 				<meta name="twitter:title" content="Accueil | Ask&Trust" />
 				<meta
 					name="twitter:description"
-					content="Page d'accueil du site Ark$Trust"
+					content="Page d'accueil du site Ark&Trust"
 				/>
 			</Helmet>
 			<Hero />
