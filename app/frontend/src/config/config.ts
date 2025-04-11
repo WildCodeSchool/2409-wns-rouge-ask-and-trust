@@ -1,1 +1,4 @@
-export const VITE_GRAPHQL_ENDPOINT = "/api/v1"
+export const VITE_GRAPHQL_ENDPOINT = "http://localhost:3310/api/v1"
+
+// Stripe publishable key (test mode)
+export const VITE_STRIPE_PUBLISHABLE_KEY = "pk_test_VePHdqKTYQjKNInc7u56JBrQ"

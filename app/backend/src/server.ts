@@ -7,6 +7,7 @@ import { GraphQLFormattedError } from "graphql"
 import Cookies from "cookies"
 import { AppError } from "./middlewares/error-handler"
 import { AuthResolver } from "./graphql/resolvers/auth-resolver"
+import { PaymentResolver } from "./graphql/resolvers/payment-resolver"
 import { customAuthChecker } from "./middlewares/auth-checker"
 
 dotenv.config() // Load environment variables from .env file
@@ -27,10 +28,10 @@ if (!process.env.APP_PORT) {
 		await dataSource.initialize()
 
 		// Constructing the GraphQL schema with TypeGraphQL
-		// Replace the resolvers array with your actual resolvers
 		const schema = await buildSchema({
 			resolvers: [
 				AuthResolver,
+				PaymentResolver,
 				/* your resolvers here */
 			],
 			validate: true, // Activate validation for input fields
