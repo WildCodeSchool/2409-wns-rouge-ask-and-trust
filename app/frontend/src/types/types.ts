@@ -54,3 +54,13 @@ export interface NavAndAuthButtonsProps {
 	headerLinks: readonly LinksType[]
 	isMobile: boolean
 }
+
+export interface SurveyCardType {
+	href: string
+	picture: string
+	title: string
+	content: string
+	tag: string
+	estimateTime: number
+	timeLeft: string
+}

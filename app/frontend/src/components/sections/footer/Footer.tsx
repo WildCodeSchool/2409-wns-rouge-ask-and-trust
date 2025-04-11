@@ -6,42 +6,42 @@ import logoFooter from "../../../../public/logos/logo-footer.svg"
 
 const FOOTER_LINKS: readonly LinksType[] = [
 	{
-		href: '/register',
+		href: "/register",
 		label: "S'inscrire",
 		category: "Compte",
-		ariaLabel: "Créer un compte"
+		ariaLabel: "Créer un compte",
 	},
 	{
-		href: '/login',
+		href: "/connexion",
 		label: "Se connecter",
 		category: "Compte",
-		ariaLabel: "Se connecter à votre compte"
+		ariaLabel: "Se connecter à votre compte",
 	},
 	{
-		href: '/surveys',
+		href: "/surveys",
 		label: "Liste des enquêtes",
 		category: "Enquêtes",
-		ariaLabel: "Voir la liste des enquêtes disponibles"
+		ariaLabel: "Voir la liste des enquêtes disponibles",
 	},
 	{
-		href: '/packs',
+		href: "/packs",
 		label: "Achat de packs d'enquêtes",
 		category: "Enquêtes",
-		ariaLabel: "Acheter des packs d'enquêtes"
+		ariaLabel: "Acheter des packs d'enquêtes",
 	},
 	{
-		href: '/legal',
+		href: "/terms-of-use",
 		label: "Mentions légales",
 		category: "Informations",
-		ariaLabel: "Consulter les mentions légales"
+		ariaLabel: "Consulter les mentions légales",
 	},
 	{
-		href: '/contact',
+		href: "/contact",
 		label: "Contact",
 		category: "Informations",
-		ariaLabel: "Nous contacter"
-	}
-] as const;
+		ariaLabel: "Nous contacter",
+	},
+] as const
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -68,7 +68,7 @@ export default function Footer() {
 				>
 					<path
 						d="M0 0H1440V100C1440 100 1082.5 0 720 0C357.5 0 0 100 0 100V0Z"
-						fill="white"
+						fill="#fafafa"
 					/>
 				</svg>
 			</div>
@@ -162,7 +162,7 @@ export default function Footer() {
  */
 
 function FooterLink({ href, label, category, ariaLabel }: LinksType) {
-	const isExternal = href.startsWith('http');
+	const isExternal = href.startsWith("http")
 
 	// Security: check allowed protocols
 	if (isExternal && !href.startsWith("https://")) {

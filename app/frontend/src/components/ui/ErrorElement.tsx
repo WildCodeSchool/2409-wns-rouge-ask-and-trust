@@ -67,9 +67,7 @@ export default function ErrorElement() {
 					className="mx-auto mb-6 h-64 w-64"
 					role="image"
 				/>
-				<h1
-					className="text-destructive-medium mb-2 text-4xl font-bold"
-				>
+				<h1 className="text-destructive-medium mb-2 text-4xl font-bold">
 					{error.status} - {errorContent.title}
 				</h1>
 				<p className="text-black-default mb-6">

@@ -7,8 +7,10 @@ import ErrorElement from "@/components/ui/ErrorElement"
 //import ProtectedRoute from "@/components/hoc/ProtectedRoute";
 
 // Using lazy loading for pages
-const Home = lazy(() => import("@/pages/Home"))
+const Landing = lazy(() => import("@/pages/Landing"))
+const Surveys = lazy(() => import("@/pages/Surveys"))
 const Auth = lazy(() => import("@/pages/Auth"))
+const TermsOfUse = lazy(() => import("@/pages/TermsOfUse"))
 
 const router = createBrowserRouter([
 	{
@@ -20,7 +22,7 @@ const router = createBrowserRouter([
 				path: "/",
 				element: (
 					<Suspense fallback={<Loader />}>
-						<Home />
+						<Landing />
 					</Suspense>
 				),
 			},
@@ -48,6 +50,22 @@ const router = createBrowserRouter([
 				element: (
 					<Suspense fallback={<Loader />}>
 						<Auth />
+					</Suspense>
+				),
+			},
+			{
+				path: "terms-of-use",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<TermsOfUse />
+					</Suspense>
+				),
+			},
+			{
+				path: "/surveys",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<Surveys />
 					</Suspense>
 				),
 			},
