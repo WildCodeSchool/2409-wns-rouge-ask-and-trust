@@ -2,7 +2,7 @@ import * as argon2 from "argon2"
 import Cookies from "cookies"
 import jwt from "jsonwebtoken"
 import dataSource from "../database/config/datasource"
-import { User } from "../database/entities/user"
+import { LogInResponse, User } from "../database/entities/user"
 import { AppError } from "../middlewares/error-handler"
 import { UserRole } from "../types/types"
 
@@ -63,7 +63,7 @@ export const login = async (
 	email: string,
 	password: string,
 	cookies: Cookies
-): Promise<string> => {
+): Promise<LogInResponse> => {
 	const userRepository = dataSource.getRepository(User)
 	// Find the user by email
 	const user = await userRepository.findOne({ where: { email } })
@@ -96,7 +96,10 @@ export const login = async (
 	})
 
 	// Return the generated token
-	return token
+	return {
+		message: "Sign in successful!",
+		cookieSet: true,
+	}
 }
 
 // Function to retrieve the currently logged-in user
