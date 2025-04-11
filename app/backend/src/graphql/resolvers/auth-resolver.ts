@@ -1,8 +1,8 @@
-import { Resolver, Mutation, Arg, Ctx, Query } from "type-graphql"
-import { register, login, whoami } from "../../services/auth-service"
-import { CreateUserInput } from "../../graphql/inputs/create/create-auth-input"
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql"
 import { User } from "../../database/entities/user"
+import { CreateUserInput } from "../../graphql/inputs/create/create-auth-input"
 import { AppError } from "../../middlewares/error-handler"
+import { login, register, whoami } from "../../services/auth-service"
 import { Context } from "../../types/types"
 
 // Define the AuthResolver class for handling authentication-related GraphQL mutations
@@ -15,14 +15,37 @@ export class AuthResolver {
 		@Ctx() context: Context // Context object containing cookies
 	): Promise<User> {
 		try {
-			const { email, password } = data
+			// NB : for now, data is checked automatically in buildSchema() in server.ts
+			// with the option "validate:true"
+
+			const { email, password, firstname, role, lastname } = data
 
 			// Get the cookies from the context
 			const { cookies } = context
 
-			return await register(email, password, cookies) // Call register method from AuthService
+			return await register(
+				email,
+				password,
+				firstname,
+				lastname,
+				role,
+				cookies
+			) // Call register method from AuthService
 		} catch (error) {
-			throw new AppError("Registration failed", 400, "ValidationError") // Handle registration errors
+			// If email already used
+			if (
+				error instanceof AppError &&
+				error.errorType === "EmailAlreadyUsedError"
+			) {
+				throw new AppError(
+					error.message,
+					error.statusCode,
+					error.errorType
+				)
+			}
+
+			// Others errors
+			throw new AppError("Registration failed", 400, "InternalError")
 		}
 	}
 

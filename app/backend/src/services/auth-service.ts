@@ -1,13 +1,17 @@
-import { User } from "../database/entities/user"
-import dataSource from "../database/config/datasource"
 import * as argon2 from "argon2"
-import jwt from "jsonwebtoken"
-import { AppError } from "../middlewares/error-handler"
 import Cookies from "cookies"
+import jwt from "jsonwebtoken"
+import dataSource from "../database/config/datasource"
+import { User } from "../database/entities/user"
+import { AppError } from "../middlewares/error-handler"
+import { UserRole } from "../types/types"
 
 export const register = async (
 	email: string,
 	password: string,
+	firstname: string,
+	lastname: string,
+	role: UserRole,
 	cookies: Cookies
 ): Promise<User> => {
 	const userRepository = dataSource.getRepository(User)
@@ -25,18 +29,33 @@ export const register = async (
 	const existingUser = await userRepository.findOne({ where: { email } })
 	if (existingUser) {
 		// Throw an error if the email is already in use
-		throw new AppError("Email already exists", 400, "ValidationError")
+		throw new AppError("Email already exists", 400, "EmailAlreadyUsedError")
 	}
 
 	// Hash the password before saving it
 	const hashedPassword = await argon2.hash(password)
 
-	const user = new User()
-	user.email = email // Définir l'email de l'utilisateur
-	user.password = hashedPassword // Définir le mot de passe haché de l'utilisateur
+	// Create a new instance of user and save it in the database
+	try {
+		const user = User.create({
+			email,
+			hashedPassword,
+			firstname,
+			lastname,
+			role,
+		})
 
-	// Save the new user in the database
-	return await userRepository.save(user)
+		await user.save()
+
+		return user
+	} catch (error) {
+		throw new AppError(
+			"Failed to create user",
+			500,
+			"DatabaseError",
+			error instanceof Error ? error.message : undefined
+		)
+	}
 }
 
 // Function to log in an existing user
@@ -50,7 +69,7 @@ export const login = async (
 	const user = await userRepository.findOne({ where: { email } })
 
 	// Check if the user exists and if the password is correct
-	if (!user || !(await argon2.verify(user.password, password))) {
+	if (!user || !(await argon2.verify(user.hashedPassword, password))) {
 		throw new AppError("Invalid identifiers", 401, "UnauthorizedError")
 	}
 
