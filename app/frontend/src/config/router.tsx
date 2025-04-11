@@ -11,6 +11,8 @@ const Landing = lazy(() => import("@/pages/Landing"))
 const Surveys = lazy(() => import("@/pages/Surveys"))
 const Auth = lazy(() => import("@/pages/Auth"))
 const TermsOfUse = lazy(() => import("@/pages/TermsOfUse"))
+const Payment = lazy(() => import("@/pages/Payment"))
+const PaymentConfirmation = lazy(() => import("@/pages/PaymentConfirmation"))
 
 const router = createBrowserRouter([
 	{
@@ -66,6 +68,22 @@ const router = createBrowserRouter([
 				element: (
 					<Suspense fallback={<Loader />}>
 						<Surveys />
+					</Suspense>
+				),
+			},
+			{
+				path: "/payment",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<Payment />
+					</Suspense>
+				),
+			},
+			{
+				path: "/payment/confirmation",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<PaymentConfirmation />
 					</Suspense>
 				),
 			},
