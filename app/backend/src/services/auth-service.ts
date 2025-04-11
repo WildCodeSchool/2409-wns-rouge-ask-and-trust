@@ -64,41 +64,52 @@ export const login = async (
 	password: string,
 	cookies: Cookies
 ): Promise<LogInResponse> => {
-	const userRepository = dataSource.getRepository(User)
-	// Find the user by email
-	const user = await userRepository.findOne({ where: { email } })
+	try {
+		const userRepository = dataSource.getRepository(User)
 
-	// Check if the user exists and if the password is correct
-	if (!user || !(await argon2.verify(user.hashedPassword, password))) {
-		throw new AppError("Invalid identifiers", 401, "UnauthorizedError")
-	}
+		// Find the user by email
+		const user = await userRepository.findOne({ where: { email } })
 
-	// Ensure that the JWT secret is defined
-	if (!process.env.JWT_SECRET) {
+		// Check if the user exists and if the password is correct
+		if (!user || !(await argon2.verify(user.hashedPassword, password))) {
+			throw new AppError("Invalid identifiers", 401, "UnauthorizedError")
+		}
+
+		// Ensure that the JWT secret is defined
+		if (!process.env.JWT_SECRET) {
+			throw new AppError(
+				"JWT_SECRET is not defined in environment variables.",
+				500,
+				"InternalServerError"
+			)
+		}
+
+		// Generate a JWT token for the user
+		const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
+			expiresIn: "1d", // Temps d'expiration du token
+		})
+
+		// Set the token as a cookie in the response
+		cookies.set("token", token, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: "strict",
+			signed: true,
+		})
+
+		// Return the generated token
+		return {
+			message: "Sign in successful!",
+			cookieSet: true,
+		}
+	} catch (error) {
+		// Handle and throw a general error if something goes wrong
 		throw new AppError(
-			"JWT_SECRET is not defined in environment variables.",
+			"Failed to log in the user.",
 			500,
-			"InternalServerError"
+			"InternalServerError",
+			error instanceof Error ? error.message : undefined
 		)
-	}
-
-	// Generate a JWT token for the user
-	const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
-		expiresIn: "1d", // Temps d'expiration du token
-	})
-
-	// Set the token as a cookie in the response
-	cookies.set("token", token, {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		sameSite: "strict",
-		signed: true,
-	})
-
-	// Return the generated token
-	return {
-		message: "Sign in successful!",
-		cookieSet: true,
 	}
 }
 
