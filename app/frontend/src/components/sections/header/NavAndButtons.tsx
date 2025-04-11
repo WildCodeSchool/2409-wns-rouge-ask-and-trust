@@ -47,7 +47,7 @@ export default function NavAndAuthButtons({
 						S'inscrire
 					</Button>
 					<Button
-						to="/login"
+						to="/connexion"
 						variant="primary"
 						role="link"
 						fullWidth={isMobile}
