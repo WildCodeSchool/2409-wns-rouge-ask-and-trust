@@ -64,14 +64,19 @@ export const login = async (
 	password: string,
 	cookies: Cookies
 ): Promise<LogInResponse> => {
+	const userRepository = dataSource.getRepository(User)
+
+	// Find the user by email
+	const user = await userRepository.findOne({ where: { email } })
+
+	// Check if the user exists and if the password is correct
+	if (!user) {
+		throw new AppError("Invalid identifiers", 401, "UnauthorizedError")
+	}
+
 	try {
-		const userRepository = dataSource.getRepository(User)
-
-		// Find the user by email
-		const user = await userRepository.findOne({ where: { email } })
-
-		// Check if the user exists and if the password is correct
-		if (!user || !(await argon2.verify(user.hashedPassword, password))) {
+		// Check if the password is correct
+		if (!(await argon2.verify(user.hashedPassword, password))) {
 			throw new AppError("Invalid identifiers", 401, "UnauthorizedError")
 		}
 
@@ -97,13 +102,12 @@ export const login = async (
 			signed: true,
 		})
 
-		// Return the generated token
+		// Return a success message
 		return {
 			message: "Sign in successful!",
 			cookieSet: true,
 		}
 	} catch (error) {
-		// Handle and throw a general error if something goes wrong
 		throw new AppError(
 			"Failed to log in the user.",
 			500,
