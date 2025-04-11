@@ -11,19 +11,9 @@ export const register = async (
 	password: string,
 	firstname: string,
 	lastname: string,
-	role: UserRole,
-	cookies: Cookies
+	role: UserRole
 ): Promise<User> => {
 	const userRepository = dataSource.getRepository(User)
-
-	// Check to ensure no existing token is present
-	if (cookies.get("token")) {
-		throw new AppError(
-			"A user is already logged in with an active token.",
-			400,
-			"TokenExistsError"
-		)
-	}
 
 	// Check if a user already exists with this email
 	const existingUser = await userRepository.findOne({ where: { email } })

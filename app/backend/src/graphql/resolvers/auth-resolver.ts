@@ -3,7 +3,7 @@ import { LogInResponse, User } from "../../database/entities/user"
 import { CreateUserInput } from "../../graphql/inputs/create/create-auth-input"
 import { AppError } from "../../middlewares/error-handler"
 import { login, register, whoami } from "../../services/auth-service"
-import { Context } from "../../types/types"
+import { Context, Roles, UserRole } from "../../types/types"
 import { LogUserInput } from "./../inputs/create/create-auth-input"
 
 /**
@@ -24,8 +24,7 @@ export class AuthResolver {
 	 */
 	@Mutation(() => User)
 	async register(
-		@Arg("data") data: CreateUserInput, // Input object containing email and password
-		@Ctx() context: Context // Context object containing cookies
+		@Arg("data") data: CreateUserInput // Input object containing email and password
 	): Promise<User> {
 		try {
 			// NB : for now, data is checked automatically in buildSchema() in server.ts
@@ -33,16 +32,17 @@ export class AuthResolver {
 
 			const { email, password, firstname, role, lastname } = data
 
-			// Get the cookies from the context
-			const { cookies } = context
+			// Verify user's role
+			const userRole: UserRole = Object.values(Roles).includes(role)
+				? role
+				: "user"
 
 			return await register(
 				email,
 				password,
 				firstname,
 				lastname,
-				role,
-				cookies
+				userRole
 			) // Call register method from AuthService
 		} catch (error) {
 			// If email already used
@@ -58,6 +58,7 @@ export class AuthResolver {
 			}
 
 			// Others errors
+			console.error("Registration error:", error)
 			throw new AppError("Registration failed", 400, "InternalError")
 		}
 	}
