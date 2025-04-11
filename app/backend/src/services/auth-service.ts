@@ -27,7 +27,7 @@ export const register = async (
 
 	// Check if a user already exists with this email
 	const existingUser = await userRepository.findOne({ where: { email } })
-	
+
 	if (existingUser) {
 		// Throw an error if the email is already in use
 		throw new AppError("Email already exists", 400, "EmailAlreadyUsedError")
@@ -77,7 +77,12 @@ export const login = async (
 
 	try {
 		// Check if the password is correct
-		if (!(await argon2.verify(user.hashedPassword, password))) {
+		const isPasswordValid = await argon2.verify(
+			user.hashedPassword,
+			password
+		)
+
+		if (!isPasswordValid) {
 			throw new AppError("Invalid identifiers", 401, "UnauthorizedError")
 		}
 
