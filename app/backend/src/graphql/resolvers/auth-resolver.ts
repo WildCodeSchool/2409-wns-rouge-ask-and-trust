@@ -4,6 +4,7 @@ import { CreateUserInput } from "../../graphql/inputs/create/create-auth-input"
 import { AppError } from "../../middlewares/error-handler"
 import { login, register, whoami } from "../../services/auth-service"
 import { Context } from "../../types/types"
+import { LogUserInput } from "./../inputs/create/create-auth-input"
 
 // Define the AuthResolver class for handling authentication-related GraphQL mutations
 @Resolver(User)
@@ -52,7 +53,7 @@ export class AuthResolver {
 	// Mutation for user login
 	@Mutation(() => String)
 	async login(
-		@Arg("data") data: CreateUserInput, // Input object containing email and password
+		@Arg("data") data: LogUserInput, // Input object containing email and password
 		@Ctx() context: Context // Context object containing cookies
 	): Promise<string> {
 		try {
@@ -96,5 +97,17 @@ export class AuthResolver {
 		if (!user) throw new AppError("User not found", 404, "NotFoundError")
 
 		return user
+	}
+
+	@Query(() => [User])
+	// @TODO : later authorize only admin to get users
+	// @Authorized()
+	async getUsers(): Promise<User[] | string> {
+		const users = await User.find()
+		if (users) {
+			return users
+		} else {
+			return "Error to get users"
+		}
 	}
 }
