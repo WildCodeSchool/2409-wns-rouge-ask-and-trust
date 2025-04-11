@@ -6,10 +6,22 @@ import { login, register, whoami } from "../../services/auth-service"
 import { Context } from "../../types/types"
 import { LogUserInput } from "./../inputs/create/create-auth-input"
 
-// Define the AuthResolver class for handling authentication-related GraphQL mutations
+/**
+ * AuthResolver handles all authentication-related GraphQL mutations and queries.
+ */
+
 @Resolver(User)
 export class AuthResolver {
-	// Mutation for user registration
+	/**
+	 * Mutation for user registration.
+	 *
+	 * @param data - The input data containing the user's email, password, firstname, lastname, and role.
+	 * @param context - The context object that contains cookies for session management.
+	 *
+	 * @returns A Promise that resolves to the newly created User object.
+	 *
+	 * @throws AppError If the email is already in use or if there is any other error during registration.
+	 */
 	@Mutation(() => User)
 	async register(
 		@Arg("data") data: CreateUserInput, // Input object containing email and password
@@ -50,7 +62,16 @@ export class AuthResolver {
 		}
 	}
 
-	// Mutation for user login
+	/**
+	 * Mutation for user login.
+	 *
+	 * @param data - The input data containing the user's email and password.
+	 * @param context - The context object that contains cookies for session management.
+	 *
+	 * @returns A Promise that resolves to a LogInResponse object containing a message and cookie status.
+	 *
+	 * @throws AppError If there is any error during the login process, such as invalid credentials.
+	 */
 	@Mutation(() => LogInResponse)
 	async login(
 		@Arg("data") data: LogUserInput, // Input object containing email and password
@@ -77,7 +98,13 @@ export class AuthResolver {
 		}
 	}
 
-	// Mutation for user logout
+	/**
+	 * Mutation for logging out the user by clearing the authentication token cookie.
+	 *
+	 * @param context - The context object that contains cookies for session management.
+	 *
+	 * @returns A string message confirming successful logout.
+	 */
 	@Mutation(() => String)
 	async logout(@Ctx() context: Context): Promise<string> {
 		const { cookies } = context
@@ -88,6 +115,15 @@ export class AuthResolver {
 		return "Logged out successfully"
 	}
 
+	/**
+	 * Query to get the currently authenticated user.
+	 *
+	 * @param context - The context object that contains cookies for session management.
+	 *
+	 * @returns A Promise that resolves to the current User object.
+	 *
+	 * @throws AppError If no user is found or if there is any error in the process.
+	 */
 	@Query(() => User)
 	async whoami(@Ctx() context: Context): Promise<User> {
 		const { cookies } = context
@@ -99,6 +135,11 @@ export class AuthResolver {
 		return user
 	}
 
+	/**
+	 * Query to get all users in the system.
+	 *
+	 * @returns A Promise that resolves to an array of User objects, or a string indicating an error.
+	 */
 	@Query(() => [User])
 	// @TODO : later authorize only admin to get users
 	// @Authorized()
