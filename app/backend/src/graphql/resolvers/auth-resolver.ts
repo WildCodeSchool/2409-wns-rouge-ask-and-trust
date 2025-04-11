@@ -1,5 +1,5 @@
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql"
-import { User } from "../../database/entities/user"
+import { LogInResponse, User } from "../../database/entities/user"
 import { CreateUserInput } from "../../graphql/inputs/create/create-auth-input"
 import { AppError } from "../../middlewares/error-handler"
 import { login, register, whoami } from "../../services/auth-service"
@@ -51,11 +51,11 @@ export class AuthResolver {
 	}
 
 	// Mutation for user login
-	@Mutation(() => String)
+	@Mutation(() => LogInResponse)
 	async login(
 		@Arg("data") data: LogUserInput, // Input object containing email and password
 		@Ctx() context: Context // Context object containing cookies
-	): Promise<string> {
+	): Promise<LogInResponse> {
 		try {
 			const { email, password } = data
 
@@ -71,7 +71,7 @@ export class AuthResolver {
 				)
 			}
 
-			return await login(email, password, cookies) // Call login method from AuthService
+			return await login(email, password, cookies)
 		} catch (error) {
 			throw new AppError("Login failed", 401, "UnauthorizedError") // Handle login errors
 		}
