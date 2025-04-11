@@ -23,7 +23,7 @@ jobs:
         # Run only if the pr is from develop to main
         # Others branches are not allowed to be merged in main
         run: |
-          if [ "${{ github.head_ref }} != "develop" ] && [ "${{ github.base_ref }}" = "main" ]; then
+          if [ "${{ github.head_ref }}" != "develop" ] && [ "${{ github.base_ref }}" = "main" ]; then
             echo "Error: Merge requests to the main branch are allowed only from the 'develop' branch."
             exit 1
           fi
