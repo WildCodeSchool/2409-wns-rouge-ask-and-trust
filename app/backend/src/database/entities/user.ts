@@ -26,7 +26,7 @@ import { Roles, UserRole } from "../../types/types"
 export class User extends BaseEntity {
 	@Field(() => ID)
 	@PrimaryGeneratedColumn()
-	id!: number 
+	id!: number
 
 	@Field()
 	@Column({ length: 254, unique: true })
@@ -53,12 +53,21 @@ export class User extends BaseEntity {
 
 	@Field()
 	@Column({ default: () => "CURRENT_TIMESTAMP" })
-	createdAt!: Date 
+	createdAt!: Date
 
 	@Field()
 	@Column({
 		default: () => "CURRENT_TIMESTAMP",
 		onUpdate: "CURRENT_TIMESTAMP",
 	})
-	updatedAt!: Date 
+	updatedAt!: Date
+}
+
+@ObjectType()
+export class LogInResponse {
+	@Field()
+	message!: string
+
+	@Field(() => Boolean)
+	cookieSet!: boolean
 }
