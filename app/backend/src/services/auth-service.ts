@@ -27,7 +27,7 @@ export const register = async (
 
 	// Check if a user already exists with this email
 	const existingUser = await userRepository.findOne({ where: { email } })
-	
+
 	if (existingUser) {
 		// Throw an error if the email is already in use
 		throw new AppError("Email already exists", 400, "EmailAlreadyUsedError")
