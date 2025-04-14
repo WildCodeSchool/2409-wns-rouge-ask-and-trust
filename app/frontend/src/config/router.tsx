@@ -93,6 +93,22 @@ const router = createBrowserRouter([
 					</Suspense>
 				),
 			},
+			{
+				path: "/payment",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<Payment />
+					</Suspense>
+				),
+			},
+			{
+				path: "/payment/confirmation",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<PaymentConfirmation />
+					</Suspense>
+				),
+			},
 		],
 	},
 	{
