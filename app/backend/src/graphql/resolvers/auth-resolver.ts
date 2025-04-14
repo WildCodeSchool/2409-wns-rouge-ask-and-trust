@@ -93,7 +93,12 @@ export class AuthResolver {
 				)
 			}
 
-			return await login(email, password, cookies)
+			const loginResponse = await login(email, password, cookies)
+
+			return {
+				message: loginResponse.message,
+				cookieSet: loginResponse.cookieSet,
+			}
 		} catch (error) {
 			throw new AppError("Login failed", 401, "UnauthorizedError") // Handle login errors
 		}
