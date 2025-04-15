@@ -13,7 +13,7 @@ export default function Signin() {
 	const {
 		register,
 		handleSubmit,
-		// reset,
+		reset,
 		formState: { errors },
 	} = useForm<UserSignIn>({
 		mode: "onBlur",
@@ -26,7 +26,7 @@ export default function Signin() {
 	const [Login, { error }] = useMutation(LOGIN, {
 		refetchQueries: [WHOAMI],
 	})
-	// @TODO implement logic sign in
+
 	const onSubmit: SubmitHandler<UserSignIn> = async formData => {
 		try {
 			const { data } = await Login({
@@ -37,8 +37,6 @@ export default function Signin() {
 					},
 				},
 			})
-			console.log("formData", formData)
-			console.log("data", data)
 
 			// Check Mutation errors
 			if (error) {
@@ -46,11 +44,16 @@ export default function Signin() {
 				return
 			}
 
+			// If registration ok, toastify
 			if (data) {
+				reset()
+				// @TODO implement React Toastify
 				const { message } = data.login
 				alert(message)
 				navigate("/surveys")
 			}
+
+			// Handle others errors
 		} catch (err) {
 			console.error("Error:", err)
 		}
