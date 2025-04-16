@@ -1,32 +1,22 @@
 services:
     # Frontend service (React + Vite)
     frontend:
-        build:
-            context: ./app/frontend # Directory where the Dockerfile is located
-            dockerfile: Dockerfile # Name of the Dockerfile to use
+        image: yohangh/askandtrust-frontend:4fed9eabcc526ee187f48c04e3de7646bcb8b214
         # ports:
-        #   - "5173:5173" # Exposes port 5173 to access Vite from the host
+        #     - "5173:5173" # Exposes port 5173 to access Vite from the host
         environment:
             - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
-        volumes:
-            - ./app/frontend/index.html:/app/index.html
-            - ./app/frontend/src:/app/src
-            - ./app/frontend/public:/app/public
-            - ./app/frontend/vite.config.ts:/app/vite.config.ts
         command: ["npm", "run", "dev", "--host"] # Start Vite in development mode (hot reload enabled)
-
         # Unused options, but useful in other cases
         # restart: always # Recreate the container in case of failure
-        # depends_on:
-        #   - backend # Wait for the backend to be ready (useful if necessary)
+        depends_on:
+            - backend # Wait for the backend to be ready (useful if necessary)
         networks:
             - frontend_network # To be configured if a specific network is required
 
     # Backend service (Express.js)
     backend:
-        build:
-            context: ./app/backend # Directory where the Dockerfile is located
-            dockerfile: Dockerfile # Name of the Dockerfile to use
+        image: yohangh/askandtrust-backend:4fed9eabcc526ee187f48c04e3de7646bcb8b214
         # ports:
         #     - "3310:3310" # Exposes port 3310 to access the backend from the host
         environment:
@@ -34,8 +24,6 @@ services:
             - DB_HOST=db
         env_file:
             - ./app/backend/.env # Loads environment variables from a file
-        volumes:
-            - ./app/backend/src:/app/src
         command: ["npm", "start"] # Start the Express.js server (hot reload enabled with nodemon if configured)
         depends_on:
             db:
@@ -52,12 +40,8 @@ services:
         restart: always # Recreate the container in case of failure
         ports:
             - "5432:5432"
-        environment:
-            - POSTGRES_DB=the_good_corner
-            - POSTGRES_USER=the_good_corner
-            - POSTGRES_PASSWORD=the_good_corner_password
-        volumes:
-            - db_data:/var/lib/postgresql/data
+        env_file:
+            - ./app/backend/database.env
         networks:
             - backend_network
         healthcheck: # To ensure that PostgreSQL is ready before starting the backend.
@@ -70,12 +54,13 @@ services:
             timeout: 5s
             retries: 5
             start_period: 5s
+
     nginx:
         image: nginx
         volumes:
             - ./nginx:/etc/nginx
         ports:
-            - 8080:80
+            - 8080:2269
         depends_on:
             - backend
             - frontend

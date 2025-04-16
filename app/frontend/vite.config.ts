@@ -1,5 +1,5 @@
-import path from "path"
 import react from "@vitejs/plugin-react"
+import path from "path"
 import { defineConfig } from "vitest/config"
 
 export default defineConfig({
@@ -15,6 +15,7 @@ export default defineConfig({
 		},
 		hmr: { path: "hmr" }, // Hot Module Replacement (HMR) updates in realtime on the host machine
 		host: true, // needed for the Docker Container port mapping to work
+		allowedHosts: ["frontend"], // expose frontend Docker service to external access
 	},
 	test: {
 		environment: "jsdom", // Simulates a browser environment for testing
