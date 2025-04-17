@@ -22,7 +22,7 @@ if (!process.env.APP_PORT) {
 	throw new Error("APP_PORT is not defined in environment variables.")
 }
 
-;(async () => {
+(async () => {
 	try {
 		// Initialize the data source (e.g., connect to a database)
 		await dataSource.initialize()
