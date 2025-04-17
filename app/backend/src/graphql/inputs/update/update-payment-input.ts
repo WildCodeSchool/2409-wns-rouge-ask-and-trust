@@ -28,8 +28,8 @@ import { Field, InputType, Int } from "type-graphql"
  * - `@IsOptional()`: marks the field as optional for updates.
  */
 /**
-* @note Update with role juste for admin
-*/
+ * @note Update with role juste for admin
+ */
 @InputType()
 export class UpdatePaymentInput {
 	@Field(() => Int)

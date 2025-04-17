@@ -312,8 +312,10 @@ export const updatePayment = async (input: {
 		// Update only the provided fields
 		if (input.amount !== undefined) payment.amount = input.amount
 		if (input.currency !== undefined) payment.currency = input.currency
-		if (input.description !== undefined) payment.description = input.description
-		if (input.surveyCount !== undefined) payment.surveyCount = input.surveyCount
+		if (input.description !== undefined)
+			payment.description = input.description
+		if (input.surveyCount !== undefined)
+			payment.surveyCount = input.surveyCount
 
 		await payment.save()
 		return payment

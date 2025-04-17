@@ -22,7 +22,7 @@ if (!process.env.APP_PORT) {
 	throw new Error("APP_PORT is not defined in environment variables.")
 }
 
-(async () => {
+;(async () => {
 	try {
 		// Initialize the data source (e.g., connect to a database)
 		await dataSource.initialize()
@@ -89,7 +89,9 @@ if (!process.env.APP_PORT) {
 			},
 		})
 
-		console.log(`🚀  Server ready at: ${url} \n 🚀 http://localhost:8080/api/v1/`)
+		console.log(
+			`🚀  Server ready at: ${url} \n 🚀 http://localhost:8080/api/v1/`
+		)
 	} catch (error) {
 		console.error("🚨 Error during initialization:", error)
 	}
