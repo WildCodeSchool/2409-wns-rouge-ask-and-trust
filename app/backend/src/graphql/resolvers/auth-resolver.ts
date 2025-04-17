@@ -3,7 +3,7 @@ import { LogInResponse, User } from "../../database/entities/user"
 import { CreateUserInput } from "../../graphql/inputs/create/create-auth-input"
 import { AppError } from "../../middlewares/error-handler"
 import { login, register, whoami } from "../../services/auth-service"
-import { Context, Roles, UserRole } from "../../types/types"
+import { Context, Roles } from "../../types/types"
 import { LogUserInput } from "./../inputs/create/create-auth-input"
 
 /**
@@ -30,19 +30,14 @@ export class AuthResolver {
 			// NB : for now, data is checked automatically in buildSchema() in server.ts
 			// with the option "validate:true"
 
-			const { email, password, firstname, role, lastname } = data
-
-			// Verify user's role
-			const userRole: UserRole = Object.values(Roles).includes(role)
-				? role
-				: "user"
+			const { email, password, firstname, lastname } = data
 
 			return await register(
 				email,
 				password,
 				firstname,
 				lastname,
-				userRole
+				Roles.User // Always create a user with the role "user"
 			) // Call register method from AuthService
 		} catch (error) {
 			// If email already used
