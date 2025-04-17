@@ -8,6 +8,7 @@ import Cookies from "cookies"
 import { AppError } from "./middlewares/error-handler"
 import { AuthResolver } from "./graphql/resolvers/auth-resolver"
 import { customAuthChecker } from "./middlewares/auth-checker"
+import { PaymentResolver } from "./graphql/resolvers/payment-resolver"
 
 dotenv.config() // Load environment variables from .env file
 
@@ -31,10 +32,12 @@ if (!process.env.APP_PORT) {
 		const schema = await buildSchema({
 			resolvers: [
 				AuthResolver,
+				PaymentResolver,
 				/* your resolvers here */
 			],
 			validate: true, // Activate validation for input fields
 			authChecker: customAuthChecker,
+			emitSchemaFile: true, // Optional , for debugging
 		})
 
 		//Create instance of ApolloServer with the schema
