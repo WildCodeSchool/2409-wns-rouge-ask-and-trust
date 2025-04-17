@@ -53,9 +53,9 @@ services:
         ports:
             - "5432:5432"
         environment:
-            - POSTGRES_DB=the_good_corner
-            - POSTGRES_USER=the_good_corner
-            - POSTGRES_PASSWORD=the_good_corner_password
+            - POSTGRES_DB=ask_and_trust
+            - POSTGRES_USER=ask_and_trust
+            - POSTGRES_PASSWORD=superpassword
         volumes:
             - db_data:/var/lib/postgresql/data
         networks:
@@ -64,7 +64,7 @@ services:
             test:
                 [
                     "CMD-SHELL",
-                    "pg_isready -U the_good_corner -d the_good_corner -h localhost",
+                    "pg_isready -U ask_and_trust -d ask_and_trust -h localhost",
                 ]
             interval: 10s
             timeout: 5s
