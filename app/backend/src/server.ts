@@ -89,7 +89,7 @@ if (!process.env.APP_PORT) {
 			},
 		})
 
-		console.log(`🚀  Server ready at: ${url}`)
+		console.log(`🚀  Server ready at: ${url} \n 🚀 http://localhost:8080/api/v1/`)
 	} catch (error) {
 		console.error("🚨 Error during initialization:", error)
 	}
