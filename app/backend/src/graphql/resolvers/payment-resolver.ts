@@ -6,11 +6,13 @@
  * It handles payment creation, retrieval, and status management.
  */
 
-import { Arg, Ctx, Mutation, Query, Resolver, Float, Int } from "type-graphql"
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql"
 import { Context, Roles } from "../../types/types"
 import { Payment } from "../../database/entities/payment"
-import { createPaymentIntent, getPaymentById, getPaymentsByUserId } from "../../services/stripe-service"
+import { createPaymentIntent, getPaymentById, getPaymentsByUserId, updatePayment } from "../../services/stripe-service"
 import { AppError } from "../../middlewares/error-handler"
+import { CreatePaymentInput } from "../inputs/create/create-payment-input"
+import { UpdatePaymentInput } from "../inputs/update/update-payment-input"
 
 /**
  * Payment Resolver
@@ -22,17 +24,59 @@ import { AppError } from "../../middlewares/error-handler"
 export class PaymentResolver {
   /**
    * Creates a new payment intent
-   * @param amount - The amount to charge in cents
-   * @param currency - The currency code (default: 'eur')
-   * @param description - Description of the payment
-   * @param surveyCount - Number of surveys that will be added to the user's quota
-   * @param userId - The ID of the user making the payment
-   * @returns The created payment object
+   * @param input - The input data for creating a payment
+   * @param context - The context containing the authenticated user
+   * @returns The client secret for the payment intent
    * 
    * @example
    * ```graphql
    * mutation {
-   *   createPaymentIntent(amount: 1000, currency: "eur", description: "Pack 50 enquêtes", surveyCount: 50) {
+   *   createPaymentIntent(input: {
+   *     amount: 1000
+   *     currency: "eur"
+   *     description: "Pack 50 enquêtes"
+   *     surveyCount: 50
+   *   })
+   * }
+   * ```
+   */
+  @Mutation(() => String)
+  @Authorized()
+  async createPaymentIntent(
+    @Arg("input") input: CreatePaymentInput,
+    @Ctx() { user }: Context
+  ): Promise<string> {
+
+    console.log('Context user:', user); // Ajoutez ce log
+    //console.log('Cookies:', context.cookies); // Ajoutez ce log
+
+    if (!user) {
+      throw new AppError("Not authenticated", 401, "NotAuthenticatedError")
+    }
+
+    return createPaymentIntent(
+      input.amount,
+      input.currency,
+      input.description,
+      input.surveyCount,
+      user.id
+    )
+  }
+
+  /**
+   * Updates an existing payment
+   * @param input - The input data for updating a payment
+   * @param context - The context containing the authenticated user
+   * @returns The updated payment object
+   * 
+   * @example
+   * ```graphql
+   * mutation {
+   *   updatePayment(input: {
+   *     id: 1
+   *     amount: 2000
+   *     description: "Pack 100 enquêtes"
+   *   }) {
    *     id
    *     amount
    *     status
@@ -40,30 +84,36 @@ export class PaymentResolver {
    * }
    * ```
    */
-  @Mutation(() => String)
-  async createPaymentIntent(
-    @Arg("amount", () => Float) amount: number,
-    @Arg("currency") currency: string,
-    @Arg("description") description: string,
-    @Arg("surveyCount", () => Int) surveyCount: number,
+  @Mutation(() => Payment)
+  @Authorized()
+  async updatePayment(
+    @Arg("input") input: UpdatePaymentInput,
     @Ctx() { user }: Context
-  ): Promise<string> {
+  ): Promise<Payment> {
     if (!user) {
       throw new AppError("Not authenticated", 401, "NotAuthenticatedError")
     }
 
-    return createPaymentIntent(amount, currency, description, surveyCount, user.id)
+    const payment = await getPaymentById(input.id)
+
+    // Ensure the user can only update their own payments
+    if (payment.userId !== user.id && user.role !== Roles.Admin) {
+      throw new AppError("Not authorized", 403, "NotAuthorizedError")
+    }
+
+    return updatePayment(input)
   }
 
   /**
    * Retrieves a payment by ID
    * @param id - The ID of the payment to retrieve
+   * @param context - The context containing the authenticated user
    * @returns The payment object
    * 
    * @example
    * ```graphql
    * query {
-   *   payment(id: "123") {
+   *   payment(id: 1) {
    *     id
    *     amount
    *     status
@@ -72,6 +122,7 @@ export class PaymentResolver {
    * ```
    */
   @Query(() => Payment)
+  @Authorized()
   async payment(
     @Arg("id") id: number,
     @Ctx() { user }: Context
@@ -91,14 +142,14 @@ export class PaymentResolver {
   }
 
   /**
-   * Retrieves all payments for a user
-   * @param userId - The ID of the user
+   * Retrieves all payments for the authenticated user
+   * @param context - The context containing the authenticated user
    * @returns An array of payment objects
    * 
    * @example
    * ```graphql
    * query {
-   *   userPayments(userId: "123") {
+   *   myPayments {
    *     id
    *     amount
    *     status
@@ -107,6 +158,7 @@ export class PaymentResolver {
    * ```
    */
   @Query(() => [Payment])
+  @Authorized()
   async myPayments(@Ctx() { user }: Context): Promise<Payment[]> {
     if (!user) {
       throw new AppError("Not authenticated", 401, "NotAuthenticatedError")
