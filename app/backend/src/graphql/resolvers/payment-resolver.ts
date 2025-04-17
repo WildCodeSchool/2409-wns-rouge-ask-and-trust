@@ -47,9 +47,6 @@ export class PaymentResolver {
     @Ctx() { user }: Context
   ): Promise<string> {
 
-    console.log('Context user:', user); // Ajoutez ce log
-    //console.log('Cookies:', context.cookies); // Ajoutez ce log
-
     if (!user) {
       throw new AppError("Not authenticated", 401, "NotAuthenticatedError")
     }
@@ -90,6 +87,7 @@ export class PaymentResolver {
     @Arg("input") input: UpdatePaymentInput,
     @Ctx() { user }: Context
   ): Promise<Payment> {
+
     if (!user) {
       throw new AppError("Not authenticated", 401, "NotAuthenticatedError")
     }
