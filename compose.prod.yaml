@@ -23,7 +23,7 @@ services:
             - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
             - DB_HOST=db
         env_file:
-            - ./app/backend/.env # Loads environment variables from a file
+            - .env # Loads environment variables from a file
         command: ["npm", "start"] # Start the Express.js server (hot reload enabled with nodemon if configured)
         depends_on:
             db:
@@ -41,7 +41,7 @@ services:
         ports:
             - "5432:5432"
         env_file:
-            - ./app/backend/database.env
+            - .database.env
         networks:
             - backend_network
         healthcheck: # To ensure that PostgreSQL is ready before starting the backend.
