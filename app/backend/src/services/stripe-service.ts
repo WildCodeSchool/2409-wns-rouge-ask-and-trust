@@ -276,3 +276,56 @@ export const getPaymentsByUserId = async (
 		)
 	}
 }
+
+/**
+ * Updates an existing payment
+ * @param input - The input data for updating a payment
+ * @returns The updated payment object
+ * @throws Error if payment update fails
+ *
+ * @example
+ * ```typescript
+ * const payment = await updatePayment({
+ *   id: 1,
+ *   amount: 2000,
+ *   description: "Pack 100 enquêtes"
+ * });
+ * ```
+ */
+export const updatePayment = async (input: {
+	id: number
+	amount?: number
+	currency?: string
+	description?: string
+	surveyCount?: number
+}): Promise<Payment> => {
+	try {
+		const paymentRepository = dataSource.getRepository(Payment)
+		const payment = await paymentRepository.findOne({
+			where: { id: input.id },
+		})
+
+		if (!payment) {
+			throw new AppError("Payment not found", 404, "PaymentNotFoundError")
+		}
+
+		// Update only the provided fields
+		if (input.amount !== undefined) payment.amount = input.amount
+		if (input.currency !== undefined) payment.currency = input.currency
+		if (input.description !== undefined) payment.description = input.description
+		if (input.surveyCount !== undefined) payment.surveyCount = input.surveyCount
+
+		await payment.save()
+		return payment
+	} catch (error) {
+		if (error instanceof AppError) {
+			throw error
+		}
+		console.error("Error updating payment:", error)
+		throw new AppError(
+			"Failed to update payment",
+			500,
+			"PaymentUpdateError"
+		)
+	}
+}
