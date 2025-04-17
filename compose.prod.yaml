@@ -58,6 +58,8 @@ services:
     nginx:
         image: nginx
         volumes:
+            # ./nginx => in the host machine
+            # on the right => where it is in the docker container
             - ./nginx:/etc/nginx
         ports:
             - ${{GATEAWAY_PORT}}:80
