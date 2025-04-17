@@ -60,7 +60,7 @@ services:
         volumes:
             - ./nginx:/etc/nginx
         ports:
-            - 8080:80
+            - ${{GATEAWAY_PORT}}:80
         depends_on:
             - backend
             - frontend
