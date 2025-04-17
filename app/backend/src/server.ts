@@ -36,6 +36,7 @@ if (!process.env.APP_PORT) {
 			],
 			validate: true, // Activate validation for input fields
 			authChecker: customAuthChecker,
+			emitSchemaFile: true, // Optional , for debugging
 		})
 
 		//Create instance of ApolloServer with the schema
