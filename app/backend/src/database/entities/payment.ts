@@ -74,10 +74,10 @@ export class Payment extends BaseEntity {
   /**
    * Status of the payment
    * @description
-   * The current status of the payment (e.g., 'pending', 'succeeded', 'failed').
+   * The current status of the payment (e.g., 'requires_payment_method', 'pending', 'succeeded', 'failed').
    */
   @Field()
-  @Column({ length: 20 })
+  @Column({ length: 255 })
   status!: string
 
   /**
