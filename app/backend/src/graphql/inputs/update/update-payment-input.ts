@@ -27,6 +27,9 @@ import { Field, InputType, Int } from "type-graphql"
  * - `@Length()`: ensures the string length is within the specified bounds.
  * - `@IsOptional()`: marks the field as optional for updates.
  */
+/**
+* @note Update with role juste for admin
+*/
 @InputType()
 export class UpdatePaymentInput {
 	@Field(() => Int)
