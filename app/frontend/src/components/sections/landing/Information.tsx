@@ -27,7 +27,7 @@ const Information = () => {
 							<div className="flex h-[15px] w-[15px] flex-row rounded-xl bg-white"></div>
 						</div>
 						<div className="items-center rounded-b-xl bg-white px-7 pt-6 pb-8">
-							<h4 className="pb-2 pb-6 text-2xl font-bold">
+							<h4 className="pb-6 text-2xl font-bold">
 								Une enquête personnalisée et adaptée à vos
 								besoins
 							</h4>
