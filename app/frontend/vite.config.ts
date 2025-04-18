@@ -24,8 +24,10 @@ export default defineConfig({
 				img-src 'self' data: https://*.stripe.com;
 				frame-src 'self' https://*.stripe.com https://*.stripe.network;
 				connect-src 'self' https://*.stripe.com https://*.stripe.network http://localhost:3310;
-			`.replace(/\s+/g, ' ').trim()
-		}
+			`
+				.replace(/\s+/g, " ")
+				.trim(),
+		},
 	},
 	test: {
 		environment: "jsdom", // Simulates a browser environment for testing
