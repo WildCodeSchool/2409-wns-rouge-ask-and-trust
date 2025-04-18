@@ -1,13 +1,15 @@
-import dotenv from "dotenv"
-import { buildSchema } from "type-graphql"
 import { ApolloServer } from "@apollo/server"
 import { startStandaloneServer } from "@apollo/server/standalone"
-import dataSource from "./database/config/datasource"
-import { GraphQLFormattedError } from "graphql"
 import Cookies from "cookies"
-import { AppError } from "./middlewares/error-handler"
+import dotenv from "dotenv"
+import { GraphQLFormattedError } from "graphql"
+import { buildSchema } from "type-graphql"
+import dataSource from "./database/config/datasource"
 import { AuthResolver } from "./graphql/resolvers/auth-resolver"
 import { customAuthChecker } from "./middlewares/auth-checker"
+import { PaymentResolver } from "./graphql/resolvers/payment-resolver"
+import { AppError } from "./middlewares/error-handler"
+import { createAdmin } from "./scripts/create-admin"
 
 dotenv.config() // Load environment variables from .env file
 
@@ -26,15 +28,20 @@ if (!process.env.APP_PORT) {
 		// Initialize the data source (e.g., connect to a database)
 		await dataSource.initialize()
 
+		// Create Admin user if doesn't exist
+		await createAdmin()
+
 		// Constructing the GraphQL schema with TypeGraphQL
 		// Replace the resolvers array with your actual resolvers
 		const schema = await buildSchema({
 			resolvers: [
 				AuthResolver,
+				PaymentResolver,
 				/* your resolvers here */
 			],
 			validate: true, // Activate validation for input fields
 			authChecker: customAuthChecker,
+			emitSchemaFile: true, // Optional , for debugging
 		})
 
 		//Create instance of ApolloServer with the schema
@@ -86,7 +93,9 @@ if (!process.env.APP_PORT) {
 			},
 		})
 
-		console.log(`🚀  Server ready at: ${url}`)
+		console.log(
+			`🚀  Server ready at: ${url} \n 🚀 http://localhost:8080/api/v1/`
+		)
 	} catch (error) {
 		console.error("🚨 Error during initialization:", error)
 	}

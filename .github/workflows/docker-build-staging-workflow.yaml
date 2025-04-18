@@ -10,10 +10,10 @@ on:
       - edited
 
 jobs:
-  docker-build:
+  docker-build-staging:
     # Run if client test is a success
-    # Only build docker image when merging on main
-    if: github.base_ref == 'main'
+    # Only build docker image when merging on staging
+    if: github.base_ref == 'staging'
     runs-on: ubuntu-latest
     # for existing actions, we need the keyword "uses"
     steps:
