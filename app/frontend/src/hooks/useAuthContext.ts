@@ -14,7 +14,7 @@ import { AuthContext } from "@/contexts/AuthContext"
  * @description
  * A custom hook that provides access to the authentication context.
  * It must be used within a component that is wrapped by the AuthProvider.
- * 
+ *
  * @returns The authentication context containing user state and methods
  * @throws Error if used outside of an AuthProvider
  */
