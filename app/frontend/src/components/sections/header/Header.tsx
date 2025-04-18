@@ -15,7 +15,7 @@ const HEADER_LINKS: readonly LinksType[] = [
 		ariaLabel: "Voir la liste des enquêtes disponibles",
 	},
 	{
-		href: "/packs",
+		href: "/payments",
 		label: "Notre offre",
 		category: "Enquêtes",
 		ariaLabel: "Acheter des packs d'enquêtes",
