@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react"
+import { UserRole } from "./../../../backend/src/types/types"
 
 export type AuthContextProps = {
 	user: User | null
@@ -26,6 +27,7 @@ export interface UserAuth {
 	lastname: string
 	email: string
 	password: string
+	role: UserRole
 }
 
 export type UserSignUp = UserAuth

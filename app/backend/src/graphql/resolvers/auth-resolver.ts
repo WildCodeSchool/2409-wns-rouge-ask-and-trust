@@ -3,7 +3,7 @@ import { LogInResponse, User } from "../../database/entities/user"
 import { CreateUserInput } from "../../graphql/inputs/create/create-auth-input"
 import { AppError } from "../../middlewares/error-handler"
 import { login, register, whoami } from "../../services/auth-service"
-import { Context } from "../../types/types"
+import { Context, Roles } from "../../types/types"
 import { LogUserInput } from "./../inputs/create/create-auth-input"
 
 /**
@@ -24,25 +24,20 @@ export class AuthResolver {
 	 */
 	@Mutation(() => User)
 	async register(
-		@Arg("data") data: CreateUserInput, // Input object containing email and password
-		@Ctx() context: Context // Context object containing cookies
+		@Arg("data") data: CreateUserInput // Input object containing email and password
 	): Promise<User> {
 		try {
 			// NB : for now, data is checked automatically in buildSchema() in server.ts
 			// with the option "validate:true"
 
-			const { email, password, firstname, role, lastname } = data
-
-			// Get the cookies from the context
-			const { cookies } = context
+			const { email, password, firstname, lastname } = data
 
 			return await register(
 				email,
 				password,
 				firstname,
 				lastname,
-				role,
-				cookies
+				Roles.User // Always create a user with the role "user"
 			) // Call register method from AuthService
 		} catch (error) {
 			// If email already used
@@ -58,6 +53,7 @@ export class AuthResolver {
 			}
 
 			// Others errors
+			console.error("Registration error:", error)
 			throw new AppError("Registration failed", 400, "InternalError")
 		}
 	}
@@ -92,7 +88,12 @@ export class AuthResolver {
 				)
 			}
 
-			return await login(email, password, cookies)
+			const loginResponse = await login(email, password, cookies)
+
+			return {
+				message: loginResponse.message,
+				cookieSet: loginResponse.cookieSet,
+			}
 		} catch (error) {
 			throw new AppError("Login failed", 401, "UnauthorizedError") // Handle login errors
 		}
