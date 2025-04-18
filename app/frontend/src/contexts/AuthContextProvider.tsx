@@ -1,13 +1,29 @@
-import React, { createContext, useEffect, useState, useCallback } from "react"
+/**
+ * @packageDocumentation
+ * @category Providers
+ * @description
+ * This module provides the AuthContextProvider component that makes the authentication context
+ * available throughout the application.
+ */
+
+import React, { useEffect, useState, useCallback } from "react"
 import { useMutation, useQuery } from "@apollo/client"
 import { LOGOUT, WHOAMI } from "@/graphql/auth"
-import { AuthContextProps, User } from "@/types/types"
+import { User } from "@/types/types"
+import { AuthContext, AuthContextType } from "./AuthContext"
 
-export const AuthContext = createContext<AuthContextProps | undefined>(
-	undefined
-)
+/**
+ * Props for the AuthContextProvider component
+ * @interface AuthContextProviderProps
+ * @description
+ * Defines the required properties for the AuthContextProvider component.
+ */
+interface AuthContextProviderProps {
+	/** The children components that will have access to the auth context */
+	children: React.ReactNode
+}
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+export const AuthProvider: React.FC<AuthContextProviderProps> = ({
 	children,
 }) => {
 	const [user, setUser] = useState<User | null>(null)
@@ -42,10 +58,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 		}
 	}, [logoutMutation, refetch])
 
+	/**
+	 * The context value that will be provided to all child components
+	 * @description
+	 * Contains the authentication state and methods.
+	 */
+	const value: AuthContextType = {
+		user,
+		isLoading,
+		refetchUser: refetch,
+		logout,
+	}
+
 	return (
-		<AuthContext.Provider
-			value={{ user, isLoading, refetchUser: refetch, logout }}
-		>
+		<AuthContext.Provider value={value}>
 			{children}
 		</AuthContext.Provider>
 	)

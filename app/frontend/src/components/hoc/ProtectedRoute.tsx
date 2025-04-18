@@ -4,7 +4,7 @@
  */
 
 import Loader from "@/components/ui/Loader"
-import { useAuth } from "@/hooks/useAuth"
+import { useAuthContext } from "@/hooks/useAuthContext"
 import AuthRequired from "@/components/sections/auth/AuthRequired"
 
 /**
@@ -24,7 +24,7 @@ import AuthRequired from "@/components/sections/auth/AuthRequired"
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
-	const { user, isLoading } = useAuth()
+	const { user, isLoading } = useAuthContext()
 
 	// If the authentication state is still loading, show the loader
 	if (isLoading) {
