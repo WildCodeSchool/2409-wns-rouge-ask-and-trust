@@ -64,3 +64,11 @@ export interface SurveyCardType {
 	estimateTime: number
 	timeLeft: string
 }
+
+export type Package = {
+	id: string
+	name: string
+	price: number
+	surveyCount: number
+	features: string[]
+} 
