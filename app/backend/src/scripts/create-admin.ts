@@ -30,12 +30,12 @@ async function createAdmin() {
 
 	try {
 		// Verify if an admin exists in database
-		const isAlreadyUserInDatabase = await User.find({
+		const isAlreadyAdminInDatabase = await User.find({
 			where: { email },
 			select: ["id", "email"], // Don't want to get hashedPassword
 		})
 
-		if (isAlreadyUserInDatabase) {
+		if (isAlreadyAdminInDatabase) {
 			return
 		}
 
