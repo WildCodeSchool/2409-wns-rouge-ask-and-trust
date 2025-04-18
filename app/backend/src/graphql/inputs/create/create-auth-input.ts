@@ -1,12 +1,5 @@
-import {
-	IsEmail,
-	IsIn,
-	IsNotEmpty,
-	IsStrongPassword,
-	Length,
-} from "class-validator"
+import { IsEmail, IsNotEmpty, IsStrongPassword, Length } from "class-validator"
 import { Field, InputType } from "type-graphql"
-import { Roles, UserRole } from "../../../types/types"
 
 /**
  * Represents user input for creating a new user (SIGN UP).
@@ -64,11 +57,11 @@ export class CreateUserInput {
 	})
 	lastname!: string
 
-	@Field()
-	@IsIn(Object.values(Roles), {
-		message: "This role is invalid",
-	})
-	role!: UserRole
+	// @Field()
+	// @IsIn(Object.values(Roles), {
+	// 	message: "This role is invalid",
+	// })
+	// role!: UserRole
 }
 
 /**

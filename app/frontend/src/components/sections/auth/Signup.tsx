@@ -1,5 +1,8 @@
+import { REGISTER, WHOAMI } from "@/graphql/auth"
 import { UserSignUp } from "@/types/types"
+import { useMutation } from "@apollo/client"
 import { SubmitHandler, useForm } from "react-hook-form"
+import { useNavigate } from "react-router-dom"
 import FormButtonSubmit from "./form/FormButtonSubmit"
 import FormTitle from "./form/FormTitle"
 import FormWrapper from "./form/FormWrapper"
@@ -23,10 +26,37 @@ export default function Signup() {
 			password: "",
 		},
 	})
+	const navigate = useNavigate()
+	const [Register, { error }] = useMutation(REGISTER, {
+		refetchQueries: [WHOAMI],
+	})
 
-	// @TODO implement logic sign up
-	const onSubmit: SubmitHandler<UserSignUp> = async data => {
-		console.log("Hello from Submit SignUp", data)
+	const onSubmit: SubmitHandler<UserSignUp> = async formData => {
+		try {
+			const { data } = await Register({
+				variables: {
+					data: {
+						email: formData.email,
+						password: formData.password,
+						firstname: formData.firstname,
+						lastname: formData.lastname,
+						role: formData.role || "user",
+					},
+				},
+			})
+			// Check Mutation errors
+			if (error) {
+				console.error(error)
+				return
+			}
+
+			if (data) {
+				navigate("/connexion")
+			}
+		} catch (err) {
+			// Handle others errors
+			console.error("Error:", err)
+		}
 	}
 	return (
 		<FormWrapper onSubmit={handleSubmit(onSubmit)}>
