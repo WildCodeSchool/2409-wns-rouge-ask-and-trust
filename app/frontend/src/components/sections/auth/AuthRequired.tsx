@@ -26,11 +26,11 @@ export default function AuthRequired() {
 					</div>
 				</div>
 
-				<h1 className="mb-2 text-2xl font-bold text-black-default">
+				<h1 className="text-black-default mb-2 text-2xl font-bold">
 					Authentification requise
 				</h1>
 
-				<p className="mb-6 text-black-default">
+				<p className="text-black-default mb-6">
 					Vous devez être connecté pour accéder à cette page. Veuillez
 					vous connecter ou créer un compte pour continuer.
 				</p>
@@ -56,7 +56,7 @@ export default function AuthRequired() {
 
 					<Link
 						to="/"
-						className="hover:text-primary-600 mt-2 text-sm text-black-default hover:underline"
+						className="hover:text-primary-600 text-black-default mt-2 text-sm hover:underline"
 					>
 						Retour à l'accueil
 					</Link>
