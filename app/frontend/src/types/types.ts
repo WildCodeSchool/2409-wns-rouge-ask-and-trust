@@ -73,4 +73,4 @@ export type Package = {
 	price: number
 	surveyCount: number
 	features: string[]
-} 
+}
