@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button"
 import SearchForm from "./SearchForm"
 import clsx from "clsx"
 
-export default function Header() {
+export default function Header({ showCategories = false }) {
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
 	useEffect(() => {
@@ -62,14 +62,16 @@ export default function Header() {
 					)}
 				</nav>
 			</div>
-			<div className="flex items-center gap-3 overflow-x-scroll pb-3">
-				<Button
-					variant="navbar_btn"
-					size="sm"
-					ariaLabel="Annonces de la catégorie sport"
-					children="Sport"
-				/>
-			</div>
+			{showCategories && (
+				<div className="flex items-center gap-3 overflow-x-scroll pb-3">
+					<Button
+						variant="navbar_btn"
+						size="sm"
+						ariaLabel="Annonces de la catégorie sport"
+						children="Sport"
+					/>
+				</div>
+			)}
 		</header>
 	)
 }

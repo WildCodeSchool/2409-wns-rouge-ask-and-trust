@@ -10,8 +10,10 @@ export type AuthContextProps = {
 
 export interface User {
 	id: string
+	firstname: string
+	lastname: string
 	email: string
-	// ... other user properties
+	password: string
 }
 
 export interface LinksType {

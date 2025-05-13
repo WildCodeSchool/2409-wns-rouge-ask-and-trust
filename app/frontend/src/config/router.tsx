@@ -11,6 +11,7 @@ const Landing = lazy(() => import("@/pages/Landing"))
 const Surveys = lazy(() => import("@/pages/Surveys"))
 const Auth = lazy(() => import("@/pages/Auth"))
 const TermsOfUse = lazy(() => import("@/pages/TermsOfUse"))
+const UserProfile = lazy(() => import("@/pages/UserProfile"))
 
 const router = createBrowserRouter([
 	{
@@ -66,6 +67,14 @@ const router = createBrowserRouter([
 				element: (
 					<Suspense fallback={<Loader />}>
 						<Surveys />
+					</Suspense>
+				),
+			},
+			{
+				path: "/profile",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<UserProfile />
 					</Suspense>
 				),
 			},
