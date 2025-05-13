@@ -26,7 +26,7 @@ const PaymentConfirmation = lazy(() => import("@/pages/PaymentConfirmation"))
 
 /**
  * Router confirmation
- * 
+ *
  * @description
  * Defines all routes in the application with their respective components
  * and protection levels
