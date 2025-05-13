@@ -9,7 +9,12 @@
 import { useLocation, Link } from "react-router-dom"
 import { useState } from "react"
 import { loadStripe } from "@stripe/stripe-js"
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
+import {
+	Elements,
+	PaymentElement,
+	useStripe,
+	useElements,
+} from "@stripe/react-stripe-js"
 import { VITE_STRIPE_PUBLIC_KEY } from "@/config/config"
 
 interface PaymentLocationState {
@@ -17,8 +22,10 @@ interface PaymentLocationState {
 }
 
 const STRIPE_PK = VITE_STRIPE_PUBLIC_KEY
-if (!STRIPE_PK || !STRIPE_PK.startsWith('pk_')) {
-	throw new Error('Clé publique Stripe manquante ou invalide. Vérifie VITE_STRIPE_PUBLIC_KEY dans src/config/config.ts')
+if (!STRIPE_PK || !STRIPE_PK.startsWith("pk_")) {
+	throw new Error(
+		"Clé publique Stripe manquante ou invalide. Vérifie VITE_STRIPE_PUBLIC_KEY dans src/config/config.ts"
+	)
 }
 const stripePromise = loadStripe(STRIPE_PK)
 
@@ -40,7 +47,7 @@ function StripePaymentForm() {
 					// Optionnel: url de redirection après paiement
 					// return_url: window.location.origin + "/payment-confirmation"
 				},
-				redirect: "if_required"
+				redirect: "if_required",
 			})
 			if (error) setMessage(error.message || "Erreur lors du paiement")
 			else setMessage("Paiement réussi !")
@@ -62,12 +69,15 @@ function StripePaymentForm() {
 				{isProcessing ? "Traitement en cours..." : "Payer"}
 			</button>
 			{message && (
-				<div className={`mt-4 text-center ${message.includes("réussi") ? "text-green-600" : "text-red-600"}`}>
+				<div
+					className={`mt-4 text-center ${message.includes("réussi") ? "text-green-600" : "text-red-600"}`}
+				>
 					{message}
 				</div>
 			)}
-			<div className="mt-4 text-sm text-gray-500 text-center">
-				Utilise la carte test Stripe : <b>4242 4242 4242 4242</b> (date et CVC au choix)
+			<div className="mt-4 text-center text-sm text-gray-500">
+				Utilise la carte test Stripe : <b>4242 4242 4242 4242</b> (date
+				et CVC au choix)
 			</div>
 		</form>
 	)
@@ -87,17 +97,21 @@ const PaymentConfirmation = () => {
 	return (
 		<div className="container mx-auto flex min-h-[70vh] flex-col items-center justify-center px-4 py-8">
 			<div className="w-full max-w-md rounded-xl bg-white p-8 text-center shadow-lg">
-				<h1 className="mb-4 text-2xl font-bold">Confirmation du paiement</h1>
+				<h1 className="mb-4 text-2xl font-bold">
+					Confirmation du paiement
+				</h1>
 				{clientSecret ? (
 					<Elements stripe={stripePromise} options={{ clientSecret }}>
 						<StripePaymentForm />
 					</Elements>
 				) : (
-					<div className="text-red-600">Aucun client_secret reçu.</div>
+					<div className="text-red-600">
+						Aucun client_secret reçu.
+					</div>
 				)}
 				<Link
 					to="/payment"
-					className="mt-6 inline-block rounded bg-primary-default px-4 py-2 font-medium text-white hover:opacity-90"
+					className="bg-primary-default mt-6 inline-block rounded px-4 py-2 font-medium text-white hover:opacity-90"
 				>
 					Revenir à la page de paiement
 				</Link>
