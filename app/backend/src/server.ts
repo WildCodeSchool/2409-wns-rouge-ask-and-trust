@@ -6,8 +6,8 @@ import { GraphQLFormattedError } from "graphql"
 import { buildSchema } from "type-graphql"
 import dataSource from "./database/config/datasource"
 import { AuthResolver } from "./graphql/resolvers/auth-resolver"
-import { customAuthChecker } from "./middlewares/auth-checker"
 import { PaymentResolver } from "./graphql/resolvers/payment-resolver"
+import { customAuthChecker } from "./middlewares/auth-checker"
 import { AppError } from "./middlewares/error-handler"
 import { createAdmin } from "./scripts/create-admin"
 
@@ -94,7 +94,7 @@ if (!process.env.APP_PORT) {
 		})
 
 		console.log(
-			`🚀  Server ready at: ${url} \n 🚀 http://localhost:8080/api/v1/`
+			`🚀  Server ready at: ${url} \n 🚀 Backend : http://localhost:8080/api/v1/ \n 🚀 Frontend : http://localhost:8080`
 		)
 	} catch (error) {
 		console.error("🚨 Error during initialization:", error)
