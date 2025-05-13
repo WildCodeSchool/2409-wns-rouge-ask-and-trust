@@ -29,8 +29,8 @@ const HEADER_LINKS: readonly LinksType[] = [
 ] as const
 
 export default function Header() {
-	const [showMenu, setShowMenu] = useState(false)
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
+	const [showMenu, setShowMenu] = useState<boolean>(false)
+	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 1024)
 
 	const handleShowMenu = () => {
 		setShowMenu(!showMenu)

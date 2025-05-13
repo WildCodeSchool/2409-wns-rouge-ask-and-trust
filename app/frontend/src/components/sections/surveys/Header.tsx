@@ -6,7 +6,7 @@ import SearchForm from "./SearchForm"
 import clsx from "clsx"
 
 export default function Header() {
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
 
 	useEffect(() => {
 		const handleResize = () => {

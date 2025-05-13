@@ -7,7 +7,7 @@ import FooterMobile from "@/components/sections/footer/FooterMobile"
 
 function App() {
 	const location = useLocation()
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
 
 	useEffect(() => {
 		const handleResize = () => {
