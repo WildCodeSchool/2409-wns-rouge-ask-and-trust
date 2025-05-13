@@ -43,7 +43,7 @@ const Information = () => {
 					</div>
 					<div className="rounded-xl shadow-lg shadow-black/10">
 						<img
-							src="public/assets/window-group-icons.svg"
+							src="/assets/window-group-icons.svg"
 							alt="img-window-content"
 						/>
 					</div>

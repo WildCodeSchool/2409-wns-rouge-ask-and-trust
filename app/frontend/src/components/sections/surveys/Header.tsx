@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import logoFooter from "../../../../public/logos/logo-footer.svg"
+import logoFooter from "/logos/logo-footer.svg"
 import { Button } from "@/components/ui/Button"
 import SearchForm from "./SearchForm"
 import clsx from "clsx"
 
 export default function Header() {
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
 
 	useEffect(() => {
 		const handleResize = () => {

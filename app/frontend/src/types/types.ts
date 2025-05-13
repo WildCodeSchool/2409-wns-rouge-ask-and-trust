@@ -55,6 +55,7 @@ export interface HeaderMobileMenuProps {
 export interface NavAndAuthButtonsProps {
 	headerLinks: readonly LinksType[]
 	isMobile: boolean
+	handleShowMenu?: () => void
 }
 
 export interface SurveyCardType {

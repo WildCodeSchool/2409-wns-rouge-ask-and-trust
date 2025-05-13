@@ -5,6 +5,7 @@ import { HeaderLink } from "./Header"
 export default function NavAndAuthButtons({
 	headerLinks,
 	isMobile,
+	handleShowMenu,
 }: NavAndAuthButtonsProps) {
 	return (
 		<>
@@ -25,7 +26,11 @@ export default function NavAndAuthButtons({
 					role="list"
 				>
 					{headerLinks.map(link => (
-						<li key={link.href} role="listitem">
+						<li
+							key={link.href}
+							role="listitem"
+							onClick={handleShowMenu}
+						>
 							<HeaderLink {...link} />
 						</li>
 					))}
@@ -43,6 +48,7 @@ export default function NavAndAuthButtons({
 						role="link"
 						fullWidth={isMobile}
 						ariaLabel="S'inscrire"
+						onClick={handleShowMenu}
 					>
 						S'inscrire
 					</Button>
@@ -52,6 +58,7 @@ export default function NavAndAuthButtons({
 						role="link"
 						fullWidth={isMobile}
 						ariaLabel="Se connecter"
+						onClick={handleShowMenu}
 					>
 						Se connecter
 					</Button>

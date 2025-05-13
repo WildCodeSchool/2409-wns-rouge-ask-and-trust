@@ -15,7 +15,7 @@ const AllPackages = () => {
 					<div className="flex flex-row items-center justify-start gap-3 px-3 pb-3">
 						<img
 							className="max-w-[36px]"
-							src="../../../public/assets/check.svg"
+							src="/assets/check.svg"
 							alt="img-check"
 						/>
 						<p className="text-lg">1 enquête offerte</p>
@@ -23,7 +23,7 @@ const AllPackages = () => {
 					<div className="flex flex-row items-center justify-start gap-3 px-3 py-3">
 						<img
 							className="max-w-[36px]"
-							src="../../../public/assets/check.svg"
+							src="/assets/check.svg"
 							alt="img-check"
 						/>
 						<p className="text-lg">30 questions</p>
@@ -31,7 +31,7 @@ const AllPackages = () => {
 					<div className="flex flex-row items-center justify-start gap-3 px-3 pt-3 pb-5">
 						<img
 							className="max-w-[36px]"
-							src="../../../public/assets/check.svg"
+							src="/assets/check.svg"
 							alt="img-check"
 						/>
 						<p className="text-lg">
@@ -58,7 +58,7 @@ const AllPackages = () => {
 					<div className="flex flex-row items-center justify-start gap-3 px-3 pb-3">
 						<img
 							className="max-w-[36px]"
-							src="../../../public/assets/check.svg"
+							src="/assets/check.svg"
 							alt="img-check"
 						/>
 						<p className="text-lg">1 enquête offerte</p>
@@ -66,7 +66,7 @@ const AllPackages = () => {
 					<div className="flex flex-row items-center justify-start gap-3 px-3 py-3">
 						<img
 							className="max-w-[36px]"
-							src="../../../public/assets/check.svg"
+							src="/assets/check.svg"
 							alt="img-check"
 						/>
 						<p className="text-lg">Questions illimitées</p>
@@ -74,7 +74,7 @@ const AllPackages = () => {
 					<div className="flex flex-row items-center justify-start gap-3 px-3 pt-3 pb-5">
 						<img
 							className="max-w-[36px]"
-							src="../../../public/assets/check.svg"
+							src="/assets/check.svg"
 							alt="img-check"
 						/>
 						<p className="text-lg">
@@ -101,7 +101,7 @@ const AllPackages = () => {
 					<div className="flex flex-row items-center justify-start gap-3 px-3 pb-3">
 						<img
 							className="max-w-[36px]"
-							src="../../../public/assets/check.svg"
+							src="/assets/check.svg"
 							alt="img-check"
 						/>
 						<p className="text-lg">1 enquête offerte</p>
@@ -109,7 +109,7 @@ const AllPackages = () => {
 					<div className="flex flex-row items-center justify-start gap-3 px-3 py-3">
 						<img
 							className="max-w-[36px]"
-							src="../../../public/assets/check.svg"
+							src="/assets/check.svg"
 							alt="img-check"
 						/>
 						<p className="text-lg">Questions illimitées</p>
@@ -117,7 +117,7 @@ const AllPackages = () => {
 					<div className="flex flex-row items-center justify-start gap-3 px-3 pt-3 pb-5">
 						<img
 							className="max-w-[36px]"
-							src="../../../public/assets/check.svg"
+							src="/assets/check.svg"
 							alt="img-check"
 						/>
 						<p className="text-lg">
