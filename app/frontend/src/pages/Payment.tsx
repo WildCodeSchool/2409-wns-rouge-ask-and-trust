@@ -11,27 +11,64 @@ import { useMutation } from "@apollo/client"
 import { CREATE_PAYMENT_INTENT } from "@/graphql/payment"
 import { Helmet } from "react-helmet"
 import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/Button"
 
+const PACKS = [
+	{
+		label: "Pack 50 enquêtes",
+		amount: 2999,
+		price: "29,99 €",
+		surveyCount: 50,
+		description: "Achat de Pack 50 enquêtes",
+	},
+	{
+		label: "Pack 100 enquêtes",
+		amount: 5999,
+		price: "59,99 €",
+		surveyCount: 100,
+		description: "Achat de Pack 100 enquêtes",
+	},
+]
+
+/**
+ * Payment Page Component
+ *
+ * Handles the purchase of survey packs and the creation of a Stripe PaymentIntent.
+ *
+ * @component
+ */
 export default function Payment() {
+	// State for error display and loading status
 	const [error, setError] = useState<string>("")
 	const [loading, setLoading] = useState(false)
+	const [selectedPack, setSelectedPack] = useState(0)
+	// Apollo hook for the Stripe PaymentIntent creation mutation
 	const [createPaymentIntent] = useMutation(CREATE_PAYMENT_INTENT)
 	const navigate = useNavigate()
 
-	const handleCreatePayment = async () => {
+	/**
+	 * Handles the click event to create a Stripe PaymentIntent and navigate to the confirmation page.
+	 *
+	 * @async
+	 * @returns {Promise<void>}
+	 */
+	const handleCreatePayment = async (): Promise<void> => {
 		setLoading(true)
 		setError("")
+		const pack = PACKS[selectedPack]
 		try {
+			// Call the GraphQL mutation to create a Stripe PaymentIntent
 			const { data } = await createPaymentIntent({
 				variables: {
 					input: {
-						amount: 2999, // 29,99€ en centimes
+						amount: pack.amount, // in cents
 						currency: "eur",
-						description: "Achat de Pack Test",
-						surveyCount: 50,
+						description: pack.description,
+						surveyCount: pack.surveyCount,
 					},
 				},
 			})
+			// If the clientSecret is returned, navigate to the confirmation page
 			if (data && data.createPaymentIntent) {
 				navigate("/payment-confirmation", {
 					state: {
@@ -43,6 +80,7 @@ export default function Payment() {
 				setError("Erreur : Pas de client_secret retourné.")
 			}
 		} catch (err: unknown) {
+			// Handle errors during payment creation
 			if (err && typeof err === "object" && "message" in err) {
 				setError(
 					(err as { message?: string }).message ||
@@ -58,6 +96,7 @@ export default function Payment() {
 
 	return (
 		<>
+			{/* SEO and meta tags for the payment page */}
 			<Helmet>
 				<title>Payment</title>
 				<meta
@@ -81,25 +120,52 @@ export default function Payment() {
 				/>
 			</Helmet>
 
-			<div className="container mx-auto px-4 py-8">
-				<h1 className="mb-8 text-center text-2xl font-bold">
-					Paiement de Pack d'enquêtes
-				</h1>
-				<div className="flex flex-col items-center gap-4">
-					<button
-						className="bg-primary-default rounded px-4 py-2 text-white"
-						onClick={handleCreatePayment}
-						disabled={loading}
-					>
-						{loading
-							? "Création en cours..."
-							: "Paiement de Pack d'enquêtes"}
-					</button>
-					{error && (
-						<div className="mt-4 text-center text-red-600">
-							{error}
-						</div>
-					)}
+			<div className="flex min-h-[80vh] items-center justify-center bg-gray-50 px-4 py-8">
+				<div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
+					<h1 className="text-black-default mb-4 text-center text-3xl font-bold">
+						Paiement de Pack d'enquêtes
+					</h1>
+					<div className="mb-6 flex flex-col gap-4">
+						{PACKS.map((pack, idx) => (
+							<button
+								key={pack.label}
+								type="button"
+								className={`w-full rounded-lg border-2 px-4 py-3 text-left transition-all duration-150 ${
+									selectedPack === idx
+										? "border-primary-700 bg-primary-50 text-primary-700 font-bold shadow"
+										: "text-black-default hover:border-primary-700 border-gray-200 bg-white"
+								}`}
+								onClick={() => setSelectedPack(idx)}
+							>
+								<div className="flex items-center justify-between">
+									<span>{pack.label}</span>
+									<span className="text-lg font-bold">
+										{pack.price}
+									</span>
+								</div>
+							</button>
+						))}
+					</div>
+					<div className="flex flex-col items-center gap-4">
+						<Button
+							className="bg-primary-700 mt-4 w-full py-3 text-lg"
+							onClick={handleCreatePayment}
+							disabled={loading}
+							ariaLabel={`Payer le ${PACKS[selectedPack].label}`}
+						>
+							{loading
+								? "Création en cours..."
+								: `Payer ${PACKS[selectedPack].price}`}
+						</Button>
+						{error && (
+							<div className="text-destructive-medium mt-4 text-center">
+								{error}
+							</div>
+						)}
+					</div>
+					<div className="text-black-400 mt-6 text-center text-sm">
+						Paiement 100% sécurisé via Stripe
+					</div>
 				</div>
 			</div>
 		</>
