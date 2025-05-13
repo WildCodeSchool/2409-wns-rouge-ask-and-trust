@@ -1,10 +1,10 @@
 import { LinksType } from "@/types/types"
-import logoHeader from "../../../../public/logos/logo-header.svg"
+import logoHeader from "/logos/logo-header.svg"
 import { Link } from "react-router-dom"
 import { Menu } from "lucide-react"
 import { useEffect, useState } from "react"
 import HeaderMobileMenu from "./HeaderMobileMenu"
-import NavAndAuthButtons from "./NavAndButtons"
+import NavAndAuthButtons from "./NavAndAuthButtons"
 import { Button } from "@/components/ui/Button"
 
 const HEADER_LINKS: readonly LinksType[] = [
