@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import logoFooter from "../../../../public/logos/logo-footer.svg"
+import logoFooter from "/logos/logo-footer.svg"
 import { Button } from "@/components/ui/Button"
 import SearchForm from "./SearchForm"
 import clsx from "clsx"
