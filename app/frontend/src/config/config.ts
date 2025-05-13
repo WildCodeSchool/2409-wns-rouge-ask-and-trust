@@ -1,1 +1,1 @@
-export const VITE_GRAPHQL_ENDPOINT = "http://localhost:8810/api/v1"
+export const VITE_GRAPHQL_ENDPOINT = "http://localhost:8080/api/v1"
