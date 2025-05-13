@@ -34,7 +34,7 @@ const stripePromise = loadStripe(STRIPE_PK)
  *
  * @returns {React.ReactElement}
  */
-const PaymentConfirmation = (): React.ReactElement => {
+export default function PaymentConfirmation(): React.ReactElement {
 	// Retrieve the clientSecret passed via navigation
 	const location = useLocation()
 	const state = location.state as PaymentLocationState | null
@@ -96,5 +96,3 @@ const PaymentConfirmation = (): React.ReactElement => {
 		</>
 	)
 }
-
-export default PaymentConfirmation

@@ -1,6 +1,6 @@
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js"
 import { useState } from "react"
-import { Button } from "../ui/Button"
+import { Button } from "@/components/ui/Button"
 
 /**
  * StripePaymentForm Component
@@ -13,8 +13,8 @@ import { Button } from "../ui/Button"
 export default function StripePaymentForm() {
 	const stripe = useStripe()
 	const elements = useElements()
-	const [isProcessing, setIsProcessing] = useState(false)
-	const [message, setMessage] = useState("")
+	const [isProcessing, setIsProcessing] = useState<boolean>(false)
+	const [message, setMessage] = useState<string>("")
 
 	/**
 	 * Handles the form submission for Stripe payment.

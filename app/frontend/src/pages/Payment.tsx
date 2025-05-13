@@ -12,8 +12,9 @@ import { CREATE_PAYMENT_INTENT } from "@/graphql/payment"
 import { Helmet } from "react-helmet"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/Button"
+import { Package } from "@/types/types"
 
-const PACKS = [
+const PACKS: Package[] = [
 	{
 		label: "Pack 50 enquêtes",
 		amount: 2999,
@@ -40,8 +41,8 @@ const PACKS = [
 export default function Payment() {
 	// State for error display and loading status
 	const [error, setError] = useState<string>("")
-	const [loading, setLoading] = useState(false)
-	const [selectedPack, setSelectedPack] = useState(0)
+	const [loading, setLoading] = useState<boolean>(false)
+	const [selectedPack, setSelectedPack] = useState<number>(0)
 	// Apollo hook for the Stripe PaymentIntent creation mutation
 	const [createPaymentIntent] = useMutation(CREATE_PAYMENT_INTENT)
 	const navigate = useNavigate()

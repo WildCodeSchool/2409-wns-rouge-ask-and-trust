@@ -68,9 +68,9 @@ export interface SurveyCardType {
 }
 
 export type Package = {
-	id: string
-	name: string
-	price: number
+	label: string
+	amount: number
+	price: string
 	surveyCount: number
-	features: string[]
+	description: string
 }
