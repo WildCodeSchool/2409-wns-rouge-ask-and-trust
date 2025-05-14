@@ -8,7 +8,6 @@ import {
 import { ObjectType, Field, ID } from "type-graphql"
 import { Survey } from "./survey/survey"
 import { Roles, UserRole } from "../../types/types"
-import { SurveyQuestionAnswered } from "./survey/surveyAnswers"
 
 /**
  * Represents a user entity in the database.
@@ -62,9 +61,6 @@ export class User extends BaseEntity {
 
 	@OneToMany(() => Survey, survey => survey.user)
 	surveys!: Survey[]
-
-	@OneToMany(() => SurveyQuestionAnswered, answer => answer.user)
-	answers!: SurveyQuestionAnswered[]
 
 	@Field()
 	@Column({ default: () => "CURRENT_TIMESTAMP" })

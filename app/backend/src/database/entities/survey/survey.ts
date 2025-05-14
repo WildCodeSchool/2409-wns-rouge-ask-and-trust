@@ -19,7 +19,6 @@ import { ObjectType, Field, ID } from "type-graphql"
 import { User } from "../user"
 import { Category } from "./category"
 import { Questions } from "./questions"
-import { SurveyAnswers } from "./surveyAnswers"
 
 /**
  * Survey Entity
@@ -88,7 +87,7 @@ export class Survey extends BaseEntity {
 	 * Provides additional information or context about the survey.
 	 */
 	@Field()
-	@Column({ type: "text", length: 5000 })
+	@Column({ length: 5000, nullable: true })
 	description!: string
 
 	/**
@@ -139,15 +138,6 @@ export class Survey extends BaseEntity {
 	@OneToMany(() => Questions, question => question.survey)
 	@Field(() => Questions, { nullable: true })
 	questions!: Questions[]
-
-	/**
-	 * Answers submitted to the survey
-	 * @description
-	 * One-to-many relationship with the SurveyAnswers entity.
-	 */
-	@OneToMany(() => SurveyAnswers, answer => answer.user)
-	@Field(() => SurveyAnswers, { nullable: true })
-	answers!: SurveyAnswers[]
 
 	/**
 	 * Timestamp when the survey was created

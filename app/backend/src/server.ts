@@ -10,11 +10,10 @@ import { PaymentResolver } from "./graphql/resolvers/payment-resolver"
 import { customAuthChecker } from "./middlewares/auth-checker"
 import { AppError } from "./middlewares/error-handler"
 import { createAdmin } from "./scripts/create-admin"
-import { SurveysResolver } from "./graphql/resolvers/survey-resolver"
-import { SurveyAnswersResolver } from "./graphql/resolvers/surveyAnswers-resolver"
-import { SurveyCategoryResolver } from "./graphql/resolvers/surveyCategory-resolver"
-import { SurveyQuestionsResolver } from "./graphql/resolvers/surveyQuestions-resolver"
-import { SurveyQuestionsAnsweredResolver } from "./graphql/resolvers/surveyQuestionsAnswered-resolver"
+import { SurveysResolver } from "./graphql/resolvers/survey/survey-resolver"
+import { AnswersResolver } from "./graphql/resolvers/survey/answers-resolver"
+import { CategoryResolver } from "./graphql/resolvers/survey/category-resolver"
+import { QuestionsResolver } from "./graphql/resolvers/survey/questions-resolver"
 
 dotenv.config() // Load environment variables from .env file
 
@@ -43,10 +42,9 @@ if (!process.env.APP_PORT) {
 				AuthResolver,
 				PaymentResolver,
 				SurveysResolver,
-				SurveyAnswersResolver,
-				SurveyCategoryResolver,
-				SurveyQuestionsResolver,
-				SurveyQuestionsAnsweredResolver,
+				AnswersResolver,
+				CategoryResolver,
+				QuestionsResolver,
 				/* your resolvers here */
 			],
 			validate: true, // Activate validation for input fields
