@@ -15,31 +15,31 @@ import {
 	Query,
 	Resolver,
 } from "type-graphql"
-import { SurveyCategory } from "../../database/entities/survey/surveyCategory"
-import { CreateCategorySurveyInput } from "../inputs/create/create-surveyCategory-input"
-import { Context } from "../../types/types"
-import { UpdateCategorySurveyInput } from "../inputs/update/update-category-survey-input"
-import { AppError } from "../../middlewares/error-handler"
+import { Category } from "../../../database/entities/survey/category"
+import { CreateCategoryInput } from "../../inputs/create/survey/create-category-input"
+import { Context } from "../../../types/types"
+import { UpdateCategoryInput } from "../../inputs/update/survey/update-category-input"
+import { AppError } from "../../../middlewares/error-handler"
 
 /**
- * SurveyCategoryResolver
+ * CategoryResolver
  * @description
  * Handles all survey category-related GraphQL mutations and queries.
  */
 
-@Resolver(SurveyCategory)
-export class SurveyCategoryResolver {
+@Resolver(Category)
+export class CategoryResolver {
 	/**
 	 * Query to get all survey categories.
 	 *
-	 * @returns A Promise that resolves to an array of SurveyCategory objects.
+	 * @returns A Promise that resolves to an array of Category objects.
 	 *
 	 * This query retrieves all survey categories, including their associated surveys.
 	 */
-	@Query(() => [SurveyCategory])
-	async categories(): Promise<SurveyCategory[]> {
+	@Query(() => [Category])
+	async categories(): Promise<Category[]> {
 		try {
-			const categories = await SurveyCategory.find({
+			const categories = await Category.find({
 				relations: {
 					surveys: true,
 					createdBy: true,
@@ -65,14 +65,14 @@ export class SurveyCategoryResolver {
 	 *
 	 * @param id - The ID of the category to fetch.
 	 *
-	 * @returns A Promise that resolves to a SurveyCategory object if found, or null if no category is found.
+	 * @returns A Promise that resolves to a Category object if found, or null if no category is found.
 	 *
 	 * This query retrieves a specific survey category by its ID, along with its associated surveys.
 	 */
-	@Query(() => SurveyCategory, { nullable: true })
-	async caterogy(@Arg("id") id: number): Promise<SurveyCategory | null> {
+	@Query(() => Category, { nullable: true })
+	async caterogy(@Arg("id") id: number): Promise<Category | null> {
 		try {
-			const category = await SurveyCategory.findOne({
+			const category = await Category.findOne({
 				where: { id },
 				relations: {
 					surveys: true,
@@ -100,19 +100,19 @@ export class SurveyCategoryResolver {
 	 * @param name - The input data containing the category name.
 	 * @param context - The context object that contains the currently authenticated user.
 	 *
-	 * @returns A Promise that resolves to the newly created SurveyCategory object.
+	 * @returns A Promise that resolves to the newly created Category object.
 	 *
 	 * This mutation allows an admin user to create a new survey category. The category will be associated with the admin user.
 	 */
 	@Authorized("admin")
-	@Mutation(() => SurveyCategory)
+	@Mutation(() => Category)
 	async createCategory(
-		@Arg("data", () => CreateCategorySurveyInput)
-		data: CreateCategorySurveyInput,
+		@Arg("data", () => CreateCategoryInput)
+		data: CreateCategoryInput,
 		@Ctx() context: Context
-	): Promise<SurveyCategory> {
+	): Promise<Category> {
 		try {
-			const newCategory = new SurveyCategory()
+			const newCategory = new Category()
 			const user = context.user
 
 			if (!user) {
@@ -148,19 +148,19 @@ export class SurveyCategoryResolver {
 	 * @param name - The input data containing the updated category name.
 	 * @param context - The context object that contains the currently authenticated user.
 	 *
-	 * @returns A Promise that resolves to the updated SurveyCategory object, or null if the category could not be found or updated.
+	 * @returns A Promise that resolves to the updated Category object, or null if the category could not be found or updated.
 	 *
 	 * This mutation allows an admin user to update an existing survey category. Only the admin can update categories.
 	 * If the user is not an admin, the mutation will not be executed.
 	 */
 	@Authorized("admin")
-	@Mutation(() => SurveyCategory, { nullable: true })
+	@Mutation(() => Category, { nullable: true })
 	async updateCategory(
 		@Arg("id", () => ID) id: number,
-		@Arg("data", () => UpdateCategorySurveyInput)
-		data: UpdateCategorySurveyInput,
+		@Arg("data", () => UpdateCategoryInput)
+		data: UpdateCategoryInput,
 		@Ctx() context: Context
-	): Promise<SurveyCategory | null> {
+	): Promise<Category | null> {
 		try {
 			const user = context.user
 
@@ -177,7 +177,7 @@ export class SurveyCategoryResolver {
 				)
 			}
 
-			const category = await SurveyCategory.findOneBy({
+			const category = await Category.findOneBy({
 				id,
 				createdBy: { id: user.id },
 			})

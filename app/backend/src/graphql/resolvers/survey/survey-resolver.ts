@@ -15,11 +15,11 @@ import {
 	Query,
 	Resolver,
 } from "type-graphql"
-import { Survey } from "../../database/entities/survey/survey"
-import { CreateSurveyInput } from "../inputs/create/create-survey-input"
-import { Context } from "../../types/types"
-import { UpdateSurveyInput } from "../inputs/update/update-survey-input"
-import { AppError } from "../../middlewares/error-handler"
+import { Survey } from "../../../database/entities/survey/survey"
+import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-input"
+import { Context } from "../../../types/types"
+import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
+import { AppError } from "../../../middlewares/error-handler"
 
 /**
  * Survey Resolver

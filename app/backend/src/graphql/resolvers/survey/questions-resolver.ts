@@ -15,30 +15,30 @@ import {
 	Query,
 	Resolver,
 } from "type-graphql"
-import { SurveyQuestions } from "../../database/entities/survey/surveyQuestions"
-import { CreateSurveyQuestionsInput } from "../inputs/create/create-surveyQuestions-input"
-import { Context } from "../../types/types"
-import { AppError } from "../../middlewares/error-handler"
+import { Questions } from "../../../database/entities/survey/questions"
+import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
+import { Context } from "../../../types/types"
+import { AppError } from "../../../middlewares/error-handler"
 
 /**
- * SurveyQuestionsResolver
+ * QuestionsResolver
  * @description
  * Handles all GraphQL operations related to survey questions.
  */
 
-@Resolver(SurveyQuestions)
-export class SurveyQuestionsResolver {
+@Resolver(Questions)
+export class QuestionsResolver {
 	/**
 	 * Query to get all survey questions.
 	 *
-	 * @returns A Promise that resolves to an array of SurveyQuestions objects.
+	 * @returns A Promise that resolves to an array of Questions objects.
 	 *
 	 * This query retrieves all questions, including their associated survey.
 	 */
-	@Query(() => [SurveyQuestions])
-	async surveyQuestions(): Promise<SurveyQuestions[]> {
+	@Query(() => [Questions])
+	async questions(): Promise<Questions[]> {
 		try {
-			const questions = await SurveyQuestions.find({
+			const questions = await Questions.find({
 				relations: {
 					survey: true,
 				},
@@ -63,16 +63,14 @@ export class SurveyQuestionsResolver {
 	 *
 	 * @param id - The ID of the question to retrieve.
 	 *
-	 * @returns A Promise that resolves to the corresponding SurveyQuestions object, or null if not found.
+	 * @returns A Promise that resolves to the corresponding Questions object, or null if not found.
 	 *
 	 * This query fetches a specific question based on its ID, including its related survey.
 	 */
-	@Query(() => SurveyQuestions, { nullable: true })
-	async surveyQuestion(
-		@Arg("id", () => ID) id: number
-	): Promise<SurveyQuestions | null> {
+	@Query(() => Questions, { nullable: true })
+	async question(@Arg("id", () => ID) id: number): Promise<Questions | null> {
 		try {
-			const question = await SurveyQuestions.findOne({
+			const question = await Questions.findOne({
 				where: { id },
 				relations: {
 					survey: true,
@@ -99,20 +97,20 @@ export class SurveyQuestionsResolver {
 	 * @param data - The input data for creating the question (title, type, answers, etc.).
 	 * @param context - The GraphQL context containing the authenticated user.
 	 *
-	 * @returns A Promise that resolves to the newly created SurveyQuestions object.
+	 * @returns A Promise that resolves to the newly created Questions object.
 	 *
 	 * This mutation allows an authenticated user ("user" or "admin" role) to create a new question.
 	 * The created question is optionally linked to a survey and associated with the authenticated user.
 	 */
 	@Authorized("user", "admin")
-	@Mutation(() => SurveyQuestions)
-	async createSurveyQuestion(
-		@Arg("content", () => CreateSurveyQuestionsInput)
-		content: CreateSurveyQuestionsInput,
+	@Mutation(() => Questions)
+	async createQuestion(
+		@Arg("content", () => CreateQuestionsInput)
+		content: CreateQuestionsInput,
 		@Ctx() context: Context
-	): Promise<SurveyQuestions> {
+	): Promise<Questions> {
 		try {
-			const newQuestion = new SurveyQuestions()
+			const newQuestion = new Questions()
 			const user = context.user
 
 			if (!user) {
@@ -125,7 +123,7 @@ export class SurveyQuestionsResolver {
 			return newQuestion
 		} catch (error) {
 			throw new AppError(
-				"Failed to create survey",
+				"Failed to create question",
 				500,
 				"InternalServerError"
 			)

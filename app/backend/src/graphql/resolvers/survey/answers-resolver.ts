@@ -15,32 +15,32 @@ import {
 	Query,
 	Resolver,
 } from "type-graphql"
-import { SurveyAnswers } from "../../database/entities/survey/surveyAnswers"
-import { CreateSurveyAnswersInput } from "../inputs/create/create-surveyAnswers-input"
-import { Context } from "../../types/types"
-import { AppError } from "../../middlewares/error-handler"
+import { Answers } from "../../../database/entities/survey/answers"
+import { CreateAnswersInput } from "../../inputs/create/survey/create-answers-input"
+import { Context } from "../../../types/types"
+import { AppError } from "../../../middlewares/error-handler"
 
 /**
- * SurveyAnswersResolver
+ * AnswersResolver
  * @description
  * Handles all GraphQL queries and mutations related to survey answers,
  * as well as tracking which users answered which surveys.
  */
 
-@Resolver(SurveyAnswers)
-export class SurveyAnswersResolver {
+@Resolver(Answers)
+export class AnswersResolver {
 	/**
 	 * Query to retrieve all survey answers.
 	 *
-	 * @returns A Promise resolving to an array of `SurveyAnswers` objects.
+	 * @returns A Promise resolving to an array of `Answers` objects.
 	 *
 	 * This query fetches all answers submitted for survey questions, including
 	 * their relations to the corresponding question and the record of who answered.
 	 */
-	@Query(() => [SurveyAnswers])
-	async surveyAnswers(): Promise<SurveyAnswers[]> {
+	@Query(() => [Answers])
+	async Answers(): Promise<Answers[]> {
 		try {
-			const answers = await SurveyAnswers.find({
+			const answers = await Answers.find({
 				relations: {
 					question: true,
 					questionAnswered: true,
@@ -66,16 +66,14 @@ export class SurveyAnswersResolver {
 	 *
 	 * @param id - The ID of the answer to retrieve.
 	 *
-	 * @returns A Promise resolving to a `SurveyAnswers` object, or `null` if not found.
+	 * @returns A Promise resolving to a `Answers` object, or `null` if not found.
 	 *
 	 * This query returns a single survey answer with its related question and answered record.
 	 */
-	@Query(() => SurveyAnswers, { nullable: true })
-	async surveyAnswer(
-		@Arg("id", () => ID) id: number
-	): Promise<SurveyAnswers | null> {
+	@Query(() => Answers, { nullable: true })
+	async Answer(@Arg("id", () => ID) id: number): Promise<Answers | null> {
 		try {
-			const answer = await SurveyAnswers.findOne({
+			const answer = await Answers.findOne({
 				where: { id },
 				relations: {
 					question: true,
@@ -103,20 +101,20 @@ export class SurveyAnswersResolver {
 	 * @param content - The input data for the new answer, including the selected value and the question ID.
 	 * @param context - The context containing the currently authenticated user.
 	 *
-	 * @returns A Promise resolving to the newly created `SurveyAnswers` object.
+	 * @returns A Promise resolving to the newly created `Answers` object.
 	 *
 	 * This mutation allows a user (or admin) to submit an answer to a survey question.
 	 * The answer is automatically linked to the authenticated user.
 	 */
 	@Authorized("user", "admin")
-	@Mutation(() => SurveyAnswers)
-	async createSurveyAnswer(
-		@Arg("content", () => CreateSurveyAnswersInput)
-		content: CreateSurveyAnswersInput,
+	@Mutation(() => Answers)
+	async createAnswer(
+		@Arg("content", () => CreateAnswersInput)
+		content: CreateAnswersInput,
 		@Ctx() context: Context
-	): Promise<SurveyAnswers> {
+	): Promise<Answers> {
 		try {
-			const newAnswer = new SurveyAnswers()
+			const newAnswer = new Answers()
 			const user = context.user
 
 			if (!user) {
