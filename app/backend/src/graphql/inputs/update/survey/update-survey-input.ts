@@ -1,6 +1,6 @@
 import { InputType, Field } from "type-graphql"
 import { Length } from "class-validator"
-import { CreateCategorySurveyInput } from "../create/create-surveyCategory-input"
+import { CreateCategoryInput } from "../../create/survey/create-category-input"
 
 /**
  * Represents input data for updating an existing survey.
@@ -10,7 +10,7 @@ import { CreateCategorySurveyInput } from "../create/create-surveyCategory-input
  * - `title`: The title of the survey (must be between 10 and 255 characters).
  * - `description`: The description of the survey (must be between 100 and 5000 characters).
  * - `public`: Indicates whether the survey is public or private (optional).
- * - `category`: The category associated with the survey (optional, follows structure of `CreateCategorySurveyInput`).
+ * - `category`: The category associated with the survey (optional, follows structure of `CreateCategoryInput`).
  *
  * The class uses the following decorators:
  * - `@Field()`: Exposes the property in the GraphQL schema (via type-graphql).
@@ -31,6 +31,6 @@ export class UpdateSurveyInput {
 	@Field({ nullable: true })
 	public!: boolean
 
-	@Field(() => CreateCategorySurveyInput, { nullable: true })
-	category!: CreateCategorySurveyInput
+	@Field(() => CreateCategoryInput, { nullable: true })
+	category!: CreateCategoryInput
 }
