@@ -7,14 +7,14 @@ import { InputType, Field } from "type-graphql"
  *
  * @description
  * - `content`: the answer content for the survey question.
- * - `question`: the question to which this answer is associated (relation to `SurveyQuestions`).
+ * - `question`: the question to which this answer is associated (relation to `Questions`).
  * - `createdAt`: timestamp of when the answer was created (automatically set).
  *
  * The class uses the following decorators:
  * - `@Field()`: Exposes the property in the GraphQL schema (via type-graphql).
  */
 @InputType()
-export class CreateSurveyAnswersInput {
+export class CreateAnswersInput {
 	@Field()
 	@Length(1, 1000, {
 		message: "Content must be between 1 and 1000 characters",

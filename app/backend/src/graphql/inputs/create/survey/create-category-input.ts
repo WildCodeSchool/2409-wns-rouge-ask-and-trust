@@ -13,7 +13,7 @@ import { Field, InputType } from "type-graphql"
  * - `@Length()`: Ensures the string length is within the specified bounds.
  */
 @InputType()
-export class CreateCategorySurveyInput {
+export class CreateCategoryInput {
 	@Field()
 	@Length(1, 100, {
 		message: "Category name must be between 1 and 100 characters.",

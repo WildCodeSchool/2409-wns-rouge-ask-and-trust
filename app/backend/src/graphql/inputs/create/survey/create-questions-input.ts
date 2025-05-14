@@ -7,7 +7,7 @@ import { InputType, Field } from "type-graphql"
  *
  * @description
  * - `content`: the content of the survey question, must be a string.
- * - `question`: a reference to the existing survey question, represented by the `SurveyQuestions` entity.
+ * - `question`: a reference to the existing survey question, represented by the `Questions` entity.
  * - `answers`: an array of possible answers for the question, must contain at least one answer.
  * - `createdAt`: timestamp when the question is created, automatically set to the current timestamp.
  *
@@ -15,7 +15,7 @@ import { InputType, Field } from "type-graphql"
  * - `@Field()`: Exposes the property in the GraphQL schema (via type-graphql).
  */
 @InputType()
-export class CreateSurveyQuestionsInput {
+export class CreateQuestionsInput {
 	@Field()
 	@Length(1, 1000, {
 		message: "Content must be between 1 and 1000 characters",
