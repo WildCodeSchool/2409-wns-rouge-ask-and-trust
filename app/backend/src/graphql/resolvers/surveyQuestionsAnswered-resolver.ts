@@ -8,6 +8,7 @@
 
 import { Arg, ID, Query, Resolver } from "type-graphql"
 import { SurveyQuestionAnswered } from "../../database/entities/survey/surveyQuestionAnswered"
+import { AppError } from "../../middlewares/error-handler"
 
 /**
  * SurveyQuestionsAnsweredResolver
@@ -27,14 +28,30 @@ export class SurveyQuestionsAnsweredResolver {
 	 */
 	@Query(() => [SurveyQuestionAnswered])
 	async surveyQuestionsAnswered(): Promise<SurveyQuestionAnswered[]> {
-		const questionsAnswered = await SurveyQuestionAnswered.find({
-			relations: {
-				user: true,
-				survey: true,
-			},
-		})
+		try {
+			const questionsAnswered = await SurveyQuestionAnswered.find({
+				relations: {
+					user: true,
+					survey: true,
+				},
+			})
 
-		return questionsAnswered
+			if (!questionsAnswered) {
+				throw new AppError(
+					"Questions answered not found",
+					404,
+					"NotFoundError"
+				)
+			}
+
+			return questionsAnswered
+		} catch (error) {
+			throw new AppError(
+				"Failed to fetch questions answered",
+				500,
+				"InternalServerError"
+			)
+		}
 	}
 
 	/**
@@ -50,18 +67,30 @@ export class SurveyQuestionsAnsweredResolver {
 	async surveyQuestionAnswered(
 		@Arg("id", () => ID) id: number
 	): Promise<SurveyQuestionAnswered | null> {
-		const questionAnswered = await SurveyQuestionAnswered.findOne({
-			where: { id },
-			relations: {
-				user: true,
-				survey: true,
-			},
-		})
+		try {
+			const questionAnswered = await SurveyQuestionAnswered.findOne({
+				where: { id },
+				relations: {
+					user: true,
+					survey: true,
+				},
+			})
 
-		if (questionAnswered) {
+			if (!questionAnswered) {
+				throw new AppError(
+					"Question answered not found",
+					404,
+					"NotFoundError"
+				)
+			}
+
 			return questionAnswered
-		} else {
-			return null
+		} catch (error) {
+			throw new AppError(
+				"Failed to fetch question answered",
+				500,
+				"InternalServerError"
+			)
 		}
 	}
 }

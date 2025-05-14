@@ -19,6 +19,7 @@ import { SurveyCategory } from "../../database/entities/survey/surveyCategory"
 import { CreateCategorySurveyInput } from "../inputs/create/create-surveyCategory-input"
 import { Context } from "../../types/types"
 import { UpdateCategorySurveyInput } from "../inputs/update/update-category-survey-input"
+import { AppError } from "../../middlewares/error-handler"
 
 /**
  * SurveyCategoryResolver
@@ -37,14 +38,26 @@ export class SurveyCategoryResolver {
 	 */
 	@Query(() => [SurveyCategory])
 	async categories(): Promise<SurveyCategory[]> {
-		const categories = await SurveyCategory.find({
-			relations: {
-				surveys: true,
-				createdBy: true,
-			},
-		})
+		try {
+			const categories = await SurveyCategory.find({
+				relations: {
+					surveys: true,
+					createdBy: true,
+				},
+			})
 
-		return categories
+			if (!categories) {
+				throw new AppError("Categories not found", 404, "NotFoundError")
+			}
+
+			return categories
+		} catch (error) {
+			throw new AppError(
+				"Failed to fetch categories",
+				500,
+				"InternalServerError"
+			)
+		}
 	}
 
 	/**
@@ -58,18 +71,26 @@ export class SurveyCategoryResolver {
 	 */
 	@Query(() => SurveyCategory, { nullable: true })
 	async caterogy(@Arg("id") id: number): Promise<SurveyCategory | null> {
-		const category = await SurveyCategory.findOne({
-			where: { id },
-			relations: {
-				surveys: true,
-				createdBy: true,
-			},
-		})
+		try {
+			const category = await SurveyCategory.findOne({
+				where: { id },
+				relations: {
+					surveys: true,
+					createdBy: true,
+				},
+			})
 
-		if (category) {
+			if (!category) {
+				throw new AppError("Category not found", 404, "NotFoundError")
+			}
+
 			return category
-		} else {
-			return null
+		} catch (error) {
+			throw new AppError(
+				"Failed to fetch category",
+				500,
+				"InternalServerError"
+			)
 		}
 	}
 
@@ -90,12 +111,33 @@ export class SurveyCategoryResolver {
 		data: CreateCategorySurveyInput,
 		@Ctx() context: Context
 	): Promise<SurveyCategory> {
-		const newCategory = new SurveyCategory()
-		const user = context.user
-		Object.assign(newCategory, data, { createdBy: user })
+		try {
+			const newCategory = new SurveyCategory()
+			const user = context.user
 
-		await newCategory.save()
-		return newCategory
+			if (!user)
+				throw new AppError("User not found", 404, "NotFoundError")
+
+			// Only admins can create categories
+			if (user.role !== "admin") {
+				throw new AppError(
+					"You are not allowed to create category",
+					401,
+					"UnauthorizedError"
+				)
+			}
+
+			Object.assign(newCategory, data, { createdBy: user })
+
+			await newCategory.save()
+			return newCategory
+		} catch (error) {
+			throw new AppError(
+				"Failed to create category",
+				500,
+				"InternalServerError"
+			)
+		}
 	}
 
 	/**
@@ -118,28 +160,38 @@ export class SurveyCategoryResolver {
 		data: UpdateCategorySurveyInput,
 		@Ctx() context: Context
 	): Promise<SurveyCategory | null> {
-		const user = context.user
+		try {
+			const user = context.user
 
-		if (!user) {
-			return null
-		}
+			if (!user)
+				throw new AppError("User not found", 404, "NotFoundError")
 
-		// Only admins can update categories
-		if (user.role !== "admin") {
-			return null
-		}
+			// Only admins can update categories
+			if (user.role !== "admin") {
+				throw new AppError(
+					"You are not allowed to modify category",
+					401,
+					"UnauthorizedError"
+				)
+			}
 
-		const category = await SurveyCategory.findOneBy({
-			id,
-			createdBy: { id: user.id },
-		})
+			const category = await SurveyCategory.findOneBy({
+				id,
+				createdBy: { id: user.id },
+			})
 
-		if (category !== null) {
-			Object.assign(category, data)
-			await category.save()
+			if (category !== null) {
+				Object.assign(category, data)
+				await category.save()
+			}
+
 			return category
+		} catch (error) {
+			throw new AppError(
+				"Failed to update survey",
+				500,
+				"InternalServerError"
+			)
 		}
-
-		return null
 	}
 }

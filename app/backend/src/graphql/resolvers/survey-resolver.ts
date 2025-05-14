@@ -19,6 +19,7 @@ import { Survey } from "../../database/entities/survey/survey"
 import { CreateSurveyInput } from "../inputs/create/create-survey-input"
 import { Context } from "../../types/types"
 import { UpdateSurveyInput } from "../inputs/update/update-survey-input"
+import { AppError } from "../../middlewares/error-handler"
 
 /**
  * Survey Resolver
@@ -37,14 +38,26 @@ export class SurveysResolver {
 	 */
 	@Query(() => [Survey])
 	async surveys(): Promise<Survey[]> {
-		const surveys = await Survey.find({
-			relations: {
-				user: true,
-				category: true,
-			},
-		})
+		try {
+			const surveys = await Survey.find({
+				relations: {
+					user: true,
+					category: true,
+				},
+			})
 
-		return surveys
+			if (!surveys) {
+				throw new AppError("Surveys not found", 404, "NotFoundError")
+			}
+
+			return surveys
+		} catch (error) {
+			throw new AppError(
+				"Failed to fetch surveys",
+				500,
+				"InternalServerError"
+			)
+		}
 	}
 
 	/**
@@ -58,18 +71,26 @@ export class SurveysResolver {
 	 */
 	@Query(() => Survey, { nullable: true })
 	async survey(@Arg("id", () => ID) id: number): Promise<Survey | null> {
-		const survey = await Survey.findOne({
-			where: { id },
-			relations: {
-				user: true,
-				category: true,
-			},
-		})
+		try {
+			const survey = await Survey.findOne({
+				where: { id },
+				relations: {
+					user: true,
+					category: true,
+				},
+			})
 
-		if (survey) {
+			if (!survey) {
+				throw new AppError("Survey not found", 404, "NotFoundError")
+			}
+
 			return survey
-		} else {
-			return null
+		} catch (error) {
+			throw new AppError(
+				"Failed to fetch survey",
+				500,
+				"InternalServerError"
+			)
 		}
 	}
 
@@ -90,12 +111,24 @@ export class SurveysResolver {
 		@Arg("data", () => CreateSurveyInput) data: CreateSurveyInput,
 		@Ctx() context: Context
 	): Promise<Survey> {
-		const newSurvey = new Survey()
-		const user = context.user
-		Object.assign(newSurvey, data, { user: user })
+		try {
+			const user = context.user
 
-		await newSurvey.save()
-		return newSurvey
+			if (!user)
+				throw new AppError("User not found", 404, "NotFoundError")
+
+			const newSurvey = new Survey()
+			Object.assign(newSurvey, data, { user })
+
+			await newSurvey.save()
+			return newSurvey
+		} catch (error) {
+			throw new AppError(
+				"Failed to create survey",
+				500,
+				"InternalServerError"
+			)
+		}
 	}
 
 	/**
@@ -117,30 +150,47 @@ export class SurveysResolver {
 		@Arg("data", () => UpdateSurveyInput) data: UpdateSurveyInput,
 		@Ctx() context: Context
 	): Promise<Survey | null> {
-		const user = context.user
+		try {
+			const user = context.user
+			if (!user)
+				throw new AppError("User not found", 404, "NotFoundError")
 
-		if (!user) {
-			return null
-		}
+			const whereCreatedBy =
+				user.role === "admin" ? undefined : { id: user.id }
 
-		// If the user is not an admin, they can only update their own surveys
-		const whereCreatedBy =
-			user.role === "admin" ? undefined : { id: user.id }
+			const survey = await Survey.findOne({
+				where: { id, user: whereCreatedBy },
+				relations: {
+					user: true,
+					category: true,
+				},
+			})
 
-		const survey = await Survey.findOne({
-			where: { id, user: whereCreatedBy },
-			relations: {
-				user: true,
-				category: true,
-			},
-		})
+			if (!survey) {
+				if (user.role === "admin") {
+					throw new AppError(
+						"Survey not found",
+						404,
+						"SurveyNotFoundError"
+					)
+				} else {
+					throw new AppError(
+						"You are not allowed to modify this survey",
+						401,
+						"UnauthorizedError"
+					)
+				}
+			}
 
-		if (survey) {
 			Object.assign(survey, data)
 			await survey.save()
 			return survey
+		} catch (error) {
+			throw new AppError(
+				"Failed to update survey",
+				500,
+				"InternalServerError"
+			)
 		}
-
-		return null
 	}
 }

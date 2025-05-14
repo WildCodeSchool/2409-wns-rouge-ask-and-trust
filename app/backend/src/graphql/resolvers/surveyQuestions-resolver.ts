@@ -18,6 +18,7 @@ import {
 import { SurveyQuestions } from "../../database/entities/survey/surveyQuestions"
 import { CreateSurveyQuestionsInput } from "../inputs/create/create-surveyQuestions-input"
 import { Context } from "../../types/types"
+import { AppError } from "../../middlewares/error-handler"
 
 /**
  * SurveyQuestionsResolver
@@ -36,13 +37,25 @@ export class SurveyQuestionsResolver {
 	 */
 	@Query(() => [SurveyQuestions])
 	async surveyQuestions(): Promise<SurveyQuestions[]> {
-		const questions = await SurveyQuestions.find({
-			relations: {
-				survey: true,
-			},
-		})
+		try {
+			const questions = await SurveyQuestions.find({
+				relations: {
+					survey: true,
+				},
+			})
 
-		return questions
+			if (!questions) {
+				throw new AppError("Questions not found", 404, "NotFoundError")
+			}
+
+			return questions
+		} catch (error) {
+			throw new AppError(
+				"Failed to fetch questions",
+				500,
+				"InternalServerError"
+			)
+		}
 	}
 
 	/**
@@ -58,17 +71,25 @@ export class SurveyQuestionsResolver {
 	async surveyQuestion(
 		@Arg("id", () => ID) id: number
 	): Promise<SurveyQuestions | null> {
-		const question = await SurveyQuestions.findOne({
-			where: { id },
-			relations: {
-				survey: true,
-			},
-		})
+		try {
+			const question = await SurveyQuestions.findOne({
+				where: { id },
+				relations: {
+					survey: true,
+				},
+			})
 
-		if (question) {
+			if (!question) {
+				throw new AppError("Question not found", 404, "NotFoundError")
+			}
+
 			return question
-		} else {
-			return null
+		} catch (error) {
+			throw new AppError(
+				"Failed to fetch question",
+				500,
+				"InternalServerError"
+			)
 		}
 	}
 
@@ -90,11 +111,23 @@ export class SurveyQuestionsResolver {
 		content: CreateSurveyQuestionsInput,
 		@Ctx() context: Context
 	): Promise<SurveyQuestions> {
-		const newQuestion = new SurveyQuestions()
-		const user = context.user
-		Object.assign(newQuestion, content, { user: user })
+		try {
+			const newQuestion = new SurveyQuestions()
+			const user = context.user
 
-		await newQuestion.save()
-		return newQuestion
+			if (!user)
+				throw new AppError("User not found", 404, "NotFoundError")
+
+			Object.assign(newQuestion, content, { user: user })
+
+			await newQuestion.save()
+			return newQuestion
+		} catch (error) {
+			throw new AppError(
+				"Failed to create survey",
+				500,
+				"InternalServerError"
+			)
+		}
 	}
 }
