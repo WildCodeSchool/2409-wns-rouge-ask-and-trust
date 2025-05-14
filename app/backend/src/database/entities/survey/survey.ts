@@ -88,7 +88,7 @@ export class Survey extends BaseEntity {
 	 * Provides additional information or context about the survey.
 	 */
 	@Field()
-	@Column({ type: "text" })
+	@Column({ type: "text", length: 5000 })
 	description!: string
 
 	/**

@@ -68,7 +68,7 @@ export class SurveyQuestions extends BaseEntity {
 	 * The actual text/content of the question (must be unique).
 	 */
 	@Field()
-	@Column({ length: 255, unique: true })
+	@Column({ length: 1000, unique: true })
 	content!: string
 
 	/**

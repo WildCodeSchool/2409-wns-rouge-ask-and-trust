@@ -68,7 +68,7 @@ export class SurveyAnswers extends BaseEntity {
 	 * The actual response provided by the user to the question.
 	 */
 	@Field()
-	@Column({ type: "text" })
+	@Column({ type: "text", length: 1000 })
 	content!: string
 
 	/**
