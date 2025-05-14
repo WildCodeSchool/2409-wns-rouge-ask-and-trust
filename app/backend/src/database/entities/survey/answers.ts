@@ -12,11 +12,11 @@ import {
 	Entity,
 	JoinColumn,
 	OneToOne,
-	PrimaryGeneratedColumn,
+	PrimaryColumn,
 } from "typeorm"
 import { ObjectType, Field, ID } from "type-graphql"
 import { Questions } from "./questions"
-import { SurveyAnswers } from "./surveyAnswers"
+import { User } from "../user"
 
 /**
  * Answers Entity
@@ -45,7 +45,7 @@ import { SurveyAnswers } from "./surveyAnswers"
  *
  * Decorators used:
  * - `@Entity()`: defines the database table for the entity.
- * - `@PrimaryGeneratedColumn()`: auto-generates the `id`.
+ * - `@PrimaryColumn()`: Part of the composite primary key.
  * - `@Column()`: maps fields to database columns.
  * - `@OneToOne()` + `@JoinColumn()`: links to `Questions` and `SurveyAnswers`.
  * - `@Field()`: exposes fields to the GraphQL schema.
@@ -59,8 +59,29 @@ export class Answers extends BaseEntity {
 	 * Auto-generated primary key.
 	 */
 	@Field(() => ID)
-	@PrimaryGeneratedColumn()
-	id!: number
+	id() {
+		return this.user.id + this.question.id
+	}
+
+	/**
+	 * User ID
+	 * @description
+	 * Part of the composite primary key.
+	 * Identifies the user who submitted this answer.
+	 */
+	@Field(() => ID)
+	@PrimaryColumn()
+	userId!: number
+
+	/**
+	 * Question ID
+	 * @description
+	 * Part of the composite primary key.
+	 * Identifies the question to which the user responded.
+	 */
+	@Field(() => ID)
+	@PrimaryColumn()
+	questionId!: number
 
 	/**
 	 * Text content of the answer
@@ -68,17 +89,17 @@ export class Answers extends BaseEntity {
 	 * The actual response provided by the user to the question.
 	 */
 	@Field()
-	@Column({ type: "text", length: 1000 })
+	@Column({ length: 1000 })
 	content!: string
 
 	/**
-	 * Grouped submission this answer is part of
+	 * User associated with this answer
 	 * @description
-	 * Links to the survey submission that this answer belongs to.
+	 * One-to-one link to the user who answered.
 	 */
-	@OneToOne(() => SurveyAnswers)
+	@OneToOne(() => User)
 	@JoinColumn()
-	questionAnswered!: SurveyAnswers
+	user!: User
 
 	/**
 	 * Question associated with this answer

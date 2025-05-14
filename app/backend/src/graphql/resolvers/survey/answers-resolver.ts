@@ -43,7 +43,7 @@ export class AnswersResolver {
 			const answers = await Answers.find({
 				relations: {
 					question: true,
-					questionAnswered: true,
+					user: true,
 				},
 			})
 
@@ -71,13 +71,16 @@ export class AnswersResolver {
 	 * This query returns a single survey answer with its related question and answered record.
 	 */
 	@Query(() => Answers, { nullable: true })
-	async Answer(@Arg("id", () => ID) id: number): Promise<Answers | null> {
+	async Answer(
+		@Arg("userId", () => ID) userId: number,
+		@Arg("questionId", () => ID) questionId: number
+	): Promise<Answers | null> {
 		try {
 			const answer = await Answers.findOne({
-				where: { id },
+				where: { userId, questionId },
 				relations: {
 					question: true,
-					questionAnswered: true,
+					user: true,
 				},
 			})
 
