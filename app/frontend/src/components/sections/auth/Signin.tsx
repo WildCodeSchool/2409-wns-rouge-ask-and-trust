@@ -1,6 +1,7 @@
 import { LOGIN, WHOAMI } from "@/graphql/auth"
+import { useToast } from "@/hooks/useToast"
 import { UserSignIn } from "@/types/types"
-import { useMutation } from "@apollo/client"
+import { ApolloError, useMutation } from "@apollo/client"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import FormButtonSubmit from "./form/FormButtonSubmit"
@@ -23,9 +24,10 @@ export default function Signin() {
 		},
 	})
 	const navigate = useNavigate()
-	const [Login, { error }] = useMutation(LOGIN, {
+	const [Login] = useMutation(LOGIN, {
 		refetchQueries: [WHOAMI],
 	})
+	const { showToast } = useToast()
 
 	const onSubmit: SubmitHandler<UserSignIn> = async formData => {
 		try {
@@ -38,26 +40,44 @@ export default function Signin() {
 				},
 			})
 
-			// Check Mutation errors
-			if (error) {
-				console.error(error)
-				return
-			}
-
-			// If registration ok, toastify
+			// If registration ok, navigate to surveys page and toastify
 			if (data) {
 				reset()
-				// @TODO implement React Toastify
-				const { message } = data.login
-				alert(message)
 				navigate("/surveys")
+				showToast({
+					type: "success",
+					title: "Connexion réussie !",
+					description: "A vous de jouer !",
+				})
 			}
-
-			// Handle others errors
 		} catch (err) {
+			// Handle ApolloError
+			if (err instanceof ApolloError) {
+				const invalidCredentialsError = err.graphQLErrors.find(e =>
+					e.message.includes("Login failed")
+				)
+
+				showToast({
+					type: "error",
+					title: invalidCredentialsError
+						? "Identifiants incorrects"
+						: "La connexion a échoué",
+					description: invalidCredentialsError
+						? "L'email et/ou le mot de passe est incorrect."
+						: "Veuillez réessayer",
+				})
+				return
+			}
+			// Handle other errors
+			showToast({
+				type: "error",
+				title: "La connexion a échoué.",
+				description: "Veuillez réessayer",
+			})
 			console.error("Error:", err)
 		}
 	}
+
 	return (
 		<FormWrapper onSubmit={handleSubmit(onSubmit)}>
 			<FormTitle isSignUp={false} />
