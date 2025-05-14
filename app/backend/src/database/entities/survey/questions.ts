@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @category Entities
  * @description
- * This module defines the SurveyQuestions entity for the database.
+ * This module defines the Questions entity for the database.
  * It represents a question that belongs to a survey and can have
  * a specific type (e.g. text, radio, checkbox) and optional predefined answers.
  */
@@ -17,14 +17,14 @@ import {
 import { ObjectType, Field, ID } from "type-graphql"
 import { TypeOfQuestion } from "../../../types/types"
 import { Survey } from "./survey"
-import { SurveyAnswers } from "./surveyAnswers"
+import { Answers } from "./answers"
 
 /**
- * SurveyQuestions Entity
+ * Questions Entity
  * @description
  * Represents a question that belongs to a survey.
  *
- * @param name is the entity's name in database ("surveyQuestions").
+ * @param name is the entity's name in database ("questions").
  *
  * This class defines the structure of the survey questions in the database:
  * - `id`: unique identifier for the question.
@@ -35,7 +35,7 @@ import { SurveyAnswers } from "./surveyAnswers"
  *
  * @example
  * ```ts
- * const question = new SurveyQuestions()
+ * const question = new Questions()
  * question.content = "What is your favorite color?"
  * question.type = TypeOfQuestion.RADIO
  * question.answers = ["Red", "Blue", "Green"]
@@ -51,8 +51,8 @@ import { SurveyAnswers } from "./surveyAnswers"
  * - `@Field()`: Exposes a class property to the GraphQL schema.
  */
 @ObjectType()
-@Entity({ name: "surveyQuestions" })
-export class SurveyQuestions extends BaseEntity {
+@Entity({ name: "questions" })
+export class Questions extends BaseEntity {
 	/**
 	 * Unique identifier for the question
 	 * @description
@@ -95,7 +95,7 @@ export class SurveyQuestions extends BaseEntity {
 		default: () => "'[]'",
 		nullable: false,
 	})
-	answers!: SurveyAnswers
+	answers!: Answers
 
 	/**
 	 * The survey to which this question belongs

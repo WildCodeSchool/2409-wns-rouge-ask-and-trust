@@ -8,7 +8,7 @@ import {
 import { ObjectType, Field, ID } from "type-graphql"
 import { Survey } from "./survey/survey"
 import { Roles, UserRole } from "../../types/types"
-import { SurveyQuestionAnswered } from "./survey/surveyQuestionAnswered"
+import { SurveyQuestionAnswered } from "./survey/surveyAnswers"
 
 /**
  * Represents a user entity in the database.

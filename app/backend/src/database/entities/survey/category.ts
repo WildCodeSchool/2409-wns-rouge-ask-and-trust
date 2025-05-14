@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @category Entities
  * @description
- * This module defines the `SurveyCategory` entity for the database.
+ * This module defines the `Category` entity for the database.
  * It represents a category to which surveys can be assigned.
  */
 
@@ -19,13 +19,13 @@ import { Survey } from "./survey"
 import { User } from "../user"
 
 /**
- * SurveyCategory Entity
+ * Category Entity
  * @description
  * Represents a category for organizing surveys.
  * Each category is uniquely named and can contain multiple surveys.
  * It is created by a user and timestamps are automatically handled.
  *
- * @param name is the entity's name in the database (`surveyCategory`).
+ * @param name is the entity's name in the database (`category`).
  *
  * This class defines the structure of the category entity in the database:
  * - `id`: unique identifier for the category.
@@ -37,7 +37,7 @@ import { User } from "../user"
  *
  * @example
  * ```ts
- * const category = new SurveyCategory()
+ * const category = new Category()
  * category.name = "Satisfaction"
  * category.user = currentUser
  * await category.save()
@@ -48,12 +48,12 @@ import { User } from "../user"
  * - `@PrimaryGeneratedColumn()`: auto-generates the primary key.
  * - `@Column()`: maps properties to columns.
  * - `@OneToOne()` / `@OneToMany()`: defines relations.
- * - `@ManyToOne()`: defines the relations to `SurveyCategory` and `User`.
+ * - `@ManyToOne()`: defines the relations to `Category` and `User`.
  * - `@Field()`: exposes fields in GraphQL schema.
  */
 @ObjectType()
-@Entity({ name: "surveyCategory" })
-export class SurveyCategory extends BaseEntity {
+@Entity({ name: "category" })
+export class Category extends BaseEntity {
 	/**
 	 * Unique identifier for the category
 	 * @description

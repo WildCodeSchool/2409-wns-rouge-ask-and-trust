@@ -17,9 +17,9 @@ import {
 } from "typeorm"
 import { ObjectType, Field, ID } from "type-graphql"
 import { User } from "../user"
-import { SurveyCategory } from "./surveyCategory"
-import { SurveyQuestions } from "./surveyQuestions"
-import { SurveyQuestionAnswered } from "./surveyQuestionAnswered"
+import { Category } from "./category"
+import { Questions } from "./questions"
+import { SurveyAnswers } from "./surveyAnswers"
 
 /**
  * Survey Entity
@@ -35,7 +35,7 @@ import { SurveyQuestionAnswered } from "./surveyQuestionAnswered"
  * - `status`: the current state of the survey (`draft`, `publish`, `archive`, `censored`), defaults to `draft`.
  * - `public`: defines whether the survey is accessible publicly or only to selected users.
  * - `user`: the creator of the survey (relation to the `User` entity).
- * - `category`: the category to which the survey belongs (relation to the `SurveyCategory` entity).
+ * - `category`: the category to which the survey belongs (relation to the `Category` entity).
  * - `createdAt`: timestamp of when the survey was created.
  * - `updatedAt`: timestamp of when the survey was last updated.
  *
@@ -125,29 +125,29 @@ export class Survey extends BaseEntity {
 	/**
 	 * Category of the survey
 	 * @description
-	 * Many-to-one relationship with the SurveyCategory entity.
+	 * Many-to-one relationship with the Category entity.
 	 */
-	@ManyToOne(() => SurveyCategory, category => category.surveys)
-	@Field(() => SurveyCategory)
-	category!: SurveyCategory
+	@ManyToOne(() => Category, category => category.surveys)
+	@Field(() => Category)
+	category!: Category
 
 	/**
 	 * Questions in the survey
 	 * @description
-	 * One-to-many relationship with the SurveyQuestions entity.
+	 * One-to-many relationship with the Questions entity.
 	 */
-	@OneToMany(() => SurveyQuestions, question => question.survey)
-	@Field(() => SurveyQuestions, { nullable: true })
-	questions!: SurveyQuestions[]
+	@OneToMany(() => Questions, question => question.survey)
+	@Field(() => Questions, { nullable: true })
+	questions!: Questions[]
 
 	/**
 	 * Answers submitted to the survey
 	 * @description
-	 * One-to-many relationship with the SurveyQuestionAnswered entity.
+	 * One-to-many relationship with the SurveyAnswers entity.
 	 */
-	@OneToMany(() => SurveyQuestionAnswered, answer => answer.user)
-	@Field(() => SurveyQuestionAnswered, { nullable: true })
-	answers!: SurveyQuestionAnswered[]
+	@OneToMany(() => SurveyAnswers, answer => answer.user)
+	@Field(() => SurveyAnswers, { nullable: true })
+	answers!: SurveyAnswers[]
 
 	/**
 	 * Timestamp when the survey was created

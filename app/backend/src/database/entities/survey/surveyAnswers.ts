@@ -3,58 +3,47 @@
  * @category Entities
  * @description
  * This module defines the `SurveyAnswers` entity for the database.
- * It represents a single answer provided by a user to a specific survey question.
+ * It represents a completed survey submission by a specific user.
  */
 
-import {
-	BaseEntity,
-	Column,
-	Entity,
-	JoinColumn,
-	OneToOne,
-	PrimaryGeneratedColumn,
-} from "typeorm"
-import { ObjectType, Field, ID } from "type-graphql"
-import { SurveyQuestions } from "./surveyQuestions"
-import { SurveyQuestionAnswered } from "./surveyQuestionAnswered"
+import { Field, ID, ObjectType } from "type-graphql"
+import { BaseEntity, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { User } from "../user"
+import { Survey } from "./survey"
 
 /**
  * SurveyAnswers Entity
  * @description
- * Represents a single answer to a survey question submitted by a user.
- * Each answer is linked to a specific question and to a group of answers
- * representing a full survey submission.
+ * Represents a completed survey by a user, linking a user to a specific survey.
+ * This entity acts as a submission record, and is used to associate
+ * a set of answers with both the user who submitted them and the survey.
  *
- * @param name is the entity's name in the database (`surveyAnswers`).
+ * @param name is the entity's name in the database (`answers`).
  *
- * This class defines the structure of the survey answer entity in the database:
- * - `id`: unique identifier for the answer.
- * - `content`: the textual content of the answer.
- * - `questionAnswered`: reference to the group of answers from one user.
- * - `question`: the survey question to which this answer belongs.
- * - `createdAt`: timestamp indicating when the answer was submitted.
+ * This class defines the structure of the survey question answered entity in the database:
+ * - `id`: unique identifier for the submission.
+ * - `user`: the user who completed the survey (relation to `User`).
+ * - `survey`: the survey that was completed (relation to `Survey`).
  *
  * @example
  * ```ts
- * const answer = new SurveyAnswers()
- * answer.content = "I strongly agree"
- * answer.question = someQuestion
- * answer.questionAnswered = someSubmissionGroup
- * await answer.save()
+ * const submission = new SurveyAnswers()
+ * submission.user = someUser
+ * submission.survey = someSurvey
+ * await submission.save()
  * ```
  *
  * Decorators used:
  * - `@Entity()`: defines the database table for the entity.
  * - `@PrimaryGeneratedColumn()`: auto-generates the `id`.
- * - `@Column()`: maps fields to database columns.
- * - `@OneToOne()` + `@JoinColumn()`: links to `SurveyQuestions` and `SurveyQuestionAnswered`.
+ * - `@ManyToOne()`: defines the relations to `User` and `Survey`.
  * - `@Field()`: exposes fields to the GraphQL schema.
  */
 @ObjectType()
-@Entity({ name: "surveyAnswers" })
+@Entity({ name: "answers" })
 export class SurveyAnswers extends BaseEntity {
 	/**
-	 * Unique identifier for the answer
+	 * Unique identifier for the survey submission
 	 * @description
 	 * Auto-generated primary key.
 	 */
@@ -63,38 +52,18 @@ export class SurveyAnswers extends BaseEntity {
 	id!: number
 
 	/**
-	 * Text content of the answer
+	 * User who completed the survey
 	 * @description
-	 * The actual response provided by the user to the question.
+	 * Many-to-one relation to the `User` entity.
 	 */
-	@Field()
-	@Column({ type: "text", length: 1000 })
-	content!: string
+	@ManyToOne(() => User, user => user.answers)
+	user!: User
 
 	/**
-	 * Grouped submission this answer is part of
+	 * Survey that was completed
 	 * @description
-	 * Links to the survey submission that this answer belongs to.
+	 * Many-to-one relation to the `Survey` entity.
 	 */
-	@OneToOne(() => SurveyQuestionAnswered)
-	@JoinColumn()
-	questionAnswered!: SurveyQuestionAnswered
-
-	/**
-	 * Question associated with this answer
-	 * @description
-	 * One-to-one link to the question being answered.
-	 */
-	@OneToOne(() => SurveyQuestions)
-	@JoinColumn()
-	question!: SurveyQuestions
-
-	/**
-	 * Timestamp when the answer was created
-	 * @description
-	 * Automatically set when the answer is saved.
-	 */
-	@Field()
-	@Column({ default: () => "CURRENT_TIMESTAMP" })
-	createdAt!: Date
+	@ManyToOne(() => Survey, survey => survey.answers)
+	survey!: Survey
 }
