@@ -15,8 +15,8 @@ import { Field, InputType } from "type-graphql"
 @InputType()
 export class CreateCategorySurveyInput {
 	@Field()
-	@Length(5, 100, {
-		message: "Category name must be between 5 and 100 characters.",
+	@Length(1, 100, {
+		message: "Category name must be between 1 and 100 characters.",
 	})
 	name!: string
 }

@@ -1,3 +1,4 @@
+import { Length } from "class-validator"
 import { InputType, Field } from "type-graphql"
 
 /**
@@ -15,5 +16,8 @@ import { InputType, Field } from "type-graphql"
 @InputType()
 export class CreateSurveyAnswersInput {
 	@Field()
+	@Length(1, 1000, {
+		message: "Content must be between 1 and 1000 characters",
+	})
 	content!: string
 }

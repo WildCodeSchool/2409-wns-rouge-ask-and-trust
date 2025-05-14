@@ -19,12 +19,12 @@ import { CreateCategorySurveyInput } from "./create-surveyCategory-input"
 @InputType()
 export class CreateSurveyInput {
 	@Field()
-	@Length(10, 255, { message: "Title must be between 10 and 255 characters" })
+	@Length(1, 255, { message: "Title must be between 1 and 255 characters" })
 	title!: string
 
 	@Field()
-	@Length(100, 5000, {
-		message: "Description must be between 100 and 5000 characters",
+	@Length(1, 5000, {
+		message: "Description must be between 1 and 5000 characters",
 	})
 	description!: string
 
