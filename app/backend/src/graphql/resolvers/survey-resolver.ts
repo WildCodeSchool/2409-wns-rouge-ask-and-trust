@@ -114,8 +114,9 @@ export class SurveysResolver {
 		try {
 			const user = context.user
 
-			if (!user)
+			if (!user) {
 				throw new AppError("User not found", 404, "NotFoundError")
+			}
 
 			const newSurvey = new Survey()
 			Object.assign(newSurvey, data, { user })
@@ -152,8 +153,10 @@ export class SurveysResolver {
 	): Promise<Survey | null> {
 		try {
 			const user = context.user
-			if (!user)
+
+			if (!user) {
 				throw new AppError("User not found", 404, "NotFoundError")
+			}
 
 			const whereCreatedBy =
 				user.role === "admin" ? undefined : { id: user.id }
@@ -167,19 +170,17 @@ export class SurveysResolver {
 			})
 
 			if (!survey) {
-				if (user.role === "admin") {
-					throw new AppError(
-						"Survey not found",
-						404,
-						"SurveyNotFoundError"
-					)
-				} else {
-					throw new AppError(
-						"You are not allowed to modify this survey",
-						401,
-						"UnauthorizedError"
-					)
-				}
+				throw new AppError(
+					"Survey not found",
+					404,
+					"SurveyNotFoundError"
+				)
+			} else if (user.role !== "admin") {
+				throw new AppError(
+					"You are not allowed to modify this survey",
+					401,
+					"UnauthorizedError"
+				)
 			}
 
 			Object.assign(survey, data)

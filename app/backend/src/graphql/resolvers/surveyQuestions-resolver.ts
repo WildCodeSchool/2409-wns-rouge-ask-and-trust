@@ -115,8 +115,9 @@ export class SurveyQuestionsResolver {
 			const newQuestion = new SurveyQuestions()
 			const user = context.user
 
-			if (!user)
+			if (!user) {
 				throw new AppError("User not found", 404, "NotFoundError")
+			}
 
 			Object.assign(newQuestion, content, { user: user })
 

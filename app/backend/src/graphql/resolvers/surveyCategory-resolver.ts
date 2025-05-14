@@ -115,8 +115,9 @@ export class SurveyCategoryResolver {
 			const newCategory = new SurveyCategory()
 			const user = context.user
 
-			if (!user)
+			if (!user) {
 				throw new AppError("User not found", 404, "NotFoundError")
+			}
 
 			// Only admins can create categories
 			if (user.role !== "admin") {
@@ -163,8 +164,9 @@ export class SurveyCategoryResolver {
 		try {
 			const user = context.user
 
-			if (!user)
+			if (!user) {
 				throw new AppError("User not found", 404, "NotFoundError")
+			}
 
 			// Only admins can update categories
 			if (user.role !== "admin") {
