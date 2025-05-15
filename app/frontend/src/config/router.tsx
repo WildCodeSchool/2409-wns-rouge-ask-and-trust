@@ -3,13 +3,13 @@
  * @module router
  */
 
+import App from "@/App.tsx"
+import ProtectedRoute from "@/components/hoc/ProtectedRoute"
+import ErrorElement from "@/components/ui/ErrorElement"
+import Loader from "@/components/ui/Loader"
+import NotFound from "@/pages/NotFound"
 import { lazy, Suspense } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import App from "@/App.tsx"
-import NotFound from "@/pages/NotFound"
-import Loader from "@/components/ui/Loader"
-import ErrorElement from "@/components/ui/ErrorElement"
-import ProtectedRoute from "@/components/hoc/ProtectedRoute"
 
 /**
  *  Using lazy loading for pages
