@@ -87,7 +87,7 @@ export class Survey extends BaseEntity {
 	 * Provides additional information or context about the survey.
 	 */
 	@Field()
-	@Column({ length: 5000, nullable: true })
+	@Column({ length: 5000 })
 	description!: string
 
 	/**
@@ -118,7 +118,7 @@ export class Survey extends BaseEntity {
 	 * Many-to-one relationship with the User entity.
 	 */
 	@ManyToOne(() => User, user => user.surveys)
-	@Field(() => User, { nullable: true })
+	@Field(() => User)
 	user!: User
 
 	/**
@@ -136,7 +136,7 @@ export class Survey extends BaseEntity {
 	 * One-to-many relationship with the Questions entity.
 	 */
 	@OneToMany(() => Questions, question => question.survey)
-	@Field(() => Questions, { nullable: true })
+	@Field(() => [Questions])
 	questions!: Questions[]
 
 	/**
