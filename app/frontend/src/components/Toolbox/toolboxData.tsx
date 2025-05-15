@@ -14,8 +14,8 @@ import {
   } from "lucide-react";
 
 /**
- * Définition des catégories et items de la boîte à outils (toolbox) pour le créateur de sondage.
- * Chaque catégorie regroupe des types de questions ou d'éléments pouvant être ajoutés à un sondage.
+ * Definition of toolbox categories and items for the survey creator.
+ * Each category groups types of questions or elements that can be added to a survey.
  *
  * @type {ToolboxCategory[]}
  */
