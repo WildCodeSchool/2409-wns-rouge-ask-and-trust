@@ -1,6 +1,5 @@
-import { InputType, Field } from "type-graphql"
+import { InputType, Field, ID } from "type-graphql"
 import { Length } from "class-validator"
-import { CreateCategoryInput } from "./create-category-input"
 
 /**
  * Represents input data for creating a new survey.
@@ -28,9 +27,9 @@ export class CreateSurveyInput {
 	})
 	description!: string
 
-	@Field({ nullable: true })
+	@Field()
 	public!: boolean
 
-	@Field(() => CreateCategoryInput, { nullable: true })
-	category!: CreateCategoryInput
+	@Field(() => ID)
+	category!: number
 }
