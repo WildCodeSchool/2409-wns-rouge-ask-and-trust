@@ -102,7 +102,7 @@ const router = createBrowserRouter([
 				path: "/survey-creator",
 				element: (
 					<Suspense fallback={<Loader />}>
-							<SurveyCreator />
+						<SurveyCreator />
 					</Suspense>
 				),
 			},
