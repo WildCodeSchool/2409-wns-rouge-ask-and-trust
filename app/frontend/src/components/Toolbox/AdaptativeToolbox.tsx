@@ -3,12 +3,12 @@ import { ToolboxItem, ToolboxProps } from "@/types/types"
 import { useResponsivity } from "@/hooks/useResponsivity"
 
 /**
- * Composant AdaptiveToolbox
+ * AdaptiveToolbox component
  *
- * Affiche une boîte à outils avec catégories, items, recherche et mode compact selon la hauteur.
+ * Displays a toolbox with categories, items, search, and compact mode based on height.
  *
- * @param {ToolboxProps} props - Propriétés du composant.
- * @returns {JSX.Element} Le composant de boîte à outils adaptative.
+ * @param {ToolboxProps} props - Component properties.
+ * @returns {JSX.Element} The adaptive toolbox component.
  */
 export function AdaptiveToolbox({
 	className = "",
