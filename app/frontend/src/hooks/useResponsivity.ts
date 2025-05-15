@@ -20,45 +20,50 @@ export function useResponsivity(
 	horizontalThreshold: number
 ) {
 	// State for vertical compact mode (based on element height)
-	const [isVerticalCompact, setVerticalCompact] = useState(false)
+	const [isVerticalCompact, setVerticalCompact] = useState<boolean>(false)
 	// State for horizontal compact mode (based on window width)
-	const [isHorizontalCompact, setHorizontalCompact] = useState(false)
+	const [isHorizontalCompact, setHorizontalCompact] = useState<boolean>(false)
 	// Ref to attach to the element to observe
 	const rootRef = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		if (!rootRef.current) return
 
-		// Observe the element's height for vertical responsivity
+		// Create a ResizeObserver to watch the element's height
 		const observer = new ResizeObserver(entries => {
 			for (const entry of entries) {
-				const height = entry.contentRect.height
-				const width = window.innerWidth
+				const height = entry.contentRect.height // Get the element's height
+				const width = window.innerWidth // Get the current window width
 
+				// Set vertical compact if height is below the threshold
 				setVerticalCompact(height < verticalThreshold)
+				// Set horizontal compact if window width is below the threshold
 				setHorizontalCompact(width < horizontalThreshold)
 			}
 		})
 
+		// Start observing the referenced element
 		observer.observe(rootRef.current)
 
-		// Also check on window resize for horizontal responsivity
+		// Handler for window resize to update horizontal compact state
 		const handleResize = () => {
 			if (rootRef.current) {
 				setHorizontalCompact(window.innerWidth < horizontalThreshold)
 			}
 		}
 
+		// Listen to window resize events
 		window.addEventListener("resize", handleResize)
-		// Initial check
+		// Initial check to set the state on mount
 		handleResize()
 
+		// Cleanup: disconnect observer and remove event listener
 		return () => {
 			observer.disconnect()
 			window.removeEventListener("resize", handleResize)
 		}
 	}, [verticalThreshold, horizontalThreshold])
 
-	// Return the ref and both compact states
+	// Return the ref to attach to the element and both compact states
 	return { rootRef, isVerticalCompact, isHorizontalCompact }
 }
