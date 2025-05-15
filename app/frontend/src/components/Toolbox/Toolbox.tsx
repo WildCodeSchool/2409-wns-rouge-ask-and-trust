@@ -13,10 +13,13 @@ import { ToolboxCategory, ToolboxItem } from "@/types/types"
  * @param {string} [props.className] - Optional CSS class for the main container.
  * @returns {JSX.Element} The toolbox component.
  */
-export function Toolbox({ 
-    onAddQuestion, 
-    className = "" 
-}: { onAddQuestion: (type: string) => void; className?: string }) {
+export function Toolbox({
+	onAddQuestion,
+	className = "",
+}: {
+	onAddQuestion: (type: string) => void
+	className?: string
+}) {
 	const [searchValue, setSearchValue] = useState("")
 
 	// Inject the search value into the search input
