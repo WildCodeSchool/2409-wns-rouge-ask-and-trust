@@ -1,0 +1,145 @@
+.survey-toolbox {
+	width: 280px;
+	background-color: white;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	position: sticky;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	transition: width 0.3s ease;
+}
+
+.adaptive-toolbox {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow: hidden;
+}
+
+.toolbox-search {
+	padding: 12px;
+	border-bottom: 1px solid #eaeaea;
+}
+
+.toolbox-search input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	font-size: 14px;
+	outline: none;
+}
+
+.toolbox-search input:focus {
+	border-color: #38b2ac;
+	box-shadow: 0 0 0 2px rgba(56, 178, 172, 0.2);
+}
+
+.toolbox-content {
+	flex: 1;
+	overflow-y: auto;
+	padding: 8px 0;
+}
+
+.toolbox-category {
+	margin-bottom: 8px;
+}
+
+.category-title {
+	font-weight: 600;
+	font-size: 14px;
+	color: #1a202c;
+	padding: 8px 16px;
+	background-color: #f7fafc;
+}
+
+.category-items {
+	padding: 4px 0;
+}
+
+.toolbox-item {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 8px 16px;
+	border: none;
+	background: transparent;
+	text-align: left;
+	justify-content: start;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	font-size: 14px;
+	color: #4a5568;
+}
+
+.toolbox-item:hover {
+	background-color: #f1f5f9;
+}
+
+.toolbox-item .icon {
+	margin-right: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.toolbox-item.compact {
+	justify-content: center;
+	padding: 8px 4px;
+}
+
+.toolbox-item.compact .icon {
+	margin-right: 0;
+}
+
+.no-results {
+	padding: 16px;
+	text-align: center;
+	color: #718096;
+	font-size: 14px;
+}
+
+/* Horizontal compact mode */
+.adaptive-toolbox.horizontal-compact {
+	width: 60px;
+}
+
+.adaptive-toolbox.horizontal-compact .toolbox-search,
+.adaptive-toolbox.horizontal-compact .category-title,
+.adaptive-toolbox.horizontal-compact .toolbox-item .label {
+	display: none;
+}
+
+.adaptive-toolbox.horizontal-compact .toolbox-item {
+	justify-content: center;
+	padding: 12px 4px;
+}
+
+.adaptive-toolbox.horizontal-compact .toolbox-item .icon {
+	margin-right: 0;
+}
+
+.adaptive-toolbox.horizontal-compact .category-items {
+	border-bottom: 1px solid #eaeaea;
+	padding: 4px 0;
+}
+
+/* When in horizontal compact mode, make the survey toolbox narrower */
+.survey-toolbox .adaptive-toolbox.horizontal-compact {
+	width: 60px;
+}
+
+.survey-toolbox .adaptive-toolbox.horizontal-compact + .survey-toolbox {
+	width: 60px;
+}
+
+@media (max-width: 768px) {
+	.survey-toolbox {
+		width: 60px;
+	}
+}
