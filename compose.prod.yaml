@@ -1,0 +1,83 @@
+services:
+    # Frontend service (React + Vite)
+    frontend:
+        image: yohangh/askandtrust-frontend:4fed9eabcc526ee187f48c04e3de7646bcb8b214
+        # ports:
+        #     - "5173:5173" # Exposes port 5173 to access Vite from the host
+        environment:
+            - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
+        command: ["npm", "run", "dev", "--host"] # Start Vite in development mode (hot reload enabled)
+        # Unused options, but useful in other cases
+        # restart: always # Recreate the container in case of failure
+        depends_on:
+            - backend # Wait for the backend to be ready (useful if necessary)
+        networks:
+            - frontend_network # To be configured if a specific network is required
+
+    # Backend service (Express.js)
+    backend:
+        image: yohangh/askandtrust-backend:4fed9eabcc526ee187f48c04e3de7646bcb8b214
+        # ports:
+        #     - "3310:3310" # Exposes port 3310 to access the backend from the host
+        environment:
+            - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
+            - DB_HOST=db
+        env_file:
+            - .env # Loads environment variables from a file
+        command: ["npm", "start"] # Start the Express.js server (hot reload enabled with nodemon if configured)
+        depends_on:
+            db:
+                condition: service_healthy
+        networks:
+            - frontend_network
+            - backend_network
+
+        # Unused options, but useful in other cases
+        # restart: always # Recreate the container in case of failure
+
+    db:
+        image: postgres:15
+        restart: always # Recreate the container in case of failure
+        ports:
+            - "5432:5432"
+        env_file:
+            - .database.env
+        networks:
+            - backend_network
+        healthcheck: # To ensure that PostgreSQL is ready before starting the backend.
+            test:
+                [
+                    "CMD-SHELL",
+                    "pg_isready -U ask_and_trust -d ask_and_trust -h localhost",
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 5s
+
+    nginx:
+        image: nginx
+        volumes:
+            # ./nginx => in the host machine
+            # on the right => where it is in the docker container
+            - ./nginx:/etc/nginx
+        ports:
+            - ${{GATEAWAY_PORT}}:80
+        depends_on:
+            - backend
+            - frontend
+        networks:
+            - backend_network
+            - frontend_network
+
+# Networks (useful for isolating services)
+networks:
+    backend_network:
+        driver: bridge
+    frontend_network:
+        driver: bridge
+
+# Volumes (to persist data like databases)
+volumes:
+    db_data: # Volume for the database
+        driver: local

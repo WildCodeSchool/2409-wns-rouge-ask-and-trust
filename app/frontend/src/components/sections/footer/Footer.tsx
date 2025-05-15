@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { LinksType } from "@/types/types"
-import logoFooter from "../../../../public/logos/logo-footer.svg"
+import logoFooter from "/logos/logo-footer.svg"
 
 const FOOTER_LINKS: readonly LinksType[] = [
 	{
@@ -24,7 +24,7 @@ const FOOTER_LINKS: readonly LinksType[] = [
 		ariaLabel: "Voir la liste des enquêtes disponibles",
 	},
 	{
-		href: "/packs",
+		href: "/payment",
 		label: "Achat de packs d'enquêtes",
 		category: "Enquêtes",
 		ariaLabel: "Acheter des packs d'enquêtes",

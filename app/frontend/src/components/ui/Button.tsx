@@ -110,6 +110,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 					aria-label={ariaLabel}
 					role={role}
 					className={classNameContent}
+					onClick={onClick}
 				>
 					{childrenContent}
 				</Link>

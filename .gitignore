@@ -49,6 +49,7 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+*.env
 
 # Fichiers de base de données
 *.sqlite
