@@ -1,5 +1,5 @@
 import SurveyCard from "@/components/sections/surveys/SurveyCard"
-import img from "../../public/img/dev.webp"
+import img from "/img/dev.webp"
 import Pagination from "@/components/ui/Pagination"
 import { Button } from "@/components/ui/Button"
 import { useEffect, useState } from "react"
@@ -7,7 +7,7 @@ import clsx from "clsx"
 import { Helmet } from "react-helmet"
 
 export default function Surveys() {
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
 
 	useEffect(() => {
 		const handleResize = () => {

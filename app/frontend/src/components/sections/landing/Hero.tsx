@@ -9,7 +9,7 @@ const Hero = () => {
 		>
 			<div className="pb-6 lg:m-4 lg:max-w-[45rem]" aria-hidden="true">
 				<img
-					src="../../../../public/assets/illustration-presentation.svg"
+					src="/assets/illustration-presentation.svg"
 					alt="img-presentation"
 				/>
 			</div>
