@@ -20,7 +20,7 @@ export function Toolbox({
 	onAddQuestion: (type: string) => void
 	className?: string
 }) {
-	const [searchValue, setSearchValue] = useState("")
+	const [searchValue, setSearchValue] = useState<string>("")
 
 	// Inject the search value into the search input
 	const categories: ToolboxCategory[] = toolboxCategories.map(category => ({
