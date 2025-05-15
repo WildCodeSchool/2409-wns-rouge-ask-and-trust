@@ -20,6 +20,7 @@ import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-inpu
 import { Context } from "../../../types/types"
 import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
 import { AppError } from "../../../middlewares/error-handler"
+import { Category } from "../../../database/entities/survey/category"
 
 /**
  * Survey Resolver
@@ -118,8 +119,16 @@ export class SurveysResolver {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
 
+			const category = await Category.findOne({
+				where: { id: data.category },
+			})
+
+			if (!category) {
+				throw new AppError("Category not found", 404, "NotFoundError")
+			}
+
 			const newSurvey = new Survey()
-			Object.assign(newSurvey, data, { user })
+			Object.assign(newSurvey, data, { user, category })
 
 			await newSurvey.save()
 			return newSurvey
