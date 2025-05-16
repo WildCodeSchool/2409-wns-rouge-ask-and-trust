@@ -119,3 +119,12 @@ export type Question = {
 	content: string
 	answers: string
 }
+export interface QuestionUpdate {
+	id: number
+	title?: string
+	description?: string
+	type?: "text" | "text-area" | "checkbox" | "radio" | "boolean" | "select" // faire enum ici
+	answers: Record<string, AnswerValue>
+}
+
+export type AnswerValue = boolean | string | number | string[]
