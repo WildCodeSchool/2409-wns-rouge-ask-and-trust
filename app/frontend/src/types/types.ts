@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react"
 import { UserRole } from "./../../../backend/src/types/types"
+import { FieldErrors, UseFormRegister } from "react-hook-form"
 
 export type AuthContextProps = {
 	user: User | null
@@ -105,4 +106,17 @@ export interface SearchManager {
 	value: string
 	onChange: (value: string) => void
 	placeholder?: string
+}
+
+export type SurveyFormType = {
+	id: string
+	title: string
+	description: string
+	isPublic: boolean
+	category: string
+}
+
+export type InputsProps = {
+	register: UseFormRegister<SurveyFormType>
+	errors: FieldErrors<SurveyFormType>
 }
