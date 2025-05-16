@@ -100,6 +100,10 @@ const router = createBrowserRouter([
 				),
 			},
 			{
+				path: "/:id/edit-survey",
+				element: <Suspense fallback={<Loader />}></Suspense>,
+			},
+			{
 				path: "/survey-creator",
 				element: (
 					<Suspense fallback={<Loader />}>
