@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react"
 import { UserRole } from "./../../../backend/src/types/types"
+import { FieldErrors, UseFormRegister } from "react-hook-form"
 
 export type AuthContextProps = {
 	user: User | null
@@ -121,6 +122,7 @@ export type Question = {
 	type: QuestionType
 	answers: { value: string }[]
 }
+
 export interface QuestionUpdate {
 	id: number
 	title?: string
@@ -150,3 +152,16 @@ export const TypesOfQuestionLabels: Record<
 
 export type QuestionType =
 	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]
+
+export type SurveyFormType = {
+	id: string
+	title: string
+	description: string
+	isPublic: boolean
+	category: string
+}
+
+export type InputsProps = {
+	register: UseFormRegister<SurveyFormType>
+	errors: FieldErrors<SurveyFormType>
+}
