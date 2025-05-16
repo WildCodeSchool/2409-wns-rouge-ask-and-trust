@@ -5,6 +5,7 @@ import { Outlet, useLocation } from "react-router-dom"
 import { Toaster } from "sonner"
 import Footer from "./components/sections/footer/Footer"
 import Header from "./components/sections/header/Header"
+import Question from "./components/sections/surveys/buildSurvey/question/Question"
 
 function App() {
 	const location = useLocation()
@@ -30,6 +31,7 @@ function App() {
 			{/* @TODO calc height : fill screen minus Header height. On mobile : minus Header height and Navbar height. */}
 			<main className="bg-bg mb-20">
 				<div className="h-full">
+					<Question questionId={""} type={"boolean"} />
 					<Outlet />
 				</div>
 			</main>
