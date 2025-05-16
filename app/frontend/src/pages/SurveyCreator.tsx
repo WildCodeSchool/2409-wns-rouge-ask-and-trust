@@ -1,14 +1,23 @@
 import { Toolbox } from "@/components/Toolbox/Toolbox"
 import { Helmet } from "react-helmet"
 import "@/styles/toolbox.css"
+import { Canvas } from "@/components/canvas/Canvas"
+import { useState } from "react"
 
 function SurveyCreator() {
+	// Lift the questions state up to the parent component
+	const [questions, setQuestions] = useState<Array<{ id: string; type: string }>>([])
+
 	/**
 	 * @Note [todo] add logic
 	 * @param type
 	 */
 	const handleAddQuestion = (type: string) => {
 		console.log(`Adding question of type ${type}`)
+		/**
+		 * @TEST - add logic to add question
+		 */
+		setQuestions((prev) => [...prev, { id: `question-${Date.now()}`, type }])
 	}
 
 	return (
@@ -50,8 +59,13 @@ function SurveyCreator() {
 							onAddQuestion={handleAddQuestion}
 							className="h-full"
 						/>
-						{/* Name component of display questions Canvas Or Survey*/}
-						{/* <Canvas /> */}
+						<div className="flex-grow overflow-auto p-4 sm:p-6 lg:p-8">
+							<Canvas
+								className="w-full"
+								questions={questions}
+								onAddQuestion={handleAddQuestion}
+							/>
+						</div>
 					</div>
 				</main>
 			</div>

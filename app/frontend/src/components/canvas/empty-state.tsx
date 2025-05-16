@@ -1,0 +1,40 @@
+import type React from "react"
+import { Button } from "../ui/Button"
+
+interface EmptyStateProps {
+	onAddQuestion: () => void
+}
+
+export const EmptyState: React.FC<EmptyStateProps> = ({ onAddQuestion }) => {
+	return (
+		<div className="flex flex-col items-center justify-center text-center">
+			<div className="relative mb-6 h-64 w-64">
+				<img
+					src="/placeholder.svg?height=256&width=256"
+					alt="Empty form"
+					width={256}
+					height={256}
+					className="opacity-70"
+				/>
+			</div>
+
+			<h2 className="text-2xl font-semibold text-primary-800 mb-2">
+				Votre formulaire est vide
+			</h2>
+
+			<p className="mb-8 text-black-400">
+				Cliquez sur le bouton ci-dessous pour ajouter une question.
+			</p>
+
+			<div className="flex items-center">
+				<Button
+					onClick={onAddQuestion}
+					ariaLabel="Add Question"
+				>
+					Ajouter une question
+					<span className="ml-2 text-black-400">•••</span>
+				</Button>
+			</div>
+		</div>
+	)
+}

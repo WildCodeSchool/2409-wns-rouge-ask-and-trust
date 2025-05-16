@@ -43,7 +43,7 @@ export default function Header() {
 					{!isMobile && (
 						<div className="flex items-center justify-center gap-6">
 							<Button
-								to="/"
+								to="/survey-creator"
 								variant="tertiary"
 								role="link"
 								ariaLabel="Créer une enquête"
