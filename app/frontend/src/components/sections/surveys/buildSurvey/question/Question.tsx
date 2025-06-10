@@ -13,7 +13,7 @@ type QuestionProps = {
 	questionId: string
 	type: "boolean" | "text" | "checkbox" | "radio" | "text-area"
 }
-// @TODO add question id in props
+
 export default function Question({ questionId, type }: QuestionProps) {
 	const {
 		register,
@@ -25,7 +25,7 @@ export default function Question({ questionId, type }: QuestionProps) {
 			title: "Question's title",
 			type: type ?? "text",
 			description: "",
-			answers: { [questionId]: type === "boolean" ? false : "" },
+			answers: { [questionId]: type === "boolean" ? false : "" }, // if boolean type, Question doesn't have a list of possible answers.
 		},
 	})
 	// useQuery() to get Question info (receive question id in props).
@@ -42,6 +42,18 @@ export default function Question({ questionId, type }: QuestionProps) {
 		// give survey id
 		// and data
 	}
+
+	// add conditional return : if type type "boolean" return switch, etc.
+
+	// @TODO add real type
+	// switch (type) {
+	// 	case :
+
+	// 		break;
+
+	// 	default:
+	// 		break;
+	// }
 
 	return (
 		<li>
