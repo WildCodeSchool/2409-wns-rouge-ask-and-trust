@@ -1,6 +1,6 @@
 import type React from "react"
-import { EmptyState } from "./empty-state"
-import { Button } from "../ui/Button"
+import { EmptyState } from "@/components/sections/canvas/empty-state"
+import { Button } from "@/components/ui/Button"
 interface Question {
 	id: string
 	type: string
