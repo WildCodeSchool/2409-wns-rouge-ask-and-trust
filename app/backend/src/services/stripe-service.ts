@@ -18,9 +18,7 @@ import { AppError } from "../middlewares/error-handler"
  * The service is initialized with a test secret key for development.
  * In production, use the live secret key from environment variables.
  */
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-	apiVersion: "2025-04-30.basil", // Latest API version
-})
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "")
 
 // Test card details for development
 // Card number: 4242 4242 4242 4242
