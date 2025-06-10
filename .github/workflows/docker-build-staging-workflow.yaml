@@ -1,19 +1,68 @@
-name: Docker Build Workflow
+name: Docker Build Staging Workflow
 
 # When this workflow is activated
 on:
-  pull_request:
-    types: 
-      - opened 
-      - reopened 
-      - synchronize
-      - edited
+  push:
+    branches:
+      - staging
+  workflow_dispatch:
 
 jobs:
+  extract-version:
+    # Ce job ne tourne que si la PR cible 'staging'
+    runs-on: ubuntu-latest
+    outputs:
+      # Output version pour le job suivant (extraite depuis package.json)
+      version: ${{ steps.get_version.outputs.VERSION }}
+    steps:
+      # Clone le repository GitHub dans la VM GitHub Actions
+      # Rend les fichiers disponibles pour le workflow
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Récupère tout l’historique et les tags (important pour standard-version)
+
+      # Prépare l’environnement Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Installe les dépendances du projet
+      - name: Install dependencies
+        run: npm ci
+
+      # Configure l’auteur Git pour pouvoir pousser le commit généré
+      - name: Configure git author (for push)
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      # Génère une nouvelle version, modifie package.json et changelog, commit + tag (local)
+      - name: Bump version and changelog with standard-version
+        run: npx standard-version
+
+      # Pull les derniers changements de la branche staging avant de pusher
+      - name: Pull latest changes from origin/staging
+        run: git pull --rebase origin staging
+
+      # Push le commit et le tag générés par standard-version
+      - name: Push release commit and tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git push --follow-tags origin ${{ github.ref_name }}
+
+      # Lis la version calculée dans le package.json et la transmet au prochain job
+      - name: Read version from package.json
+        id: get_version
+        run: |
+          VERSION=$(cat package.json | jq -r '.version')
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
   docker-build-staging:
     # Run if client test is a success
+    needs: extract-version
     # Only build docker image when merging on staging
-    if: github.base_ref == 'staging'
     runs-on: ubuntu-latest
     # for existing actions, we need the keyword "uses"
     steps:
@@ -21,6 +70,8 @@ jobs:
       # Make the files available by the workflow
       - name: Check out code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Recovery all tags
 
       # Enable to built multi-architectures images
       - name: Set up QEMU
@@ -46,7 +97,7 @@ jobs:
           # Indicate where is the app to build
          context: "{{defaultContext}}:app/frontend"
           # DockerHub user's name and app's name
-         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-frontend:${{ github.sha }}
+         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-frontend:${{ needs.extract-version.outputs.version }}
 
       # Build Docker image and push it in DockerHub
       - name: Build and push backend
@@ -56,4 +107,4 @@ jobs:
           # Indicate where is the app to build
          context: "{{defaultContext}}:app/backend"
           # DockerHub user's name and app's name
-         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-backend:${{ github.sha }}
+         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-backend:${{ needs.extract-version.outputs.version }}
