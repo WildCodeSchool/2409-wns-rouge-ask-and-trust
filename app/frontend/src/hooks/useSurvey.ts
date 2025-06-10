@@ -1,101 +1,83 @@
-import { useState } from "react"
-import { SurveyCardType } from "@/types/types"
+import { useQuery, useMutation } from "@apollo/client"
+import { GET_SURVEYS, CREATE_SURVEY, UPDATE_SURVEY } from "@/graphql/survey"
+import { useState, useEffect } from "react"
+import { CreateSurveyInput } from "@/types/types"
 
-// Nombre d'éléments par page (modifiable selon besoin)
+// Number of items per page (modifiable as needed)
 const PAGE_SIZE = 10
 
-// Mock de données pour démarrer
-type Survey = SurveyCardType
-const mockSurveys: Survey[] = [
-	{
-		href: "/",
-		picture: "/img/dev.webp",
-		title: "Pratiquez vous une activité physique?",
-		content:
-			"Dites-nous si le sport fait partie de votre quotidien. Vos réponses aideront à mieux comprendre les habitudes d'activité physique.",
-		tag: "Sport",
-		estimateTime: 5,
-		timeLeft: "Un mois",
-	},
-	// ... ajouter d'autres mocks si besoin
-]
-
+/**
+ * Hook for the survey management.
+ */
 export function useSurvey() {
-	const [surveys, setSurveys] = useState<Survey[]>(mockSurveys)
-	const [isLoading, setIsLoading] = useState(false)
-	const [error, setError] = useState<string | null>(null)
 	const [page, setPage] = useState(1)
+	const [surveys, setSurveys] = useState<CreateSurveyInput[]>([])
+	const [error, setError] = useState<string | null>(null)
+
+	// Apollo hooks
+	const { data, loading, refetch } = useQuery(GET_SURVEYS)
+	const [createSurveyMutation] = useMutation(CREATE_SURVEY)
+	const [updateSurveyMutation] = useMutation(UPDATE_SURVEY)
+
+	useEffect(() => {
+		if (data && data.surveys) {
+			setSurveys(data.surveys)
+		}
+	}, [data])
+
 	const totalPages = Math.ceil(surveys.length / PAGE_SIZE)
 
-	// Simule la récupération des surveys (à remplacer par un appel API)
-	const fetchSurveys = async (pageToFetch: number = page) => {
-		setIsLoading(true)
-		setError(null)
+	// Client-side pagination (should be improved on the backend if needed)
+	const paginatedSurveys = surveys.slice(
+		(page - 1) * PAGE_SIZE,
+		page * PAGE_SIZE
+	)
+
+	const fetchSurveys = async () => {
 		try {
-			// Ici, remplacer par un appel API réel
-			// Simule la pagination
-			const start = (pageToFetch - 1) * PAGE_SIZE
-			const end = start + PAGE_SIZE
-			setSurveys(mockSurveys.slice(start, end))
-			setPage(pageToFetch)
+			await refetch()
 		} catch {
-			setError("Erreur lors du chargement des enquêtes.")
-		} finally {
-			setIsLoading(false)
+			setError("Error while loading surveys.")
 		}
 	}
 
-	// Ajoute une enquête (mock)
-	const addSurvey = async (survey: Survey) => {
-		setIsLoading(true)
+	const addSurvey = async (survey: CreateSurveyInput): Promise<{ id: string } | undefined> => {
 		setError(null)
 		try {
-			setSurveys(prev => [survey, ...prev])
+			const result = await createSurveyMutation({ variables: { data: survey } })
+			await refetch()
+			//@note On suppose que la mutation retourne { data: { createSurvey: { id: ... } } }
+			return result.data?.createSurvey
 		} catch {
-			setError("Erreur lors de l'ajout de l'enquête.")
-		} finally {
-			setIsLoading(false)
+			setError("Error while adding the survey.")
 		}
 	}
 
-	// Modifie une enquête (mock)
-	const updateSurvey = async (survey: Survey) => {
-		setIsLoading(true)
+	const updateSurvey = async (id: string, survey: Partial<CreateSurveyInput>) => {
 		setError(null)
 		try {
-			setSurveys(prev =>
-				prev.map(s => (s.href === survey.href ? survey : s))
-			)
+			await updateSurveyMutation({ variables: { id, data: survey } })
+			await refetch()
 		} catch {
-			setError("Erreur lors de la modification de l'enquête.")
-		} finally {
-			setIsLoading(false)
+			setError("Error while updating the survey.")
 		}
 	}
 
-	// Supprime une enquête (mock)
-	const deleteSurvey = async (href: string) => {
-		setIsLoading(true)
-		setError(null)
-		try {
-			setSurveys(prev => prev.filter(s => s.href !== href))
-		} catch {
-			setError("Erreur lors de la suppression de l'enquête.")
-		} finally {
-			setIsLoading(false)
-		}
-	}
+	// Deletion to be added on backend and frontend
+	// const deleteSurvey = async (id: string) => {
+	// 	setError("Deletion not implemented on the backend.")
+	// }
 
 	return {
-		surveys,
-		isLoading,
+		surveys: paginatedSurveys,
+		isLoading: loading,
 		error,
 		page,
 		totalPages,
 		fetchSurveys,
 		addSurvey,
 		updateSurvey,
-		deleteSurvey,
+		//deleteSurvey,
 		setPage,
 	}
 }
