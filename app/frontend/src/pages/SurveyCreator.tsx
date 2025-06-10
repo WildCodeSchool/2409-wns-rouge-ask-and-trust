@@ -1,27 +1,50 @@
-import { Toolbox } from "@/components/Toolbox/Toolbox"
+import { Toolbox } from "@/components/sections/Toolbox/Toolbox"
 import { Helmet } from "react-helmet"
 import "@/styles/toolbox.css"
-import { Canvas } from "@/components/canvas/Canvas"
+import { Canvas } from "@/components/sections/canvas/Canvas"
 import { useState } from "react"
+import { useQuestions } from "@/hooks/useQuestions"
+import { useToast } from "@/hooks/useToast"
 
 function SurveyCreator() {
-	// Lift the questions state up to the parent component
-	const [questions, setQuestions] = useState<Array<{ id: string; type: string }>>([])
+	// Local state for immediate display
+	const [questions, setQuestions] = useState<
+		Array<{ id: string; type: string }>
+	>([])
+
+	// Hook pour la gestion des questions
+	const { addQuestion, isLoading, error } = useQuestions()
+	const { showToast } = useToast()
 
 	/**
-	 * @Note [todo] add logic
+	 * Adds a question via the hook and updates the local state
 	 * @param type
 	 */
-	const handleAddQuestion = (type: string) => {
-		console.log(`Adding question of type ${type}`)
-		/**
-		 * @TEST - add logic to add question
-		 */
-		setQuestions((prev) => [...prev, { id: `question-${Date.now()}`, type }])
+	const handleAddQuestion = async (type: string) => {
+		try {
+			await addQuestion({
+				content: `Nouvelle question (${type})`,
+				answers: "[]", // à adapter selon la structure attendue
+			})
+			setQuestions(prev => [...prev, { id: `question-${Date.now()}`, type }])
+			showToast({
+				type: "success",
+				title: "Question ajoutée",
+				description: "La question a bien été ajoutée à l'enquête.",
+			})
+		} catch {
+			showToast({
+				type: "error",
+				title: "Erreur",
+				description: "Impossible d'ajouter la question.",
+			})
+		}
 	}
 
 	return (
 		<>
+			{isLoading && <div className="loader">Chargement...</div>}
+			{error && <div className="error-message">{error}</div>}
 			<Helmet>
 				<title>Survey Creator</title>
 				<meta

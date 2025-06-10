@@ -31,10 +31,10 @@ function SurveyCreate() {
         <meta name="twitter:title" content="Créer une enquête" />
         <meta name="twitter:description" content="Page de création d'une nouvelle enquête." />
       </Helmet>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-black-50">
 				<header className="bg-white shadow-sm">
 					<div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-						<h1 className="text-2xl font-semibold text-gray-900">
+						<h1 className="text-2xl font-semibold text-black-default">
             Créer une enquête
 						</h1>
 					</div>

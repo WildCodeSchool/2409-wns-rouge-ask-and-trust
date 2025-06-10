@@ -78,7 +78,7 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 						errorMessage=""
 					/>
 					{errors.title && (
-						<p className="text-sm text-red-600">
+						<p className="text-sm text-destructive-medium">
 							{errors.title.message}
 						</p>
 					)}
@@ -92,7 +92,7 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 						})}
 					/>
 					{errors.description && (
-						<p className="text-sm text-red-600">
+						<p className="text-sm text-destructive-medium">
 							{errors.description.message}
 						</p>
 					)}
@@ -113,7 +113,7 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 						))}
 					</select>
 					{errors.category && (
-						<p className="text-sm text-red-600">{errors.category.message}</p>
+						<p className="text-sm text-destructive-medium">{errors.category.message}</p>
 					)}
 				</div>
 				<div className="mb-4 flex items-center space-x-2">
@@ -126,7 +126,7 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 					<Label htmlFor="public">Enquête publique</Label>
 				</div>
 				{errors.root && (
-					<div className="mb-4 text-red-600">
+					<div className="mb-4 text-destructive-medium">
 						{errors.root.message}
 					</div>
 				)}
