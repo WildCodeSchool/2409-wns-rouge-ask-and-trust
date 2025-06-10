@@ -18,21 +18,18 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onAddQuestion }) => {
 				/>
 			</div>
 
-			<h2 className="text-2xl font-semibold text-primary-800 mb-2">
+			<h2 className="text-primary-800 mb-2 text-2xl font-semibold">
 				Votre formulaire est vide
 			</h2>
 
-			<p className="mb-8 text-black-400">
+			<p className="text-black-400 mb-8">
 				Cliquez sur le bouton ci-dessous pour ajouter une question.
 			</p>
 
 			<div className="flex items-center">
-				<Button
-					onClick={onAddQuestion}
-					ariaLabel="Add Question"
-				>
+				<Button onClick={onAddQuestion} ariaLabel="Add Question">
 					Ajouter une question
-					<span className="ml-2 text-black-400">•••</span>
+					<span className="text-black-400 ml-2">•••</span>
 				</Button>
 			</div>
 		</div>

@@ -24,6 +24,7 @@ const TermsOfUse = lazy(() => import("@/pages/TermsOfUse"))
 const Payment = lazy(() => import("@/pages/Payment"))
 const PaymentConfirmation = lazy(() => import("@/pages/PaymentConfirmation"))
 const SurveyCreator = lazy(() => import("@/pages/SurveyCreator"))
+const SurveyCreate = lazy(() => import("@/pages/SurveyCreate"))
 
 /**
  * Router confirmation
@@ -100,6 +101,22 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/survey-creator",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<SurveyCreator />
+					</Suspense>
+				),
+			},
+			{
+				path: "/surveys/create",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<SurveyCreate />
+					</Suspense>
+				),
+			},
+			{
+				path: "/surveys/build/:id",
 				element: (
 					<Suspense fallback={<Loader />}>
 						<SurveyCreator />
