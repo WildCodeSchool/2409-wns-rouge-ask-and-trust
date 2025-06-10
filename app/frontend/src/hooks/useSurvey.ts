@@ -41,10 +41,14 @@ export function useSurvey() {
 		}
 	}
 
-	const addSurvey = async (survey: CreateSurveyInput): Promise<{ id: string } | undefined> => {
+	const addSurvey = async (
+		survey: CreateSurveyInput
+	): Promise<{ id: string } | undefined> => {
 		setError(null)
 		try {
-			const result = await createSurveyMutation({ variables: { data: survey } })
+			const result = await createSurveyMutation({
+				variables: { data: survey },
+			})
 			await refetch()
 			//@note On suppose que la mutation retourne { data: { createSurvey: { id: ... } } }
 			return result.data?.createSurvey
@@ -53,7 +57,10 @@ export function useSurvey() {
 		}
 	}
 
-	const updateSurvey = async (id: string, survey: Partial<CreateSurveyInput>) => {
+	const updateSurvey = async (
+		id: string,
+		survey: Partial<CreateSurveyInput>
+	) => {
 		setError(null)
 		try {
 			await updateSurveyMutation({ variables: { id, data: survey } })

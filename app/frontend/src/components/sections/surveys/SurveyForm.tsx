@@ -28,7 +28,8 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 		},
 	})
 
-	const { data: categoriesData, loading: loadingCategories } = useQuery(GET_CATEGORIES)
+	const { data: categoriesData, loading: loadingCategories } =
+		useQuery(GET_CATEGORIES)
 	const { showToast } = useToast()
 
 	const onFormSubmit = async (data: CreateSurveyInput) => {
@@ -36,7 +37,10 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 		try {
 			await onSubmit({
 				...data,
-				category: typeof data.category === "string" ? Number(data.category) : data.category,
+				category:
+					typeof data.category === "string"
+						? Number(data.category)
+						: data.category,
 			})
 			showToast({
 				type: "success",
@@ -78,7 +82,7 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 						errorMessage=""
 					/>
 					{errors.title && (
-						<p className="text-sm text-destructive-medium">
+						<p className="text-destructive-medium text-sm">
 							{errors.title.message}
 						</p>
 					)}
@@ -92,7 +96,7 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 						})}
 					/>
 					{errors.description && (
-						<p className="text-sm text-destructive-medium">
+						<p className="text-destructive-medium text-sm">
 							{errors.description.message}
 						</p>
 					)}
@@ -101,19 +105,25 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 					<Label htmlFor="category">Catégorie</Label>
 					<select
 						id="category"
-						{...register("category", { required: "La catégorie est requise" })}
-						className="w-full border rounded px-3 py-2"
+						{...register("category", {
+							required: "La catégorie est requise",
+						})}
+						className="w-full rounded border px-3 py-2"
 						disabled={loadingCategories}
 					>
 						<option value="">Sélectionner une catégorie</option>
-						{categoriesData?.categories?.map((cat: { id: string; name: string }) => (
-							<option key={cat.id} value={cat.id}>
-								{cat.name}
-							</option>
-						))}
+						{categoriesData?.categories?.map(
+							(cat: { id: string; name: string }) => (
+								<option key={cat.id} value={cat.id}>
+									{cat.name}
+								</option>
+							)
+						)}
 					</select>
 					{errors.category && (
-						<p className="text-sm text-destructive-medium">{errors.category.message}</p>
+						<p className="text-destructive-medium text-sm">
+							{errors.category.message}
+						</p>
 					)}
 				</div>
 				<div className="mb-4 flex items-center space-x-2">
@@ -126,11 +136,15 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 					<Label htmlFor="public">Enquête publique</Label>
 				</div>
 				{errors.root && (
-					<div className="mb-4 text-destructive-medium">
+					<div className="text-destructive-medium mb-4">
 						{errors.root.message}
 					</div>
 				)}
-				<Button type="submit" disabled={isSubmitting} ariaLabel="Créer l'enquête">
+				<Button
+					type="submit"
+					disabled={isSubmitting}
+					ariaLabel="Créer l'enquête"
+				>
 					{isSubmitting ? "Création..." : "Créer l'enquête"}
 				</Button>
 			</form>

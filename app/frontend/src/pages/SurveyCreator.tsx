@@ -26,7 +26,10 @@ function SurveyCreator() {
 				content: `Nouvelle question (${type})`,
 				answers: "[]", // à adapter selon la structure attendue
 			})
-			setQuestions(prev => [...prev, { id: `question-${Date.now()}`, type }])
+			setQuestions(prev => [
+				...prev,
+				{ id: `question-${Date.now()}`, type },
+			])
 			showToast({
 				type: "success",
 				title: "Question ajoutée",
