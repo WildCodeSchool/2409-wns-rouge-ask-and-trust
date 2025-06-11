@@ -18,6 +18,7 @@ import { ObjectType, Field, ID } from "type-graphql"
 import { TypeOfQuestion } from "../../../types/types"
 import { Survey } from "./survey"
 import { Answers } from "./answers"
+import { User } from "../user"
 
 /**
  * Questions Entity
@@ -105,4 +106,13 @@ export class Questions extends BaseEntity {
 	@ManyToOne(() => Survey, survey => survey.questions)
 	@Field(() => Survey, { nullable: true })
 	survey!: Survey
+
+	/**
+	 * User who created the question
+	 * @description
+	 * Many relation to the `User` entity.
+	 */
+	@ManyToOne(() => User)
+	@Field(() => User, { nullable: true })
+	createdBy!: User
 }

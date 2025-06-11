@@ -20,6 +20,7 @@ import { CreateQuestionsInput } from "../../inputs/create/survey/create-question
 import { Survey } from "../../../database/entities/survey/survey"
 import { Context } from "../../../types/types"
 import { AppError } from "../../../middlewares/error-handler"
+import { UpdateQuestionInput } from "../../inputs/update/survey/update-question-input"
 
 /**
  * QuestionsResolver
@@ -133,6 +134,104 @@ export class QuestionsResolver {
 		} catch (error) {
 			throw new AppError(
 				"Failed to create question",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
+
+	/**
+	 * Mutation to update an existing survey question.
+	 *
+	 * @param id - The ID of the question to update.
+	 * @param context - The context object that contains the currently authenticated user.
+	 *
+	 * @returns A Promise that resolves to the updated Questions object, or null if the question could not be found or updated.
+	 *
+	 * This mutation allows an admin user to update an existing survey question. Only the admin or the question owner can update questions.
+	 * If the user is not an admin, the mutation will not be executed.
+	 */
+	@Authorized("user", "admin")
+	@Mutation(() => Questions, { nullable: true })
+	async updateQuestion(
+		@Arg("id", () => ID) id: number,
+		@Arg("data", () => UpdateQuestionInput)
+		data: UpdateQuestionInput,
+		@Ctx() context: Context
+	): Promise<Questions | null> {
+		try {
+			const user = context.user
+
+			if (!user) {
+				throw new AppError("User not found", 404, "NotFoundError")
+			}
+
+			// Only admins or question owner can update question
+			const whereCreatedBy =
+				user.role === "admin" ? undefined : { id: user.id }
+
+			const question = await Questions.findOneBy({
+				id,
+				createdBy: whereCreatedBy,
+			})
+
+			if (question !== null) {
+				Object.assign(question, data)
+				await question.save()
+			}
+
+			return question
+		} catch (error) {
+			throw new AppError(
+				"Failed to update question",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
+
+	/**
+	 * Mutation to delete an existing survey question.
+	 *
+	 * @param id - The ID of the question to delete.
+	 * @param context - The context object that contains the currently authenticated user.
+	 *
+	 * @returns A Promise that resolves to the deleted Question object, or null if the question could not be found or deleted.
+	 *
+	 * This mutation allows an admin or user to delete an existing survey question. Only the admin or question owner can delete questions.
+	 * If the user is not an admin or question owner, the mutation will not be executed.
+	 */
+	@Authorized("unser", "admin")
+	@Mutation(() => Questions, { nullable: true })
+	async deleteQuestion(
+		@Arg("id", () => ID) id: number,
+		@Ctx() context: Context
+	): Promise<Questions | null> {
+		try {
+			const user = context.user
+
+			if (!user) {
+				throw new AppError("User not found", 404, "NotFoundError")
+			}
+
+			// Only admins or question owner can delete qestions
+			const whereCreatedBy =
+				user.role === "admin" ? undefined : { id: user.id }
+
+			const question = await Questions.findOneBy({
+				id,
+				createdBy: whereCreatedBy,
+			})
+
+			if (question !== null) {
+				await question.remove()
+				question.id = id
+			}
+
+			return question
+		} catch (error) {
+			throw new AppError(
+				"Failed to delete question",
 				500,
 				"InternalServerError"
 			)

@@ -205,4 +205,52 @@ export class SurveysResolver {
 			)
 		}
 	}
+
+	/**
+	 * Mutation to delete an existing survey.
+	 *
+	 * @param id - The ID of the survey to delete.
+	 * @param context - The context object that contains the currently authenticated user.
+	 *
+	 * @returns A Promise that resolves to the deleted Survey object, or null if the survey could not be found or deleted.
+	 *
+	 * This mutation allows an admin or user to delete an existing survey. Only the admin or the survey owner can delete surveys.
+	 * If the user is not an admin or the wurvey owner, the mutation will not be executed.
+	 */
+	@Authorized("user", "admin")
+	@Mutation(() => Survey, { nullable: true })
+	async deleteSurvey(
+		@Arg("id", () => ID) id: number,
+		@Ctx() context: Context
+	): Promise<Survey | null> {
+		try {
+			const user = context.user
+
+			if (!user) {
+				throw new AppError("User not found", 404, "NotFoundError")
+			}
+
+			// Only admins or survey owner can delete surveys
+			const whereCreatedBy =
+				user.role === "admin" ? undefined : { id: user.id }
+
+			const survey = await Survey.findOneBy({
+				id,
+				user: whereCreatedBy,
+			})
+
+			if (survey !== null) {
+				await survey.remove()
+				survey.id = id
+			}
+
+			return survey
+		} catch (error) {
+			throw new AppError(
+				"Failed to delete survey",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
 }
