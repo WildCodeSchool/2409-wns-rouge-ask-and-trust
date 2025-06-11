@@ -1,132 +1,138 @@
 import FormWrapper from "../../auth/form/FormWrapper"
 import InputTitle from "./InputTitle"
 import InputDescription from "./InputDescription"
-import { SubmitHandler, useForm } from "react-hook-form"
-import { SurveyFormType } from "@/types/types"
+import { useForm } from "react-hook-form"
 import { useToast } from "@/hooks/useToast"
-import { useMutation, useQuery } from "@apollo/client"
-import { CREATE_SURVEY } from "@/graphql/survey/createSurvey"
-import { querySurvey } from "@/graphql/survey/getSurvey"
-import { useNavigate, useParams } from "react-router-dom"
-import { UPDATE_SURVEY } from "@/graphql/survey/updateSurvey"
-import { useEffect } from "react"
+import { useQuery } from "@apollo/client"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/Button"
+import { Label } from "@/components/ui/Label"
+import { Input } from "@/components/ui/Input"
+import { CategoryOption, CreateSurveyInput } from "@/types/types"
+import { GET_CATEGORIES } from "@/graphql/category"
+import { useSurvey } from "@/hooks/useSurvey"
+import TypeSelect from "@/components/ui/TypeSelect"
 
 export default function SurveyForm() {
-	const { showToast } = useToast()
-	const params = useParams<{ id: string }>()
-	const id = params.id && Number(params.id)
+	const { addSurvey } = useSurvey()
 	const navigate = useNavigate()
+	const { showToast } = useToast()
 
 	const {
 		register,
 		handleSubmit,
-		reset,
-		formState: { errors },
-	} = useForm<SurveyFormType>({
-		mode: "onBlur",
+		formState: { errors, isSubmitting },
+		setError,
+		clearErrors,
+		control,
+	} = useForm<CreateSurveyInput>({
 		defaultValues: {
 			title: "",
 			description: "",
-			isPublic: true,
+			public: true,
 			category: "",
+			questions: [],
 		},
 	})
 
-	const [doCreateSurvey] = useMutation<{ CREATE_SURVEY: SurveyFormType }>(
-		CREATE_SURVEY
-	)
+	const { data: categoriesData, loading: loadingCategories } =
+		useQuery(GET_CATEGORIES)
 
-	const [doUpdateSurvey] = useMutation<{
-		UPDATE_SURVEY: SurveyFormType
-	}>(UPDATE_SURVEY)
-
-	const { data: surveyData } = useQuery<{ survey: SurveyFormType }>(
-		querySurvey,
-		{
-			variables: { surveyId: id },
-			skip: !id,
-		}
-	)
-	const survey = surveyData?.survey
-	console.log(survey)
-
-	useEffect(() => {
-		if (survey) {
-			reset(survey)
-		}
-	}, [survey])
-
-	const onSubmit: SubmitHandler<SurveyFormType> = async formData => {
+	const onFormSubmit = async (form: CreateSurveyInput) => {
+		clearErrors()
 		try {
-			if (survey) {
-				const { data } = await doUpdateSurvey({
-					variables: {
-						id: survey.id,
-						data: formData,
-					},
-				})
+			const survey = await addSurvey({
+				...form,
+				category:
+					typeof form.category === "string"
+						? Number(form.category)
+						: form.category,
+				questions: form.questions ?? [],
+			})
 
-				if (data) {
-					reset()
-					showToast({
-						type: "success",
-						title: "Modification de votre enquête réussie !",
-						description:
-							"Vous pouvez maintenant modifier si nécessaires, les questions de votre enquêtes.",
-					})
-				}
+			showToast({
+				type: "success",
+				title: "Enquête créée avec succès",
+				description: "Votre enquête a bien été enregistrée.",
+			})
 
-				navigate("/survey-creator")
-			} else {
-				const { data } = await doCreateSurvey({
-					variables: {
-						data: {
-							title: formData.title,
-							description: formData.description,
-							isPublic: formData.isPublic,
-							category: formData.category,
-						},
-					},
-				})
-
-				console.log(data)
-
-				if (data) {
-					reset()
-					showToast({
-						type: "success",
-						title: "Création de votre enquête réussie !",
-						description:
-							"Vous pouvez maintenant ajouter des questions à votre enquêtes.",
-					})
-				}
-
-				navigate("/survey-creator")
+			if (survey && survey.id) {
+				navigate(`/surveys/build/${survey.id}`)
 			}
 		} catch (err) {
-			console.error("Erreur complète :", err)
-
-			// Handle others errors
-			console.error("Error:", err)
+			setError("root", {
+				message:
+					err instanceof Error
+						? err.message
+						: "Erreur lors de la création de l'enquête.",
+			})
 			showToast({
 				type: "error",
-				title: "Oops, nous avons rencontré un problème pour créer votre enquête.",
-				description: "Réessayer ultérieurement.",
+				title: "Erreur lors de la création",
+				description:
+					err instanceof Error
+						? err.message
+						: "Erreur lors de la création de l'enquête.",
 			})
 		}
 	}
 
+	const categoryOptions: CategoryOption[] =
+		categoriesData?.categories?.map(
+			(cat: { id: string; name: string }) => ({
+				value: cat.id,
+				label: cat.name,
+			})
+		) ?? []
+
 	return (
-		<FormWrapper onSubmit={handleSubmit(onSubmit)}>
+		<FormWrapper onSubmit={handleSubmit(onFormSubmit)}>
+			<h1 className="text-center text-2xl font-bold">
+				Créer une enquête
+			</h1>
 			<InputTitle register={register} errors={errors} />
 			<InputDescription register={register} errors={errors} />
+			<div>
+				<Label htmlFor="category" required>
+					Catégorie
+				</Label>
+				<TypeSelect
+					control={control}
+					name="category"
+					selectSomething="Sélectionner une catégorie"
+					options={categoryOptions}
+					disabled={loadingCategories}
+				/>
+				{errors.category && (
+					<p className="text-destructive-medium text-sm">
+						{errors.category.message}
+					</p>
+				)}
+			</div>
+			<div className="flex flex-row-reverse items-center space-x-2">
+				<Label htmlFor="public" required>
+					Enquête publique
+				</Label>
+				<Input
+					id="public"
+					type="checkbox"
+					{...register("public")}
+					errorMessage=""
+				/>
+			</div>
+			{errors.root && (
+				<div className="text-destructive-medium mb-4">
+					{errors.root.message}
+				</div>
+			)}
 			<Button
 				type="submit"
+				disabled={isSubmitting}
 				fullWidth
-				ariaLabel="Soumettre le formulaire"
-				children="Sauvegarder"
-			/>
+				ariaLabel="Créer l'enquête"
+			>
+				{isSubmitting ? "Création..." : "Créer l'enquête"}
+			</Button>
 		</FormWrapper>
 	)
 }
