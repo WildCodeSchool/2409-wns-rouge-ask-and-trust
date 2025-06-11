@@ -44,6 +44,7 @@ export class SurveysResolver {
 				relations: {
 					user: true,
 					category: true,
+					questions: true,
 				},
 			})
 
@@ -78,6 +79,7 @@ export class SurveysResolver {
 				relations: {
 					user: true,
 					category: true,
+					questions: true,
 				},
 			})
 
