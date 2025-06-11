@@ -1,7 +1,7 @@
-import { useState } from "react"
-import { toolboxCategories } from "@/components/sections/Toolbox/toolboxData"
 import { AdaptiveToolbox } from "@/components/sections/Toolbox/AdaptativeToolbox"
+import { toolboxCategories } from "@/components/sections/Toolbox/toolboxData"
 import { ToolboxCategory, ToolboxItem } from "@/types/types"
+import { useState } from "react"
 
 /**
  * Toolbox component
