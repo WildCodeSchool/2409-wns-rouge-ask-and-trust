@@ -13,7 +13,7 @@ function SurveyCreator() {
 	>([])
 
 	// Hook pour la gestion des questions
-	const { addQuestion, isLoading, error } = useQuestions()
+	const { addQuestion, isLoading } = useQuestions()
 	const { showToast } = useToast()
 
 	/**
@@ -47,7 +47,6 @@ function SurveyCreator() {
 	return (
 		<>
 			{isLoading && <div className="loader">Chargement...</div>}
-			{error && <div className="error-message">{error}</div>}
 			<Helmet>
 				<title>Survey Creator</title>
 				<meta
