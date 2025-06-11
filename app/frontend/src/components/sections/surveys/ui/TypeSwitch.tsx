@@ -1,12 +1,12 @@
 import { Switch } from "@/components/ui/Switch"
-import { QuestionDefinition } from "@/types/types"
+import { QuestionUpdate } from "@/types/types"
 import { useId } from "react"
 import { Control, Controller } from "react-hook-form"
 
 type Props = {
 	label: string
 	name: `answers.${string}` // check this
-	control: Control<QuestionDefinition>
+	control: Control<QuestionUpdate>
 }
 
 export default function TypeSwitch({ label, name, control }: Props) {
