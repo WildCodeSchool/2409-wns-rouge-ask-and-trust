@@ -14,7 +14,6 @@ export const GET_SURVEYS = gql`
 				id
 				email
 			}
-			# Ajoute ici les autres champs nécessaires pour l'affichage
 		}
 	}
 `
