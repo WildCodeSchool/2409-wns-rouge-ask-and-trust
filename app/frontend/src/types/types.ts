@@ -123,8 +123,26 @@ export interface QuestionUpdate {
 	id: number
 	title?: string
 	description?: string
-	type?: "text" | "text-area" | "checkbox" | "radio" | "boolean" | "select" // faire enum ici
-	answers: Record<string, AnswerValue>
+	type?: QuestionType
+	answers: { value: string }[]
 }
 
-export type AnswerValue = boolean | string | number | string[]
+export const TypesOfQuestion = {
+	Text: "text",
+	Multiple_Choice: "multiple_choice",
+	Boolean: "boolean",
+	Select: "select",
+} as const
+
+export const TypesOfQuestionLabels: Record<
+	keyof typeof TypesOfQuestion,
+	string
+> = {
+	Text: "Texte court",
+	Multiple_Choice: "Choix multiples",
+	Boolean: "Oui / Non",
+	Select: "Liste déroulante",
+}
+
+export type QuestionType =
+	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]
