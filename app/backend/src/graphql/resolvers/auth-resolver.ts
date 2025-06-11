@@ -106,6 +106,7 @@ export class AuthResolver {
 	 *
 	 * @returns A string message confirming successful logout.
 	 */
+	@Authorized()
 	@Mutation(() => String)
 	async logout(@Ctx() context: Context): Promise<string> {
 		const { cookies } = context
@@ -125,6 +126,7 @@ export class AuthResolver {
 	 *
 	 * @throws AppError If no user is found or if there is any error in the process.
 	 */
+	@Authorized()
 	@Query(() => User)
 	async whoami(@Ctx() context: Context): Promise<User> {
 		const { cookies } = context
@@ -142,7 +144,7 @@ export class AuthResolver {
 	 * @returns A Promise that resolves to an array of User objects, or a string indicating an error.
 	 */
 	@Query(() => [User])
-	@Authorized("admin")
+	@Authorized(Roles.Admin)
 	async getUsers(): Promise<User[] | string> {
 		const users = await User.find()
 		if (users) {

@@ -18,7 +18,7 @@ import {
 import { Questions } from "../../../database/entities/survey/questions"
 import { Survey } from "../../../database/entities/survey/survey"
 import { AppError } from "../../../middlewares/error-handler"
-import { Context, TypesOfQuestion } from "../../../types/types"
+import { Context, TypesOfQuestion, Roles } from "../../../types/types"
 import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
 import { UpdateQuestionInput } from "../../inputs/update/survey/update-question-input"
 
@@ -104,7 +104,7 @@ export class QuestionsResolver {
 	 * This mutation allows an authenticated user ("user" or "admin" role) to create a new question.
 	 * The created question is optionally linked to a survey and associated with the authenticated user.
 	 */
-	@Authorized("user", "admin")
+	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Questions)
 	async createQuestion(
 		@Arg("data", () => CreateQuestionsInput)
@@ -164,7 +164,7 @@ export class QuestionsResolver {
 	 * This mutation allows an admin user to update an existing survey question. Only the admin or the question owner can update questions.
 	 * If the user is not an admin, the mutation will not be executed.
 	 */
-	@Authorized("user", "admin")
+	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Questions, { nullable: true })
 	async updateQuestion(
 		@Arg("id", () => ID) id: number,
@@ -214,7 +214,7 @@ export class QuestionsResolver {
 	 * This mutation allows an admin or user to delete an existing survey question. Only the admin or question owner can delete questions.
 	 * If the user is not an admin or question owner, the mutation will not be executed.
 	 */
-	@Authorized("unser", "admin")
+	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Questions, { nullable: true })
 	async deleteQuestion(
 		@Arg("id", () => ID) id: number,
