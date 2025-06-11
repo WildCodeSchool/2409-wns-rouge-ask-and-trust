@@ -15,12 +15,14 @@ export function useSurvey() {
 
 	// Apollo hooks
 	const { data, loading: isFetching, refetch } = useQuery(GET_SURVEYS)
-	const [createSurvey, { loading: isCreating, error: createError }] = useMutation(CREATE_SURVEY, {
-		refetchQueries: [{ query: GET_SURVEYS }],
-	})
-	const [updateSurveyMutation, { loading: isUpdating, error: updateError }] = useMutation(UPDATE_SURVEY, {
-		refetchQueries: [{ query: GET_SURVEYS }],
-	})
+	const [createSurvey, { loading: isCreating, error: createError }] =
+		useMutation(CREATE_SURVEY, {
+			refetchQueries: [{ query: GET_SURVEYS }],
+		})
+	const [updateSurveyMutation, { loading: isUpdating, error: updateError }] =
+		useMutation(UPDATE_SURVEY, {
+			refetchQueries: [{ query: GET_SURVEYS }],
+		})
 
 	useEffect(() => {
 		if (data && data.surveys) {

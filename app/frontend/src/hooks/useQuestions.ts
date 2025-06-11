@@ -12,18 +12,21 @@ export type CreateQuestionInput = {
 export function useQuestions() {
 	const [questions, setQuestions] = useState<Question[]>([])
 
-	const [createQuestionMutation, { loading: isLoading, error }] = useMutation(CREATE_QUESTION, {
-    refetchQueries: [GET_SURVEYS]
-  })
+	const [createQuestionMutation, { loading: isLoading, error }] = useMutation(
+		CREATE_QUESTION,
+		{
+			refetchQueries: [GET_SURVEYS],
+		}
+	)
 
 	const addQuestion = async (input: CreateQuestionInput) => {
-			const result = await createQuestionMutation({
-				variables: { content: input },
-			})
-			if (result.data?.createQuestion) {
-				setQuestions(prev => [...prev, result.data.createQuestion])
-			}
-			return result.data?.createQuestion
+		const result = await createQuestionMutation({
+			variables: { content: input },
+		})
+		if (result.data?.createQuestion) {
+			setQuestions(prev => [...prev, result.data.createQuestion])
+		}
+		return result.data?.createQuestion
 	}
 
 	// updateQuestion, deleteQuestion à implémenter si besoin
