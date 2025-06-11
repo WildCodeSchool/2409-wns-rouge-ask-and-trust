@@ -5,13 +5,14 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/Select"
+import { CategoryOption } from "@/types/types"
 import { Control, Controller, FieldPath, FieldValues } from "react-hook-form"
 
 type TypeSelectProps<T extends FieldValues> = {
 	control: Control<T>
 	name: FieldPath<T>
 	selectSomething: string
-	options: { label: string; value: string }[]
+	options: CategoryOption[]
 	disabled?: boolean
 }
 

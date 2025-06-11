@@ -106,6 +106,7 @@ export type CreateSurveyInput = {
 	description: string
 	public: boolean
 	category: number | string
+	questions: Question[]
 }
 
 export interface Survey {
@@ -153,15 +154,12 @@ export const TypesOfQuestionLabels: Record<
 export type QuestionType =
 	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]
 
-export type SurveyFormType = {
-	id: string
-	title: string
-	description: string
-	isPublic: boolean
-	category: string
+export type InputsProps = {
+	register: UseFormRegister<CreateSurveyInput>
+	errors: FieldErrors<CreateSurveyInput>
 }
 
-export type InputsProps = {
-	register: UseFormRegister<SurveyFormType>
-	errors: FieldErrors<SurveyFormType>
+export type CategoryOption = {
+	value: string
+	label: string
 }
