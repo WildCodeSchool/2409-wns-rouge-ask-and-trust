@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
-import { QuestionDefinition } from "@/types/types"
+import { QuestionUpdate } from "@/types/types"
 import { PlusCircle, Trash2 } from "lucide-react"
 import {
 	FieldArrayWithId,
@@ -18,11 +18,11 @@ export function BuildSelect({
 	remove,
 	append,
 }: {
-	fields: FieldArrayWithId<QuestionDefinition, "answers", "id">[]
-	register: UseFormRegister<QuestionDefinition>
+	fields: FieldArrayWithId<QuestionUpdate, "answers", "id">[]
+	register: UseFormRegister<QuestionUpdate>
 	errors: FieldValues
 	remove: UseFieldArrayRemove
-	append: UseFieldArrayAppend<QuestionDefinition, "answers">
+	append: UseFieldArrayAppend<QuestionUpdate, "answers">
 }) {
 	return (
 		<div className="flex flex-col gap-3">
