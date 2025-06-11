@@ -1,12 +1,12 @@
-import { useForm } from "react-hook-form"
-import { Input } from "@/components/ui/Input"
-import { Textarea } from "@/components/ui/Textarea"
 import { Button } from "@/components/ui/Button"
+import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
-import { CreateSurveyInput } from "@/types/types"
-import { useQuery } from "@apollo/client"
+import { Textarea } from "@/components/ui/Textarea"
 import { GET_CATEGORIES } from "@/graphql/category"
 import { useToast } from "@/hooks/useToast"
+import { CreateSurveyInput } from "@/types/types"
+import { useQuery } from "@apollo/client"
+import { useForm } from "react-hook-form"
 
 interface SurveyFormProps {
 	onSubmit: (form: CreateSurveyInput) => Promise<void>
@@ -30,6 +30,7 @@ export default function SurveyForm({ onSubmit }: SurveyFormProps) {
 
 	const { data: categoriesData, loading: loadingCategories } =
 		useQuery(GET_CATEGORIES)
+
 	const { showToast } = useToast()
 
 	const onFormSubmit = async (data: CreateSurveyInput) => {

@@ -1,6 +1,5 @@
 import type React from "react"
-import { EmptyState } from "@/components/sections/canvas/empty-state"
-import { Button } from "@/components/ui/Button"
+import Question from "../surveys/buildSurvey/question/Question"
 interface Question {
 	id: string
 	type: string
@@ -21,10 +20,11 @@ export const Canvas: React.FC<CanvasProps> = ({
 		// Default to single-line when using the button
 		onAddQuestion("single-line")
 	}
+	console.log("questions", questions)
 
 	return (
 		<div className={`survey-canvas ${className}`}>
-			<div className="bg-primary-100 rounded-lg p-8">
+			{/* <div className="bg-primary-100 rounded-lg p-8">
 				{questions.length === 0 ? (
 					// Afficher l'état vide s'il n'y a pas de questions
 					<EmptyState onAddQuestion={handleAddQuestion} />
@@ -32,7 +32,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 					// Afficher les questions s'il y en a
 					<div>
 						{/* Add logic to render questions - @ArthurVS05*/}
-						{/*
+			{/*
                             questions.map(question => (
                             <QuestionManager
                                 key={question.id}
@@ -44,7 +44,7 @@ export const Canvas: React.FC<CanvasProps> = ({
                           ))}
                          */}
 
-						{questions.map(question => (
+			{/* {questions.map(question => (
 							<div
 								key={question.id}
 								className="mb-4 rounded-lg bg-white p-4 shadow"
@@ -68,8 +68,9 @@ export const Canvas: React.FC<CanvasProps> = ({
 							</Button>
 						</div>
 					</div>
-				)}
-			</div>
+				)} */}
+			{/* </div> */}
+			<Question questionId="10" />
 		</div>
 	)
 }
