@@ -29,5 +29,8 @@
 		"survey"
 	],
 	"author": "YohanGH, AlexDDevv, ArthurVS05, corenthin95",
-	"license": "GPL-2.0"
+	"license": "GPL-2.0",
+	"dependencies": {
+		"typeorm": "0.0.11"
+	}
 }
