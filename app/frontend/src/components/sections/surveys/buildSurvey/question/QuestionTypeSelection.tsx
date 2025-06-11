@@ -6,16 +6,16 @@ import {
 	SelectItem,
 	SelectTrigger,
 } from "@/components/ui/Select"
-import { QuestionUpdate } from "@/types/types"
+import {
+	QuestionDefinition,
+	TypesOfQuestion,
+	TypesOfQuestionLabels,
+} from "@/types/types"
 import { Control, Controller, FieldErrors } from "react-hook-form"
 
-// question : à quel moment on sauvegarde la question ?
-// au clic en dehors ?
-// un bouton enregister au niveau de la survey ?
-
 type QuestionTypeSelectProps = {
-	control: Control<QuestionUpdate>
-	errors: FieldErrors<QuestionUpdate>
+	control: Control<QuestionDefinition>
+	errors: FieldErrors<QuestionDefinition>
 }
 export default function QuestionTypeSelect({
 	control,
@@ -32,19 +32,27 @@ export default function QuestionTypeSelect({
 				render={({ field }) => (
 					<Select onValueChange={field.onChange} value={field.value}>
 						<SelectTrigger id="question-type">
-							Sélectionner le type de la question
+							{TypesOfQuestionLabels[
+								Object.keys(TypesOfQuestion).find(
+									key =>
+										TypesOfQuestion[
+											key as keyof typeof TypesOfQuestion
+										] === field.value
+								) as keyof typeof TypesOfQuestion
+							] || "Sélectionner le type de la question"}
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value="text">Texte court</SelectItem>
-							<SelectItem value="text-area">
-								Paragraphe
-							</SelectItem>
-							<SelectItem value="checkbox">
-								Plusieurs réponses
-							</SelectItem>
-							<SelectItem value="radio">
-								Une seule réponse
-							</SelectItem>
+							{Object.entries(TypesOfQuestion).map(
+								([key, value]) => (
+									<SelectItem key={value} value={value}>
+										{
+											TypesOfQuestionLabels[
+												key as keyof typeof TypesOfQuestion
+											]
+										}
+									</SelectItem>
+								)
+							)}
 						</SelectContent>
 					</Select>
 				)}

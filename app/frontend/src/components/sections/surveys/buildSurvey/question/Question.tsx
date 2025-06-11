@@ -2,58 +2,96 @@ import FormWrapper from "@/components/sections/auth/form/FormWrapper"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
-import { QuestionUpdate } from "@/types/types"
-import { useForm } from "react-hook-form"
-import QuestionTypeSelect from "./QuestionTypeSelect"
-import TypeSelect from "./TypeSelect"
-import TypeSwitch from "./TypeSwitch"
-import TypeText from "./TypeText"
+import { GET_QUESTION } from "@/graphql/question"
+import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
+import { useQuery } from "@apollo/client"
+import { useEffect } from "react"
+import {
+	FieldArrayWithId,
+	FieldValues,
+	useFieldArray,
+	UseFieldArrayAppend,
+	UseFieldArrayRemove,
+	useForm,
+	UseFormRegister,
+} from "react-hook-form"
+import { BuildSelect } from "./BuildSelect"
+import QuestionTypeSelect from "./QuestionTypeSelection"
 
 type QuestionProps = {
 	questionId: string
-	type: "boolean" | "text" | "checkbox" | "radio" | "text-area"
 }
 
-export default function Question({ questionId, type }: QuestionProps) {
+const renderAnswerComponent = (
+	questionType: QuestionType,
+	register: UseFormRegister<QuestionUpdate>,
+	errors: FieldValues,
+	fields: FieldArrayWithId<QuestionUpdate, "answers", "id">[],
+	remove: UseFieldArrayRemove,
+	append: UseFieldArrayAppend<QuestionUpdate, "answers">
+) => {
+	switch (questionType) {
+		case TypesOfQuestion.Text:
+			// return (
+			// // input text
+			// )
+			break
+		case TypesOfQuestion.Multiple_Choice:
+		case TypesOfQuestion.Boolean:
+		case TypesOfQuestion.Select:
+			return (
+				<BuildSelect
+					register={register}
+					errors={errors}
+					fields={fields}
+					remove={remove}
+					append={append}
+				/>
+			)
+		default:
+			throw new Error(`Unsupported question type: ${questionType}`)
+	}
+}
+
+export default function Question({ questionId }: QuestionProps) {
 	const {
 		register,
 		handleSubmit,
 		control,
 		formState: { errors },
+		reset,
 	} = useForm<QuestionUpdate>({
 		defaultValues: {
-			title: "Question's title",
-			type: type ?? "text",
-			description: "",
-			answers: { [questionId]: type === "boolean" ? false : "" }, // if boolean type, Question doesn't have a list of possible answers.
+			title: "Titre de la question",
+			type: TypesOfQuestion.Text,
+			answers: [],
 		},
 	})
-	// useQuery() to get Question info (receive question id in props).
-	// useMutation() to update Question.
+
+	const { data } = useQuery<{ question: QuestionUpdate }>(GET_QUESTION, {
+		variables: { questionId },
+	})
+
+	// Allow to manipulate answers as a dynamic array (no state needed)
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: "answers",
+	})
 
 	const onSubmit = (data: QuestionUpdate) => {
-		const isBooleanQuestion = data.type === "boolean"
-
-		if (isBooleanQuestion && data.answers.questionId === undefined) {
-			data.answers.questionId = false
-		}
+		// @TODO add logic to handle update question
 		console.log("Form data", data)
-		// Update / refetch logic here
-		// give survey id
-		// and data
 	}
 
-	// add conditional return : if type type "boolean" return switch, etc.
-
-	// @TODO add real type
-	// switch (type) {
-	// 	case :
-
-	// 		break;
-
-	// 	default:
-	// 		break;
-	// }
+	useEffect(() => {
+		if (data?.question) {
+			reset({
+				title: data.question.title,
+				type: data.question.type,
+				answers: data.question.answers,
+			})
+		}
+	}, [data, reset])
 
 	return (
 		<li>
@@ -74,35 +112,19 @@ export default function Question({ questionId, type }: QuestionProps) {
 						errorMessage={errors?.title?.message}
 					/>
 				</div>
-				{/* INPUT DESCRIPTION ********************************************** */}
-				<div className="flex flex-col gap-1">
-					<Label htmlFor="description">Description</Label>
-					<textarea
-						{...register("description")}
-						placeholder="Ajouter une description..."
-						className="border-black-100 file:text-black-default placeholder:border-black-400 focus-visible:border-focus flex h-10 w-full rounded-lg border bg-transparent px-3 py-1 text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-					/>
-				</div>
 				<QuestionTypeSelect control={control} errors={errors} />
-				{/* Depending on Question Type, return one of this components >> */}
-				<TypeSwitch
-					label="Êtes-vous d'accord ?"
-					control={control}
-					name={`answers.questionId`} // put true questionId
-				/>
-				<TypeText register={register} errors={errors} />
-				<TypeSelect
-					control={control}
-					options={[
-						{ value: "1", label: "Toto" },
-						{ value: "2", label: "Patate" },
-						{ value: "3", label: "Cailloux" },
-					]}
-					name={`answers.questionId2`} // put true questionId
-				/>
+				{data?.question.type &&
+					renderAnswerComponent(
+						data.question.type,
+						register,
+						errors,
+						fields,
+						remove,
+						append
+					)}
 				<Button
 					type="submit"
-					ariaLabel="Enregistrer la question et ses réponses possibles."
+					ariaLabel="Enregistrer la question."
 					fullWidth
 				>
 					Enregistrer

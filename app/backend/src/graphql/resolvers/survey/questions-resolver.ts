@@ -16,10 +16,10 @@ import {
 	Resolver,
 } from "type-graphql"
 import { Questions } from "../../../database/entities/survey/questions"
-import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
 import { Survey } from "../../../database/entities/survey/survey"
-import { Context } from "../../../types/types"
 import { AppError } from "../../../middlewares/error-handler"
+import { Context, TypesOfQuestion } from "../../../types/types"
+import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
 import { UpdateQuestionInput } from "../../inputs/update/survey/update-question-input"
 
 /**
@@ -119,15 +119,28 @@ export class QuestionsResolver {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
 
-			const survey = await Survey.findOne({ where: { id: surveyId } })
-
-			if (!survey) {
-				throw new AppError("Survey not found", 404, "NotFoundError")
+			if (!Object.values(TypesOfQuestion).includes(data.type)) {
+				throw new AppError(
+					"Invalid question type",
+					400,
+					"BadRequestError"
+				)
 			}
 
 			const newQuestion = new Questions()
-			Object.assign(newQuestion, data, { user: user })
-			newQuestion.survey = survey
+			newQuestion.title = data.title
+			newQuestion.answers = data.answers
+			newQuestion.type = data.type
+
+			if (surveyId) {
+				const survey = await Survey.findOne({
+					where: { id: surveyId },
+				})
+				if (!survey) {
+					throw new AppError("Survey not found", 404, "NotFoundError")
+				}
+				newQuestion.survey = survey
+			}
 
 			await newQuestion.save()
 			return newQuestion

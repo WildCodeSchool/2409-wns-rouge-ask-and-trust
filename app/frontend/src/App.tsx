@@ -31,7 +31,7 @@ function App() {
 			{/* @TODO calc height : fill screen minus Header height. On mobile : minus Header height and Navbar height. */}
 			<main className="bg-bg mb-20">
 				<div className="h-full">
-					<Question questionId={""} type={"boolean"} />
+					<Question questionId={"10"} />
 					<Outlet />
 				</div>
 			</main>
