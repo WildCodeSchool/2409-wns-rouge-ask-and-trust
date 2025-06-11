@@ -11,7 +11,7 @@ const FOOTER_LINKS: readonly FooterLinkType[] = [
 		Icon: House,
 	},
 	{
-		href: "/createSurvey",
+		href: "/surveys/create",
 		label: "Créer",
 		category: "Création",
 		ariaLabel: "Créer une enquête",

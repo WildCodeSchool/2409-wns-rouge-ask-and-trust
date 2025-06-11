@@ -106,3 +106,16 @@ export interface SearchManager {
 	onChange: (value: string) => void
 	placeholder?: string
 }
+
+export type CreateSurveyInput = {
+	title: string
+	description: string
+	public: boolean
+	category: number | string
+}
+
+export type Question = {
+	id: string
+	content: string
+	answers: string
+}
