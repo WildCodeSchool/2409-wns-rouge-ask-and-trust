@@ -14,15 +14,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      # Clean node_modules and lock
-      - name: Clean node_modules and lock
-        run: |
-          cd ./app/frontend
-          rm -rf node_modules package-lock.json
-
       # Go to frontend directory, install packages and run test
       - name: Goto client and run tests
         run: |
           cd ./app/frontend
-          npm install
+          npm ci
           npm test
