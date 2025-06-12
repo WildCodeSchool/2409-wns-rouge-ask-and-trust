@@ -31,7 +31,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 	console.log("questions", questions)
 
 	const { data } = useQuery<{ survey: Survey }>(GET_SURVEY, {
-		variables: { surveyId: "1" },
+		variables: { surveyId: "1" }, // @TODO add dynamic data
 	})
 
 	// console.log("dataSurvey", data)
