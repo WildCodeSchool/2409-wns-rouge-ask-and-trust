@@ -14,10 +14,20 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      # Go to frontend directory, install packages and run test
-      - name: Goto client and run tests
-        # set-script prepare
+      - name: Clean npm state
+        run: |
+          rm -rf node_modules
+          cd ./app/frontend
+          rm -rf node_modules
+          cd ../..
+          npm cache clean --force
+
+      - name: Install dependencies
         run: |
           cd ./app/frontend
           npm ci
+
+      - name: Run tests
+        run: |
+          cd ./app/frontend
           npm test

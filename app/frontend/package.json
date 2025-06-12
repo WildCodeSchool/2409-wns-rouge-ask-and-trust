@@ -51,10 +51,9 @@
 		"eslint-plugin-react-refresh": "^0.4.18",
 		"globals": "^15.14.0",
 		"jsdom": "^26.0.0",
-		"prettier-plugin-tailwindcss": "^0.6.11",
 		"typescript": "~5.7.2",
-		"typescript-eslint": "^7.3.1",
-		"vite": "^6.2.7",
+		"typescript-eslint": "^8.22.0",
+		"vite": "^6.1.0",
 		"vitest": "^3.0.8"
 	}
 }
