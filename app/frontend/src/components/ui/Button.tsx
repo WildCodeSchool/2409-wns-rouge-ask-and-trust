@@ -27,12 +27,14 @@ const buttonVariants = cva(
 					"bg-destructive-medium border-destructive-medium text-white hover:bg-white hover:text-destructive-medium focus:ring-destructive-medium",
 				disabled:
 					"bg-black-400 border-black-400 text-white focus:ring-black-400 pointer-events-none cursor-not-allowed",
+				ghost: "bg-transparent border-none text-primary-700 hover:underline focus:ring-primary-700",
 			},
 			size: {
 				sm: "px-3 py-1 text-sm",
 				md: "px-5 py-2 text-base",
 				lg: "px-6 py-3 text-lg",
 				square: "w-12 h-12",
+				square_sm: "w-10 h-10",
 			},
 			nav: {
 				selected: "bg-white text-primary-700",

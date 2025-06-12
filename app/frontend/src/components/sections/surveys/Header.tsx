@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import logoFooter from "/logos/logo-footer.svg"
 import { Button } from "@/components/ui/Button"
-import SearchForm from "./SearchForm"
+import SearchForm from "@/components/sections/surveys/SearchForm"
 import clsx from "clsx"
 
 export default function Header() {
@@ -43,7 +43,7 @@ export default function Header() {
 					{!isMobile && (
 						<div className="flex items-center justify-center gap-6">
 							<Button
-								to="/"
+								to="/surveys/create"
 								variant="tertiary"
 								role="link"
 								ariaLabel="Créer une enquête"

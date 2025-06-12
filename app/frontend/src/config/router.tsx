@@ -3,13 +3,13 @@
  * @module router
  */
 
+import App from "@/App.tsx"
+import ProtectedRoute from "@/components/hoc/ProtectedRoute"
+import ErrorElement from "@/components/ui/ErrorElement"
+import Loader from "@/components/ui/Loader"
+import NotFound from "@/pages/NotFound"
 import { lazy, Suspense } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import App from "@/App.tsx"
-import NotFound from "@/pages/NotFound"
-import Loader from "@/components/ui/Loader"
-import ErrorElement from "@/components/ui/ErrorElement"
-import ProtectedRoute from "@/components/hoc/ProtectedRoute"
 
 /**
  *  Using lazy loading for pages
@@ -23,6 +23,8 @@ const Auth = lazy(() => import("@/pages/Auth"))
 const TermsOfUse = lazy(() => import("@/pages/TermsOfUse"))
 const Payment = lazy(() => import("@/pages/Payment"))
 const PaymentConfirmation = lazy(() => import("@/pages/PaymentConfirmation"))
+const SurveyCreator = lazy(() => import("@/pages/SurveyCreator"))
+const SurveyCreate = lazy(() => import("@/pages/SurveyCreate"))
 
 /**
  * Router confirmation
@@ -94,6 +96,30 @@ const router = createBrowserRouter([
 						<ProtectedRoute>
 							<PaymentConfirmation />
 						</ProtectedRoute>
+					</Suspense>
+				),
+			},
+			{
+				path: "/survey-creator",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<SurveyCreator />
+					</Suspense>
+				),
+			},
+			{
+				path: "/surveys/create",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<SurveyCreate />
+					</Suspense>
+				),
+			},
+			{
+				path: "/surveys/build/:id",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<SurveyCreator />
 					</Suspense>
 				),
 			},

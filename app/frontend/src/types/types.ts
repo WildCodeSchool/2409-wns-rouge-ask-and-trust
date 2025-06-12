@@ -75,3 +75,74 @@ export type Package = {
 	surveyCount: number
 	description: string
 }
+
+export type ToolboxCategory = {
+	id: string
+	title: string
+	items: ToolboxItem[]
+}
+
+export type ToolboxItem = {
+	id: string
+	label: string
+	icon?: React.ReactNode
+	onClickType: string
+	onClick?: () => void
+}
+
+export interface ToolboxProps {
+	className?: string
+	items?: ToolboxItem[]
+	categories?: ToolboxCategory[]
+	showSearch?: boolean
+	searchManager?: SearchManager
+	compactThreshold?: number
+	horizontalThreshold?: number
+	noResultsText?: string
+}
+
+export interface SearchManager {
+	value: string
+	onChange: (value: string) => void
+	placeholder?: string
+}
+
+export type CreateSurveyInput = {
+	title: string
+	description: string
+	public: boolean
+	category: number | string
+}
+
+export type Question = {
+	id: string
+	content: string
+	answers: string
+}
+export interface QuestionUpdate {
+	id: number
+	title?: string
+	description?: string
+	type?: QuestionType
+	answers: { value: string }[]
+}
+
+export const TypesOfQuestion = {
+	Text: "text",
+	Multiple_Choice: "multiple_choice",
+	Boolean: "boolean",
+	Select: "select",
+} as const
+
+export const TypesOfQuestionLabels: Record<
+	keyof typeof TypesOfQuestion,
+	string
+> = {
+	Text: "Texte court",
+	Multiple_Choice: "Choix multiples",
+	Boolean: "Oui / Non",
+	Select: "Liste déroulante",
+}
+
+export type QuestionType =
+	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]

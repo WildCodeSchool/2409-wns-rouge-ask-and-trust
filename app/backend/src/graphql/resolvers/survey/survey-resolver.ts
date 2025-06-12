@@ -17,7 +17,7 @@ import {
 } from "type-graphql"
 import { Survey } from "../../../database/entities/survey/survey"
 import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-input"
-import { Context } from "../../../types/types"
+import { Context, Roles } from "../../../types/types"
 import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
 import { AppError } from "../../../middlewares/error-handler"
 import { Category } from "../../../database/entities/survey/category"
@@ -108,7 +108,7 @@ export class SurveysResolver {
 	 * This mutation allows a user to create a new survey. Only users with the "user" or "admin" roles can create surveys.
 	 * The survey is associated with the currently authenticated user.
 	 */
-	@Authorized("user", "admin")
+	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Survey)
 	async createSurvey(
 		@Arg("data", () => CreateSurveyInput) data: CreateSurveyInput,
@@ -155,7 +155,7 @@ export class SurveysResolver {
 	 * This mutation allows a user to update an existing survey. Only users with the "user" or "admin" roles can update surveys.
 	 * If the user is not an admin, they can only update surveys they have created.
 	 */
-	@Authorized("user", "admin")
+	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Survey, { nullable: true })
 	async updateSurvey(
 		@Arg("id", () => ID) id: number,
@@ -217,7 +217,7 @@ export class SurveysResolver {
 	 * This mutation allows an admin or user to delete an existing survey. Only the admin or the survey owner can delete surveys.
 	 * If the user is not an admin or the wurvey owner, the mutation will not be executed.
 	 */
-	@Authorized("user", "admin")
+	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Survey, { nullable: true })
 	async deleteSurvey(
 		@Arg("id", () => ID) id: number,

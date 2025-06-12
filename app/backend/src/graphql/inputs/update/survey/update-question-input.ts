@@ -7,8 +7,8 @@
  */
 
 import { InputType, Field, ID } from "type-graphql"
-import { TypeOfQuestion } from "../../../../types/types"
 import { Answers } from "../../../../database/entities/survey/answers"
+import { QuestionType } from "../../../../types/types"
 
 /**
  * UpdateQuestionInput
@@ -53,7 +53,7 @@ export class UpdateQuestionInput {
 	 * New type for the question (e.g. text, radio, checkbox).
 	 */
 	@Field(() => String, { nullable: true })
-	type?: TypeOfQuestion
+	type?: QuestionType
 
 	/**
 	 * Updated predefined answers

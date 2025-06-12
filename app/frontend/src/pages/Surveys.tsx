@@ -95,6 +95,7 @@ export default function Surveys() {
 							variant="primary"
 							ariaLabel="Création d'une enquête"
 							children="Créer une enquête"
+							to="/surveys/create"
 						/>
 					</div>
 				</>
