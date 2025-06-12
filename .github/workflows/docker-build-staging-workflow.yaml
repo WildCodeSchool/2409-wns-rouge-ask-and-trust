@@ -42,6 +42,10 @@ jobs:
       - name: Bump version and changelog with standard-version
         run: npx standard-version
 
+      # Pull les derniers changements de la branche staging avant de pusher
+      - name: Pull latest changes from origin/staging
+        run: git pull --rebase origin staging
+
       # Push le commit et le tag générés par standard-version
       - name: Push release commit and tag
         env:
