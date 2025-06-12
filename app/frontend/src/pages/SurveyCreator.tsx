@@ -5,10 +5,8 @@ import "@/styles/toolbox.css"
 import { Helmet } from "react-helmet"
 
 function SurveyCreator() {
-
-// @TODO récupérer l'id en url
-// puis useSurvey pour récuperer les infos de survey (notamment les ids des questions)
-
+	// @TODO récupérer l'id en url
+	// puis useSurvey pour récuperer les infos de survey (notamment les ids des questions)
 
 	// Local state for immediate display
 	// const [questions, setQuestions] = useState<
@@ -16,7 +14,7 @@ function SurveyCreator() {
 	// >([])
 
 	// Hook pour la gestion des questions
-	const { addQuestion, isCreateQuestionLoading } = useQuestions()
+	const { isCreateQuestionLoading } = useQuestions()
 	// const { showToast } = useToast()
 
 	/**
@@ -26,6 +24,7 @@ function SurveyCreator() {
 
 	// @TODO Move it in useQuestion
 	const handleAddQuestion = async (type: string) => {
+		console.log("type", type)
 		// try {
 		// 	await addQuestion({
 		// 		content: `Nouvelle question (${type})`,
