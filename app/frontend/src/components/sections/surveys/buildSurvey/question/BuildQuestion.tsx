@@ -16,6 +16,7 @@ import {
 	UseFieldArrayRemove,
 	useForm,
 	UseFormRegister,
+	useWatch,
 } from "react-hook-form"
 import { BuildSelect } from "./BuildSelect"
 import QuestionTypeSelect from "./QuestionTypeSelection"
@@ -24,14 +25,23 @@ type QuestionProps = {
 	questionId: number
 }
 
-const renderAnswerComponent = (
-	questionType: QuestionType,
-	register: UseFormRegister<QuestionUpdate>,
-	errors: FieldValues,
-	fields: FieldArrayWithId<QuestionUpdate, "answers", "id">[],
-	remove: UseFieldArrayRemove,
+type RenderAnswerComponentProps = {
+	questionType: QuestionType
+	register: UseFormRegister<QuestionUpdate>
+	errors: FieldValues
+	fields: FieldArrayWithId<QuestionUpdate, "answers", "id">[]
+	remove: UseFieldArrayRemove
 	append: UseFieldArrayAppend<QuestionUpdate, "answers">
-) => {
+}
+
+export function RenderAnswerComponent({
+	questionType,
+	register,
+	errors,
+	fields,
+	remove,
+	append,
+}: RenderAnswerComponentProps) {
 	switch (questionType) {
 		case TypesOfQuestion.Text:
 			break
@@ -78,14 +88,15 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		control,
 		formState: { errors },
 		reset,
-		watch,
-	} = useForm<QuestionUpdate>({
-		defaultValues: {
-			title: "Titre de la question",
-			type: TypesOfQuestion.Text,
-			answers: [],
-		},
-	})
+		// watch,
+	} = useForm<QuestionUpdate>()
+	// 	{
+	// 	defaultValues: {
+	// 		title: "Titre de la question",
+	// 		type: TypesOfQuestion.Text,
+	// 		answers: [],
+	// 	},
+	// }
 	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
 		useState(false)
 
@@ -98,9 +109,11 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		control,
 		name: "answers",
 	})
-	const { updateQuestion, deleteQuestion } = useQuestions()
+	const { updateQuestion, updateQuestionError, deleteQuestion } =
+		useQuestions()
 
 	const onSubmit = (formData: UpdateQuestionInput) => {
+		console.log("updateQuestionError", updateQuestionError)
 		if (!data?.question.id) return
 		// @TODO add logic to handle update question
 
@@ -130,7 +143,10 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		}
 	}, [data, reset])
 
-	const watchedType = watch("type")
+	const watchedType = useWatch({
+		control,
+		name: "type",
+	})
 	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
 
 	useEffect(() => {
@@ -152,7 +168,6 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		questionId: number | undefined,
 		surveyId: number | undefined
 	) => {
-		console.log("questionId", questionId, "surveyId", surveyId)
 		if (!questionId || !surveyId) return null
 		deleteQuestion(questionId, surveyId)
 	}
@@ -224,16 +239,19 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 						errorMessage={errors?.title?.message}
 					/>
 				</div>
-				<QuestionTypeSelect control={control} errors={errors} />
-				{watchedType &&
-					renderAnswerComponent(
-						watchedType,
-						register,
-						errors,
-						fields,
-						remove,
-						append
-					)}
+				{watchedType && (
+					<>
+						<QuestionTypeSelect control={control} errors={errors} />
+						<RenderAnswerComponent
+							questionType={watchedType}
+							register={register}
+							errors={errors}
+							fields={fields}
+							remove={remove}
+							append={append}
+						/>
+					</>
+				)}
 				<Button
 					role="submit"
 					ariaLabel="Enregistrer la question."
