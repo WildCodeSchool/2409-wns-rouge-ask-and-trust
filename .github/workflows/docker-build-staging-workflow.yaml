@@ -35,15 +35,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Génère une nouvelle version, modifie package.json et changelog, commit + tag (local)
-      - name: Bump version and changelog with standard-version
-        run: npx standard-version
-
       # Configure l’auteur Git pour pouvoir pousser le commit généré
       - name: Configure git author (for push)
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
+
+      # Génère une nouvelle version, modifie package.json et changelog, commit + tag (local)
+      - name: Bump version and changelog with standard-version
+        run: npx standard-version
 
       # Push le commit et le tag générés par standard-version
       - name: Push release commit and tag
