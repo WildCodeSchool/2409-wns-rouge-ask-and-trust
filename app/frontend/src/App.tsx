@@ -22,11 +22,7 @@ function App() {
 	return (
 		<>
 			<Toaster richColors position="bottom-center" closeButton />
-			{location.pathname.startsWith("/surveys") ? (
-				<HeaderSurveys />
-			) : (
-				<Header />
-			)}
+			{location.pathname === "/" ? <Header /> : <HeaderSurveys />}
 			{/* @TODO calc height : fill screen minus Header height. On mobile : minus Header height and Navbar height. */}
 			<main className="bg-bg mb-20">
 				<div className="h-full">
