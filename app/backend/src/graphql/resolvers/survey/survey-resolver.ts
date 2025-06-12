@@ -73,7 +73,6 @@ export class SurveysResolver {
 	 */
 	@Query(() => Survey, { nullable: true })
 	async survey(@Arg("id", () => ID) id: number): Promise<Survey | null> {
-		console.log("id resolver", id)
 		try {
 			const survey = await Survey.findOne({
 				where: { id },
@@ -83,7 +82,6 @@ export class SurveysResolver {
 					questions: true,
 				},
 			})
-			console.log("survey resolver", survey)
 			if (!survey) {
 				throw new AppError("Survey not found", 404, "NotFoundError")
 			}
