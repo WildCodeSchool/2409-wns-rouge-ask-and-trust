@@ -2,12 +2,9 @@ name: Docker Build Staging Workflow
 
 # When this workflow is activated
 on:
-  pull_request:
-    types: 
-      - opened 
-      - reopened 
-      - synchronize
-      - edited
+  push:
+    branches:
+      - staging
 
 jobs:
   extract-version:
