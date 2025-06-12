@@ -4,13 +4,11 @@ import logoFooter from "/logos/logo-footer.svg"
 import { Button } from "@/components/ui/Button"
 import NavAndAuthButtons from "./NavAndAuthButtons"
 import clsx from "clsx"
-import { WHOAMI } from "@/graphql/auth"
-import { useQuery } from "@apollo/client"
+import { useAuthContext } from "@/hooks/useAuthContext"
 
 export default function Header() {
 	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
-	const { data: whoamiData } = useQuery(WHOAMI)
-	const me = whoamiData?.whoami
+	const { user } = useAuthContext()
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -33,7 +31,7 @@ export default function Header() {
 		>
 			<div className="flex items-center justify-between gap-20 max-lg:gap-6 max-md:gap-20 max-sm:gap-12">
 				<Link
-					to={me ? "/surveys" : "/"}
+					to={user ? "/surveys" : "/"}
 					className="max-w-36 max-sm:max-w-28"
 				>
 					<img

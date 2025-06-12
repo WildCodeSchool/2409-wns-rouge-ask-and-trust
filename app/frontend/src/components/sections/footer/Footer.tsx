@@ -2,22 +2,20 @@ import { Link } from "react-router-dom"
 import { LinksType } from "@/types/types"
 import logoFooter from "/logos/logo-footer.svg"
 import FooterNav from "./FooterNav"
-import { WHOAMI } from "@/graphql/auth"
-import { useQuery } from "@apollo/client"
+import { useAuthContext } from "@/hooks/useAuthContext"
 
 export default function Footer() {
-	const { data: whoamiData } = useQuery(WHOAMI)
-	const me = whoamiData?.whoami
+	const { user } = useAuthContext()
 
 	const FOOTER_LINKS: LinksType[] = [
 		{
-			href: me
-				? me.role === "admin"
+			href: user
+				? user.role === "admin"
 					? "/admin"
 					: "/profil"
 				: "/connexion",
-			label: me
-				? me.role === "admin"
+			label: user
+				? user.role === "admin"
 					? "Admin"
 					: "Profil"
 				: "Se connecter",
@@ -50,7 +48,7 @@ export default function Footer() {
 		},
 	].filter(Boolean)
 
-	if (!me || me === null) {
+	if (!user || user === null) {
 		FOOTER_LINKS.unshift({
 			href: "/register",
 			label: "S'inscrire",

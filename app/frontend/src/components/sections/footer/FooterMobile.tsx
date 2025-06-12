@@ -1,16 +1,14 @@
-import { WHOAMI } from "@/graphql/auth"
-import { FooterLinkType } from "@/types/types"
-import { useQuery } from "@apollo/client"
+import { useAuthContext } from "@/hooks/useAuthContext"
+import { LinksType } from "@/types/types"
 import { House, SquarePlus, Bell, User } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export default function FooterMobile() {
-	const { data: whoamiData } = useQuery(WHOAMI)
-	const me = whoamiData?.whoami
+	const { user } = useAuthContext()
 
-	const FOOTER_LINKS: readonly FooterLinkType[] = [
+	const FOOTER_LINKS: LinksType[] = [
 		{
-			href: me ? "/surveys" : "/",
+			href: user ? "/surveys" : "/",
 			label: "Accueil",
 			category: "Accueil",
 			ariaLabel: "Retourner sur la page d'accueil",
@@ -23,21 +21,14 @@ export default function FooterMobile() {
 			ariaLabel: "Créer une enquête",
 			Icon: SquarePlus,
 		},
-		me && {
-			href: "/profil/notification",
-			label: "Notifications",
-			category: "Notifications",
-			ariaLabel: "Voir les notifications",
-			Icon: Bell,
-		},
 		{
-			href: me
-				? me.role === "admin"
+			href: user
+				? user.role === "admin"
 					? "/admin"
 					: "/profil"
 				: "/connexion",
-			label: me
-				? me.role === "admin"
+			label: user
+				? user.role === "admin"
 					? "Admin"
 					: "Profil"
 				: "Se connecter",
@@ -46,6 +37,20 @@ export default function FooterMobile() {
 			Icon: User,
 		},
 	].filter(Boolean)
+
+	if (user) {
+		const notifications = {
+			href: "/profil/notification",
+			label: "Notifications",
+			category: "Notifications",
+			ariaLabel: "Voir les notifications",
+			Icon: Bell,
+		}
+
+		const position = 2
+
+		FOOTER_LINKS.splice(position, 0, notifications)
+	}
 
 	return (
 		<footer className="bg-primary-600 fixed bottom-0 flex w-full justify-between px-5 py-2.5 sm:justify-around">
@@ -72,7 +77,7 @@ function FooterLinks({
 	category,
 	ariaLabel,
 	Icon,
-}: FooterLinkType) {
+}: LinksType) {
 	const isExternal = href.startsWith("http")
 
 	// Security: check allowed protocols

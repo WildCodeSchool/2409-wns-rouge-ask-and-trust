@@ -1,13 +1,13 @@
 import { WHOAMI, LOGOUT } from "@/graphql/auth"
 import SearchForm from "./SearchForm"
 import { Button } from "@/components/ui/Button"
-import { useQuery, useMutation } from "@apollo/client"
+import { useMutation } from "@apollo/client"
 import { useToast } from "@/hooks/useToast"
 import { useNavigate, useLocation } from "react-router-dom"
+import { useAuthContext } from "@/hooks/useAuthContext"
 
 export default function NavAndAuthButtons({ isMobile }: { isMobile: boolean }) {
-	const { data: whoamiData } = useQuery(WHOAMI)
-	const me = whoamiData?.whoami
+	const { user } = useAuthContext()
 	const navigate = useNavigate()
 	const location = useLocation()
 	const { showToast } = useToast()
@@ -31,8 +31,8 @@ export default function NavAndAuthButtons({ isMobile }: { isMobile: boolean }) {
 		>
 			<SearchForm />
 			{!isMobile &&
-				(me ? (
-					me.role === "admin" ? (
+				(user ? (
+					user.role === "admin" ? (
 						location.pathname === "/admin" ? (
 							<Button
 								variant="transparent"
