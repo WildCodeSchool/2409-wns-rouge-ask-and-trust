@@ -7,15 +7,15 @@ import {
 	SelectTrigger,
 } from "@/components/ui/Select"
 import {
-	QuestionDefinition,
+	QuestionUpdate,
 	TypesOfQuestion,
 	TypesOfQuestionLabels,
 } from "@/types/types"
 import { Control, Controller, FieldErrors } from "react-hook-form"
 
 type QuestionTypeSelectProps = {
-	control: Control<QuestionDefinition>
-	errors: FieldErrors<QuestionDefinition>
+	control: Control<QuestionUpdate>
+	errors: FieldErrors<QuestionUpdate>
 }
 export default function QuestionTypeSelect({
 	control,

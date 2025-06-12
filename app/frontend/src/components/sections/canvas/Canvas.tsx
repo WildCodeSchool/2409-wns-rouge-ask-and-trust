@@ -1,5 +1,11 @@
-import type React from "react"
+import { Button } from "@/components/ui/Button"
+import { GET_SURVEY } from "@/graphql/survey"
+import { useQuestions } from "@/hooks/useQuestions"
+import { Survey } from "@/types/types"
+import { useQuery } from "@apollo/client"
+import { PlusCircle } from "lucide-react"
 import Question from "../surveys/buildSurvey/question/Question"
+
 interface Question {
 	id: string
 	type: string
@@ -7,23 +13,30 @@ interface Question {
 
 interface CanvasProps {
 	className?: string
-	questions: Question[]
-	onAddQuestion: (type: string) => void
+	questions: string[]
+	// onAddQuestion: (type: string) => void
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
 	className = "",
 	questions = [],
-	onAddQuestion,
+	// onAddQuestion,
 }) => {
-	const handleAddQuestion = () => {
-		// Default to single-line when using the button
-		onAddQuestion("single-line")
-	}
+	// const handleAddQuestion = () => {
+	// 	// Default to single-line when using the button
+	// 	onAddQuestion("single-line")
+	// }
+	const { addQuestion } = useQuestions()
+
 	console.log("questions", questions)
 
+	const { data } = useQuery<{ survey: Survey }>(GET_SURVEY, {
+		variables: { surveyId: "1" },
+	})
+
+	// console.log("dataSurvey", data)
 	return (
-		<div className={`survey-canvas ${className}`}>
+		<div className={`survey-canvas ${className} flex flex-col gap-10`}>
 			{/* <div className="bg-primary-100 rounded-lg p-8">
 				{questions.length === 0 ? (
 					// Afficher l'état vide s'il n'y a pas de questions
@@ -32,45 +45,17 @@ export const Canvas: React.FC<CanvasProps> = ({
 					// Afficher les questions s'il y en a
 					<div>
 						{/* Add logic to render questions - @ArthurVS05*/}
-			{/*
-                            questions.map(question => (
-                            <QuestionManager
-                                key={question.id}
-                                questionType={question.type}
-                                questionText={question.text}
-                                {...?Props}
-                                onDelete={() => onDeleteQuestion(question.id)}
-                            />
-                          ))}
-                         */}
-
-			{/* {questions.map(question => (
-							<div
-								key={question.id}
-								className="mb-4 rounded-lg bg-white p-4 shadow"
-							>
-								<h3 className="font-medium">
-									{question.type} Question
-								</h3>
-								<p className="text-black-400">
-									Le contenu de la question sera affiché ici
-								</p>
-							</div>
-						))}
-
-						<div className="mt-6 flex justify-center">
-							<Button
-								onClick={handleAddQuestion}
-								ariaLabel="Add Question"
-							>
-								Ajouter une question
-								<span className="text-black-400 ml-2">•••</span>
-							</Button>
-						</div>
-					</div>
-				)} */}
-			{/* </div> */}
-			<Question questionId="10" />
+			{data?.survey.questions.map(question => (
+				<Question questionId={question.id} />
+			))}
+			<Button
+				onClick={() => addQuestion({ surveyId: 1 })}
+				ariaLabel="Add Question"
+				icon={PlusCircle}
+				className="self-center"
+			>
+				Ajouter une question
+			</Button>
 		</div>
 	)
 }

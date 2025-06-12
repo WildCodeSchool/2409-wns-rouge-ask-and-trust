@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
 import { GET_QUESTION } from "@/graphql/question"
+import { UpdateQuestionInput, useQuestions } from "@/hooks/useQuestions"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
 import { useQuery } from "@apollo/client"
-import { useEffect } from "react"
+import { Trash2 } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 import {
 	FieldArrayWithId,
 	FieldValues,
@@ -19,7 +21,7 @@ import { BuildSelect } from "./BuildSelect"
 import QuestionTypeSelect from "./QuestionTypeSelection"
 
 type QuestionProps = {
-	questionId: string
+	questionId: number
 }
 
 const renderAnswerComponent = (
@@ -32,12 +34,16 @@ const renderAnswerComponent = (
 ) => {
 	switch (questionType) {
 		case TypesOfQuestion.Text:
-			// return (
-			// // input text
-			// )
 			break
 		case TypesOfQuestion.Multiple_Choice:
+			// return (
+			// component checkbox
+			// )
+			break
 		case TypesOfQuestion.Boolean:
+			// return (
+			// component switch
+			break
 		case TypesOfQuestion.Select:
 			return (
 				<BuildSelect
@@ -53,6 +59,18 @@ const renderAnswerComponent = (
 	}
 }
 
+const getDefaultAnswersForType = (type: QuestionType) => {
+	switch (type) {
+		case TypesOfQuestion.Boolean:
+			return [{ value: "Vrai" }, { value: "Faux" }]
+		case TypesOfQuestion.Multiple_Choice:
+		case TypesOfQuestion.Select:
+			return [{ value: "Réponse 1" }, { value: "Réponse 2" }]
+		default:
+			return []
+	}
+}
+
 export default function Question({ questionId }: QuestionProps) {
 	const {
 		register,
@@ -60,6 +78,7 @@ export default function Question({ questionId }: QuestionProps) {
 		control,
 		formState: { errors },
 		reset,
+		watch,
 	} = useForm<QuestionUpdate>({
 		defaultValues: {
 			title: "Titre de la question",
@@ -67,22 +86,39 @@ export default function Question({ questionId }: QuestionProps) {
 			answers: [],
 		},
 	})
-
+	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
+		useState(false)
 	const { data } = useQuery<{ question: QuestionUpdate }>(GET_QUESTION, {
 		variables: { questionId },
 	})
-
 	// Allow to manipulate answers as a dynamic array (no state needed)
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "answers",
 	})
+	const { updateQuestion, deleteQuestion } = useQuestions()
 
-	const onSubmit = (data: QuestionUpdate) => {
+	const onSubmit = (formData: UpdateQuestionInput) => {
+		if (!data?.question.id) return
 		// @TODO add logic to handle update question
-		console.log("Form data", data)
+		console.log("onSubmit data Question", formData)
+
+		const formattedAnswers = formData.answers?.map(({ value }) => ({
+			value,
+		}))
+
+		const { title, type } = formData
+
+		updateQuestion({
+			id: data.question.id,
+			title: title,
+			type: type,
+			answers: formattedAnswers,
+			// surveyId: surveyId,
+		})
 	}
 
+	// Fill form data with question's data from database
 	useEffect(() => {
 		if (data?.question) {
 			reset({
@@ -93,13 +129,89 @@ export default function Question({ questionId }: QuestionProps) {
 		}
 	}, [data, reset])
 
+	const watchedType = watch("type")
+	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
+
+	useEffect(() => {
+		if (!watchedType) return
+
+		const hasTypeChanged =
+			prevTypeRef.current && prevTypeRef.current !== watchedType
+		const answersAreEmpty = fields.length === 0
+
+		if (hasTypeChanged && answersAreEmpty) {
+			const defaults = getDefaultAnswersForType(watchedType)
+			defaults.forEach(answer => append(answer))
+		}
+
+		prevTypeRef.current = watchedType
+	}, [watchedType, append, fields.length])
+
+	console.log("data", data)
+
+	const handleClickDelete = (
+		questionId: number | undefined,
+		surveyId: number | undefined
+	) => {
+		if (!questionId || !surveyId) return null
+		console.log("questionId", questionId, "surveyId", surveyId)
+		deleteQuestion(questionId, surveyId)
+	}
+
 	return (
-		<li>
-			<FormWrapper onSubmit={handleSubmit(onSubmit)}>
-				{/*INPUT TITLE ********************************************** */}
+		<li className="list-none">
+			<FormWrapper
+				onSubmit={handleSubmit(onSubmit)}
+				className="md:max-w-[90vh]"
+			>
+				<div className="flex content-center justify-between">
+					<h3 className="flex-1 self-center text-2xl font-bold">
+						{data?.question.title ?? "Nouvelle question"}
+					</h3>
+					<Button
+						variant="ghost_destructive"
+						size="square_sm"
+						ariaLabel="Supprimer cette option"
+						onClick={event => {
+							event.preventDefault()
+							setOpenButtonDeleteQuestion(prev => !prev)
+						}}
+						icon={Trash2}
+					/>
+				</div>
+				{openButtonDeleteQuestion && (
+					// mettre focus sur delete
+					<div className="flex flex-1 gap-3">
+						<Button
+							type="button"
+							variant="destructive"
+							fullWidth
+							ariaLabel="Supprimer la question"
+							onClick={() => {
+								handleClickDelete(
+									questionId,
+									data?.question.survey.id
+								)
+							}}
+							icon={Trash2}
+						>
+							Supprimer la question
+						</Button>
+						<Button
+							type="button"
+							variant="outline"
+							fullWidth
+							ariaLabel="Annuler la suppression de la question"
+							onClick={() => {
+								setOpenButtonDeleteQuestion(false)
+							}}
+						>
+							Annuler
+						</Button>
+					</div>
+				)}
 				<div className="flex flex-col gap-1">
 					<Label htmlFor="title" required>
-						{/* @TODO add dynamic data */}
 						Titre
 					</Label>
 					<Input
@@ -113,9 +225,9 @@ export default function Question({ questionId }: QuestionProps) {
 					/>
 				</div>
 				<QuestionTypeSelect control={control} errors={errors} />
-				{data?.question.type &&
+				{watchedType &&
 					renderAnswerComponent(
-						data.question.type,
+						watchedType,
 						register,
 						errors,
 						fields,
@@ -123,7 +235,7 @@ export default function Question({ questionId }: QuestionProps) {
 						append
 					)}
 				<Button
-					type="submit"
+					role="submit"
 					ariaLabel="Enregistrer la question."
 					fullWidth
 				>
