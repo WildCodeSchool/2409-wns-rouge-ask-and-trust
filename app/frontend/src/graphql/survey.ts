@@ -36,6 +36,31 @@ export const CREATE_SURVEY = gql`
 	}
 `
 
+export const GET_SURVEY = gql`
+	query getSurvey($surveyId: ID!) {
+		survey(id: $surveyId) {
+			id
+			title
+			description
+			status
+			public
+			user {
+				id
+				email
+			}
+			category {
+				id
+				name
+			}
+			questions {
+				id
+			}
+			createdAt
+			updatedAt
+		}
+	}
+`
+
 export const UPDATE_SURVEY = gql`
 	mutation UpdateSurvey($id: ID!, $data: UpdateSurveyInput!) {
 		updateSurvey(id: $id, data: $data) {
