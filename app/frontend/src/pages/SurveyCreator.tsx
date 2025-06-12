@@ -8,11 +8,6 @@ function SurveyCreator() {
 	// @TODO récupérer l'id en url
 	// puis useSurvey pour récuperer les infos de survey (notamment les ids des questions)
 
-	// Local state for immediate display
-	// const [questions, setQuestions] = useState<
-	// 	Array<{ id: string; type: string }>
-	// >([])
-
 	// Hook pour la gestion des questions
 	const { isCreateQuestionLoading } = useQuestions()
 	// const { showToast } = useToast()
@@ -47,8 +42,6 @@ function SurveyCreator() {
 		// 	})
 		// }
 	}
-
-	// Get Survey
 
 	return (
 		<>
@@ -97,7 +90,6 @@ function SurveyCreator() {
 								className="w-full"
 								questions={[]}
 								// questions = tableau d'ids
-								// onAddQuestion={handleAddQuestion}
 							/>
 						</div>
 					</div>

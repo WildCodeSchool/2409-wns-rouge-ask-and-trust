@@ -71,7 +71,7 @@ const getDefaultAnswersForType = (type: QuestionType) => {
 	}
 }
 
-export default function Question({ questionId }: QuestionProps) {
+export default function BuildQuestion({ questionId }: QuestionProps) {
 	const {
 		register,
 		handleSubmit,
