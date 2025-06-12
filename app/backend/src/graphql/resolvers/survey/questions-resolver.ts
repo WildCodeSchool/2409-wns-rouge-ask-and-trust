@@ -114,7 +114,6 @@ export class QuestionsResolver {
 	): Promise<Questions> {
 		try {
 			const user = context.user
-			console.log("hello resolver", data)
 			if (!user) {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
@@ -190,8 +189,6 @@ export class QuestionsResolver {
 				throw new AppError("Question not found", 404, "NotFoundError")
 			}
 
-			console.log("questionToUpdate", questionToUpdate)
-
 			const isOwnerOfSurvey =
 				questionToUpdate.survey?.user?.id === user.id
 
@@ -260,7 +257,6 @@ export class QuestionsResolver {
 		@Ctx() context: Context
 	): Promise<Questions | null> {
 		try {
-			console.log("hello from resolver >>>>>>>>>>>>>>>>>")
 			const user = context.user
 
 			if (!user) {
