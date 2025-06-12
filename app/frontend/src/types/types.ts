@@ -119,7 +119,7 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	questions: Question[]
+	questions: string[]
 }
 
 export type Question = {

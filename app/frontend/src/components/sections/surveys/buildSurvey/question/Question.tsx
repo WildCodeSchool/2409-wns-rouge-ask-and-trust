@@ -101,7 +101,6 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 	const onSubmit = (formData: UpdateQuestionInput) => {
 		if (!data?.question.id) return
 		// @TODO add logic to handle update question
-		console.log("onSubmit data Question", formData)
 
 		const formattedAnswers = formData.answers?.map(({ value }) => ({
 			value,
@@ -147,14 +146,11 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		prevTypeRef.current = watchedType
 	}, [watchedType, append, fields.length])
 
-	console.log("data", data)
-
 	const handleClickDelete = (
 		questionId: number | undefined,
 		surveyId: number | undefined
 	) => {
 		if (!questionId || !surveyId) return null
-		console.log("questionId", questionId, "surveyId", surveyId)
 		deleteQuestion(questionId, surveyId)
 	}
 
