@@ -88,6 +88,8 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 	})
 	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
 		useState(false)
+
+	// @TODO add error handling
 	const { data } = useQuery<{ question: QuestionUpdate }>(GET_QUESTION, {
 		variables: { questionId },
 	})
@@ -150,9 +152,12 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		questionId: number | undefined,
 		surveyId: number | undefined
 	) => {
+		console.log("questionId", questionId, "surveyId", surveyId)
 		if (!questionId || !surveyId) return null
 		deleteQuestion(questionId, surveyId)
 	}
+
+	if (!data) return null
 
 	return (
 		<li className="list-none">
@@ -168,8 +173,7 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 						variant="ghost_destructive"
 						size="square_sm"
 						ariaLabel="Supprimer cette option"
-						onClick={event => {
-							event.preventDefault()
+						onClick={() => {
 							setOpenButtonDeleteQuestion(prev => !prev)
 						}}
 						icon={Trash2}
@@ -238,7 +242,6 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 					Enregistrer
 				</Button>
 			</FormWrapper>
-			{/* Add a delete button*/}
 		</li>
 	)
 }
