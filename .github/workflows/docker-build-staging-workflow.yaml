@@ -1,4 +1,4 @@
-name: Docker Build Workflow
+name: Docker Build Staging Workflow
 
 # When this workflow is activated
 on:
