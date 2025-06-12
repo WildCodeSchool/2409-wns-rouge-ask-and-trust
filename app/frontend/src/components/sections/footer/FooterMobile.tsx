@@ -71,13 +71,7 @@ export default function FooterMobile() {
  * @param {string} props.ariaLabel - The personalized ARIA label for accessibility
  * @returns {JSX.Element} A Link component with appropriate safety and accessibility attributes
  */
-function FooterLinks({
-	href,
-	label,
-	category,
-	ariaLabel,
-	Icon,
-}: LinksType) {
+function FooterLinks({ href, label, category, ariaLabel, Icon }: LinksType) {
 	const isExternal = href.startsWith("http")
 
 	// Security: check allowed protocols

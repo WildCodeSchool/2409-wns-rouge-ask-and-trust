@@ -13,11 +13,11 @@ const FooterWrapper = () => (
 )
 
 vi.mock("@/hooks/useAuthContext", () => ({
-	useAuthContext: vi.fn()
+	useAuthContext: vi.fn(),
 }))
 
 beforeEach(() => {
-	(useAuthContext as Mock).mockReturnValue({ user: null })
+	;(useAuthContext as Mock).mockReturnValue({ user: null })
 })
 
 describe("footer Components", () => {
@@ -77,11 +77,13 @@ describe("footer Components", () => {
 	})
 
 	it("should not display 'Créer un compte' link when user is connected", () => {
-		(useAuthContext as Mock).mockReturnValue({ user: { role: "admin" } })
+		;(useAuthContext as Mock).mockReturnValue({ user: { role: "admin" } })
 
 		render(<FooterWrapper />)
 
-		expect(screen.queryByRole("link", { name: "Créer un compte" })).not.toBeInTheDocument()
+		expect(
+			screen.queryByRole("link", { name: "Créer un compte" })
+		).not.toBeInTheDocument()
 	})
 
 	it("should handle external links correctly", () => {
