@@ -1,6 +1,6 @@
 import { LucideIcon } from "lucide-react"
 import { UserRole } from "./../../../backend/src/types/types"
-import { FieldErrors, UseFormRegister } from "react-hook-form"
+import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
 
 export type AuthContextProps = {
 	user: User | null
@@ -157,6 +157,11 @@ export type QuestionType =
 export type InputsProps = {
 	register: UseFormRegister<CreateSurveyInput>
 	errors: FieldErrors<CreateSurveyInput>
+}
+
+export type SwitchProps = {
+	errors: FieldErrors<CreateSurveyInput>
+	control: Control<CreateSurveyInput>
 }
 
 export type CategoryOption = {
