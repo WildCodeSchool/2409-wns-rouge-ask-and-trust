@@ -8,6 +8,8 @@ import {
 import { ObjectType, Field, ID } from "type-graphql"
 import { Survey } from "./survey/survey"
 import { Roles, UserRole } from "../../types/types"
+import { Category } from "./survey/category"
+import { Questions } from "./survey/questions"
 
 /**
  * Represents a user entity in the database.
@@ -59,8 +61,17 @@ export class User extends BaseEntity {
 	})
 	role!: UserRole
 
+	@Field(() => [Survey], { nullable: true })
 	@OneToMany(() => Survey, survey => survey.user)
 	surveys!: Survey[]
+
+	@Field(() => [Category], { nullable: true })
+	@OneToMany(() => Category, category => category.createdBy)
+	categories!: Category[]
+
+	@Field(() => [Questions], { nullable: true })
+	@OneToMany(() => Questions, question => question.createdBy)
+	questions!: Questions[]
 
 	@Field()
 	@Column({ default: () => "CURRENT_TIMESTAMP" })
