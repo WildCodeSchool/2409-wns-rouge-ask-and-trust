@@ -17,7 +17,6 @@ import {
 	PrimaryGeneratedColumn,
 } from "typeorm"
 import { AnswerObject } from "../../../graphql/inputs/create/survey/create-questions-input"
-import { User } from "../user"
 import { Survey } from "./survey"
 
 /**
@@ -69,7 +68,7 @@ export class Questions extends BaseEntity {
 	 * The actual text/content of the question (must be unique).
 	 */
 	@Field()
-	@Column({ length: 1000, unique: true })
+	@Column({ length: 1000 /*, unique: true*/ })
 	title!: string
 
 	/**
@@ -115,7 +114,10 @@ export class Questions extends BaseEntity {
 	 * @description
 	 * Many relation to the `User` entity.
 	 */
-	@ManyToOne(() => User)
-	@Field(() => User, { nullable: true })
-	createdBy!: User
+
+	// Maybe for later if several users can create questions in the same survey.
+
+	// @ManyToOne(() => User)
+	// @Field(() => User, { nullable: true })
+	// createdBy!: User
 }
