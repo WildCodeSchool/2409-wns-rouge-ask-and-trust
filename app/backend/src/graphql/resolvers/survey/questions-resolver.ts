@@ -18,7 +18,7 @@ import {
 import { Questions } from "../../../database/entities/survey/questions"
 import { Survey } from "../../../database/entities/survey/survey"
 import { AppError } from "../../../middlewares/error-handler"
-import { Context, TypesOfQuestion, Roles } from "../../../types/types"
+import { Context, Roles, TypesOfQuestion } from "../../../types/types"
 import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
 import { UpdateQuestionInput } from "../../inputs/update/survey/update-question-input"
 
@@ -109,12 +109,12 @@ export class QuestionsResolver {
 	async createQuestion(
 		@Arg("data", () => CreateQuestionsInput)
 		data: CreateQuestionsInput,
-		@Arg("surveyId", () => ID) surveyId: number,
+		// @Arg("surveyId", () => ID) surveyId: number,
 		@Ctx() context: Context
 	): Promise<Questions> {
 		try {
 			const user = context.user
-
+			console.log("hello resolver", data)
 			if (!user) {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
@@ -128,13 +128,14 @@ export class QuestionsResolver {
 			}
 
 			const newQuestion = new Questions()
+
 			newQuestion.title = data.title
 			newQuestion.answers = data.answers
 			newQuestion.type = data.type
 
-			if (surveyId) {
+			if (data.surveyId) {
 				const survey = await Survey.findOne({
-					where: { id: surveyId },
+					where: { id: data.surveyId },
 				})
 				if (!survey) {
 					throw new AppError("Survey not found", 404, "NotFoundError")
@@ -167,7 +168,6 @@ export class QuestionsResolver {
 	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Questions, { nullable: true })
 	async updateQuestion(
-		@Arg("id", () => ID) id: number,
 		@Arg("data", () => UpdateQuestionInput)
 		data: UpdateQuestionInput,
 		@Ctx() context: Context
@@ -179,22 +179,61 @@ export class QuestionsResolver {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
 
-			// Only admins or question owner can update question
-			const whereCreatedBy =
-				user.role === "admin" ? undefined : { id: user.id }
-
-			const question = await Questions.findOneBy({
-				id,
-				createdBy: whereCreatedBy,
+			const questionToUpdate = await Questions.findOne({
+				where: { id: data.id },
+				relations: {
+					survey: { user: true }, // get survey and its user
+				},
 			})
 
-			if (question !== null) {
-				Object.assign(question, data)
-				await question.save()
+			if (!questionToUpdate) {
+				throw new AppError("Question not found", 404, "NotFoundError")
 			}
 
-			return question
+			console.log("questionToUpdate", questionToUpdate)
+
+			const isOwnerOfSurvey =
+				questionToUpdate.survey?.user?.id === user.id
+
+			if (user.role !== Roles.Admin && !isOwnerOfSurvey) {
+				throw new AppError(
+					"Not authorized to update this question",
+					403,
+					"ForbiddenError"
+				)
+			}
+
+			//
+			const { id, ...dataWithoutId } = data
+
+			const isNewTypeIsMultiple =
+				questionToUpdate.type !== data.type &&
+				(data.type === TypesOfQuestion.Select ||
+					data.type === TypesOfQuestion.Multiple_Choice)
+
+			// If type is changed to a multiple choice and if no answers in database, add default answers
+			//
+			if (isNewTypeIsMultiple && questionToUpdate.answers.length === 0) {
+				dataWithoutId.answers = [
+					{ value: "Réponse 1" },
+					{ value: "Réponse 2" },
+				]
+			}
+
+			// If type is changed to text, clean answers
+			if (data.type === TypesOfQuestion.Text) {
+				dataWithoutId.answers = []
+			}
+
+			Object.assign(questionToUpdate, dataWithoutId)
+
+			await questionToUpdate.save()
+
+			return questionToUpdate
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
 			throw new AppError(
 				"Failed to update question",
 				500,
@@ -221,28 +260,42 @@ export class QuestionsResolver {
 		@Ctx() context: Context
 	): Promise<Questions | null> {
 		try {
+			console.log("hello from resolver >>>>>>>>>>>>>>>>>")
 			const user = context.user
 
 			if (!user) {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
-
-			// Only admins or question owner can delete qestions
-			const whereCreatedBy =
-				user.role === "admin" ? undefined : { id: user.id }
-
-			const question = await Questions.findOneBy({
-				id,
-				createdBy: whereCreatedBy,
+			const questionToDelete = await Questions.findOne({
+				where: { id },
+				relations: {
+					survey: { user: true }, // get survey and its user
+				},
 			})
 
-			if (question !== null) {
-				await question.remove()
-				question.id = id
+			if (!questionToDelete) {
+				throw new AppError("Question not found", 404, "NotFoundError")
 			}
 
-			return question
+			const isOwnerOfSurvey =
+				questionToDelete.survey?.user?.id === user.id
+
+			if (user.role !== Roles.Admin && !isOwnerOfSurvey) {
+				throw new AppError(
+					"Not authorized to update this question",
+					403,
+					"ForbiddenError"
+				)
+			}
+
+			await questionToDelete.remove()
+			questionToDelete.id = id
+
+			return questionToDelete
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
 			throw new AppError(
 				"Failed to delete question",
 				500,

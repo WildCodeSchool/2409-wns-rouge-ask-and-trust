@@ -32,7 +32,7 @@ export class CreateQuestionsInput {
 	@Type(() => AnswerObject) // Transform plain objects to AnswerObject instances to enable validation
 	answers!: AnswerObject[]
 
-	@Field(() => Number, { nullable: true })
+	@Field(() => Number)
 	surveyId!: number
 }
 
@@ -44,4 +44,5 @@ export class AnswerObject {
 		message: "An answer must be between 1 and 255 characters",
 	})
 	value!: string
+	// add more properties to answers if needed
 }
