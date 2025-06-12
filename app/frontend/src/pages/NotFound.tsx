@@ -2,20 +2,24 @@ import { useEffect } from "react"
 import { Button } from "@/components/ui/Button"
 import { useNavigate } from "react-router-dom"
 import { Helmet } from "react-helmet"
+import { WHOAMI } from "@/graphql/auth"
+import { useQuery } from "@apollo/client"
 
 export default function NotFound() {
+	const { data: whoamiData } = useQuery(WHOAMI)
+	const me = whoamiData?.whoami
 	const navigate = useNavigate()
 
 	useEffect(() => {
 		const automaticRedirect = setInterval(() => {
-			navigate("/", { replace: true })
+			navigate(me ? "/surveys" : "/", { replace: true })
 		}, 5000)
 
 		return () => clearInterval(automaticRedirect)
-	}, [navigate])
+	}, [navigate, me])
 
 	const handleReturnHome = () => {
-		navigate("/", { replace: true })
+		navigate(me ? "/surveys" : "/", { replace: true })
 	}
 
 	return (
