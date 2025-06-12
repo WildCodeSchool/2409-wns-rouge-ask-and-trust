@@ -1,8 +1,9 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest"
 import { BrowserRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
 import Footer, { FooterLink } from "@/components/sections/footer/Footer"
 import userEvent from "@testing-library/user-event"
+import { useAuthContext } from "@/hooks/useAuthContext"
 
 // Wrapper require in react router
 const FooterWrapper = () => (
@@ -10,6 +11,14 @@ const FooterWrapper = () => (
 		<Footer />
 	</BrowserRouter>
 )
+
+vi.mock("@/hooks/useAuthContext", () => ({
+	useAuthContext: vi.fn()
+}))
+
+beforeEach(() => {
+	(useAuthContext as Mock).mockReturnValue({ user: null })
+})
 
 describe("footer Components", () => {
 	it("should render all essential elements", () => {
@@ -65,6 +74,14 @@ describe("footer Components", () => {
 		})
 		await user.click(contactLink)
 		expect(window.location.pathname).toBe("/register")
+	})
+
+	it("should not display 'Créer un compte' link when user is connected", () => {
+		(useAuthContext as Mock).mockReturnValue({ user: { role: "admin" } })
+
+		render(<FooterWrapper />)
+
+		expect(screen.queryByRole("link", { name: "Créer un compte" })).not.toBeInTheDocument()
 	})
 
 	it("should handle external links correctly", () => {

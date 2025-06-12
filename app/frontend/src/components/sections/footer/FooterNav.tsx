@@ -25,9 +25,7 @@ export default function FooterNav({
 			))}
 
 			{/* Separator for mobile */}
-			<div className="mt-6 md:hidden" role="separator">
-				<Separator className="bg-black-300" />
-			</div>
+			<Separator className="bg-black-300 mt-6 h-0.5 md:hidden" />
 
 			{/* Copyright */}
 			<div className="mt-8 text-center md:mt-4 md:text-left">
