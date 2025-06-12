@@ -9,7 +9,6 @@ on:
 jobs:
   extract-version:
     # Ce job ne tourne que si la PR cible 'staging'
-    if: github.base_ref == 'staging'
     runs-on: ubuntu-latest
     outputs:
       # Output version pour le job suivant (extraite depuis package.json)
