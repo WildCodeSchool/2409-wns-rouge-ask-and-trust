@@ -7,11 +7,11 @@ import { useQuery } from "@apollo/client"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/Button"
 import { Label } from "@/components/ui/Label"
-import { Input } from "@/components/ui/Input"
 import { CategoryOption, CreateSurveyInput } from "@/types/types"
 import { GET_CATEGORIES } from "@/graphql/category"
 import { useSurvey } from "@/hooks/useSurvey"
 import TypeSelect from "@/components/ui/TypeSelect"
+import SwitchPublic from "./SwitchPublic"
 
 export default function SurveyForm() {
 	const { addSurvey } = useSurvey()
@@ -109,22 +109,7 @@ export default function SurveyForm() {
 					</p>
 				)}
 			</div>
-			<div className="flex flex-row-reverse items-center space-x-2">
-				<Label htmlFor="public" required>
-					Enquête publique
-				</Label>
-				<Input
-					id="public"
-					type="checkbox"
-					{...register("public")}
-					errorMessage=""
-				/>
-			</div>
-			{errors.root && (
-				<div className="text-destructive-medium mb-4">
-					{errors.root.message}
-				</div>
-			)}
+			<SwitchPublic control={control} errors={errors} />
 			<Button
 				type="submit"
 				disabled={isSubmitting}
