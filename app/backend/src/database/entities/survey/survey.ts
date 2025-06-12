@@ -78,7 +78,7 @@ export class Survey extends BaseEntity {
 	 * A short, unique label that identifies the survey.
 	 */
 	@Field()
-	@Column({ length: 255, unique: true })
+	@Column({ length: 255, unique: true }) // PB : si deux surveys sont privées, elles ne peuvent pas avoir le même nom ?
 	title!: string
 
 	/**
