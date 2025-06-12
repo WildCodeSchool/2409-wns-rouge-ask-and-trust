@@ -10,12 +10,12 @@ on:
       - edited
 
 jobs:
-extract-version:
-    if: github.base_ref == 'staging'
-    runs-on: ubuntu-latest
-    outputs:
+  extract-version:
+      if: github.base_ref == 'staging'
+      runs-on: ubuntu-latest
+      outputs:
       version: ${{ steps.get_version.outputs.VERSION }}
-    steps:
+      steps:
       - name: Check out code
         uses: actions/checkout@v4
         with:
@@ -50,7 +50,7 @@ extract-version:
 
   docker-build-staging:
     # Run if client test is a success
-    needs: release-and-extract-version
+    needs: extract-version
     # Only build docker image when merging on staging
     if: github.base_ref == 'staging'
     runs-on: ubuntu-latest
@@ -87,7 +87,7 @@ extract-version:
           # Indicate where is the app to build
          context: "{{defaultContext}}:app/frontend"
           # DockerHub user's name and app's name
-         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-frontend:${{ needs.release-and-extract-version.outputs.version }}
+         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-frontend:${{ needs.extract-version.outputs.version }}
 
       # Build Docker image and push it in DockerHub
       - name: Build and push backend
@@ -97,4 +97,4 @@ extract-version:
           # Indicate where is the app to build
          context: "{{defaultContext}}:app/backend"
           # DockerHub user's name and app's name
-         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-backend:${{ needs.release-and-extract-version.outputs.version }}
+         tags: ${{ secrets.DOCKERHUB_USERNAME }}/askandtrust-backend:${{ needs.extract-version.outputs.version }}
