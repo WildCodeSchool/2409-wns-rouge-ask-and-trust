@@ -63,7 +63,6 @@ jobs:
     # Run if client test is a success
     needs: extract-version
     # Only build docker image when merging on staging
-    if: github.base_ref == 'staging'
     runs-on: ubuntu-latest
     # for existing actions, we need the keyword "uses"
     steps:
