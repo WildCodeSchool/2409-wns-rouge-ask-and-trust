@@ -48,7 +48,7 @@ export default function Footer() {
 		},
 	].filter(Boolean)
 
-	if (!user || user === null) {
+	if (!user) {
 		FOOTER_LINKS.unshift({
 			href: "/register",
 			label: "S'inscrire",
