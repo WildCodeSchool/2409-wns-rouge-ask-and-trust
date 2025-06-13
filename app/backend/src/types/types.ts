@@ -14,8 +14,12 @@ export const Roles = {
 
 export type UserRole = (typeof Roles)[keyof typeof Roles]
 
-export enum TypeOfQuestion {
-	TEXT = "text",
-	MULTIPLE_CHOICE = "multiple_choice",
-	BOOLEAN = "boolean",
-}
+export const TypesOfQuestion = {
+	Text: "text",
+	Multiple_Choice: "multiple_choice",
+	Boolean: "boolean",
+	Select: "select",
+} as const
+
+export type QuestionType =
+	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]

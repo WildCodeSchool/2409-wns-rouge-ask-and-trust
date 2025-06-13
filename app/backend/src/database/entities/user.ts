@@ -1,3 +1,4 @@
+import { Field, ID, ObjectType } from "type-graphql"
 import {
 	BaseEntity,
 	Column,
@@ -5,11 +6,9 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn,
 } from "typeorm"
-import { ObjectType, Field, ID } from "type-graphql"
-import { Survey } from "./survey/survey"
 import { Roles, UserRole } from "../../types/types"
 import { Category } from "./survey/category"
-import { Questions } from "./survey/questions"
+import { Survey } from "./survey/survey"
 
 /**
  * Represents a user entity in the database.
@@ -69,9 +68,9 @@ export class User extends BaseEntity {
 	@OneToMany(() => Category, category => category.createdBy)
 	categories!: Category[]
 
-	@Field(() => [Questions], { nullable: true })
-	@OneToMany(() => Questions, question => question.createdBy)
-	questions!: Questions[]
+	// @Field(() => [Questions], { nullable: true })
+	// @OneToMany(() => Questions, question => question.createdBy)
+	// questions!: Questions[]
 
 	@Field()
 	@Column({ default: () => "CURRENT_TIMESTAMP" })

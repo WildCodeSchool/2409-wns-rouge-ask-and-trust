@@ -11,6 +11,7 @@ export type AuthContextProps = {
 export interface User {
 	id: string
 	email: string
+	role: string
 	// ... other user properties
 }
 
@@ -33,14 +34,6 @@ export interface UserAuth {
 export type UserSignUp = UserAuth
 export type UserSignIn = Pick<UserAuth, "email" | "password">
 export type UserSignForm = UserSignUp | UserSignIn
-
-export interface FooterLinkType {
-	href: string
-	label: string
-	category: string
-	ariaLabel: string
-	Icon?: LucideIcon
-}
 
 export interface ErrorLayoutProps {
 	children: React.ReactNode
@@ -75,3 +68,85 @@ export type Package = {
 	surveyCount: number
 	description: string
 }
+
+export type ToolboxCategory = {
+	id: string
+	title: string
+	items: ToolboxItem[]
+}
+
+export type ToolboxItem = {
+	id: string
+	label: string
+	icon?: React.ReactNode
+	onClickType: string
+	onClick?: () => void
+}
+
+export interface ToolboxProps {
+	className?: string
+	items?: ToolboxItem[]
+	categories?: ToolboxCategory[]
+	showSearch?: boolean
+	searchManager?: SearchManager
+	compactThreshold?: number
+	horizontalThreshold?: number
+	noResultsText?: string
+}
+
+export interface SearchManager {
+	value: string
+	onChange: (value: string) => void
+	placeholder?: string
+}
+
+export type CreateSurveyInput = {
+	title: string
+	description: string
+	public: boolean
+	category: number | string
+}
+
+export interface Survey {
+	title: string
+	description: string
+	public: boolean
+	category: number | string
+	questions: string[]
+}
+
+export type Question = {
+	id: number
+	title: string
+	type: QuestionType
+	answers: { value: string }[]
+}
+export interface QuestionUpdate {
+	id: number
+	title?: string
+	type?: QuestionType
+	answers?: { value: string }[]
+	survey: {
+		id: number
+	}
+}
+
+export const TypesOfQuestion = {
+	Text: "text",
+	Multiple_Choice: "multiple_choice",
+	Boolean: "boolean",
+	Select: "select",
+} as const
+
+export const TypesOfQuestionLabels: Record<
+	keyof typeof TypesOfQuestion,
+	string
+> = {
+	Text: "Texte court",
+	Multiple_Choice: "Liste à choix multiples",
+	Boolean: "Oui / Non",
+	Select: "Liste à choix unique",
+}
+
+export type QuestionType =
+	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]

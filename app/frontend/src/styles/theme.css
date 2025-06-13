@@ -43,6 +43,8 @@
 	--color-validate-medium: #3f7a50;
 	--color-validate-dark: #1a3823;
 	--color-disabled: #82828a;
+	--color-active: var(--color-primary-700);
+	--color-focus: var(--color-primary-700);
 
 	/* components colors */
 	--color-bg: var(--color-white);

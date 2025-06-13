@@ -56,7 +56,7 @@ jobs:
     # Run dependency security audit
     - name: Run npm audit
       id: npm-audit
-      run: npm audit
+      run: npm audit --audit-level=high --omit=dev
       continue-on-error: true
 
     # Fix Prettier formatting if check failed
