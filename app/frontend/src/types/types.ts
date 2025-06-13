@@ -11,6 +11,7 @@ export type AuthContextProps = {
 export interface User {
 	id: string
 	email: string
+	role: string
 	// ... other user properties
 }
 
@@ -33,14 +34,6 @@ export interface UserAuth {
 export type UserSignUp = UserAuth
 export type UserSignIn = Pick<UserAuth, "email" | "password">
 export type UserSignForm = UserSignUp | UserSignIn
-
-export interface FooterLinkType {
-	href: string
-	label: string
-	category: string
-	ariaLabel: string
-	Icon?: LucideIcon
-}
 
 export interface ErrorLayoutProps {
 	children: React.ReactNode

@@ -77,7 +77,7 @@ export default function Surveys() {
 					)}
 				>
 					<SurveyCard
-						href="/"
+						href="/surveys"
 						picture={img}
 						title="Pratiquez vous une activité physique?"
 						content="Dites-nous si le sport fait partie de votre quotidien. Vos réponses aideront à mieux comprendre les habitudes d'activité physique."

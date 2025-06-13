@@ -2,20 +2,22 @@ import { useEffect } from "react"
 import { Button } from "@/components/ui/Button"
 import { useNavigate } from "react-router-dom"
 import { Helmet } from "react-helmet"
+import { useAuthContext } from "@/hooks/useAuthContext"
 
 export default function NotFound() {
+	const { user } = useAuthContext()
 	const navigate = useNavigate()
 
 	useEffect(() => {
 		const automaticRedirect = setInterval(() => {
-			navigate("/", { replace: true })
+			navigate(user ? "/surveys" : "/", { replace: true })
 		}, 5000)
 
 		return () => clearInterval(automaticRedirect)
-	}, [navigate])
+	}, [navigate, user])
 
 	const handleReturnHome = () => {
-		navigate("/", { replace: true })
+		navigate(user ? "/surveys" : "/", { replace: true })
 	}
 
 	return (

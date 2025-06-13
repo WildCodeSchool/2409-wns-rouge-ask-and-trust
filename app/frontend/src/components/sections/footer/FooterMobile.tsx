@@ -1,43 +1,61 @@
-import { FooterLinkType } from "@/types/types"
+import { useAuthContext } from "@/hooks/useAuthContext"
+import { LinksType } from "@/types/types"
 import { House, SquarePlus, Bell, User } from "lucide-react"
 import { Link } from "react-router-dom"
 
-const FOOTER_LINKS: readonly FooterLinkType[] = [
-	{
-		href: "/",
-		label: "Accueil",
-		category: "Accueil",
-		ariaLabel: "Retourner sur la page d'accueil",
-		Icon: House,
-	},
-	{
-		href: "/surveys/create",
-		label: "Créer",
-		category: "Création",
-		ariaLabel: "Créer une enquête",
-		Icon: SquarePlus,
-	},
-	{
-		href: "/profil/notification",
-		label: "Notifications",
-		category: "Notifications",
-		ariaLabel: "Voir les notifications",
-		Icon: Bell,
-	},
-	{
-		href: "/profil",
-		label: "Profil",
-		category: "Profil",
-		ariaLabel: "Aller sur son profil",
-		Icon: User,
-	},
-] as const
-
 export default function FooterMobile() {
+	const { user } = useAuthContext()
+
+	const FOOTER_LINKS: LinksType[] = [
+		{
+			href: user ? "/surveys" : "/",
+			label: "Accueil",
+			category: "Accueil",
+			ariaLabel: "Retourner sur la page d'accueil",
+			Icon: House,
+		},
+		{
+			href: "/surveys/create",
+			label: "Créer",
+			category: "Création",
+			ariaLabel: "Créer une enquête",
+			Icon: SquarePlus,
+		},
+		{
+			href: user
+				? user.role === "admin"
+					? "/admin"
+					: "/profil"
+				: "/connexion",
+			label: user
+				? user.role === "admin"
+					? "Admin"
+					: "Profil"
+				: "Se connecter",
+			category: "Compte",
+			ariaLabel: "Se connecter ou accéder à son compte",
+			Icon: User,
+		},
+	].filter(Boolean)
+
+	if (user) {
+		const notifications = {
+			href: "/profil/notification",
+			label: "Notifications",
+			category: "Notifications",
+			ariaLabel: "Voir les notifications",
+			Icon: Bell,
+		}
+
+		const position = 2
+
+		FOOTER_LINKS.splice(position, 0, notifications)
+	}
+
 	return (
 		<footer className="bg-primary-600 fixed bottom-0 flex w-full justify-between px-5 py-2.5 sm:justify-around">
 			{FOOTER_LINKS.map(link => (
-				<FooterLinkLink key={link.href} {...link} />
+				<FooterLinks key={link.href} {...link} />
 			))}
 		</footer>
 	)
@@ -53,13 +71,7 @@ export default function FooterMobile() {
  * @param {string} props.ariaLabel - The personalized ARIA label for accessibility
  * @returns {JSX.Element} A Link component with appropriate safety and accessibility attributes
  */
-function FooterLinkLink({
-	href,
-	label,
-	category,
-	ariaLabel,
-	Icon,
-}: FooterLinkType) {
+function FooterLinks({ href, label, category, ariaLabel, Icon }: LinksType) {
 	const isExternal = href.startsWith("http")
 
 	// Security: check allowed protocols
