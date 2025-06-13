@@ -28,6 +28,8 @@ const buttonVariants = cva(
 				disabled:
 					"bg-black-400 border-black-400 text-white focus:ring-black-400 pointer-events-none cursor-not-allowed",
 				ghost: "bg-transparent border-none text-primary-700 hover:underline focus:ring-primary-700",
+				ghost_destructive:
+					"bg-transparent border-none text-destructive-medium hover:underline focus:ring-primary-700 active:outline-none hover:bg-destructive-medium hover:text-white active:bg-transparent",
 			},
 			size: {
 				sm: "px-3 py-1 text-sm",

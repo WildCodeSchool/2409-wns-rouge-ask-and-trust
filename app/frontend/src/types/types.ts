@@ -114,17 +114,28 @@ export type CreateSurveyInput = {
 	category: number | string
 }
 
+export interface Survey {
+	title: string
+	description: string
+	public: boolean
+	category: number | string
+	questions: string[]
+}
+
 export type Question = {
-	id: string
-	content: string
-	answers: string
+	id: number
+	title: string
+	type: QuestionType
+	answers: { value: string }[]
 }
 export interface QuestionUpdate {
 	id: number
 	title?: string
-	description?: string
 	type?: QuestionType
-	answers: { value: string }[]
+	answers?: { value: string }[]
+	survey: {
+		id: number
+	}
 }
 
 export const TypesOfQuestion = {
@@ -139,9 +150,9 @@ export const TypesOfQuestionLabels: Record<
 	string
 > = {
 	Text: "Texte court",
-	Multiple_Choice: "Choix multiples",
+	Multiple_Choice: "Liste à choix multiples",
 	Boolean: "Oui / Non",
-	Select: "Liste déroulante",
+	Select: "Liste à choix unique",
 }
 
 export type QuestionType =

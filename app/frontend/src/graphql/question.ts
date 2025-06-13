@@ -1,11 +1,10 @@
 import { gql } from "@apollo/client"
 
 export const CREATE_QUESTION = gql`
-	mutation CreateQuestion($content: CreateQuestionsInput!) {
+	mutation CreateQuestion($data: CreateQuestionsInput!) {
 		createQuestion(data: $data) {
 			id
-			content
-			answers
+			title
 		}
 	}
 `
@@ -19,6 +18,25 @@ export const GET_QUESTION = gql`
 			answers {
 				value
 			}
+			survey {
+				id
+			}
+		}
+	}
+`
+
+export const UPDATE_QUESTION = gql`
+	mutation UpdateQuestion($data: UpdateQuestionInput!) {
+		updateQuestion(data: $data) {
+			id
+		}
+	}
+`
+export const DELETE_QUESTION = gql`
+	mutation DeleteQuestion($deleteQuestionId: ID!) {
+		deleteQuestion(id: $deleteQuestionId) {
+			id
+			title
 		}
 	}
 `

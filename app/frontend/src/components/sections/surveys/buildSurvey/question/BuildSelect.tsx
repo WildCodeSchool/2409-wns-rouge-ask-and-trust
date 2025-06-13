@@ -25,7 +25,7 @@ export function BuildSelect({
 	append: UseFieldArrayAppend<QuestionUpdate, "answers">
 }) {
 	return (
-		<div className="flex flex-col gap-3">
+		<div className="flex flex-col gap-1">
 			<Label htmlFor="lastname" required>
 				Définir les réponses
 			</Label>
@@ -46,7 +46,7 @@ export function BuildSelect({
 					></Input>
 					<Button
 						type="button"
-						variant="destructive"
+						variant="ghost_destructive"
 						size="square_sm"
 						ariaLabel="Supprimer cette option"
 						onClick={() => remove(index)}

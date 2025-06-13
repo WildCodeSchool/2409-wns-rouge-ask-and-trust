@@ -15,12 +15,12 @@ import {
 	Query,
 	Resolver,
 } from "type-graphql"
-import { Survey } from "../../../database/entities/survey/survey"
-import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-input"
-import { Context, Roles } from "../../../types/types"
-import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
-import { AppError } from "../../../middlewares/error-handler"
 import { Category } from "../../../database/entities/survey/category"
+import { Survey } from "../../../database/entities/survey/survey"
+import { AppError } from "../../../middlewares/error-handler"
+import { Context, Roles } from "../../../types/types"
+import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-input"
+import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
 
 /**
  * Survey Resolver
@@ -82,7 +82,6 @@ export class SurveysResolver {
 					questions: true,
 				},
 			})
-
 			if (!survey) {
 				throw new AppError("Survey not found", 404, "NotFoundError")
 			}

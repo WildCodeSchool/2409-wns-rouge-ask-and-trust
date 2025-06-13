@@ -1,6 +1,8 @@
 import { Search } from "lucide-react"
 
 export default function SearchForm() {
+	// @TODO use UI components FormWrapper, Label, Input
+	// and react hook form.
 	return (
 		<form className="relative flex flex-1 items-center justify-center">
 			<label htmlFor="search" className="sr-only">
