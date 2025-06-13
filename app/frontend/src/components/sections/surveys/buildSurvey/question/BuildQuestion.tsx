@@ -18,7 +18,7 @@ import {
 	UseFormRegister,
 	useWatch,
 } from "react-hook-form"
-import { BuildSelect } from "./BuildSelect"
+import { BuildListAnswers } from "./BuildListAnswers"
 import QuestionTypeSelect from "./QuestionTypeSelection"
 
 type QuestionProps = {
@@ -45,18 +45,14 @@ export function RenderAnswerComponent({
 	switch (questionType) {
 		case TypesOfQuestion.Text:
 			break
-		case TypesOfQuestion.Multiple_Choice:
-			// return (
-			// component checkbox
-			// )
-			break
 		case TypesOfQuestion.Boolean:
 			// return (
 			// component switch
 			break
+		case TypesOfQuestion.Multiple_Choice:
 		case TypesOfQuestion.Select:
 			return (
-				<BuildSelect
+				<BuildListAnswers
 					register={register}
 					errors={errors}
 					fields={fields}
@@ -115,7 +111,6 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 	const onSubmit = (formData: UpdateQuestionInput) => {
 		console.log("updateQuestionError", updateQuestionError)
 		if (!data?.question.id) return
-		// @TODO add logic to handle update question
 
 		const formattedAnswers = formData.answers?.map(({ value }) => ({
 			value,
@@ -128,7 +123,6 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 			title: title,
 			type: type,
 			answers: formattedAnswers,
-			// surveyId: surveyId,
 		})
 	}
 
