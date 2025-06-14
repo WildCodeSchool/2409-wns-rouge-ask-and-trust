@@ -1,5 +1,9 @@
 import { useQuery, useMutation } from "@apollo/client"
-import { GET_SURVEYS, CREATE_SURVEY, UPDATE_SURVEY } from "@/graphql/survey/survey"
+import {
+	GET_SURVEYS,
+	CREATE_SURVEY,
+	UPDATE_SURVEY,
+} from "@/graphql/survey/survey"
 import { useState, useEffect } from "react"
 import { CreateSurveyInput, UpdateSurveyType } from "@/types/types"
 
@@ -59,9 +63,9 @@ export function useSurvey() {
 			variables: {
 				data: {
 					...survey,
-					id
-				}
-			}
+					id,
+				},
+			},
 		})
 		return result.data?.updateSurvey
 	}

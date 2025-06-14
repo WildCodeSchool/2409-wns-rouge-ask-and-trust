@@ -45,46 +45,49 @@ export default function SurveyForm() {
 	const { data: categoriesData, loading: loadingCategories } =
 		useQuery(GET_CATEGORIES)
 
-	const { data: surveyData, loading: surveyLoading, error: surveyError } = useQuery(GET_SURVEY, {
+	const {
+		data: surveyData,
+		loading: surveyLoading,
+		error: surveyError,
+	} = useQuery(GET_SURVEY, {
 		variables: { surveyId: surveyId },
-		skip: !surveyId
+		skip: !surveyId,
 	})
 	const survey = surveyData?.survey
 
 	useEffect(() => {
-	if (survey) {
-		reset({
-			title: survey.title,
-			description: survey.description,
-			public: survey.public,
-			category: survey.category.id.toString(),
-			questions: [] as CreateQuestionsInput[],
-		})
-	}
-}, [survey, categoriesData, reset])
-
+		if (survey) {
+			reset({
+				title: survey.title,
+				description: survey.description,
+				public: survey.public,
+				category: survey.category.id.toString(),
+				questions: [] as CreateQuestionsInput[],
+			})
+		}
+	}, [survey, categoriesData, reset])
 
 	if (surveyId && surveyLoading) {
 		return (
-			<div className="flex justify-center items-center">
+			<div className="flex items-center justify-center">
 				<div>Chargement de l'enquête...</div>
 			</div>
 		)
 	}
 
 	if (surveyId && surveyError) {
-		const isNotFoundError = surveyError.graphQLErrors.some(
-			error => error.message.includes('Survey not found')
+		const isNotFoundError = surveyError.graphQLErrors.some(error =>
+			error.message.includes("Survey not found")
 		)
-		
+
 		if (isNotFoundError) {
-			navigate('/surveyNotFound', { replace: true })
+			navigate("/surveyNotFound", { replace: true })
 			return null
 		}
 	}
 
 	if (surveyId && !surveyLoading && !survey) {
-		navigate('/surveyNotFound', { replace: true })
+		navigate("/surveyNotFound", { replace: true })
 		return null
 	}
 
@@ -92,7 +95,7 @@ export default function SurveyForm() {
 		clearErrors()
 		try {
 			let result
-	
+
 			if (survey) {
 				result = await updateSurvey(survey.id, {
 					...form,
@@ -146,7 +149,6 @@ export default function SurveyForm() {
 		: isEdit
 			? "Modifier l'enquête"
 			: "Créer l'enquête"
-
 
 	const categoryOptions: CategoryOption[] =
 		categoriesData?.categories?.map(

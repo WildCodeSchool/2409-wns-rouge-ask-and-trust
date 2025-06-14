@@ -186,20 +186,24 @@ export class SurveysResolver {
 				)
 			}
 
-			const { id, category, ...updateData } = data;
+			const { id, category, ...updateData } = data
 
 			if (category) {
 				const categorySurvey = await Category.findOne({
 					where: { id: category },
-				});
+				})
 				if (!categorySurvey) {
-					throw new AppError("Category not found", 404, "NotFoundError");
+					throw new AppError(
+						"Category not found",
+						404,
+						"NotFoundError"
+					)
 				}
-				survey.category = categorySurvey;
+				survey.category = categorySurvey
 			}
 
-			Object.assign(survey, updateData);
-			
+			Object.assign(survey, updateData)
+
 			await survey.save()
 			return survey
 		} catch (error) {
