@@ -11,6 +11,7 @@ import { Control, Controller, FieldPath, FieldValues } from "react-hook-form"
 type TypeSelectProps<T extends FieldValues> = {
 	control: Control<T>
 	name: FieldPath<T>
+	message: string
 	selectSomething: string
 	options: CategoryOption[]
 	disabled?: boolean
@@ -19,6 +20,7 @@ type TypeSelectProps<T extends FieldValues> = {
 export default function TypeSelect<T extends FieldValues>({
 	control,
 	name,
+	message,
 	selectSomething,
 	options,
 	disabled = false,
@@ -27,6 +29,7 @@ export default function TypeSelect<T extends FieldValues>({
 		<Controller
 			control={control}
 			name={name}
+			rules={{ required: message }}
 			render={({ field }) => (
 				<Select
 					value={String(field.value ?? "")}
