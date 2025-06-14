@@ -13,7 +13,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 			: ""
 
 		return (
-			<div className="flex flex-1">
+			<div className="flex flex-1 flex-col gap-1">
 				<input
 					type={type}
 					className={cn(

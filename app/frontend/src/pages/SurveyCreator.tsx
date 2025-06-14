@@ -1,6 +1,6 @@
 import { Canvas } from "@/components/sections/canvas/Canvas"
 import { Toolbox } from "@/components/sections/Toolbox/Toolbox"
-import { GET_SURVEY } from "@/graphql/survey"
+import { GET_SURVEY } from "@/graphql/survey/survey"
 import "@/styles/toolbox.css"
 import { Survey } from "@/types/types"
 import { useQuery } from "@apollo/client"
