@@ -27,6 +27,7 @@ const SurveyCreator = lazy(() => import("@/pages/SurveyCreator"))
 const SurveyCreate = lazy(() => import("@/pages/SurveyCreate"))
 const PreviewSurveyPage = lazy(() => import("@/pages/PreviewSurvey"))
 const Contact = lazy(() => import("@/pages/Contact"))
+const SurveyUpdate = lazy(() => import("@/pages/SurveyUpdate"))
 
 /**
  * Router confirmation
@@ -110,7 +111,7 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "survey-creator",
+				path: "/survey-creator",
 				element: (
 					<Suspense fallback={<Loader />}>
 						<ProtectedRoute>
@@ -130,7 +131,15 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "surveys/build/:id",
+				path: "/surveys/update/:id",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<SurveyUpdate />
+					</Suspense>
+				),
+			},
+			{
+				path: "/surveys/build/:id",
 				element: (
 					<Suspense fallback={<Loader />}>
 						<ProtectedRoute>
