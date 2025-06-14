@@ -3,8 +3,8 @@ import {
 	DELETE_QUESTION,
 	GET_QUESTION,
 	UPDATE_QUESTION,
-} from "@/graphql/question"
-import { GET_SURVEY } from "@/graphql/survey"
+} from "@/graphql/survey/question"
+import { GET_SURVEY } from "@/graphql/survey/survey"
 import { QuestionType, TypesOfQuestion } from "@/types/types"
 import { useMutation } from "@apollo/client"
 import { AnswerObject } from "./../../../backend/src/graphql/inputs/create/survey/create-questions-input"

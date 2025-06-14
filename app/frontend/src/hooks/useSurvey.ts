@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "@apollo/client"
-import { GET_SURVEYS, CREATE_SURVEY, UPDATE_SURVEY } from "@/graphql/survey"
+import { GET_SURVEYS, CREATE_SURVEY, UPDATE_SURVEY } from "@/graphql/survey/survey"
 import { useState, useEffect } from "react"
-import { CreateSurveyInput } from "@/types/types"
+import { CreateSurveyInput, UpdateSurveyType } from "@/types/types"
 
 // Number of items per page (modifiable as needed)
 const PAGE_SIZE = 10
@@ -53,9 +53,12 @@ export function useSurvey() {
 
 	const updateSurvey = async (
 		id: string,
-		survey: Partial<CreateSurveyInput>
+		survey: Partial<UpdateSurveyType>
 	) => {
-		await updateSurveyMutation({ variables: { id, data: survey } })
+		const result = await updateSurveyMutation({ 
+			variables: { id, data: survey } 
+		})
+		return result.data?.updateSurvey
 	}
 
 	// Deletion to be added on backend and frontend
