@@ -4,19 +4,33 @@ import InputDescription from "./InputDescription"
 import { useForm } from "react-hook-form"
 import { useToast } from "@/hooks/useToast"
 import { useQuery } from "@apollo/client"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/Button"
 import { Label } from "@/components/ui/Label"
 import { CategoryOption, CreateSurveyInput } from "@/types/types"
-import { GET_CATEGORIES } from "@/graphql/category"
+import { GET_CATEGORIES } from "@/graphql/survey/category"
 import { useSurvey } from "@/hooks/useSurvey"
 import TypeSelect from "@/components/ui/TypeSelect"
 import SwitchPublic from "./SwitchPublic"
+import { GET_SURVEY } from "@/graphql/survey/survey"
+import { useEffect } from "react"
+import { CreateQuestionsInput } from "../../../../../../backend/src/graphql/inputs/create/survey/create-questions-input"
 
 export default function SurveyForm() {
-	const { addSurvey } = useSurvey()
+	const { addSurvey, updateSurvey } = useSurvey()
 	const navigate = useNavigate()
+	const { id: surveyId } = useParams()
 	const { showToast } = useToast()
+
+	const form = useForm<CreateSurveyInput>({
+		defaultValues: {
+			title: "",
+			description: "",
+			public: true,
+			category: "",
+			questions: [] as CreateQuestionsInput[],
+		},
+	})
 
 	const {
 		register,
@@ -25,57 +39,114 @@ export default function SurveyForm() {
 		setError,
 		clearErrors,
 		control,
-	} = useForm<CreateSurveyInput>({
-		defaultValues: {
-			title: "",
-			description: "",
-			public: true,
-			category: "",
-			questions: [],
-		},
-	})
+		reset,
+	} = form
 
 	const { data: categoriesData, loading: loadingCategories } =
 		useQuery(GET_CATEGORIES)
 
+	const { data: surveyData, loading: surveyLoading, error: surveyError } = useQuery(GET_SURVEY, {
+		variables: { surveyId: surveyId },
+		skip: !surveyId
+	})
+	const survey = surveyData?.survey
+
+	useEffect(() => {
+	if (survey) {
+		reset({
+			title: survey.title,
+			description: survey.description,
+			public: survey.public,
+			category: survey.category.id.toString(),
+			questions: [] as CreateQuestionsInput[],
+		})
+	}
+}, [survey, categoriesData, reset])
+
+
+	if (surveyId && surveyLoading) {
+		return (
+			<div className="flex justify-center items-center">
+				<div>Chargement de l'enquête...</div>
+			</div>
+		)
+	}
+
+	if (surveyId && surveyError) {
+		const isNotFoundError = surveyError.graphQLErrors.some(
+			error => error.message.includes('Survey not found')
+		)
+		
+		if (isNotFoundError) {
+			navigate('/surveyNotFound', { replace: true })
+			return null
+		}
+	}
+
+	if (surveyId && !surveyLoading && !survey) {
+		navigate('/surveyNotFound', { replace: true })
+		return null
+	}
+
 	const onFormSubmit = async (form: CreateSurveyInput) => {
 		clearErrors()
 		try {
-			const survey = await addSurvey({
-				...form,
-				category:
-					typeof form.category === "string"
-						? Number(form.category)
-						: form.category,
-				questions: form.questions ?? [],
-			})
+			let result
+	
+			if (survey) {
+				result = await updateSurvey(survey.id, {
+					...form,
+					category: Number(form.category),
+					questions: [] as CreateQuestionsInput[],
+				})
 
-			showToast({
-				type: "success",
-				title: "Enquête créée avec succès",
-				description: "Votre enquête a bien été enregistrée.",
-			})
+				showToast({
+					type: "success",
+					title: "Enquête modifiée",
+					description: "Votre enquête a bien été mise à jour.",
+				})
+			} else {
+				result = await addSurvey({
+					...form,
+					category: Number(form.category),
+					questions: form.questions ?? [],
+				})
 
-			if (survey && survey.id) {
-				navigate(`/surveys/build/${survey.id}`)
+				showToast({
+					type: "success",
+					title: "Enquête créée",
+					description: "Votre enquête a bien été enregistrée.",
+				})
+			}
+
+			if (result && result.id) {
+				navigate(`/surveys/build/${result.id}`)
 			}
 		} catch (err) {
-			setError("root", {
-				message:
-					err instanceof Error
-						? err.message
-						: "Erreur lors de la création de l'enquête.",
-			})
+			const msg =
+				err instanceof Error
+					? err.message
+					: "Erreur lors de la soumission de l'enquête."
+
+			setError("root", { message: msg })
+
 			showToast({
 				type: "error",
-				title: "Erreur lors de la création",
-				description:
-					err instanceof Error
-						? err.message
-						: "Erreur lors de la création de l'enquête.",
+				title: "Erreur",
+				description: msg,
 			})
 		}
 	}
+
+	const isEdit = Boolean(surveyId)
+	const label = isSubmitting
+		? isEdit
+			? "Modification..."
+			: "Création..."
+		: isEdit
+			? "Modifier l'enquête"
+			: "Créer l'enquête"
+
 
 	const categoryOptions: CategoryOption[] =
 		categoriesData?.categories?.map(
@@ -88,7 +159,7 @@ export default function SurveyForm() {
 	return (
 		<FormWrapper onSubmit={handleSubmit(onFormSubmit)}>
 			<h1 className="text-center text-2xl font-bold">
-				Créer une enquête
+				{surveyId ? "Modifier l'enquête" : "Créer une enquête"}
 			</h1>
 			<InputTitle register={register} errors={errors} />
 			<InputDescription register={register} errors={errors} />
@@ -99,12 +170,13 @@ export default function SurveyForm() {
 				<TypeSelect
 					control={control}
 					name="category"
+					message="La catégorie est requise"
 					selectSomething="Sélectionner une catégorie"
 					options={categoryOptions}
 					disabled={loadingCategories}
 				/>
 				{errors.category && (
-					<p className="text-destructive-medium text-sm">
+					<p className="text-destructive-medium-dark text-sm font-medium">
 						{errors.category.message}
 					</p>
 				)}
@@ -114,9 +186,9 @@ export default function SurveyForm() {
 				type="submit"
 				disabled={isSubmitting}
 				fullWidth
-				ariaLabel="Créer l'enquête"
+				ariaLabel={label}
 			>
-				{isSubmitting ? "Création..." : "Créer l'enquête"}
+				{label}
 			</Button>
 		</FormWrapper>
 	)
