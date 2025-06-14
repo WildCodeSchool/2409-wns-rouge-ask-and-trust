@@ -55,8 +55,13 @@ export function useSurvey() {
 		id: string,
 		survey: Partial<UpdateSurveyType>
 	) => {
-		const result = await updateSurveyMutation({ 
-			variables: { id, data: survey } 
+		const result = await updateSurveyMutation({
+			variables: {
+				data: {
+					...survey,
+					id
+				}
+			}
 		})
 		return result.data?.updateSurvey
 	}
