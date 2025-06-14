@@ -36,5 +36,4 @@ export class CreateSurveyInput {
 
 	@Field(() => [CreateQuestionsInput])
 	questions?: CreateQuestionsInput[]
-
 }
