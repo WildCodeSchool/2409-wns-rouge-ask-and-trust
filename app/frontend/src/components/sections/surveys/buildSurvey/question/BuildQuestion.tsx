@@ -2,6 +2,7 @@ import FormWrapper from "@/components/sections/auth/form/FormWrapper"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/RadioButton"
 import { GET_QUESTION } from "@/graphql/question"
 import { UpdateQuestionInput, useQuestions } from "@/hooks/useQuestions"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
@@ -253,6 +254,24 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 				>
 					Enregistrer
 				</Button>
+				<div>
+					<RadioGroup defaultValue="option-one">
+						<div className="flex items-center space-x-2">
+							<RadioGroupItem
+								value="option-one"
+								id="option-one"
+							/>
+							<Label htmlFor="option-one">Option One</Label>
+						</div>
+						<div className="flex items-center space-x-2">
+							<RadioGroupItem
+								value="option-two"
+								id="option-two"
+							/>
+							<Label htmlFor="option-two">Option Two</Label>
+						</div>
+					</RadioGroup>
+				</div>
 			</FormWrapper>
 		</li>
 	)
