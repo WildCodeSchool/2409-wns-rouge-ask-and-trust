@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button"
 import { useEffect, useState } from "react"
 import clsx from "clsx"
 import { Helmet } from "react-helmet"
+import SurveyTable from "@/components/sections/dashboard/SurveyTable"
 
 export default function Surveys() {
 	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
@@ -86,6 +87,7 @@ export default function Surveys() {
 						timeLeft="Un mois"
 					/>
 				</div>
+				<SurveyTable />
 			</section>
 			{!isMobile && (
 				<>
