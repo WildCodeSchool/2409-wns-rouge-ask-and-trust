@@ -1,67 +1,91 @@
-import { Eye, Pencil, Trash2 } from "lucide-react"
+import { Checkbox } from "@/components/ui/Checkbox"
+import { Chipset } from "@/components/ui/Chipset"
+import { SurveyTableProps } from "@/types/types"
+import { SurveyTableActions } from "./SurveyTableActions"
 
-export default function SurveyTable() {
-	const surveys = [
-		{
-			id: 1,
-			title: "Satisfaction Client",
-			status: "Brouillon",
-			createdAt: "2025-06-01",
-			updatedAt: "2025-06-20",
-		},
-		{
-			id: 2,
-			title: "Feedback Produit",
-			status: "Publiée",
-			createdAt: "2025-05-15",
-			updatedAt: "2025-06-10",
-		},
-		{
-			id: 3,
-			title: "Évaluation de la Formation",
-			status: "Archivée",
-			createdAt: "2025-05-15",
-			updatedAt: "2025-06-10",
-		},
-		{
-			id: 4,
-			title: "Sondage Bien-être au Travail",
-			status: "Censurée",
-			createdAt: "2025-05-15",
-			updatedAt: "2025-06-10",
-		},
-		{
-			id: 5,
-			title: "Étude sur les Habitudes Numériques",
-			status: "Publiée",
-			createdAt: "2025-05-15",
-			updatedAt: "2025-06-10",
-		},
-	]
+export default function SurveyTable({
+	isHeaderChecked,
+	handleSelectAll,
+	surveys,
+	selectedSurveyIds,
+	handleSurveyCheckboxChange,
+	statusLabelMap,
+}: SurveyTableProps) {
+	const formatDateToFrench = (dateString: string): string => {
+		const date = new Date(dateString)
+		return date.toLocaleDateString("fr-FR")
+	}
 
 	return (
-		<div className="overflow-x-auto rounded-lg shadow-md">
-			<table className="min-w-full text-left text-sm text-gray-700">
-				<thead className="bg-gray-100 text-xs uppercase">
-					<tr>
-						<th className="px-4 py-3">Titre de l'enquête</th>
-						<th className="px-4 py-3">Statut</th>
-						<th className="px-4 py-3">Date de création</th>
-						<th className="px-4 py-3">Date de modification</th>
-						<th className="px-4 py-3">Actions</th>
+		<div className="border-border mb-10 overflow-x-auto rounded-xl border">
+			<table className="text-black-default min-w-full text-left">
+				<thead className="bg-primary-50 uppercase">
+					<tr className="border-border border-b">
+						<th className="px-5 py-4">
+							<div className="flex w-max items-center gap-2.5">
+								<Checkbox
+									className="border-border data-[state=checked]:bg-primary-200 data-[state=checked]:text-border"
+									checked={isHeaderChecked}
+									onCheckedChange={handleSelectAll}
+								/>
+								Titre de l'enquête
+							</div>
+						</th>
+						<th className="px-5 py-4">Statut</th>
+						<th className="px-5 py-4">Date de création</th>
+						<th className="px-5 py-4">Date de modification</th>
+						<th className="px-5 py-4">Actions</th>
 					</tr>
 				</thead>
 				<tbody>
 					{surveys.map(survey => (
-						<tr key={survey.id} className="border-border border-b">
-							<td className="px-5 py-4">{survey.title}</td>
-							<td className="px-5 py-4">{survey.status}</td>
-							<td className="px-5 py-4">{survey.createdAt}</td>
-							<td className="px-5 py-4">{survey.updatedAt}</td>
-							<td className="flex items-center gap-5 px-5 py-4">
-								<Eye />
-								<Pencil />
-								<Trash2 />
+						<tr
+							key={survey.id}
+							className="border-border border-b text-sm last-of-type:border-none"
+						>
+							<td className="px-5 py-4">
+								<div className="flex items-center gap-2.5">
+									<Checkbox
+										className="border-border data-[state=checked]:bg-primary-200 data-[state=checked]:text-border"
+										checked={selectedSurveyIds.includes(
+											survey.id
+										)}
+										onCheckedChange={checked =>
+											handleSurveyCheckboxChange(
+												survey.id,
+												checked
+											)
+										}
+									/>
+									<p
+										className="block max-w-60 truncate"
+										title={survey.title}
+										aria-label={`Titre de l'enquête : ${survey.title}`}
+									>
+										{survey.title}
+									</p>
+								</div>
+							</td>
+							<td className="px-5 py-4">
+								<Chipset
+									key={survey.id}
+									ariaLabel="Statut de l'enquête"
+									state={survey.status}
+								>
+									{statusLabelMap[survey.status]}
+								</Chipset>
+							</td>
+							<td className="px-5 py-4">
+								{formatDateToFrench(survey.createdAt)}
+							</td>
+							<td className="px-5 py-4">
+								{formatDateToFrench(survey.updatedAt)}
+							</td>
+							<td className="px-5 py-4">
+								<SurveyTableActions
+									surveyId={survey.id}
+									status={survey.status}
+								/>
 							</td>
 						</tr>
 					))}
