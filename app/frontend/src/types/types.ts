@@ -1,6 +1,7 @@
 import { LucideIcon } from "lucide-react"
 import { UserRole } from "./../../../backend/src/types/types"
 import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
+import { CheckedState } from "@radix-ui/react-checkbox"
 
 export type AuthContextProps = {
 	user: User | null
@@ -164,4 +165,52 @@ export type SwitchProps = {
 export type CategoryOption = {
 	value: string
 	label: string
+}
+
+export type PaginationProps = {
+	currentPage: number
+	totalCount: number
+	perPage: number
+	onPageChange: (page: number) => void
+	className?: string
+}
+
+export type SurveyTableType = {
+	id: number
+	title: string
+	status: SurveyStatus
+	createdAt: string
+	updatedAt: string
+}
+
+export type SurveysDashboardQuery = {
+	surveys: SurveyTableType[]
+}
+
+type SurveyStatus = "draft" | "published" | "archived" | "censored"
+
+export type SurveyTableProps = {
+	isHeaderChecked: CheckedState
+	handleSelectAll: (checked: CheckedState) => void
+	surveys: SurveyTableType[]
+	selectedSurveyIds: number[]
+	handleSurveyCheckboxChange: (
+		surveyId: number,
+		checked: CheckedState
+	) => void
+	statusLabelMap: Record<SurveyTableType["status"], string>
+}
+
+export type SurveyTableActionsProps = {
+	surveyId: number
+	status: string
+}
+
+export type SurveyTableNavProps = {
+	showDeleteButton: boolean
+	currentPage: number
+	setCurrentPage: (page: number) => void
+	sortedSurveys: SurveyTableType[]
+	surveysPerPage: number
+	selectedSurveyIds: number[]
 }
