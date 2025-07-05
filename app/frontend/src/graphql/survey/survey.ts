@@ -6,6 +6,9 @@ export const GET_SURVEYS = gql`
 			id
 			title
 			description
+			status
+			createdAt
+			updatedAt
 			category {
 				id
 				name
@@ -75,6 +78,14 @@ export const UPDATE_SURVEY = gql`
 				id
 				email
 			}
+		}
+	}
+`
+
+export const DELETE_SURVEY = gql`
+	mutation DeleteSurvey($surveyId: ID!) {
+		deleteSurvey(id: $surveyId) {
+			id
 		}
 	}
 `

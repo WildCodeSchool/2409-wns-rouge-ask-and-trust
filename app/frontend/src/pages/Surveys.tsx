@@ -1,10 +1,10 @@
 import SurveyCard from "@/components/sections/surveys/SurveyCard"
 import img from "/img/dev.webp"
-import Pagination from "@/components/ui/Pagination"
 import { Button } from "@/components/ui/Button"
 import { useEffect, useState } from "react"
 import clsx from "clsx"
 import { Helmet } from "react-helmet"
+import SurveyTableContainer from "@/components/sections/dashboard/SurveyTableContainer"
 
 export default function Surveys() {
 	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
@@ -86,19 +86,17 @@ export default function Surveys() {
 						timeLeft="Un mois"
 					/>
 				</div>
+				<SurveyTableContainer />
 			</section>
 			{!isMobile && (
-				<>
-					<Pagination />
-					<div className="flex items-center justify-center">
-						<Button
-							variant="primary"
-							ariaLabel="Création d'une enquête"
-							children="Créer une enquête"
-							to="/surveys/create"
-						/>
-					</div>
-				</>
+				<div className="flex items-center justify-center">
+					<Button
+						variant="primary"
+						ariaLabel="Création d'une enquête"
+						children="Créer une enquête"
+						to="/surveys/create"
+					/>
+				</div>
 			)}
 		</>
 	)
