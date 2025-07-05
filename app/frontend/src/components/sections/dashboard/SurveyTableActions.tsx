@@ -15,19 +15,48 @@ export const SurveyTableActions = ({
 		refetchQueries: [GET_SURVEYS],
 	})
 
-	const onDelete = (surveyId: string) => {
-		doDeleteSurvey({
-			variables: {
-				surveyId: surveyId,
-			},
-		})
+	const onDelete = async (surveyId: string) => {
+		try {
+			await doDeleteSurvey({
+				variables: {
+					surveyId: surveyId,
+				},
+			})
 
-		showToast({
-			type: "success",
-			title: "L'enquête a bien été supprimée !",
-			description:
-				"Vous pouvez poursuivre votre lecture du tableau de bord.",
-		})
+			showToast({
+				type: "success",
+				title: "L'enquête a bien été supprimée !",
+				description:
+					"Vous pouvez poursuivre votre lecture du tableau de bord.",
+			})
+		} catch (error) {
+			if (error instanceof Error) {
+				if (
+					error.message.includes(
+						"Access denied! You don't have permission for this action!"
+					)
+				) {
+					showToast({
+						type: "error",
+						title: "Échec de la suppression",
+						description: "Vous n'avez pas les droits nécessaires.",
+					})
+				} else {
+					showToast({
+						type: "error",
+						title: "Erreur lors de la suppression",
+						description:
+							"Une erreur est survenue. Veuillez réessayer plus tard.",
+					})
+				}
+			} else {
+				showToast({
+					type: "error",
+					title: "Erreur inattendue",
+					description: "Une erreur inconnue est survenue.",
+				})
+			}
+		}
 	}
 
 	return (
