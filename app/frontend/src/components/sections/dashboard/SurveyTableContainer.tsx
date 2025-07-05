@@ -109,6 +109,16 @@ export default function SurveyTableContainer() {
 		setSelectedSurveyIds([])
 	}, [sortedSurveys.length, currentPage, surveysPerPage])
 
+	if (surveysData.length === 0) {
+		return (
+			<div className="flex h-full w-full items-center justify-center">
+				<p className="text-black-default text-xl font-medium">
+					Vous n'avez pas encore créé d'enquête.
+				</p>
+			</div>
+		)
+	}
+
 	return (
 		<div className="flex flex-col gap-10">
 			<SurveyTableFilter filters={filters} setFilters={setFilters} />
