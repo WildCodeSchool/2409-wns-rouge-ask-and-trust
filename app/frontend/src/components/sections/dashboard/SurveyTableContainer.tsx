@@ -5,7 +5,7 @@ import SurveyTable from "./SurveyTable"
 import SurveyTableNav from "./SurveyTableNav"
 import SurveyTableFilter from "./SurveyTableFilter"
 import { useQuery } from "@apollo/client"
-import { GET_SURVEYS } from "@/graphql/survey/survey"
+import { GET_MY_SURVEYS } from "@/graphql/survey/survey"
 
 const statusLabelMap: Record<SurveyTableType["status"], string> = {
 	draft: "Brouillon",
@@ -23,10 +23,10 @@ export default function SurveyTableContainer() {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const surveysPerPage = 5
 
-	const { data } = useQuery<SurveysDashboardQuery>(GET_SURVEYS, {
+	const { data } = useQuery<SurveysDashboardQuery>(GET_MY_SURVEYS, {
 		fetchPolicy: "cache-and-network",
 	})
-	const surveysData = data?.surveys ?? []
+	const surveysData = data?.mySurveys ?? []
 
 	const handleSurveyCheckboxChange = (
 		surveyId: number,
