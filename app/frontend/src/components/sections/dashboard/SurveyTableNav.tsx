@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination"
-import { DELETE_SURVEY, GET_SURVEYS } from "@/graphql/survey/survey"
+import { DELETE_SURVEY, GET_MY_SURVEYS } from "@/graphql/survey/survey"
 import { useToast } from "@/hooks/useToast"
 import { cn } from "@/lib/utils"
 import { SurveyTableNavProps } from "@/types/types"
@@ -17,7 +17,7 @@ export default function SurveyTableNav({
 	const { showToast } = useToast()
 
 	const [doDeleteSurvey] = useMutation(DELETE_SURVEY, {
-		refetchQueries: [GET_SURVEYS],
+		refetchQueries: [GET_MY_SURVEYS],
 	})
 
 	const handleDeleteSurveys = async (selectedSurveyIds: number[]) => {

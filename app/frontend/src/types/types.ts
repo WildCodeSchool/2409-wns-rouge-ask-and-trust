@@ -184,7 +184,7 @@ export type SurveyTableType = {
 }
 
 export type SurveysDashboardQuery = {
-	surveys: SurveyTableType[]
+	mySurveys: SurveyTableType[]
 }
 
 type SurveyStatus = "draft" | "published" | "archived" | "censored"

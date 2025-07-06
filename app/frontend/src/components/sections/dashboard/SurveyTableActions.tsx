@@ -1,7 +1,7 @@
 import { Eye, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { useMutation } from "@apollo/client"
-import { DELETE_SURVEY, GET_SURVEYS } from "@/graphql/survey/survey"
+import { DELETE_SURVEY, GET_MY_SURVEYS } from "@/graphql/survey/survey"
 import { SurveyTableActionsProps } from "@/types/types"
 import { useToast } from "@/hooks/useToast"
 
@@ -12,7 +12,7 @@ export const SurveyTableActions = ({
 	const { showToast } = useToast()
 
 	const [doDeleteSurvey] = useMutation(DELETE_SURVEY, {
-		refetchQueries: [GET_SURVEYS],
+		refetchQueries: [GET_MY_SURVEYS],
 	})
 
 	const onDelete = async (surveyId: string) => {
