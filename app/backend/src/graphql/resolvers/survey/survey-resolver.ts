@@ -97,6 +97,50 @@ export class SurveysResolver {
 	}
 
 	/**
+	 * Query to get surveys of the currently authenticated user.
+	 *
+	 * @param context - The context object that contains the currently authenticated user.
+	 *
+	 * @returns A Promise that resolves to an array of Survey objects owned by the authenticated user.
+	 *
+	 * This query allows a user to retrieve only their own surveys.
+	 */
+	@Authorized(Roles.User)
+	@Query(() => [Survey])
+	async mySurveys(@Ctx() context: Context): Promise<Survey[]> {
+		try {
+			const user = context.user
+
+			if (!user) {
+				throw new AppError(
+					"You can only retrieve your own surveys",
+					401,
+					"UnauthorizedError"
+				)
+			}
+
+			const surveys = await Survey.find({
+				where: {
+					user: { id: user.id },
+				},
+				relations: {
+					user: true,
+					category: true,
+					questions: true,
+				},
+			})
+
+			return surveys
+		} catch (error) {
+			throw new AppError(
+				"Failed to fetch user surveys",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
+
+	/**
 	 * Mutation to create a new survey.
 	 *
 	 * @param data - The input data containing the survey details, including the title, description, and category.
