@@ -2,11 +2,7 @@ import { Chipset } from "@/components/ui/Chipset"
 import { X } from "lucide-react"
 import { SelectFilter } from "./SelectFilter"
 import { Button } from "@/components/ui/Button"
-
-type SurveyTableFilterProps = {
-	filters: string[]
-	setFilters: (filters: string[]) => void
-}
+import { SurveyTableFilterProps } from "@/types/types"
 
 export default function SurveyTableFilter({
 	filters,

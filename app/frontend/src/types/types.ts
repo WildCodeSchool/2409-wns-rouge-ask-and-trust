@@ -215,3 +215,21 @@ export type SurveyTableNavProps = {
 	surveysPerPage: number
 	selectedSurveyIds: number[]
 }
+
+type FilterOption = {
+	label: string
+	value: string
+}
+
+export type SelectFilterProps = {
+	value: string
+	onChange: (val: string) => void
+	options: FilterOption[]
+	placeholder?: string
+	disabled?: boolean
+}
+
+export type SurveyTableFilterProps = {
+	filters: string[]
+	setFilters: (filters: string[]) => void
+}

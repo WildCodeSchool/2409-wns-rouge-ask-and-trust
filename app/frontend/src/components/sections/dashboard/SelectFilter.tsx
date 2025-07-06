@@ -5,20 +5,8 @@ import {
 	SelectContent,
 	SelectItem,
 } from "@/components/ui/Select"
+import { SelectFilterProps } from "@/types/types"
 import { ListFilter } from "lucide-react"
-
-type FilterOption = {
-	label: string
-	value: string
-}
-
-type SelectFilterProps = {
-	value: string
-	onChange: (val: string) => void
-	options: FilterOption[]
-	placeholder?: string
-	disabled?: boolean
-}
 
 export function SelectFilter({
 	value,
