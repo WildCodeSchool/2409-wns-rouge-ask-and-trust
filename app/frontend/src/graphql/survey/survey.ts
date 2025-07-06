@@ -21,26 +21,8 @@ export const GET_SURVEYS = gql`
 	}
 `
 
-export const CREATE_SURVEY = gql`
-	mutation CreateSurvey($data: CreateSurveyInput!) {
-		createSurvey(data: $data) {
-			id
-			title
-			description
-			category {
-				id
-				name
-			}
-			user {
-				id
-				email
-			}
-		}
-	}
-`
-
 export const GET_SURVEY = gql`
-	query getSurvey($surveyId: ID!) {
+	query GetSurvey($surveyId: ID!) {
 		survey(id: $surveyId) {
 			id
 			title
@@ -60,6 +42,41 @@ export const GET_SURVEY = gql`
 			}
 			createdAt
 			updatedAt
+		}
+	}
+`
+
+export const GET_MY_SURVEYS = gql`
+	query MySurveys {
+		mySurveys {
+			id
+			title
+			description
+			status
+			createdAt
+			updatedAt
+			category {
+				id
+				name
+			}
+		}
+	}
+`
+
+export const CREATE_SURVEY = gql`
+	mutation CreateSurvey($data: CreateSurveyInput!) {
+		createSurvey(data: $data) {
+			id
+			title
+			description
+			category {
+				id
+				name
+			}
+			user {
+				id
+				email
+			}
 		}
 	}
 `
