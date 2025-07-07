@@ -6,6 +6,7 @@ import SurveyTableNav from "./SurveyTableNav"
 import SurveyTableFilter from "./SurveyTableFilter"
 import { useQuery } from "@apollo/client"
 import { GET_MY_SURVEYS } from "@/graphql/survey/survey"
+import SurveyTableSearch from "./SurveyTableSearch"
 
 const statusLabelMap: Record<SurveyTableType["status"], string> = {
 	draft: "Brouillon",
@@ -20,6 +21,7 @@ export default function SurveyTableContainer() {
 	const [selectedSurveyIds, setSelectedSurveyIds] = useState<number[]>([])
 	const [isHeaderChecked, setIsHeaderChecked] = useState<CheckedState>(false)
 	const [filters, setFilters] = useState<string[]>([])
+	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const surveysPerPage = 5
 
@@ -74,7 +76,10 @@ export default function SurveyTableContainer() {
 		const matchStatus =
 			selectedStatuses.length === 0 ||
 			selectedStatuses.includes(statusLabel)
-		return matchStatus
+		const matchSearch =
+			searchTerm.trim() === "" ||
+			survey.title.toLowerCase().includes(searchTerm.toLowerCase())
+		return matchStatus && matchSearch
 	})
 
 	const sortedSurveys = [...filteredSurveys].sort((a, b) => {
@@ -121,7 +126,10 @@ export default function SurveyTableContainer() {
 
 	return (
 		<div className="flex flex-col gap-10">
-			<SurveyTableFilter filters={filters} setFilters={setFilters} />
+			<div className="flex items-start justify-between max-sm:flex-col max-sm:gap-5">
+				<SurveyTableFilter filters={filters} setFilters={setFilters} />
+				<SurveyTableSearch onSearch={setSearchTerm} />
+			</div>
 			<div>
 				<SurveyTable
 					isHeaderChecked={isHeaderChecked}
