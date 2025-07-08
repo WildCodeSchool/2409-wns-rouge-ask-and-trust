@@ -25,7 +25,7 @@ const Payment = lazy(() => import("@/pages/Payment"))
 const PaymentConfirmation = lazy(() => import("@/pages/PaymentConfirmation"))
 const SurveyCreator = lazy(() => import("@/pages/SurveyCreator"))
 const SurveyCreate = lazy(() => import("@/pages/SurveyCreate"))
-const PreviewSurveyPage = lazy(() => import("@/pages/PreviewSurveyPage"))
+const PreviewSurveyPage = lazy(() => import("@/pages/PreviewSurvey"))
 const Contact = lazy(() => import("@/pages/Contact"))
 
 /**
@@ -140,7 +140,7 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "surveys/preview",
+				path: "surveys/preview/:id",
 				element: (
 					<Suspense fallback={<Loader />}>
 						<ProtectedRoute>
