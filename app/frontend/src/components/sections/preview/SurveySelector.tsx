@@ -3,7 +3,7 @@ import { mockSurvey, SurveyPreview } from "./mockSurvey"
 import { useState } from "react"
 
 interface SurveySelectorProps {
-  onSelect: (survey: SurveyPreview) => void
+	onSelect: (survey: SurveyPreview) => void
 }
 
 export default function SurveySelector({ onSelect }: SurveySelectorProps) {
@@ -19,25 +19,29 @@ export default function SurveySelector({ onSelect }: SurveySelectorProps) {
   ]
   const [selectedIndex, setSelectedIndex] = useState(0)
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const idx = Number(e.target.value)
-    setSelectedIndex(idx)
-    onSelect(allSurveys[idx])
-  }
+	const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const idx = Number(e.target.value)
+		setSelectedIndex(idx)
+		onSelect(allSurveys[idx])
+	}
 
-  return (
-    <div className="mb-4">
-      <label htmlFor="survey-select" className="block mb-1 font-medium">Choisir un formulaire :</label>
-      <select
-        id="survey-select"
-        className="w-full rounded border px-3 py-2"
-        value={selectedIndex}
-        onChange={handleChange}
-      >
-        {allSurveys.map((s, i) => (
-          <option key={i} value={i}>{s.title}</option>
-        ))}
-      </select>
-    </div>
-  )
+	return (
+		<div className="mb-4">
+			<label htmlFor="survey-select" className="mb-1 block font-medium">
+				Choisir un formulaire :
+			</label>
+			<select
+				id="survey-select"
+				className="w-full rounded border px-3 py-2"
+				value={selectedIndex}
+				onChange={handleChange}
+			>
+				{allSurveys.map((s, i) => (
+					<option key={i} value={i}>
+						{s.title}
+					</option>
+				))}
+			</select>
+		</div>
+	)
 }
