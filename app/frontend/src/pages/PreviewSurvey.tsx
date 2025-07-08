@@ -2,7 +2,10 @@ import { Helmet } from "react-helmet"
 import QuestionPreview from "@/components/sections/preview/QuestionPreview"
 import { useSurvey } from "@/hooks/useSurvey"
 import { Question } from "@/types/types"
-import { mockSurvey, SurveyPreview } from "@/components/sections/preview/mockSurvey"
+import {
+	mockSurvey,
+	SurveyPreview,
+} from "@/components/sections/preview/mockSurvey"
 import { useParams } from "react-router-dom"
 import { Badge } from "@/components/ui/Badge"
 import { Callout } from "@/components/ui/Callout"
@@ -10,17 +13,19 @@ import { Callout } from "@/components/ui/Callout"
 export default function PreviewSurveyPage() {
 	const { id } = useParams<{ id: string }>()
 	const { surveys, isFetching } = useSurvey()
-	
+
 	// Surveys du backend uniquement
 	const backendSurveys: SurveyPreview[] = surveys.map(s => ({
 		...s,
 		questions: [],
 	}))
-	
+
 	// Sélectionner le survey par ID ou utiliser le mock par défaut
-	const selectedSurvey = id === "template" 
-		? mockSurvey 
-		: backendSurveys.find((_, index) => index.toString() === id) || mockSurvey
+	const selectedSurvey =
+		id === "template"
+			? mockSurvey
+			: backendSurveys.find((_, index) => index.toString() === id) ||
+				mockSurvey
 
 	const questions = selectedSurvey.questions
 
@@ -40,14 +45,17 @@ export default function PreviewSurveyPage() {
 				/>
 				<meta property="og:type" content="website" />
 				<meta name="twitter:card" content="summary" />
-				<meta name="twitter:title" content="Prévisualiser une enquête" />
+				<meta
+					name="twitter:title"
+					content="Prévisualiser une enquête"
+				/>
 				<meta
 					name="twitter:description"
 					content="Page de prévisualisation d'une nouvelle enquête."
 				/>
 			</Helmet>
 			<div className="mx-auto max-w-2xl rounded bg-white p-8 shadow">
-				<h1 className="mb-4 text-2xl font-bold flex items-center gap-2">
+				<h1 className="mb-4 flex items-center gap-2 text-2xl font-bold">
 					{selectedSurvey.title}
 					<Badge variant="secondary">
 						{typeof selectedSurvey.category === "object"
