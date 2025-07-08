@@ -13,17 +13,19 @@ import { Callout } from "@/components/ui/Callout"
 export default function PreviewSurveyPage() {
 	const { id } = useParams<{ id: string }>()
 	const { surveys, isFetching } = useSurvey()
-	
+
 	// Backend surveys only
 	const backendSurveys: SurveyPreview[] = surveys.map(s => ({
 		...s,
 		questions: [],
 	}))
-	
+
 	// Select survey by ID or use mock as default
-	const selectedSurvey = id === "template" 
-		? mockSurvey 
-		: backendSurveys.find((_, index) => index.toString() === id) || mockSurvey
+	const selectedSurvey =
+		id === "template"
+			? mockSurvey
+			: backendSurveys.find((_, index) => index.toString() === id) ||
+				mockSurvey
 
 	const questions = selectedSurvey.questions
 
