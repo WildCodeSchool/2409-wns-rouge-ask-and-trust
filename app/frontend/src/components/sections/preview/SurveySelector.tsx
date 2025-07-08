@@ -8,13 +8,13 @@ interface SurveySelectorProps {
 
 export default function SurveySelector({ onSelect }: SurveySelectorProps) {
   const { surveys } = useSurvey()
-  // On combine le mock et les surveys du backend (si disponibles)
+  // Combine mock and backend surveys (if available)
   const allSurveys = [
     mockSurvey,
     ...surveys.map(s => ({
       ...s,
       questions: [],
-      // On garde category tel quel (objet ou string)
+      // Keep category as is (object or string)
     }))
   ]
   const [selectedIndex, setSelectedIndex] = useState(0)

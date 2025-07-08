@@ -11,13 +11,13 @@ export default function PreviewSurveyPage() {
 	const { id } = useParams<{ id: string }>()
 	const { surveys, isFetching } = useSurvey()
 	
-	// Surveys du backend uniquement
+	// Backend surveys only
 	const backendSurveys: SurveyPreview[] = surveys.map(s => ({
 		...s,
 		questions: [],
 	}))
 	
-	// Sélectionner le survey par ID ou utiliser le mock par défaut
+	// Select survey by ID or use mock as default
 	const selectedSurvey = id === "template" 
 		? mockSurvey 
 		: backendSurveys.find((_, index) => index.toString() === id) || mockSurvey
@@ -59,7 +59,7 @@ export default function PreviewSurveyPage() {
 					{selectedSurvey.description}
 				</Callout>
 				<h2 className="mb-4 text-lg font-bold">Questions :</h2>
-				{/* Rendu dynamique des questions */}
+				{/* Render questions */}
 				{isFetching ? (
 					<p>Chargement...</p>
 				) : Array.isArray(questions) && questions.length > 0 ? (
