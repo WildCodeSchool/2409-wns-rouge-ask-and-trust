@@ -7,17 +7,17 @@ interface SurveySelectorProps {
 }
 
 export default function SurveySelector({ onSelect }: SurveySelectorProps) {
-  const { surveys } = useSurvey()
-  // Combine mock and backend surveys (if available)
-  const allSurveys = [
-    mockSurvey,
-    ...surveys.map(s => ({
-      ...s,
-      questions: [],
-      // Keep category as is (object or string)
-    }))
-  ]
-  const [selectedIndex, setSelectedIndex] = useState(0)
+	const { surveys } = useSurvey()
+	// Combine mock and backend surveys (if available)
+	const allSurveys = [
+		mockSurvey,
+		...surveys.map(s => ({
+			...s,
+			questions: [],
+			// Keep category as is (object or string)
+		})),
+	]
+	const [selectedIndex, setSelectedIndex] = useState(0)
 
 	const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const idx = Number(e.target.value)
