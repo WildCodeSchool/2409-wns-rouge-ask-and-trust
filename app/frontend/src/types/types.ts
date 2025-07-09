@@ -1,5 +1,5 @@
 import { LucideIcon } from "lucide-react"
-import { UserRole } from "./../../../backend/src/types/types"
+import { UserRole } from "backend/src/types/types"
 
 export type AuthContextProps = {
 	user: User | null
@@ -14,6 +14,9 @@ export interface User {
 	lastname: string
 	email: string
 	password: string
+	role: UserRole
+	created_at: string
+	updated_at: string
 }
 
 export interface LinksType {
@@ -24,16 +27,8 @@ export interface LinksType {
 	Icon?: LucideIcon
 }
 
-export interface UserAuth {
-	firstname: string
-	lastname: string
-	email: string
-	password: string
-	role: UserRole
-}
-
-export type UserSignUp = UserAuth
-export type UserSignIn = Pick<UserAuth, "email" | "password">
+export type UserSignUp = User
+export type UserSignIn = Pick<User, "email" | "password">
 export type UserSignForm = UserSignUp | UserSignIn
 
 export interface FooterLinkType {
