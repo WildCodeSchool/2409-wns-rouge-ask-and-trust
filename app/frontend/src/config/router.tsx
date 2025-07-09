@@ -111,7 +111,7 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/survey-creator",
+				path: "survey-creator",
 				element: (
 					<Suspense fallback={<Loader />}>
 						<ProtectedRoute>
@@ -131,7 +131,7 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/surveys/update/:id",
+				path: "surveys/update/:id",
 				element: (
 					<Suspense fallback={<Loader />}>
 						<SurveyUpdate />
@@ -139,7 +139,7 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/surveys/build/:id",
+				path: "surveys/build/:id",
 				element: (
 					<Suspense fallback={<Loader />}>
 						<ProtectedRoute>
