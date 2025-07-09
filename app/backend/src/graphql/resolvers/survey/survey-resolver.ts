@@ -157,7 +157,6 @@ export class SurveysResolver {
 	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Survey, { nullable: true })
 	async updateSurvey(
-		@Arg("id", () => ID) id: number,
 		@Arg("data", () => UpdateSurveyInput) data: UpdateSurveyInput,
 		@Ctx() context: Context
 	): Promise<Survey | null> {
@@ -172,7 +171,7 @@ export class SurveysResolver {
 				user.role === "admin" ? undefined : { id: user.id }
 
 			const survey = await Survey.findOne({
-				where: { id, user: whereCreatedBy },
+				where: { id: data.id, user: whereCreatedBy },
 				relations: {
 					user: true,
 					category: true,
@@ -185,15 +184,26 @@ export class SurveysResolver {
 					404,
 					"SurveyNotFoundError"
 				)
-			} else if (user.role !== "admin") {
-				throw new AppError(
-					"You are not allowed to modify this survey",
-					401,
-					"UnauthorizedError"
-				)
 			}
 
-			Object.assign(survey, data)
+			const { id, category, ...updateData } = data
+
+			if (category) {
+				const categorySurvey = await Category.findOne({
+					where: { id: category },
+				})
+				if (!categorySurvey) {
+					throw new AppError(
+						"Category not found",
+						404,
+						"NotFoundError"
+					)
+				}
+				survey.category = categorySurvey
+			}
+
+			Object.assign(survey, updateData)
+
 			await survey.save()
 			return survey
 		} catch (error) {
