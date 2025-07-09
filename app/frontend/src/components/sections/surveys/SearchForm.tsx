@@ -8,15 +8,21 @@ interface SearchFormData {
 }
 
 export default function SearchForm() {
-	const { handleSubmit, formState: { errors } } = useForm<SearchFormData>()
+	const {
+		handleSubmit,
+		formState: { errors },
+	} = useForm<SearchFormData>()
 
-	const onSubmit: SubmitHandler<SearchFormData> = (data) => {
+	const onSubmit: SubmitHandler<SearchFormData> = data => {
 		// TODO: Implement search functionality
 		console.log("Search query:", data.search)
 	}
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="relative flex flex-1 items-center justify-center">
+		<form
+			onSubmit={handleSubmit(onSubmit)}
+			className="relative flex flex-1 items-center justify-center"
+		>
 			<Label htmlFor="search" className="sr-only">
 				Rechercher une enquête
 			</Label>

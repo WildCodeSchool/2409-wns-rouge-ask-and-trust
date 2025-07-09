@@ -31,10 +31,10 @@ export default function StripePaymentForm() {
 	 */
 	const onSubmit: SubmitHandler<PaymentFormData> = async () => {
 		if (!stripe || !elements) return
-		
+
 		setIsProcessing(true)
 		setMessage("")
-		
+
 		try {
 			const { error } = await stripe.confirmPayment({
 				elements,
@@ -44,7 +44,7 @@ export default function StripePaymentForm() {
 				},
 				redirect: "if_required",
 			})
-			
+
 			if (error) {
 				setMessage(error.message || "Erreur lors du paiement")
 			} else {
@@ -58,10 +58,13 @@ export default function StripePaymentForm() {
 	}
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="mx-auto w-full max-w-md">
+		<form
+			onSubmit={handleSubmit(onSubmit)}
+			className="mx-auto w-full max-w-md"
+		>
 			{/* Displays available Stripe payment methods (card, etc.) */}
 			<PaymentElement options={{ layout: "tabs" }} />
-			
+
 			<Button
 				type="submit"
 				disabled={isProcessing || !stripe || !elements}
@@ -70,7 +73,7 @@ export default function StripePaymentForm() {
 			>
 				{isProcessing ? "Paiement en cours..." : "Paiement"}
 			</Button>
-			
+
 			{/* Displays success or error message */}
 			{message && (
 				<div
@@ -79,7 +82,7 @@ export default function StripePaymentForm() {
 					{message}
 				</div>
 			)}
-			
+
 			<div className="mt-4 text-center text-sm text-gray-500">
 				Utilise la carte test Stripe : <b>4242 4242 4242 4242</b> (date
 				et CVC au choix)
