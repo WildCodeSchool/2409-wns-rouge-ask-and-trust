@@ -1,3 +1,5 @@
+import imgGrpIcons from "/public/img/landing/window-group-icons.svg"
+
 const Information = () => {
 	return (
 		<section
