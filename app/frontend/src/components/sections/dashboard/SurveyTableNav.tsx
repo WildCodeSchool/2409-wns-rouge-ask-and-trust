@@ -70,7 +70,7 @@ export default function SurveyTableNav({
 				variant="destructive"
 				onClick={() => handleDeleteSurveys(selectedSurveyIds)}
 				className={cn(
-					"transition-opacity duration-200 ease-in-out max-lg:order-3",
+					"transition-all duration-200 ease-in-out max-lg:order-3",
 					showDeleteButton
 						? "opacity-100"
 						: "pointer-events-none opacity-0"

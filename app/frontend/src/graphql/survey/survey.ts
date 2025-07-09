@@ -51,14 +51,9 @@ export const GET_MY_SURVEYS = gql`
 		mySurveys {
 			id
 			title
-			description
 			status
 			createdAt
 			updatedAt
-			category {
-				id
-				name
-			}
 		}
 	}
 `

@@ -24,7 +24,7 @@ export default function SurveyTable({
 						<th className="px-5 py-4">
 							<div className="flex w-max items-center gap-2.5">
 								<Checkbox
-									className="border-border data-[state=checked]:bg-primary-200 data-[state=checked]:text-border"
+									className="border-border data-[state=checked]:bg-primary-default data-[state=checked]:text-white"
 									checked={isHeaderChecked}
 									onCheckedChange={handleSelectAll}
 								/>
@@ -46,7 +46,7 @@ export default function SurveyTable({
 							<td className="px-5 py-4">
 								<div className="flex items-center gap-2.5">
 									<Checkbox
-										className="border-border data-[state=checked]:bg-primary-200 data-[state=checked]:text-border"
+										className="border-border data-[state=checked]:bg-primary-default data-[state=checked]:text-white"
 										checked={selectedSurveyIds.includes(
 											survey.id
 										)}
