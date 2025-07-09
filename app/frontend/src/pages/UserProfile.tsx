@@ -1,9 +1,11 @@
-import Header from "@/components/sections/surveys/Header.tsx"
+import UserInformations from "@/components/sections/profile/UserInformations.tsx"
 
 export default function UserProfilePage() {
 	return (
 		<>
-			<Header />
+			<section className="px-5">
+				<UserInformations />
+			</section>
 		</>
 	)
 }
