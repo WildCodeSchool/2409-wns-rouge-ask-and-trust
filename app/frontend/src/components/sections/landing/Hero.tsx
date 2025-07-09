@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button.tsx"
+import imgPresentation from "/public/img/landing/illustration-presentation.svg"
 
 const Hero = () => {
 	return (
@@ -8,10 +9,7 @@ const Hero = () => {
 			aria-label="Premiere section"
 		>
 			<div className="pb-6 lg:m-4 lg:max-w-[45rem]" aria-hidden="true">
-				<img
-					src="../../../../public/assets/illustration-presentation.svg"
-					alt="img-presentation"
-				/>
+				<img src={imgPresentation} alt="img-presentation" />
 			</div>
 			<div
 				className="flex flex-col lg:w-120"

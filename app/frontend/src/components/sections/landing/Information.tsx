@@ -1,3 +1,5 @@
+import imgGrpIcons from "/public/img/landing/window-group-icons.svg"
+
 const Information = () => {
 	return (
 		<section
@@ -42,10 +44,7 @@ const Information = () => {
 						</div>
 					</div>
 					<div className="rounded-xl shadow-lg shadow-black/10">
-						<img
-							src="public/assets/window-group-icons.svg"
-							alt="img-window-content"
-						/>
+						<img src={imgGrpIcons} alt="img-window-content" />
 					</div>
 				</div>
 			</div>
