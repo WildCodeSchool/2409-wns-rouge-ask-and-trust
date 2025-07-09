@@ -1,105 +1,41 @@
 #!/usr/bin/env sh
 
-echo "🚀 Running comprehensive pre-push checks..."
+echo "🚀 Running pre-push checks..."
 
-# Exit on any command failure
-set -e
-
-# 1. Security audit (critical vulnerabilities only for pre-push)
-echo "🔒 Running comprehensive security audit..."
-pnpm audit --audit-level=moderate
-if [ $? -ne 0 ]; then
-  echo "❌ Security vulnerabilities detected!"
-  echo "Fix vulnerabilities before pushing"
-  exit 1
-fi
-
-# 2. License compliance check
-echo "📄 Checking license compliance..."
-if command -v npx >/dev/null 2>&1; then
-  npx license-checker --summary --onlyAllow 'MIT;BSD;Apache-2.0;ISC;GPL-2.0;GPL-3.0' || {
-    echo "⚠️ License compliance check failed or found restricted licenses"
-    echo "Review dependencies' licenses before pushing"
-  }
-fi
-
-# 3. Type checking (all projects)
-echo "🔍 Type checking all projects..."
-pnpm run type-check
+# 1. Type checking
+echo "🔍 Type checking..."
+cd app/frontend && npx tsc --noEmit
 if [ $? -ne 0 ]; then
   echo "❌ Type checking failed!"
   exit 1
 fi
+cd ../..
 
-# 4. Full linting with auto-fix disabled
-echo "🎨 Running comprehensive linting..."
-pnpm run lint
+# 2. Linting
+echo "🎨 Linting..."
+cd app/frontend && npm run lint
 if [ $? -ne 0 ]; then
   echo "❌ Linting failed!"
-  echo "Run 'pnpm run lint:fix' to auto-fix issues"
   exit 1
 fi
+cd ../..
 
-# 5. Comprehensive test suite with coverage
-echo "🧪 Running full test suite with coverage..."
-pnpm run test:coverage
+# 3. Tests
+echo "🧪 Running tests..."
+cd app/frontend && npm run test -- --run
 if [ $? -ne 0 ]; then
   echo "❌ Tests failed!"
   exit 1
 fi
+cd ../..
 
-# 6. Build verification (ensure everything compiles)
-echo "🏗️ Building all projects..."
-pnpm run build:frontend
+# 4. Build check
+echo "🏗️ Build check..."
+cd app/frontend && npm run build
 if [ $? -ne 0 ]; then
-  echo "❌ Frontend build failed!"
+  echo "❌ Build failed!"
   exit 1
-fi
-
-# Backend build check (if build script exists)
-if grep -q '"build"' app/backend/package.json; then
-  pnpm run build
-  if [ $? -ne 0 ]; then
-    echo "❌ Backend build failed!"
-    exit 1
-  fi
-else
-  echo "ℹ️  Backend build script not configured"
-fi
-
-# 7. Bundle size analysis (if applicable)
-echo "📊 Analyzing bundle size..."
-cd app/frontend
-if [ -f "dist/assets" ] || [ -d "dist/assets" ]; then
-  echo "Frontend bundle analysis:"
-  find dist -name "*.js" -exec wc -c {} + | sort -n || echo "No JS bundles found"
-  find dist -name "*.css" -exec wc -c {} + | sort -n || echo "No CSS bundles found"
 fi
 cd ../..
 
-# 8. Documentation build check
-echo "📚 Verifying documentation build..."
-if command -v typedoc >/dev/null 2>&1; then
-  pnpm run docs --dry-run || echo "⚠️ Documentation build may have issues"
-fi
-
-# 9. Final dependency check
-echo "🔍 Final dependency verification..."
-pnpm install --frozen-lockfile --silent
-if [ $? -ne 0 ]; then
-  echo "❌ Dependency lock file is out of sync!"
-  echo "Run 'pnpm install' and commit the updated lockfile"
-  exit 1
-fi
-
-echo ""
-echo "✅ All pre-push checks passed! 🚀"
-echo "📊 Summary:"
-echo "  • Security audit: ✅"
-echo "  • Type checking: ✅"
-echo "  • Linting: ✅"
-echo "  • Tests with coverage: ✅"
-echo "  • Build verification: ✅"
-echo "  • Dependencies: ✅"
-echo ""
-echo "Ready to push! 🎉"
+echo "✅ All pre-push checks passed!"

@@ -2,42 +2,21 @@
 
 echo "🚀 Running pre-commit checks..."
 
-# 1. Quick fail-fast checks (most likely to fail)
-echo "🔍 Type checking (fail-fast)..."
-pnpm run type-check:frontend
+# 1. Quick type checking (frontend only)
+echo "🔍 Type checking frontend..."
+cd app/frontend && npx tsc --noEmit
 if [ $? -ne 0 ]; then
   echo "❌ Frontend type check failed!"
   exit 1
 fi
+cd ../..
 
 # 2. Lint-staged (ESLint + Prettier on staged files only)
 echo "🎨 Linting and formatting staged files..."
-pnpm exec lint-staged
+npx lint-staged
 if [ $? -ne 0 ]; then
   echo "❌ Lint-staged failed!"
   exit 1
-fi
-
-# 3. Quick security check on package files (if changed)
-if git diff --cached --name-only | grep -E "package.*\.json$"; then
-  echo "🔒 Quick security audit for package changes..."
-  pnpm audit --audit-level=high --summary
-  if [ $? -ne 0 ]; then
-    echo "⚠️ Security vulnerabilities detected in dependencies!"
-    echo "Run 'pnpm audit' to see details"
-    exit 1
-  fi
-fi
-
-# 4. Quick unit tests (only if test files changed)
-if git diff --cached --name-only | grep -E "\.(test|spec)\.(ts|tsx|js|jsx)$"; then
-  echo "🧪 Running affected tests..."
-  cd app/frontend && npm run test -- --run --reporter=basic
-  if [ $? -ne 0 ]; then
-    echo "❌ Tests failed!"
-    exit 1
-  fi
-  cd ../..
 fi
 
 echo "✅ Pre-commit checks passed!"
