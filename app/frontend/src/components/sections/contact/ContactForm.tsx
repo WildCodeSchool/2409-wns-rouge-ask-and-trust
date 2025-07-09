@@ -87,12 +87,8 @@ export function ContactForm() {
 					{...register("message", {
 						required: "Le message est obligatoire.",
 					})}
+					errorMessage={errors.message?.message as string}
 				/>
-				{errors.message && (
-					<div className="text-destructive-medium text-sm">
-						{errors.message.message as string}
-					</div>
-				)}
 			</div>
 			<Button
 				type="submit"
