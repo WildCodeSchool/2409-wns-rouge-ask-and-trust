@@ -23,8 +23,10 @@ import { forwardRef } from "react"
 // Trigger
 const SelectTrigger = forwardRef<
 	React.ComponentRef<typeof SelectTriggerBase>,
-	React.ComponentPropsWithoutRef<typeof SelectTriggerBase>
->(({ className, children, ...props }, ref) => (
+	React.ComponentPropsWithoutRef<typeof SelectTriggerBase> & {
+		icon?: React.ReactNode
+	}
+>(({ className, children, icon, ...props }, ref) => (
 	<SelectTriggerBase
 		ref={ref}
 		className={cn(
@@ -35,7 +37,9 @@ const SelectTrigger = forwardRef<
 	>
 		{children}
 		<SelectIcon asChild>
-			<ChevronDown className="h-4 w-4 opacity-50 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+			{icon ?? (
+				<ChevronDown className="h-4 w-4 opacity-50 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+			)}
 		</SelectIcon>
 	</SelectTriggerBase>
 ))
