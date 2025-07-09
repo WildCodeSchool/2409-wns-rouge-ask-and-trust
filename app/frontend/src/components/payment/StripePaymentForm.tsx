@@ -1,12 +1,18 @@
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js"
 import { useState } from "react"
+import { useForm, SubmitHandler } from "react-hook-form"
 import { Button } from "@/components/ui/Button"
+
+interface PaymentFormData {
+	customerEmail?: string
+}
 
 /**
  * StripePaymentForm Component
  *
  * Renders the Stripe payment form and handles the payment submission process.
  * Displays status messages based on the payment result.
+ * Now uses React Hook Form for form management and validation.
  *
  * @component
  */
@@ -16,16 +22,19 @@ export default function StripePaymentForm() {
 	const [isProcessing, setIsProcessing] = useState<boolean>(false)
 	const [message, setMessage] = useState<string>("")
 
+	const { handleSubmit } = useForm<PaymentFormData>()
+
 	/**
 	 * Handles the form submission for Stripe payment.
 	 *
-	 * @param e - The form event
+	 * @param formData - The form data from React Hook Form
 	 */
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault()
+	const onSubmit: SubmitHandler<PaymentFormData> = async () => {
 		if (!stripe || !elements) return
+		
 		setIsProcessing(true)
 		setMessage("")
+		
 		try {
 			const { error } = await stripe.confirmPayment({
 				elements,
@@ -35,8 +44,12 @@ export default function StripePaymentForm() {
 				},
 				redirect: "if_required",
 			})
-			if (error) setMessage(error.message || "Erreur lors du paiement")
-			else setMessage("Paiement réussi !")
+			
+			if (error) {
+				setMessage(error.message || "Erreur lors du paiement")
+			} else {
+				setMessage("Paiement réussi !")
+			}
 		} catch {
 			setMessage("Erreur lors du paiement")
 		} finally {
@@ -45,9 +58,10 @@ export default function StripePaymentForm() {
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className="mx-auto w-full max-w-md">
+		<form onSubmit={handleSubmit(onSubmit)} className="mx-auto w-full max-w-md">
 			{/* Displays available Stripe payment methods (card, etc.) */}
 			<PaymentElement options={{ layout: "tabs" }} />
+			
 			<Button
 				type="submit"
 				disabled={isProcessing || !stripe || !elements}
@@ -56,6 +70,7 @@ export default function StripePaymentForm() {
 			>
 				{isProcessing ? "Paiement en cours..." : "Paiement"}
 			</Button>
+			
 			{/* Displays success or error message */}
 			{message && (
 				<div
@@ -64,6 +79,7 @@ export default function StripePaymentForm() {
 					{message}
 				</div>
 			)}
+			
 			<div className="mt-4 text-center text-sm text-gray-500">
 				Utilise la carte test Stripe : <b>4242 4242 4242 4242</b> (date
 				et CVC au choix)
