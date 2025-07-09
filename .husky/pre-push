@@ -1,5 +1,13 @@
 #!/usr/bin/env sh
 
+# Trigger : Before pushing to remote
+# Duration : ~10-30 seconds
+# Actions :
+#   - TypeScript frontend check (tsc --noEmit)
+#   - Prettier formatting of staged files via lint-staged
+#   - Block push if any check fails
+# Goal : Quick quality filter to catch obvious errors early
+
 echo "🚀 Running pre-push checks (Husky config mode)..."
 
 # TEMPORARY: Skip TypeScript checks during Husky configuration
@@ -19,6 +27,7 @@ echo "🧪 Running tests..."
 cd app/frontend && npm run test -- --run --reporter=basic
 if [ $? -ne 0 ]; then
   echo "⚠️  Tests failed - continuing anyway (Husky config mode)"
+  exit 1
 fi
 cd ../..
 

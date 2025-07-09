@@ -1,5 +1,18 @@
 #!/usr/bin/env sh
 
+# Trigger : At each git commit
+# Duration : <1 second
+# Actions :
+#   - Validate commit message format with commitlint
+#   - Enforce conventional commits (type(scope): description)
+#   - Display helpful guide if validation fails
+#   - Accepted formats:
+#     - feat: add new feature
+#     - fix(api): resolve memory leak
+#     - docs: update README
+#     - Block commit with invalid format
+# Goal : Ensure commit messages follow a consistent format and are valid
+
 echo "📝 Validating commit message..."
 
 # 1. Execute commitlint with detailed output

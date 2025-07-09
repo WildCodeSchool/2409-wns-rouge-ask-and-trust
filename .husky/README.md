@@ -96,13 +96,3 @@ If lint-staged creates automatic stashes:
 git stash list      # View stashes
 git stash drop 0    # Clean up if necessary
 ```
-
-## 📋 Standards Respected
-
-- ✅ **Conventional Commits** for history
-- ✅ **Type Safety** with TypeScript
-- ✅ **Code Quality** with ESLint + Prettier
-- ✅ **Test Coverage** before push
-- ✅ **Build Verification** automatic
-
-This configuration is **simple**, **fast** and **reliable**! 🎉 
