@@ -62,8 +62,8 @@ export const GET_SURVEY = gql`
 `
 
 export const UPDATE_SURVEY = gql`
-	mutation UpdateSurvey($id: ID!, $data: UpdateSurveyInput!) {
-		updateSurvey(id: $id, data: $data) {
+	mutation UpdateSurvey($data: UpdateSurveyInput!) {
+		updateSurvey(data: $data) {
 			id
 			title
 			description

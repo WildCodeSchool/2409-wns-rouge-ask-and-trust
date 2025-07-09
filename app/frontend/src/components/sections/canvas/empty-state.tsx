@@ -4,7 +4,7 @@ export const EmptyState = () => {
 			<div className="relative mb-6 h-64 w-64">
 				{/* // Image is missing */}
 				<img
-					src="/placeholder.svg?height=256&width=256"
+					src="/img/errors/undraw_no-data_ig65.svg"
 					alt="Empty form"
 					width={256}
 					height={256}
