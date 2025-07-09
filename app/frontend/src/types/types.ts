@@ -1,7 +1,6 @@
 import { LucideIcon } from "lucide-react"
 import { UserRole } from "./../../../backend/src/types/types"
 import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
-import { CreateQuestionsInput } from "../../../backend/src/graphql/inputs/create/survey/create-questions-input"
 
 export type AuthContextProps = {
 	user: User | null
@@ -108,7 +107,7 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	questions: CreateQuestionsInput[]
+	questions: Question[]
 }
 
 export type CreateSurveyInput = Survey

@@ -1,20 +1,19 @@
-import FormWrapper from "../../auth/form/FormWrapper"
-import InputTitle from "./InputTitle"
-import InputDescription from "./InputDescription"
+import FormWrapper from "@/components/sections/auth/form/FormWrapper"
+import InputTitle from "@/components/sections/surveys/form/InputTitle"
+import InputDescription from "@/components/sections/surveys/form/InputDescription"
 import { useForm } from "react-hook-form"
 import { useToast } from "@/hooks/useToast"
 import { useQuery } from "@apollo/client"
 import { useNavigate, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/Button"
 import { Label } from "@/components/ui/Label"
-import { CategoryOption, CreateSurveyInput } from "@/types/types"
+import { CategoryOption, CreateSurveyInput, Question } from "@/types/types"
 import { GET_CATEGORIES } from "@/graphql/survey/category"
 import { useSurvey } from "@/hooks/useSurvey"
 import TypeSelect from "@/components/ui/TypeSelect"
-import SwitchPublic from "./SwitchPublic"
+import SwitchPublic from "@/components/sections/surveys/form/SwitchPublic"
 import { GET_SURVEY } from "@/graphql/survey/survey"
 import { useEffect } from "react"
-import { CreateQuestionsInput } from "../../../../../../backend/src/graphql/inputs/create/survey/create-questions-input"
 
 export default function SurveyForm() {
 	const { addSurvey, updateSurvey } = useSurvey()
@@ -28,7 +27,7 @@ export default function SurveyForm() {
 			description: "",
 			public: true,
 			category: "",
-			questions: [] as CreateQuestionsInput[],
+			questions: [] as Question[],
 		},
 	})
 
@@ -62,7 +61,7 @@ export default function SurveyForm() {
 				description: survey.description,
 				public: survey.public,
 				category: survey.category.id.toString(),
-				questions: [] as CreateQuestionsInput[],
+				questions: [] as Question[],
 			})
 		}
 	}, [survey, categoriesData, reset])
@@ -100,7 +99,7 @@ export default function SurveyForm() {
 				result = await updateSurvey(survey.id, {
 					...form,
 					category: Number(form.category),
-					questions: [] as CreateQuestionsInput[],
+					questions: [] as Question[],
 				})
 
 				showToast({

@@ -207,9 +207,6 @@ export class SurveysResolver {
 			await survey.save()
 			return survey
 		} catch (error) {
-			if (error instanceof AppError) {
-				throw error
-			}
 			throw new AppError(
 				"Failed to update survey",
 				500,
