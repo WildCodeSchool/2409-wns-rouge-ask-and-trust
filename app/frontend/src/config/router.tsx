@@ -25,6 +25,8 @@ const Payment = lazy(() => import("@/pages/Payment"))
 const PaymentConfirmation = lazy(() => import("@/pages/PaymentConfirmation"))
 const SurveyCreator = lazy(() => import("@/pages/SurveyCreator"))
 const SurveyCreate = lazy(() => import("@/pages/SurveyCreate"))
+const PreviewSurveyPage = lazy(() => import("@/pages/PreviewSurvey"))
+const Contact = lazy(() => import("@/pages/Contact"))
 
 /**
  * Router confirmation
@@ -40,7 +42,7 @@ const router = createBrowserRouter([
 		errorElement: <ErrorElement />,
 		children: [
 			{
-				path: "/",
+				index: true,
 				element: (
 					<Suspense fallback={<Loader />}>
 						<Landing />
@@ -64,6 +66,14 @@ const router = createBrowserRouter([
 				),
 			},
 			{
+				path: "contact",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<Contact />
+					</Suspense>
+				),
+			},
+			{
 				path: "terms-of-use",
 				element: (
 					<Suspense fallback={<Loader />}>
@@ -72,7 +82,7 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/surveys",
+				path: "surveys",
 				element: (
 					<Suspense fallback={<Loader />}>
 						<Surveys />
@@ -80,7 +90,7 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/payment",
+				path: "payment",
 				element: (
 					<Suspense fallback={<Loader />}>
 						<ProtectedRoute>
@@ -90,7 +100,7 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/payment-confirmation",
+				path: "payment-confirmation",
 				element: (
 					<Suspense fallback={<Loader />}>
 						<ProtectedRoute>
@@ -100,26 +110,42 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/survey-creator",
+				path: "survey-creator",
 				element: (
 					<Suspense fallback={<Loader />}>
-						<SurveyCreator />
+						<ProtectedRoute>
+							<SurveyCreator />
+						</ProtectedRoute>
 					</Suspense>
 				),
 			},
 			{
-				path: "/surveys/create",
+				path: "surveys/create",
 				element: (
 					<Suspense fallback={<Loader />}>
-						<SurveyCreate />
+						<ProtectedRoute>
+							<SurveyCreate />
+						</ProtectedRoute>
 					</Suspense>
 				),
 			},
 			{
-				path: "/surveys/build/:id",
+				path: "surveys/build/:id",
 				element: (
 					<Suspense fallback={<Loader />}>
-						<SurveyCreator />
+						<ProtectedRoute>
+							<SurveyCreator />
+						</ProtectedRoute>
+					</Suspense>
+				),
+			},
+			{
+				path: "surveys/preview/:id",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<ProtectedRoute>
+							<PreviewSurveyPage />
+						</ProtectedRoute>
 					</Suspense>
 				),
 			},
