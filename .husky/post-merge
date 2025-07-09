@@ -1,0 +1,37 @@
+#!/usr/bin/env sh
+
+echo "🔄 Running post-merge automation..."
+
+# Check if package.json or lockfile changed
+if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -E "(package.*\.json|pnpm-lock\.yaml)$"; then
+  echo "📦 Dependencies changed, updating..."
+  
+  # Install new dependencies
+  pnpm install --frozen-lockfile
+  
+  if [ $? -eq 0 ]; then
+    echo "✅ Dependencies updated successfully"
+  else
+    echo "⚠️ Dependency update failed - manual intervention required"
+    echo "Run 'pnpm install' manually to resolve"
+  fi
+fi
+
+# Check if database schema files changed (customize paths as needed)
+if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -E "(database|migrations|entities)" | grep -E "\.(ts|sql)$"; then
+  echo "🗄️ Database schema changes detected"
+  echo "⚠️ Consider running database migrations if needed"
+fi
+
+# Check if configuration files changed
+if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -E "(\.env\.example|docker|compose)" | grep -E "\.(yaml|yml|env)$"; then
+  echo "⚙️ Configuration files changed"
+  echo "💡 Review and update your local .env files if needed"
+fi
+
+# Clear any stale caches
+echo "🧹 Clearing development caches..."
+rm -rf app/frontend/.eslintcache 2>/dev/null || true
+rm -rf app/frontend/node_modules/.cache 2>/dev/null || true
+
+echo "✅ Post-merge automation completed!" 
