@@ -11,8 +11,8 @@ if [ $? -ne 0 ]; then
 fi
 cd ../..
 
-# 2. Lint-staged (ESLint + Prettier on staged files only)
-echo "🎨 Linting and formatting staged files..."
+# 2. Lint-staged (Prettier on staged files only)
+echo "🎨 Formatting staged files..."
 npx lint-staged
 if [ $? -ne 0 ]; then
   echo "❌ Lint-staged failed!"

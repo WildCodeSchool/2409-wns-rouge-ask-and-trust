@@ -4,7 +4,7 @@ echo "🔄 Post-merge automation..."
 
 # Simple dependency check
 if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -E "package.*\.json$"; then
-  echo "📦 Dependencies may have changed - consider running 'pnpm install'"
+  echo "📦 Dependencies may have changed - consider running 'npm install'"
 fi
 
 echo "✅ Post-merge completed!" 

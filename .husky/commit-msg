@@ -3,7 +3,7 @@
 echo "📝 Validating commit message..."
 
 # 1. Execute commitlint with detailed output
-pnpm exec commitlint --edit "$1" --verbose
+npx commitlint --edit "$1" --verbose
 
 if [ $? -ne 0 ]; then
   echo ""

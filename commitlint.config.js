@@ -18,24 +18,13 @@ export default {
 				"build", // Build system or external dependencies
 			],
 		],
-		"type-case": [
-			2,
-			"always",
-			["lower-case", "upper-case", "sentence-case"],
-		],
+		"type-case": [2, "always", "lower-case"],
 		"type-empty": [2, "never"],
-		"scope-case": [
-			2,
-			"always",
-			["lower-case", "upper-case", "sentence-case"],
-		],
-		"subject-case": [
-			2,
-			"always",
-			["lower-case", "upper-case", "sentence-case"],
-		],
+		"scope-case": [2, "always", "lower-case"],
+		"subject-case": [0], // Disabled - allow any case
 		"subject-empty": [2, "never"],
 		"subject-full-stop": [2, "never", "."],
 		"header-max-length": [2, "always", 255],
+		"body-max-line-length": [2, "always", 255],
 	},
 }

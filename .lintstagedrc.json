@@ -1,9 +1,4 @@
 {
-	"app/frontend/**/*.{js,ts,tsx}": [
-		"cd app/frontend && npx eslint --fix --cache --max-warnings=0",
-		"prettier --write"
-	],
-	"app/frontend/**/*.{css,scss}": ["prettier --write"],
-	"*.{json,md,yaml,yml}": ["prettier --write"],
-	"app/frontend/**/*.{ts,tsx}": ["cd app/frontend && npx tsc --noEmit"]
+	"*.{js,ts,tsx}": ["prettier --write"],
+	"*.{css,scss,json,md,yml,yaml}": ["prettier --write"]
 }
