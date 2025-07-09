@@ -1,6 +1,6 @@
 import { Chipset } from "@/components/ui/Chipset"
 import { X } from "lucide-react"
-import { SelectFilter } from "./SelectFilter"
+import { SelectFilter } from "@/components/sections/dashboard/SelectFilter"
 import { Button } from "@/components/ui/Button"
 import { SurveyTableFilterProps } from "@/types/types"
 

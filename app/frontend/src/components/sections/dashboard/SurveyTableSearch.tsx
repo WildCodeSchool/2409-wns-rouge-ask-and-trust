@@ -1,6 +1,5 @@
 import { Search } from "lucide-react"
 import { useForm } from "react-hook-form"
-import FormWrapper from "../auth/form/FormWrapper"
 import { Label } from "@/components/ui/Label"
 import { Input } from "@/components/ui/Input"
 import { Button } from "@/components/ui/Button"
@@ -25,9 +24,8 @@ export default function SurveyTableSearch({
 	}
 
 	return (
-		<FormWrapper
+		<form
 			onSubmit={handleSubmit(onFormSubmit)}
-			unstyled
 			className="relative flex max-w-3xs flex-1 items-center justify-center max-sm:order-1"
 		>
 			<Button
@@ -48,12 +46,11 @@ export default function SurveyTableSearch({
 				errorMessage=""
 				{...register("search")}
 				onChange={e => {
-					if (e.target.value === "") {
-						onSearch("")
-					}
+					const value = e.target.value
+					onSearch(value)
 				}}
 				className="border-button-line-border text-input-fg h-10 bg-white pl-14 text-sm"
 			/>
-		</FormWrapper>
+		</form>
 	)
 }

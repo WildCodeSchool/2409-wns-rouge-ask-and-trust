@@ -105,7 +105,7 @@ export class SurveysResolver {
 	 *
 	 * This query allows a user to retrieve only their own surveys.
 	 */
-	@Authorized(Roles.User)
+	@Authorized(Roles.User, Roles.Admin)
 	@Query(() => [Survey])
 	async mySurveys(@Ctx() context: Context): Promise<Survey[]> {
 		try {
@@ -119,7 +119,7 @@ export class SurveysResolver {
 				)
 			}
 
-			const surveys = await Survey.find({
+			return await Survey.find({
 				where: {
 					user: { id: user.id },
 				},
@@ -129,8 +129,6 @@ export class SurveysResolver {
 					questions: true,
 				},
 			})
-
-			return surveys
 		} catch (error) {
 			throw new AppError(
 				"Failed to fetch user surveys",

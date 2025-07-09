@@ -232,3 +232,5 @@ export type SurveyTableFilterProps = {
 	filters: string[]
 	setFilters: (filters: string[]) => void
 }
+
+export type DateSortFilter = "Plus récente" | "Plus ancienne"

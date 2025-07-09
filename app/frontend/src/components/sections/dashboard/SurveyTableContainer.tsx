@@ -1,12 +1,16 @@
-import { SurveysDashboardQuery, SurveyTableType } from "@/types/types"
+import {
+	DateSortFilter,
+	SurveysDashboardQuery,
+	SurveyTableType,
+} from "@/types/types"
 import { CheckedState } from "@radix-ui/react-checkbox"
 import { useEffect, useState } from "react"
-import SurveyTable from "./SurveyTable"
-import SurveyTableNav from "./SurveyTableNav"
-import SurveyTableFilter from "./SurveyTableFilter"
+import SurveyTable from "@/components/sections/dashboard/SurveyTable"
+import SurveyTableNav from "@/components/sections/dashboard/SurveyTableNav"
+import SurveyTableFilter from "@/components/sections/dashboard/SurveyTableFilter"
 import { useQuery } from "@apollo/client"
 import { GET_MY_SURVEYS } from "@/graphql/survey/survey"
-import SurveyTableSearch from "./SurveyTableSearch"
+import SurveyTableSearch from "@/components/sections/dashboard/SurveyTableSearch"
 
 const statusLabelMap: Record<SurveyTableType["status"], string> = {
 	draft: "Brouillon",
@@ -25,9 +29,7 @@ export default function SurveyTableContainer() {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const surveysPerPage = 5
 
-	const { data } = useQuery<SurveysDashboardQuery>(GET_MY_SURVEYS, {
-		fetchPolicy: "cache-and-network",
-	})
+	const { data } = useQuery<SurveysDashboardQuery>(GET_MY_SURVEYS)
 	const surveysData = data?.mySurveys ?? []
 
 	const handleSurveyCheckboxChange = (
@@ -69,7 +71,9 @@ export default function SurveyTableContainer() {
 		Object.values(statusLabelMap).includes(f)
 	)
 
-	const selectedSort = filters.find(f => DATE_SORT_FILTERS.includes(f as any))
+	const selectedSort = filters.find((f): f is DateSortFilter =>
+		DATE_SORT_FILTERS.includes(f as DateSortFilter)
+	)
 
 	const filteredSurveys = surveysData.filter(survey => {
 		const statusLabel = statusLabelMap[survey.status]

@@ -1,7 +1,7 @@
 import { Checkbox } from "@/components/ui/Checkbox"
 import { Chipset } from "@/components/ui/Chipset"
 import { SurveyTableProps } from "@/types/types"
-import { SurveyTableActions } from "./SurveyTableActions"
+import { SurveyTableActions } from "@/components/sections/dashboard/SurveyTableActions"
 
 export default function SurveyTable({
 	isHeaderChecked,
