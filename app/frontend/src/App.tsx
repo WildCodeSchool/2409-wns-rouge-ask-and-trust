@@ -1,13 +1,14 @@
-import { Outlet, useLocation } from "react-router-dom"
-import Footer from "./components/sections/footer/Footer"
+import FooterMobile from "@/components/sections/footer/FooterMobile"
 import HeaderSurveys from "@/components/sections/surveys/Header"
 import { useEffect, useState } from "react"
-import FooterMobile from "@/components/sections/footer/FooterMobile"
-import Header from "@/components/sections/header/Header.tsx"
+import { Outlet, useLocation } from "react-router-dom"
+import { Toaster } from "sonner"
+import Footer from "./components/sections/footer/Footer"
+import Header from "./components/sections/header/Header"
 
 function App() {
 	const location = useLocation()
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -36,6 +37,7 @@ function App() {
 
 	return (
 		<>
+			<Toaster richColors position="bottom-center" closeButton />
 			{renderHeader()}
 			{/* @TODO calc height : fill screen minus Header height. On mobile : minus Header height and Navbar height. */}
 			<main className="bg-bg mb-20">

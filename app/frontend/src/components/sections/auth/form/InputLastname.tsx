@@ -25,6 +25,10 @@ export default function InputLastname({
 				aria-required
 				{...register("lastname", {
 					required: "Le nom est requis",
+					minLength: {
+						value: 2,
+						message: "Le nom doit contenir au moins 2 caractères.",
+					},
 				})}
 				aria-invalid={errors?.lastname ? "true" : "false"}
 				errorMessage={errors?.lastname?.message}

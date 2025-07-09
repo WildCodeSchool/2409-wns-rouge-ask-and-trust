@@ -4,15 +4,29 @@ import App from "@/App.tsx"
 import NotFound from "@/pages/NotFound"
 import Loader from "@/components/ui/Loader"
 import ErrorElement from "@/components/ui/ErrorElement"
-//import ProtectedRoute from "@/components/hoc/ProtectedRoute";
+import ProtectedRoute from "@/components/hoc/ProtectedRoute"
 
-// Using lazy loading for pages
+/**
+ *  Using lazy loading for pages
+ * @description
+ * Lazy loaded page components
+ * These components are loaded only when needed, improving initial load time
+ */
 const Landing = lazy(() => import("@/pages/Landing"))
 const Surveys = lazy(() => import("@/pages/Surveys"))
 const Auth = lazy(() => import("@/pages/Auth"))
 const TermsOfUse = lazy(() => import("@/pages/TermsOfUse"))
+const Payment = lazy(() => import("@/pages/Payment"))
+const PaymentConfirmation = lazy(() => import("@/pages/PaymentConfirmation"))
 const UserProfile = lazy(() => import("@/pages/UserProfile"))
 
+/**
+ * Router confirmation
+ *
+ * @description
+ * Defines all routes in the application with their respective components
+ * and protection levels
+ */
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -27,17 +41,6 @@ const router = createBrowserRouter([
 					</Suspense>
 				),
 			},
-			// {
-			// 	path: "auth",
-			// 	element: (
-			// 		//<ProtectedRoute> # example the use protected route here
-			// 		<Suspense fallback={<Loader />}>
-			// 			<Auth />
-			// 		</Suspense>
-			// 		//</ProtectedRoute>
-			// 	),
-			// },
-			// @TODO If user is connected, block access to Signin and Signup
 			{
 				path: "register",
 				element: (
@@ -78,6 +81,26 @@ const router = createBrowserRouter([
 					</Suspense>
 				),
 			},
+			{
+				path: "/payment",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<ProtectedRoute>
+							<Payment />
+						</ProtectedRoute>
+					</Suspense>
+				),
+			},
+			{
+				path: "/payment-confirmation",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<ProtectedRoute>
+							<PaymentConfirmation />
+						</ProtectedRoute>
+					</Suspense>
+				),
+			},
 		],
 	},
 	{
@@ -86,6 +109,13 @@ const router = createBrowserRouter([
 	},
 ])
 
+/**
+ * Router Component
+ *
+ * Provides routing functionality to the application using React Router
+ * @component
+ * @returns {JSX.Element} The RouterProvider component with the configured routes
+ */
 const Router = () => {
 	return <RouterProvider router={router} />
 }

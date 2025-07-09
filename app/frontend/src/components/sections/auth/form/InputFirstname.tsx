@@ -25,6 +25,11 @@ export default function InputFirstname({
 				aria-required
 				{...register("firstname", {
 					required: "Le prénom est requis",
+					minLength: {
+						value: 2,
+						message:
+							"Le prénom doit contenir au moins 2 caractères.",
+					},
 				})}
 				aria-invalid={errors?.firstname ? "true" : "false"}
 				errorMessage={errors?.firstname?.message}

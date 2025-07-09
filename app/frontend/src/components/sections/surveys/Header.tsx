@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import logoFooter from "../../../../public/logos/logo-footer.svg"
+import logoFooter from "/logos/logo-footer.svg"
 import { Button } from "@/components/ui/Button"
 import SearchForm from "./SearchForm"
 import clsx from "clsx"
 
-export default function Header({ showCategories = false }) {
-	const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+export default function Header() {
+    const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -62,16 +62,14 @@ export default function Header({ showCategories = false }) {
 					)}
 				</nav>
 			</div>
-			{showCategories && (
-				<div className="flex items-center gap-3 overflow-x-scroll pb-3">
-					<Button
-						variant="navbar_btn"
-						size="sm"
-						ariaLabel="Annonces de la catégorie sport"
-						children="Sport"
-					/>
-				</div>
-			)}
+			<div className="flex items-center gap-3 overflow-x-scroll pb-3">
+				<Button
+					variant="navbar_btn"
+					size="sm"
+					ariaLabel="Annonces de la catégorie sport"
+					children="Sport"
+				/>
+			</div>
 		</header>
 	)
 }

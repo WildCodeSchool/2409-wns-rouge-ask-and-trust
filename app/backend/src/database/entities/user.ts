@@ -1,6 +1,15 @@
-import { Field, ID, ObjectType } from "type-graphql"
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import {
+	BaseEntity,
+	Column,
+	Entity,
+	OneToMany,
+	PrimaryGeneratedColumn,
+} from "typeorm"
+import { ObjectType, Field, ID } from "type-graphql"
+import { Survey } from "./survey/survey"
 import { Roles, UserRole } from "../../types/types"
+import { Category } from "./survey/category"
+import { Questions } from "./survey/questions"
 
 /**
  * Represents a user entity in the database.
@@ -12,6 +21,7 @@ import { Roles, UserRole } from "../../types/types"
  * - `firstname`: the user's first name.
  * - `lastname`: the user's last name.
  * - `role`: the user's role (defaults to `Roles.User`).
+ * - `surveys`: list of surveys created by the user (relation to the `Survey` entity).
  * - `createdAt`: timestamp of when the user was created.
  * - `updatedAt`: timestamp of when the user was last updated.
  *
@@ -50,6 +60,18 @@ export class User extends BaseEntity {
 		default: Roles.User,
 	})
 	role!: UserRole
+
+	@Field(() => [Survey], { nullable: true })
+	@OneToMany(() => Survey, survey => survey.user)
+	surveys!: Survey[]
+
+	@Field(() => [Category], { nullable: true })
+	@OneToMany(() => Category, category => category.createdBy)
+	categories!: Category[]
+
+	@Field(() => [Questions], { nullable: true })
+	@OneToMany(() => Questions, question => question.createdBy)
+	questions!: Questions[]
 
 	@Field()
 	@Column({ default: () => "CURRENT_TIMESTAMP" })

@@ -52,6 +52,7 @@ export interface HeaderMobileMenuProps {
 export interface NavAndAuthButtonsProps {
 	headerLinks: readonly LinksType[]
 	isMobile: boolean
+	handleShowMenu?: () => void
 }
 
 export interface SurveyCardType {
@@ -62,4 +63,12 @@ export interface SurveyCardType {
 	tag: string
 	estimateTime: number
 	timeLeft: string
+}
+
+export type Package = {
+	label: string
+	amount: number
+	price: string
+	surveyCount: number
+	description: string
 }

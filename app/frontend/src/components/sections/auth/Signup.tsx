@@ -1,8 +1,8 @@
 import { REGISTER, WHOAMI } from "@/graphql/auth"
+import { useToast } from "@/hooks/useToast"
 import { UserSignUp } from "@/types/types"
-import { useMutation } from "@apollo/client"
+import { ApolloError, useMutation } from "@apollo/client"
 import { SubmitHandler, useForm } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
 import FormButtonSubmit from "./form/FormButtonSubmit"
 import FormTitle from "./form/FormTitle"
 import FormWrapper from "./form/FormWrapper"
@@ -15,7 +15,7 @@ export default function Signup() {
 	const {
 		register,
 		handleSubmit,
-		// reset,
+		reset,
 		formState: { errors },
 	} = useForm<UserSignUp>({
 		mode: "onBlur",
@@ -26,10 +26,11 @@ export default function Signup() {
 			password: "",
 		},
 	})
-	const navigate = useNavigate()
-	const [Register, { error }] = useMutation(REGISTER, {
+
+	const [Register] = useMutation(REGISTER, {
 		refetchQueries: [WHOAMI],
 	})
+	const { showToast } = useToast()
 
 	const onSubmit: SubmitHandler<UserSignUp> = async formData => {
 		try {
@@ -40,24 +41,50 @@ export default function Signup() {
 						password: formData.password,
 						firstname: formData.firstname,
 						lastname: formData.lastname,
-						role: formData.role || "user",
 					},
 				},
 			})
-			// Check Mutation errors
-			if (error) {
-				console.error(error)
-				return
-			}
 
 			if (data) {
-				navigate("/connexion")
+				reset()
+				showToast({
+					type: "success",
+					title: "Inscription réussie !",
+					description: "Bienvenue chez Ask and Trust",
+					actionLabel: "Me connecter",
+					redirectTo: "/connexion",
+				})
 			}
 		} catch (err) {
+			console.error("Erreur complète :", err)
+
+			// Handle GraphQL errors : invalid formats, email already used...
+			if (err instanceof ApolloError) {
+				console.log("err.graphQLErrors", err.graphQLErrors)
+				const emailError = err.graphQLErrors.find(e =>
+					e.message.includes("Email already exists")
+				)
+
+				if (emailError) {
+					showToast({
+						type: "warning",
+						title: "Cette e-mail est déjà utilisée !",
+						description: "Choisissez une autre adresse e-mail.",
+					})
+					return
+				}
+			}
+
 			// Handle others errors
 			console.error("Error:", err)
+			showToast({
+				type: "error",
+				title: "Oops, nous avons rencontré un problème pour créer votre compte.",
+				description: "Réessayer ultérieurement.",
+			})
 		}
 	}
+
 	return (
 		<FormWrapper onSubmit={handleSubmit(onSubmit)}>
 			<FormTitle isSignUp />
