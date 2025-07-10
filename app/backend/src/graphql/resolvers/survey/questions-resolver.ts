@@ -21,6 +21,7 @@ import { AppError } from "../../../middlewares/error-handler"
 import { Context, Roles, TypesOfQuestion } from "../../../types/types"
 import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
 import { UpdateQuestionInput } from "../../inputs/update/survey/update-question-input"
+import { isOwnerOrAdmin } from "../../utils/authorizations"
 
 /**
  * QuestionsResolver
@@ -85,6 +86,9 @@ export class QuestionsResolver {
 
 			return question
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
 			throw new AppError(
 				"Failed to fetch question",
 				500,
@@ -109,7 +113,6 @@ export class QuestionsResolver {
 	async createQuestion(
 		@Arg("data", () => CreateQuestionsInput)
 		data: CreateQuestionsInput,
-		// @Arg("surveyId", () => ID) surveyId: number,
 		@Ctx() context: Context
 	): Promise<Questions> {
 		try {
@@ -135,16 +138,30 @@ export class QuestionsResolver {
 			if (data.surveyId) {
 				const survey = await Survey.findOne({
 					where: { id: data.surveyId },
+					relations: { user: true }, // get survey and its user
 				})
+
 				if (!survey) {
 					throw new AppError("Survey not found", 404, "NotFoundError")
 				}
+
+				if (!isOwnerOrAdmin(survey.user.id, user)) {
+					throw new AppError(
+						"Not authorized to add a question in this survey",
+						403,
+						"ForbiddenError"
+					)
+				}
+
 				newQuestion.survey = survey
 			}
 
 			await newQuestion.save()
 			return newQuestion
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
 			throw new AppError(
 				"Failed to create question",
 				500,
@@ -189,10 +206,7 @@ export class QuestionsResolver {
 				throw new AppError("Question not found", 404, "NotFoundError")
 			}
 
-			const isOwnerOfSurvey =
-				questionToUpdate.survey?.user?.id === user.id
-
-			if (user.role !== Roles.Admin && !isOwnerOfSurvey) {
+			if (!isOwnerOrAdmin(questionToUpdate.survey.user.id, user)) {
 				throw new AppError(
 					"Not authorized to update this question",
 					403,
@@ -200,7 +214,6 @@ export class QuestionsResolver {
 				)
 			}
 
-			//
 			const { id, ...dataWithoutId } = data
 
 			const isNewTypeIsMultiple =
@@ -209,7 +222,6 @@ export class QuestionsResolver {
 					data.type === TypesOfQuestion.Multiple_Choice)
 
 			// If type is changed to a multiple choice and if no answers in database, add default answers
-			//
 			if (isNewTypeIsMultiple && questionToUpdate.answers.length === 0) {
 				dataWithoutId.answers = [
 					{ value: "Réponse 1" },
@@ -273,10 +285,7 @@ export class QuestionsResolver {
 				throw new AppError("Question not found", 404, "NotFoundError")
 			}
 
-			const isOwnerOfSurvey =
-				questionToDelete.survey?.user?.id === user.id
-
-			if (user.role !== Roles.Admin && !isOwnerOfSurvey) {
+			if (!isOwnerOrAdmin(questionToDelete.survey.user.id, user)) {
 				throw new AppError(
 					"Not authorized to update this question",
 					403,
