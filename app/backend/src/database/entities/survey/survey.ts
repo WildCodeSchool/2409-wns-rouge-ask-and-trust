@@ -7,6 +7,7 @@
  * status, category, and a set of questions and answers.
  */
 
+import { Field, ID, InputType, ObjectType } from "type-graphql"
 import {
 	BaseEntity,
 	Column,
@@ -15,7 +16,6 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn,
 } from "typeorm"
-import { ObjectType, Field, ID } from "type-graphql"
 import { User } from "../user"
 import { Category } from "./category"
 import { Questions } from "./questions"
@@ -78,7 +78,7 @@ export class Survey extends BaseEntity {
 	 * A short, unique label that identifies the survey.
 	 */
 	@Field()
-	@Column({ length: 255, unique: true })
+	@Column({ length: 255, unique: true }) // PB : si deux surveys sont privées, elles ne peuvent pas avoir le même nom ?
 	title!: string
 
 	/**
@@ -159,4 +159,10 @@ export class Survey extends BaseEntity {
 		onUpdate: "CURRENT_TIMESTAMP",
 	})
 	updatedAt!: Date
+}
+
+@InputType()
+export class SurveyInputCreateQuestion {
+	@Field(() => ID)
+	id!: number
 }

@@ -6,9 +6,11 @@
  * It allows partial updates to a question's content, type, and predefined answers.
  */
 
-import { InputType, Field, ID } from "type-graphql"
-import { TypeOfQuestion } from "../../../../types/types"
-import { Answers } from "../../../../database/entities/survey/answers"
+import { Type } from "class-transformer"
+import { Length, ValidateNested } from "class-validator"
+import { Field, ID, InputType } from "type-graphql"
+import { QuestionType } from "../../../../types/types"
+import { AnswerObject } from "../../create/survey/create-questions-input"
 
 /**
  * UpdateQuestionInput
@@ -39,13 +41,11 @@ export class UpdateQuestionInput {
 	@Field(() => ID)
 	id!: number
 
-	/**
-	 * Updated content of the question
-	 * @description
-	 * New text for the question, must be unique if changed.
-	 */
-	@Field({ nullable: true })
-	content?: string
+	@Field(() => String, { nullable: true })
+	@Length(1, 1000, {
+		message: "Content must be between 1 and 1000 characters",
+	})
+	title?: string
 
 	/**
 	 * Updated type of question
@@ -53,13 +53,18 @@ export class UpdateQuestionInput {
 	 * New type for the question (e.g. text, radio, checkbox).
 	 */
 	@Field(() => String, { nullable: true })
-	type?: TypeOfQuestion
+	type?: QuestionType
 
 	/**
 	 * Updated predefined answers
 	 * @description
 	 * New set of answers for the question, stored as a JSON array.
 	 */
-	@Field(() => [String], { nullable: true })
-	answers?: Answers
+	// @Field(() => [String], { nullable: true })
+	// answers?: Answers
+
+	@Field(() => [AnswerObject], { nullable: true })
+	@ValidateNested({ each: true }) // Validate each answer object in the array
+	@Type(() => AnswerObject) // Transform plain objects to AnswerObject instances to enable validation
+	answers?: AnswerObject[]
 }

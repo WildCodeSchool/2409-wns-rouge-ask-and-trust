@@ -1,0 +1,103 @@
+import { gql } from "@apollo/client"
+
+export const GET_SURVEYS = gql`
+	query Surveys {
+		surveys {
+			id
+			title
+			description
+			status
+			createdAt
+			updatedAt
+			category {
+				id
+				name
+			}
+			user {
+				id
+				email
+			}
+		}
+	}
+`
+
+export const GET_SURVEY = gql`
+	query GetSurvey($surveyId: ID!) {
+		survey(id: $surveyId) {
+			id
+			title
+			description
+			status
+			public
+			user {
+				id
+				email
+			}
+			category {
+				id
+				name
+			}
+			questions {
+				id
+			}
+			createdAt
+			updatedAt
+		}
+	}
+`
+
+export const GET_MY_SURVEYS = gql`
+	query MySurveys {
+		mySurveys {
+			id
+			title
+			status
+			createdAt
+			updatedAt
+		}
+	}
+`
+
+export const CREATE_SURVEY = gql`
+	mutation CreateSurvey($data: CreateSurveyInput!) {
+		createSurvey(data: $data) {
+			id
+			title
+			description
+			category {
+				id
+				name
+			}
+			user {
+				id
+				email
+			}
+		}
+	}
+`
+
+export const UPDATE_SURVEY = gql`
+	mutation UpdateSurvey($data: UpdateSurveyInput!) {
+		updateSurvey(data: $data) {
+			id
+			title
+			description
+			category {
+				id
+				name
+			}
+			user {
+				id
+				email
+			}
+		}
+	}
+`
+
+export const DELETE_SURVEY = gql`
+	mutation DeleteSurvey($surveyId: ID!) {
+		deleteSurvey(id: $surveyId) {
+			id
+		}
+	}
+`
