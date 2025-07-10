@@ -14,11 +14,11 @@ fi
 
 # Install dependencies if needed
 echo "📦 Installing dependencies..."
-if command -v pnpm >/dev/null 2>&1; then
-  pnpm install
+if command -v npm >/dev/null 2>&1; then
+  npm install
 else
-  echo "❌ Error: pnpm not found"
-  echo "Please install pnpm: npm install -g pnpm"
+  echo "❌ Error: npm not found"
+  echo "Please install Node.js and npm"
   exit 1
 fi
 

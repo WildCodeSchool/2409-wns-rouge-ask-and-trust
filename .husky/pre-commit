@@ -10,16 +10,58 @@
 
 echo "🚀 Running pre-commit checks..."
 
-# 1. Quick type checking (frontend only)
-echo "🔍 Type checking frontend..."
-cd app/frontend && npx tsc --noEmit
-if [ $? -ne 0 ]; then
-  echo "❌ Frontend type check failed!"
-  exit 1
-fi
-cd ../..
+# Detect which parts of the codebase were modified
+echo "🔍 Detecting modified files..."
+MODIFIED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only --cached)
 
-# 2. Lint-staged (Prettier on staged files only)
+# Check if frontend files were modified
+FRONTEND_MODIFIED=false
+if echo "$MODIFIED_FILES" | grep -q "^app/frontend/"; then
+  FRONTEND_MODIFIED=true
+  echo "📱 Frontend changes detected"
+fi
+
+# Check if backend files were modified
+BACKEND_MODIFIED=false
+if echo "$MODIFIED_FILES" | grep -q "^app/backend/"; then
+  BACKEND_MODIFIED=true
+  echo "🖥️  Backend changes detected"
+fi
+
+# If no specific frontend/backend changes, run all checks (for root files, configs, etc.)
+if [ "$FRONTEND_MODIFIED" = false ] && [ "$BACKEND_MODIFIED" = false ]; then
+  echo "🔧 Root/config changes detected - running all checks"
+  FRONTEND_MODIFIED=true
+  BACKEND_MODIFIED=true
+fi
+
+# Frontend type checking (only if frontend was modified)
+if [ "$FRONTEND_MODIFIED" = true ]; then
+  echo "🔍 Type checking frontend..."
+  cd app/frontend && npx tsc --noEmit
+  if [ $? -ne 0 ]; then
+    echo "❌ Frontend type check failed!"
+    exit 1
+  fi
+  cd ../..
+else
+  echo "⏭️  Skipping frontend type check (no changes detected)"
+fi
+
+# Backend type checking (only if backend was modified)
+if [ "$BACKEND_MODIFIED" = true ]; then
+  echo "🔍 Type checking backend..."
+  cd app/backend && npx tsc --noEmit
+  if [ $? -ne 0 ]; then
+    echo "❌ Backend type check failed!"
+    exit 1
+  fi
+  cd ../..
+else
+  echo "⏭️  Skipping backend type check (no changes detected)"
+fi
+
+# Lint-staged (Prettier on staged files only)
 echo "🎨 Formatting staged files..."
 npx lint-staged
 if [ $? -ne 0 ]; then
