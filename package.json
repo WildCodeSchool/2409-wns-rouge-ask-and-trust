@@ -1,22 +1,30 @@
 {
 	"name": "ask-and-trust",
-	"version": "1.3.3",
+	"version": "1.5.0",
 	"private": true,
 	"description": "Development of an online survey platform",
-	"workspaces": [
-		"app/frontend",
-		"app/backend"
-	],
 	"directories": {
 		"doc": "docs",
 		"scripts": "scripts"
 	},
+	"workspaces": [
+		"app/frontend",
+		"app/backend"
+	],
 	"scripts": {
 		"start": "docker compose up --build",
 		"prepare": "node -e \"process.env.CI !== 'true' && require('child_process').execSync('husky install', {stdio: 'inherit'})\"",
 		"format": "npx prettier --write \"**/*.{js,jsx,ts,tsx}\"",
 		"prettier:check": "npx prettier --check \"**/*.{js,jsx,ts,tsx}\"",
 		"lint": "cd app/frontend && npm run lint",
+		"lint:fix": "cd app/frontend && npm run lint -- --fix",
+		"type-check": "npm run type-check:frontend && npm run type-check:backend",
+		"type-check:frontend": "cd app/frontend && npx tsc --noEmit",
+		"type-check:backend": "cd app/backend && npx tsc --noEmit",
+		"test": "cd app/frontend && npm run test",
+		"test:coverage": "cd app/frontend && npm run test -- --coverage --reporter=verbose",
+		"build": "cd app/backend && npm run build",
+		"build:frontend": "cd app/frontend && npm run build",
 		"docs": "typedoc",
 		"release": "standard-version",
 		"release:minor": "standard-version --release-as minor",
@@ -31,8 +39,8 @@
 		}
 	},
 	"devDependencies": {
-		"@commitlint/cli": "^19.8.1",
-		"@commitlint/config-conventional": "^19.8.1",
+		"@commitlint/cli": "^18.6.1",
+		"@commitlint/config-conventional": "^18.6.3",
 		"commitizen": "^4.3.1",
 		"conventional-changelog-cli": "^5.0.0",
 		"cz-conventional-changelog": "^3.3.0",
@@ -42,6 +50,11 @@
 		"standard-version": "^9.5.0",
 		"prettier-plugin-tailwindcss": "^0.6.11",
 		"typedoc": "^0.22.12"
+	},
+	"overrides": {
+		"standard-version": {
+			"find-up": "5.0.0"
+		}
 	},
 	"keywords": [
 		"survey"
