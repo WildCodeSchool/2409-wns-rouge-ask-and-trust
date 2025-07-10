@@ -2,9 +2,11 @@ import SurveyCard from "@/components/sections/surveys/SurveyCard"
 import img from "/img/dev.webp"
 import { Button } from "@/components/ui/Button"
 import { useEffect, useState } from "react"
-import clsx from "clsx"
 import { Helmet } from "react-helmet"
-import SurveyTableContainer from "@/components/sections/dashboard/SurveyTableContainer"
+import { cn } from "@/lib/utils"
+import { useQuery } from "@apollo/client"
+import { GET_SURVEYS } from "@/graphql/survey/survey"
+import { SurveyCardType } from "@/types/types"
 
 export default function Surveys() {
 	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
@@ -29,6 +31,9 @@ export default function Surveys() {
 			document.body.classList.remove("hide-scrollbar")
 		}
 	}, [isMobile])
+
+	const { data, loading: isFetching } = useQuery(GET_SURVEYS)
+	const surveys = data?.surveys || []
 
 	return (
 		<>
@@ -61,32 +66,46 @@ export default function Surveys() {
 					content="Page présentant toutes les enquêtes disponibles sur Ask$Trust."
 				/>
 			</Helmet>
-			<section className={clsx("px-20 max-sm:px-5", isMobile && "pb-10")}>
+			<section
+				className={cn(
+					"px-20 max-sm:px-5",
+					isMobile ? "pb-10" : "mb-20"
+				)}
+			>
 				<h1
-					className={clsx(
+					className={cn(
 						"text-fg text-center text-3xl font-bold max-lg:text-xl",
 						isMobile ? "mb-14" : "mb-20"
 					)}
 				>
 					Liste des enquêtes disponibles
 				</h1>
+				{isFetching && (
+					<div className="flex items-center justify-center">
+						<p>Chargement des enquêtes...</p>
+					</div>
+				)}
 				<div
-					className={clsx(
-						"grid grid-cols-[repeat(auto-fill,minmax(330px,1fr))] justify-items-center",
+					className={cn(
+						"grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] justify-items-center",
 						isMobile ? "gap-14" : "gap-20"
 					)}
 				>
-					<SurveyCard
-						href="/surveys"
-						picture={img}
-						title="Pratiquez vous une activité physique?"
-						content="Dites-nous si le sport fait partie de votre quotidien. Vos réponses aideront à mieux comprendre les habitudes d'activité physique."
-						tag="Sport"
-						estimateTime={5}
-						timeLeft="Un mois"
-					/>
+					{surveys.map((survey: SurveyCardType) => (
+						// Implémenter l'image, le temps estimé et la durée de disponibilité de l'enquête
+
+						<SurveyCard
+							key={survey.id}
+							id={survey.id}
+							picture={img}
+							title={survey.title}
+							description={survey.description}
+							category={survey.category}
+							estimateTime={5}
+							timeLeft="Un mois"
+						/>
+					))}
 				</div>
-				<SurveyTableContainer />
 			</section>
 			{!isMobile && (
 				<div className="flex items-center justify-center">
