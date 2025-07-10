@@ -18,8 +18,8 @@ import {
 	UseFormRegister,
 	useWatch,
 } from "react-hook-form"
-import { BuildListAnswers } from "./BuildListAnswers"
-import QuestionTypeSelect from "./QuestionTypeSelection"
+import { BuildListAnswers } from "@/components/sections/surveys/buildSurvey/question/BuildListAnswers"
+import QuestionTypeSelect from "@/components/sections/surveys/buildSurvey/question/QuestionTypeSelection"
 
 type QuestionProps = {
 	questionId: number
@@ -44,11 +44,9 @@ export function RenderAnswerComponent({
 }: RenderAnswerComponentProps) {
 	switch (questionType) {
 		case TypesOfQuestion.Text:
-			break
+			return null
 		case TypesOfQuestion.Boolean:
-			// return (
-			// component switch
-			break
+			return null
 		case TypesOfQuestion.Multiple_Choice:
 		case TypesOfQuestion.Select:
 			return (

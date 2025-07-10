@@ -86,15 +86,15 @@ function SurveyCreator() {
 						/>
 					</Helmet>
 					<div className="min-h-screen bg-gray-50">
-						<header className="bg-white shadow-sm">
+						<section className="bg-white shadow-sm">
 							<div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
 								<h1 className="text-2xl font-semibold text-gray-900">
 									Création de l'enquête
 								</h1>
 							</div>
-						</header>
+						</section>
 
-						<main className="mx-auto py-6 sm:px-6 lg:px-8">
+						<section className="mx-auto py-6 sm:px-6 lg:px-8">
 							<div className="flex h-[calc(100vh-160px)]">
 								<Toolbox
 									onAddQuestion={() => ""} // @TODO put logic inside Toolbox with useQuestions
@@ -107,7 +107,7 @@ function SurveyCreator() {
 									/>
 								</div>
 							</div>
-						</main>
+						</section>
 					</div>
 				</>
 			)}

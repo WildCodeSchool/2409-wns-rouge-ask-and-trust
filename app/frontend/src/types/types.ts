@@ -108,7 +108,7 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	questions: Question[]
+	questions: { id: number }[] // @TODO check this change in number
 }
 
 export type CreateSurveyInput = Survey
