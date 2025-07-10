@@ -1,3 +1,4 @@
+import { QuestionType, TypesOfQuestion } from "./../../../types/types"
 /**
  * @packageDocumentation
  * @category Entities
@@ -7,6 +8,7 @@
  * a specific type (e.g. text, radio, checkbox) and optional predefined answers.
  */
 
+import { Field, ID, ObjectType } from "type-graphql"
 import {
 	BaseEntity,
 	Column,
@@ -14,11 +16,8 @@ import {
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm"
-import { ObjectType, Field, ID } from "type-graphql"
-import { TypeOfQuestion } from "../../../types/types"
+import { AnswerObject } from "../../../graphql/inputs/create/survey/create-questions-input"
 import { Survey } from "./survey"
-import { Answers } from "./answers"
-import { User } from "../user"
 
 /**
  * Questions Entity
@@ -37,7 +36,7 @@ import { User } from "../user"
  * @example
  * ```ts
  * const question = new Questions()
- * question.content = "What is your favorite color?"
+ * question.title = "What is your favorite color?"
  * question.type = TypeOfQuestion.RADIO
  * question.answers = ["Red", "Blue", "Green"]
  * question.survey = someSurveyInstance
@@ -69,8 +68,8 @@ export class Questions extends BaseEntity {
 	 * The actual text/content of the question (must be unique).
 	 */
 	@Field()
-	@Column({ length: 1000, unique: true })
-	content!: string
+	@Column({ length: 1000 /*, unique: true*/ })
+	title!: string
 
 	/**
 	 * Type of question
@@ -80,23 +79,26 @@ export class Questions extends BaseEntity {
 	@Field(() => String)
 	@Column({
 		type: "enum",
-		enum: TypeOfQuestion,
-		default: TypeOfQuestion.TEXT,
+		enum: TypesOfQuestion,
+		default: TypesOfQuestion.Text,
 	})
-	type!: TypeOfQuestion
+	type!: QuestionType
 
 	/**
 	 * Answers to the question
 	 * @description
 	 * Used to stock answers
 	 */
+	@Field(() => [AnswerObject])
 	@Column({
 		type: "jsonb",
 		array: false,
 		default: () => "'[]'",
 		nullable: false,
 	})
-	answers!: Answers
+	answers!: AnswerObject[]
+
+	// relation Answers
 
 	/**
 	 * The survey to which this question belongs
@@ -112,7 +114,10 @@ export class Questions extends BaseEntity {
 	 * @description
 	 * Many relation to the `User` entity.
 	 */
-	@ManyToOne(() => User)
-	@Field(() => User, { nullable: true })
-	createdBy!: User
+
+	// Maybe for later if several users can create questions in the same survey.
+
+	// @ManyToOne(() => User)
+	// @Field(() => User, { nullable: true })
+	// createdBy!: User
 }

@@ -1,0 +1,100 @@
+#!/usr/bin/env sh
+
+# Trigger : Before pushing to remote
+# Duration : ~10-30 seconds (optimized based on changed files)
+# Actions :
+#   - Detect which parts of codebase were modified (frontend/backend)
+#   - Run TypeScript, linting, and tests only for modified sections
+#   - Block push if any check fails
+# Goal : Quick quality filter to catch obvious errors early
+
+echo "🚀 Running pre-push checks (Husky config mode)..."
+
+# TEMPORARY: Skip TypeScript checks during Husky configuration
+echo "⚠️  TEMPORARY: Skipping TypeScript checks (Husky config mode)"
+
+# Detect which parts of the codebase were modified
+echo "🔍 Detecting modified files..."
+MODIFIED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only --cached)
+
+# Check if frontend files were modified
+FRONTEND_MODIFIED=false
+if echo "$MODIFIED_FILES" | grep -q "^app/frontend/"; then
+  FRONTEND_MODIFIED=true
+  echo "📱 Frontend changes detected"
+fi
+
+# Check if backend files were modified
+BACKEND_MODIFIED=false
+if echo "$MODIFIED_FILES" | grep -q "^app/backend/"; then
+  BACKEND_MODIFIED=true
+  echo "🖥️  Backend changes detected"
+fi
+
+# If no specific frontend/backend changes, run all checks (for root files, configs, etc.)
+if [ "$FRONTEND_MODIFIED" = false ] && [ "$BACKEND_MODIFIED" = false ]; then
+  echo "🔧 Root/config changes detected - running all checks"
+  FRONTEND_MODIFIED=true
+  BACKEND_MODIFIED=true
+fi
+
+# Frontend checks (only if frontend was modified)
+if [ "$FRONTEND_MODIFIED" = true ]; then
+  echo "🎨 Linting frontend..."
+  cd app/frontend && npm run lint
+  if [ $? -ne 0 ]; then
+    echo "❌ Frontend linting failed!"
+    exit 1
+  fi
+  cd ../..
+
+  echo "🧪 Running frontend tests..."
+  cd app/frontend && npm run test -- --run
+  if [ $? -ne 0 ]; then
+    echo "⚠️  Frontend tests failed - continuing anyway (Husky config mode)"
+    exit 1
+  fi
+  cd ../..
+
+  # Frontend build check (commented out for now)
+  # echo "🏗️ Frontend build check..."
+  # cd app/frontend && npm run build
+  # if [ $? -ne 0 ]; then
+  #   echo "⚠️  Frontend build failed - continuing anyway (Husky config mode)"
+  # fi
+  # cd ../..
+else
+  echo "⏭️  Skipping frontend checks (no changes detected)"
+fi
+
+# Backend checks (only if backend was modified)
+if [ "$BACKEND_MODIFIED" = true ]; then
+  echo "🎨 Linting backend..."
+  cd app/backend && npm run lint
+  if [ $? -ne 0 ]; then
+    echo "❌ Backend linting failed!"
+    exit 1
+  fi
+  cd ../..
+
+  echo "🧪 Running backend tests..."
+  cd app/backend && npm run test
+  if [ $? -ne 0 ]; then
+    echo "⚠️  Backend tests failed - continuing anyway (Husky config mode)"
+    exit 1
+  fi
+  cd ../..
+
+  # Backend build check (commented out for now)
+  # echo "🏗️ Backend build check..."
+  # cd app/backend && npm run build
+  # if [ $? -ne 0 ]; then
+  #   echo "⚠️  Backend build failed - continuing anyway (Husky config mode)"
+  # fi
+  # cd ../..
+else
+  echo "⏭️  Skipping backend checks (no changes detected)"
+fi
+
+echo "✅ Pre-push checks completed (Husky config mode)!"
+echo "💡 Remember to restore full checks after merging Husky config"

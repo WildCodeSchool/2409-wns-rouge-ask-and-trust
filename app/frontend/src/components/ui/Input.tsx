@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-import { forwardRef, ComponentProps } from "react"
+import { ComponentProps, forwardRef } from "react"
 import ErrorInput from "./ErrorInput"
 
 type InputProps = ComponentProps<"input"> & {
@@ -13,7 +13,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 			: ""
 
 		return (
-			<div>
+			<div className="flex flex-1 flex-col gap-1">
 				<input
 					type={type}
 					className={cn(
