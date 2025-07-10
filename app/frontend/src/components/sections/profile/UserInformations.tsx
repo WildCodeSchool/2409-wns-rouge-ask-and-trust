@@ -3,14 +3,14 @@ import { Button } from "@/components/ui/Button.tsx"
 
 export default function UserInformations() {
 	return (
-		<>
+		<section className="px-5 sm:px-20">
 			<div className="max-w-[428px] rounded-md shadow-lg shadow-black/10">
 				<div className="bg-primary-default rounded-t-md py-2 text-center text-white">
 					<h4 className="text-2xl font-semibold">
 						Informations de l'utilisateur
 					</h4>
 				</div>
-				<div className="flex flex-row justify-start gap-2.5 rounded-b-xl bg-white px-1.5 py-4 sm:gap-4 sm:px-5">
+				<div className="flex flex-row items-start justify-start gap-2.5 rounded-b-xl bg-white px-1.5 py-4 sm:gap-4 sm:px-5">
 					<div className="max-w-[109px] rounded-md shadow-lg shadow-black/10 sm:max-w-[145px]">
 						<img
 							className="max-w-[109px] rounded-md sm:max-w-[145px]"
@@ -44,6 +44,6 @@ export default function UserInformations() {
 					</div>
 				</div>
 			</div>
-		</>
+		</section>
 	)
 }
