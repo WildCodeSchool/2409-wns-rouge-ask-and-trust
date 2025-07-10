@@ -59,7 +59,7 @@ function RadioGroupItem({ className, label, ...props }: RadioGroupItemProps) {
 					data-slot="radio-group-indicator"
 					className="flex items-center justify-center"
 				>
-					<CircleIcon className="fill-primary-700 bg-pr size-2" />
+					<CircleIcon className="fill-active bg-pr size-2" />
 				</RadioGroupIndicator>
 			</RadioGroupItemPrimitive>
 			{label && (
