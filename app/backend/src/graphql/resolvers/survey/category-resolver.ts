@@ -17,7 +17,7 @@ import {
 } from "type-graphql"
 import { Category } from "../../../database/entities/survey/category"
 import { CreateCategoryInput } from "../../inputs/create/survey/create-category-input"
-import { Context } from "../../../types/types"
+import { Context, Roles } from "../../../types/types"
 import { UpdateCategoryInput } from "../../inputs/update/survey/update-category-input"
 import { AppError } from "../../../middlewares/error-handler"
 
@@ -104,7 +104,7 @@ export class CategoryResolver {
 	 *
 	 * This mutation allows an admin user to create a new survey category. The category will be associated with the admin user.
 	 */
-	@Authorized("admin")
+	@Authorized(Roles.Admin)
 	@Mutation(() => Category)
 	async createCategory(
 		@Arg("data", () => CreateCategoryInput)
@@ -153,7 +153,7 @@ export class CategoryResolver {
 	 * This mutation allows an admin user to update an existing survey category. Only the admin can update categories.
 	 * If the user is not an admin, the mutation will not be executed.
 	 */
-	@Authorized("admin")
+	@Authorized(Roles.Admin)
 	@Mutation(() => Category, { nullable: true })
 	async updateCategory(
 		@Arg("id", () => ID) id: number,
@@ -208,7 +208,7 @@ export class CategoryResolver {
 	 * This mutation allows an admin user to delete an existing survey category. Only the admin can delete categories.
 	 * If the user is not an admin, the mutation will not be executed.
 	 */
-	@Authorized("admin")
+	@Authorized(Roles.Admin)
 	@Mutation(() => Category, { nullable: true })
 	async deleteCategory(
 		@Arg("id", () => ID) id: number,

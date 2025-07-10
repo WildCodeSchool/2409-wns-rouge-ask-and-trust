@@ -1,5 +1,5 @@
-import { InputType, Field, ID } from "type-graphql"
 import { Length } from "class-validator"
+import { Field, ID, InputType } from "type-graphql"
 import { CreateQuestionsInput } from "./create-questions-input"
 
 /**
@@ -35,5 +35,5 @@ export class CreateSurveyInput {
 	category!: number
 
 	@Field(() => [CreateQuestionsInput])
-	questions!: CreateQuestionsInput[]
+	questions?: CreateQuestionsInput[]
 }
