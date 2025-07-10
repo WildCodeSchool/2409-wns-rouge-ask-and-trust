@@ -6,7 +6,7 @@ import NavAndAuthButtons from "./NavAndAuthButtons"
 import clsx from "clsx"
 import { useAuthContext } from "@/hooks/useAuthContext"
 
-export default function Header() {
+export default function Header({ showCategories = false }) {
 	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
 	const { user } = useAuthContext()
 
@@ -42,14 +42,16 @@ export default function Header() {
 				</Link>
 				<NavAndAuthButtons isMobile={isMobile} />
 			</div>
-			<div className="flex items-center gap-3 overflow-x-scroll pb-3">
-				<Button
-					variant="navbar_btn"
-					size="sm"
-					ariaLabel="Annonces de la catégorie sport"
-					children="Sport"
-				/>
-			</div>
+			{showCategories && (
+				<div className="flex items-center gap-3 overflow-x-scroll pb-3">
+					<Button
+						variant="navbar_btn"
+						size="sm"
+						ariaLabel="Annonces de la catégorie sport"
+						children="Sport"
+					/>
+				</div>
+			)}
 		</header>
 	)
 }
