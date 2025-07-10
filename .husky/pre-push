@@ -78,7 +78,7 @@ if [ "$BACKEND_MODIFIED" = true ]; then
   cd ../..
 
   echo "🧪 Running backend tests..."
-  cd app/backend && npm run test -- --run
+  cd app/backend && npm run test
   if [ $? -ne 0 ]; then
     echo "⚠️  Backend tests failed - continuing anyway (Husky config mode)"
     exit 1
