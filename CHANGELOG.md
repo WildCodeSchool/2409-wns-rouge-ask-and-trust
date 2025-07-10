@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v1.3.3...v2.0.0) (2025-07-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **readme:** blabla
+
+### Features
+
+* add graphql queries in frontend ([747ee04](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/747ee0443bb284d59a8ba801757e383c3fcc92ff))
+* added dynamic survey data in SurveyCreator and cleaned logic ([7da1456](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/7da145659987abb47c1d2621a68100a3aea21de8))
+* added graphql survey queries in frontend ([babfd00](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/babfd0042de631159884c09fb1827651dc929a19))
+* added ui Checkbox ([6fbc7e9](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/6fbc7e96243b46c7e27a342bfd1ea5a34e1934b8))
+* build Question ([0b9ec91](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0b9ec911471c1cbcc3f8932e3c87e38f7e8a0fc3))
+* **contact:** add components mocked for contact and repare router ([3c82611](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/3c826110e632026184c16cf36ecfcdf8ebed7a92))
+* **husky:** set up Git hooks for pre-commit, pre-push, post-merge, and commit message validation ([33d30aa](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/33d30aa9598a79b998ce4236cf55905aea624221))
+* **QuestionPreview:** add QuestionPreview component and related UI elements for read-only display of questions ([00b939f](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/00b939ff1602453d5d52af8eb72a6c8e5d946f6e))
+* **survey:** add mock survey data, survey selector component, and preview page for displaying surveys ([57bf008](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/57bf008c3a372b52d5f6e0b0e4948bc63a9318c1))
+* **toolbox:** improve toolbox UI, code structure, and documentation ([a4c0b72](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/a4c0b720b4b366523ef65f70801e8239dab8ecfe))
+* update backend survey and question ([0ea4121](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0ea4121363705155f2a1fc1275ab9ff8066c22b8))
+* update Button ui ([b0ff2ed](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/b0ff2edfef50da5eb6ff7995e0f00ec436430414))
+* update FormWrapper ([5d0fc86](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/5d0fc867bea1fbff96479dc238452fadc3e42102))
+* updated useQuestions ([7b49038](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/7b490389420562e00b3a2ade5a61c9be6ccabd6c))
+
+
+### Bug Fixes
+
+* bug  BuildQuestion's lifecycle ([3bed175](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/3bed17529d2231b7cb200b4edc0c3e55fec16358))
+* Merge branch 'staging' of https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust into develop ([3b6873a](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/3b6873a7cdb10b0709393151d9e4386e69b68ae2))
+* re-install packages ([b1f5789](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/b1f578954aeb592145ae3f883225f39d9701764b))
+* types, add commentary for hook and update css px to rem ([58ea2da](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/58ea2da0800e5bd6440564b5532e428a86128fae))
+* wrong data in questions.map and added dynamic survey's id ([c8728ce](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/c8728ce159bc5ab1246a821942760482da081698))
+
+
+* **readme:** add emoji ([5d5e3af](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/5d5e3af21a0444aaeda5a52819a4996a2a5be6be)), closes [#144](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/issues/144)
+
 ## [1.5.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v1.3.3...v1.5.0) (2025-07-10)
 
 ### ⚠ BREAKING CHANGES
