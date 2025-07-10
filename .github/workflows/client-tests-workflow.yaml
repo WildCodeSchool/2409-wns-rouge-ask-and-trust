@@ -59,18 +59,7 @@ jobs:
           node-version: '23'
           cache: 'npm'
 
-      - name: Clean npm state
-        run: |
-          rm -rf node_modules
-          rm -rf package-lock.json
-          cd ./app/frontend
-          rm -rf node_modules
-          rm -rf package-lock.json
-          cd ../backend
-          rm -rf node_modules
-          rm -rf package-lock.json
-          cd ../..
-          npm cache clean --force
+      - 
 
       - name: Restore dependencies cache
         uses: actions/cache@v4
@@ -90,7 +79,7 @@ jobs:
       - name: Run frontend tests
         run: |
           cd ./app/frontend
-          npm run test -- --run
+          npm run test
 
   # Job 3: Backend tests
   test-backend:
