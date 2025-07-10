@@ -59,8 +59,6 @@ jobs:
           node-version: '23'
           cache: 'npm'
 
-      - 
-
       - name: Restore dependencies cache
         uses: actions/cache@v4
         with:
