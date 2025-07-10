@@ -25,7 +25,7 @@ jobs:
 
     # Installs dependencies
     - name: Install dependencies
-      run: npm ci
+      run: npm install
       continue-on-error: false
 
     # Runs ESLint to detect code errors and check style
