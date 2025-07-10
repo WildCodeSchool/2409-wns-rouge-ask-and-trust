@@ -1,4 +1,4 @@
-import AllPackages from "@/components/sections/landing/parts/AllPackages.tsx"
+import AllPackages from "@/components/sections/landing/parts/AllPackages"
 
 const Package = () => {
 	return (

@@ -2,12 +2,12 @@ import { Button } from "@/components/ui/Button"
 import { useQuestions } from "@/hooks/useQuestions"
 import { PlusCircle } from "lucide-react"
 import { useParams } from "react-router-dom"
-import BuildQuestion from "../surveys/buildSurvey/question/BuildQuestion"
-import { EmptyState } from "./empty-state"
+import BuildQuestion from "@/components/sections/surveys/buildSurvey/question/BuildQuestion"
+import { EmptyState } from "@/components/sections/canvas/empty-state"
 
 interface CanvasProps {
 	className?: string
-	questions: { id: string }[]
+	questions: { id: number }[] // @TODO check this change in number
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
@@ -22,12 +22,16 @@ export const Canvas: React.FC<CanvasProps> = ({
 			{questions.length === 0 ? (
 				<EmptyState />
 			) : (
-				questions.map((question: { id: string }) => (
-					<BuildQuestion
-						key={question.id}
-						questionId={Number(question.id)}
-					/>
-				))
+				questions.map(
+					(
+						question: { id: number } // @TODO check this change in number
+					) => (
+						<BuildQuestion
+							key={question.id}
+							questionId={Number(question.id)}
+						/>
+					)
+				)
 			)}
 			<Button
 				onClick={() => {

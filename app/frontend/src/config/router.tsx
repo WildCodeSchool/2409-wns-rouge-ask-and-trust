@@ -3,7 +3,7 @@
  * @module router
  */
 
-import App from "@/App.tsx"
+import App from "@/App"
 import ProtectedRoute from "@/components/hoc/ProtectedRoute"
 import ErrorElement from "@/components/ui/ErrorElement"
 import Loader from "@/components/ui/Loader"

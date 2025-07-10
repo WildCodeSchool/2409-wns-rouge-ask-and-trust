@@ -5,7 +5,7 @@ import { Control, Controller } from "react-hook-form"
 
 type Props = {
 	label: string
-	name: `answers.${string}` // check this
+	name: `answers.${number}.value` // @TODO check this
 	control: Control<QuestionUpdate>
 }
 
@@ -17,8 +17,8 @@ export default function TypeSwitch({ label, name, control }: Props) {
 			<label htmlFor={switchId}>{label}</label>
 			<Controller
 				control={control}
-				name={name} // fix this. Maybe answers.question2 ?
-				defaultValue={false}
+				name={name} // @TODO fix this. Maybe answers.question2 ?
+				defaultValue={"false"} // @TODO @ArthurVS05 Fix this not assignable in boolean defaultValue={false}
 				render={({ field }) => (
 					<Switch
 						id={switchId}
