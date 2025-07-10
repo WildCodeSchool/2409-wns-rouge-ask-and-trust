@@ -16,10 +16,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '23'
+          node-version: '20'
           cache: 'npm'
 
-      - name: Clean npm state
+      - name: Clean npm state and fix optional dependencies
         run: |
           rm -rf node_modules
           rm -rf package-lock.json
@@ -33,7 +33,19 @@ jobs:
           npm cache clean --force
 
       - name: Install root dependencies
-        run: npm install
+        run: npm install --force
+
+      - name: Install frontend dependencies with rollup fix
+        run: |
+          cd ./app/frontend
+          npm install --force
+          # Explicitly install the missing rollup binary for linux
+          npm install @rollup/rollup-linux-x64-gnu --save-dev --force || true
+
+      - name: Install backend dependencies
+        run: |
+          cd ./app/backend
+          npm install --force
 
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -42,7 +54,9 @@ jobs:
             node_modules
             app/frontend/node_modules
             app/backend/node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-node20-${{ hashFiles('package-lock.json', 'app/frontend/package-lock.json', 'app/backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-node20-
 
   # Job 2: Frontend tests
   test-frontend:
@@ -56,7 +70,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '23'
+          node-version: '20'
           cache: 'npm'
 
       - name: Restore dependencies cache
@@ -66,13 +80,21 @@ jobs:
             node_modules
             app/frontend/node_modules
             app/backend/node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-node20-${{ hashFiles('package-lock.json', 'app/frontend/package-lock.json', 'app/backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-node20-
 
       - name: Install dependencies if cache miss
         run: |
-          if [ ! -d "node_modules" ]; then npm install; fi
+          if [ ! -d "node_modules" ]; then 
+            npm install --force
+          fi
           cd ./app/frontend
-          if [ ! -d "node_modules" ]; then npm install; fi
+          if [ ! -d "node_modules" ]; then 
+            npm install --force
+            # Ensure rollup binary is available
+            npm install @rollup/rollup-linux-x64-gnu --save-dev --force || true
+          fi
 
       - name: Run frontend tests
         run: |
@@ -91,7 +113,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '23'
+          node-version: '20'
           cache: 'npm'
 
       - name: Restore dependencies cache
@@ -101,13 +123,19 @@ jobs:
             node_modules
             app/frontend/node_modules
             app/backend/node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-node20-${{ hashFiles('package-lock.json', 'app/frontend/package-lock.json', 'app/backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-node20-
 
       - name: Install dependencies if cache miss
         run: |
-          if [ ! -d "node_modules" ]; then npm install; fi
+          if [ ! -d "node_modules" ]; then 
+            npm install --force
+          fi
           cd ./app/backend
-          if [ ! -d "node_modules" ]; then npm install; fi
+          if [ ! -d "node_modules" ]; then 
+            npm install --force
+          fi
 
       - name: Run backend tests
         run: |
