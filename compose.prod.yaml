@@ -1,7 +1,7 @@
 services:
     # Frontend service (React + Vite)
     frontend:
-        image: yohangh/askandtrust-frontend:4fed9eabcc526ee187f48c04e3de7646bcb8b214
+        image: yohangh/askandtrust-frontend:${VERSION}
         # ports:
         #     - "5173:5173" # Exposes port 5173 to access Vite from the host
         environment:
@@ -16,7 +16,7 @@ services:
 
     # Backend service (Express.js)
     backend:
-        image: yohangh/askandtrust-backend:4fed9eabcc526ee187f48c04e3de7646bcb8b214
+        image: yohangh/askandtrust-backend:${VERSION}
         # ports:
         #     - "3310:3310" # Exposes port 3310 to access the backend from the host
         environment:

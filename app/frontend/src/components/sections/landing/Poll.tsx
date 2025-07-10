@@ -1,4 +1,4 @@
-import CompanyBox from "@/components/ui/CompanyBox.tsx"
+import CompanyBox from "@/components/ui/CompanyBox"
 
 const Poll = () => {
 	const companies = ["Entreprise 1", "Entreprise 2"]

@@ -1,12 +1,14 @@
-import { Length } from "class-validator"
-import { InputType, Field } from "type-graphql"
+import { Type } from "class-transformer"
+import { Length, ValidateNested } from "class-validator"
+import { Field, InputType, ObjectType } from "type-graphql"
+import { QuestionType } from "../../../../types/types"
 
 /**
  * Represents input data for creating a new survey question.
  * This class is used to validate the survey question data before storing it in the database.
  *
  * @description
- * - `content`: the content of the survey question, must be a string.
+ * - `title`: the content of the survey question, must be a string.
  * - `question`: a reference to the existing survey question, represented by the `Questions` entity.
  * - `answers`: an array of possible answers for the question, must contain at least one answer.
  * - `createdAt`: timestamp when the question is created, automatically set to the current timestamp.
@@ -20,8 +22,27 @@ export class CreateQuestionsInput {
 	@Length(1, 1000, {
 		message: "Content must be between 1 and 1000 characters",
 	})
-	content!: string
+	title!: string
 
+	@Field(() => String)
+	type!: QuestionType
+
+	@Field(() => [AnswerObject])
+	@ValidateNested({ each: true }) // Validate each answer object in the array
+	@Type(() => AnswerObject) // Transform plain objects to AnswerObject instances to enable validation
+	answers!: AnswerObject[]
+
+	@Field(() => Number)
+	surveyId!: number
+}
+
+@ObjectType()
+@InputType("AnswerObjectInput")
+export class AnswerObject {
 	@Field()
-	answers!: string
+	@Length(1, 255, {
+		message: "An answer must be between 1 and 255 characters",
+	})
+	value!: string
+	// add more properties to answers if needed
 }

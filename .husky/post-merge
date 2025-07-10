@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+
+# Trigger : After git merge or git pull
+# Duration : <1 second
+# Actions :
+#   - Detect changes in package.json files
+#   - Suggest running npm install if dependencies have changed
+#   - Non-blocking: Provides useful notifications
+#   - Goal : Reminds developers to update dependencies
+
+echo "🔄 Post-merge automation..."
+
+# Simple dependency check
+if git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -E "package.*\.json$"; then
+  echo "📦 Dependencies may have changed - consider running 'npm install'"
+fi
+
+echo "✅ Post-merge completed!" 

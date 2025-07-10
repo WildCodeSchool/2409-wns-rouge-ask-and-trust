@@ -17,7 +17,7 @@ import {
 } from "type-graphql"
 import { Category } from "../../../database/entities/survey/category"
 import { CreateCategoryInput } from "../../inputs/create/survey/create-category-input"
-import { Context } from "../../../types/types"
+import { Context, Roles } from "../../../types/types"
 import { UpdateCategoryInput } from "../../inputs/update/survey/update-category-input"
 import { AppError } from "../../../middlewares/error-handler"
 
@@ -104,7 +104,7 @@ export class CategoryResolver {
 	 *
 	 * This mutation allows an admin user to create a new survey category. The category will be associated with the admin user.
 	 */
-	@Authorized("admin")
+	@Authorized(Roles.Admin)
 	@Mutation(() => Category)
 	async createCategory(
 		@Arg("data", () => CreateCategoryInput)
@@ -153,7 +153,7 @@ export class CategoryResolver {
 	 * This mutation allows an admin user to update an existing survey category. Only the admin can update categories.
 	 * If the user is not an admin, the mutation will not be executed.
 	 */
-	@Authorized("admin")
+	@Authorized(Roles.Admin)
 	@Mutation(() => Category, { nullable: true })
 	async updateCategory(
 		@Arg("id", () => ID) id: number,
@@ -191,6 +191,59 @@ export class CategoryResolver {
 		} catch (error) {
 			throw new AppError(
 				"Failed to update survey",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
+
+	/**
+	 * Mutation to delete an existing survey category.
+	 *
+	 * @param id - The ID of the category to delete.
+	 * @param context - The context object that contains the currently authenticated user.
+	 *
+	 * @returns A Promise that resolves to the deleted Category object, or null if the category could not be found or deleted.
+	 *
+	 * This mutation allows an admin user to delete an existing survey category. Only the admin can delete categories.
+	 * If the user is not an admin, the mutation will not be executed.
+	 */
+	@Authorized(Roles.Admin)
+	@Mutation(() => Category, { nullable: true })
+	async deleteCategory(
+		@Arg("id", () => ID) id: number,
+		@Ctx() context: Context
+	): Promise<Category | null> {
+		try {
+			const user = context.user
+
+			if (!user) {
+				throw new AppError("User not found", 404, "NotFoundError")
+			}
+
+			// Only admins can delete categories
+			if (user.role !== "admin") {
+				throw new AppError(
+					"You are not allowed to delete category",
+					401,
+					"UnauthorizedError"
+				)
+			}
+
+			const category = await Category.findOneBy({
+				id,
+				createdBy: { id: user.id },
+			})
+
+			if (category !== null) {
+				await category.remove()
+				category.id = id
+			}
+
+			return category
+		} catch (error) {
+			throw new AppError(
+				"Failed to delete category",
 				500,
 				"InternalServerError"
 			)

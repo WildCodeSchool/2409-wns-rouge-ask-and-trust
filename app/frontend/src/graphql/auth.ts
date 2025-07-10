@@ -25,6 +25,7 @@ export const WHOAMI = gql`
 			email
 			firstname
 			lastname
+			role
 		}
 	}
 `

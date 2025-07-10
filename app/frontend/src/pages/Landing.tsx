@@ -1,8 +1,8 @@
-import Hero from "@/components/sections/landing/Hero.tsx"
-import Information from "@/components/sections/landing/Information.tsx"
-import Poll from "@/components/sections/landing/Poll.tsx"
-import Package from "@/components/sections/landing/Package.tsx"
-import { Button } from "@/components/ui/Button.tsx"
+import Hero from "@/components/sections/landing/Hero"
+import Information from "@/components/sections/landing/Information"
+import Poll from "@/components/sections/landing/Poll"
+import Package from "@/components/sections/landing/Package"
+import { Button } from "@/components/ui/Button"
 import { Helmet } from "react-helmet"
 
 const Landing = () => {

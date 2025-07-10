@@ -15,12 +15,12 @@ import {
 	Query,
 	Resolver,
 } from "type-graphql"
-import { Survey } from "../../../database/entities/survey/survey"
-import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-input"
-import { Context } from "../../../types/types"
-import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
-import { AppError } from "../../../middlewares/error-handler"
 import { Category } from "../../../database/entities/survey/category"
+import { Survey } from "../../../database/entities/survey/survey"
+import { AppError } from "../../../middlewares/error-handler"
+import { Context, Roles } from "../../../types/types"
+import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-input"
+import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
 
 /**
  * Survey Resolver
@@ -44,6 +44,7 @@ export class SurveysResolver {
 				relations: {
 					user: true,
 					category: true,
+					questions: true,
 				},
 			})
 
@@ -78,9 +79,9 @@ export class SurveysResolver {
 				relations: {
 					user: true,
 					category: true,
+					questions: true,
 				},
 			})
-
 			if (!survey) {
 				throw new AppError("Survey not found", 404, "NotFoundError")
 			}
@@ -89,6 +90,48 @@ export class SurveysResolver {
 		} catch (error) {
 			throw new AppError(
 				"Failed to fetch survey",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
+
+	/**
+	 * Query to get surveys of the currently authenticated user.
+	 *
+	 * @param context - The context object that contains the currently authenticated user.
+	 *
+	 * @returns A Promise that resolves to an array of Survey objects owned by the authenticated user.
+	 *
+	 * This query allows a user to retrieve only their own surveys.
+	 */
+	@Authorized(Roles.User, Roles.Admin)
+	@Query(() => [Survey])
+	async mySurveys(@Ctx() context: Context): Promise<Survey[]> {
+		try {
+			const user = context.user
+
+			if (!user) {
+				throw new AppError(
+					"You can only retrieve your own surveys",
+					401,
+					"UnauthorizedError"
+				)
+			}
+
+			return await Survey.find({
+				where: {
+					user: { id: user.id },
+				},
+				relations: {
+					user: true,
+					category: true,
+					questions: true,
+				},
+			})
+		} catch (error) {
+			throw new AppError(
+				"Failed to fetch user surveys",
 				500,
 				"InternalServerError"
 			)
@@ -106,7 +149,7 @@ export class SurveysResolver {
 	 * This mutation allows a user to create a new survey. Only users with the "user" or "admin" roles can create surveys.
 	 * The survey is associated with the currently authenticated user.
 	 */
-	@Authorized("user", "admin")
+	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Survey)
 	async createSurvey(
 		@Arg("data", () => CreateSurveyInput) data: CreateSurveyInput,
@@ -153,10 +196,9 @@ export class SurveysResolver {
 	 * This mutation allows a user to update an existing survey. Only users with the "user" or "admin" roles can update surveys.
 	 * If the user is not an admin, they can only update surveys they have created.
 	 */
-	@Authorized("user", "admin")
+	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Survey, { nullable: true })
 	async updateSurvey(
-		@Arg("id", () => ID) id: number,
 		@Arg("data", () => UpdateSurveyInput) data: UpdateSurveyInput,
 		@Ctx() context: Context
 	): Promise<Survey | null> {
@@ -171,7 +213,7 @@ export class SurveysResolver {
 				user.role === "admin" ? undefined : { id: user.id }
 
 			const survey = await Survey.findOne({
-				where: { id, user: whereCreatedBy },
+				where: { id: data.id, user: whereCreatedBy },
 				relations: {
 					user: true,
 					category: true,
@@ -184,20 +226,79 @@ export class SurveysResolver {
 					404,
 					"SurveyNotFoundError"
 				)
-			} else if (user.role !== "admin") {
-				throw new AppError(
-					"You are not allowed to modify this survey",
-					401,
-					"UnauthorizedError"
-				)
 			}
 
-			Object.assign(survey, data)
+			const { id, category, ...updateData } = data
+
+			if (category) {
+				const categorySurvey = await Category.findOne({
+					where: { id: category },
+				})
+				if (!categorySurvey) {
+					throw new AppError(
+						"Category not found",
+						404,
+						"NotFoundError"
+					)
+				}
+				survey.category = categorySurvey
+			}
+
+			Object.assign(survey, updateData)
+
 			await survey.save()
 			return survey
 		} catch (error) {
 			throw new AppError(
 				"Failed to update survey",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
+
+	/**
+	 * Mutation to delete an existing survey.
+	 *
+	 * @param id - The ID of the survey to delete.
+	 * @param context - The context object that contains the currently authenticated user.
+	 *
+	 * @returns A Promise that resolves to the deleted Survey object, or null if the survey could not be found or deleted.
+	 *
+	 * This mutation allows an admin or user to delete an existing survey. Only the admin or the survey owner can delete surveys.
+	 * If the user is not an admin or the wurvey owner, the mutation will not be executed.
+	 */
+	@Authorized(Roles.User, Roles.Admin)
+	@Mutation(() => Survey, { nullable: true })
+	async deleteSurvey(
+		@Arg("id", () => ID) id: number,
+		@Ctx() context: Context
+	): Promise<Survey | null> {
+		try {
+			const user = context.user
+
+			if (!user) {
+				throw new AppError("User not found", 404, "NotFoundError")
+			}
+
+			// Only admins or survey owner can delete surveys
+			const whereCreatedBy =
+				user.role === "admin" ? undefined : { id: user.id }
+
+			const survey = await Survey.findOneBy({
+				id,
+				user: whereCreatedBy,
+			})
+
+			if (survey !== null) {
+				await survey.remove()
+				survey.id = id
+			}
+
+			return survey
+		} catch (error) {
+			throw new AppError(
+				"Failed to delete survey",
 				500,
 				"InternalServerError"
 			)

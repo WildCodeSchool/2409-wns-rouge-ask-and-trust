@@ -17,7 +17,7 @@ import {
 } from "type-graphql"
 import { Answers } from "../../../database/entities/survey/answers"
 import { CreateAnswersInput } from "../../inputs/create/survey/create-answers-input"
-import { Context } from "../../../types/types"
+import { Context, Roles } from "../../../types/types"
 import { AppError } from "../../../middlewares/error-handler"
 
 /**
@@ -37,6 +37,7 @@ export class AnswersResolver {
 	 * This query fetches all answers submitted for survey questions, including
 	 * their relations to the corresponding question and the record of who answered.
 	 */
+	@Authorized(Roles.Admin)
 	@Query(() => [Answers])
 	async Answers(): Promise<Answers[]> {
 		try {
@@ -70,6 +71,7 @@ export class AnswersResolver {
 	 *
 	 * This query returns a single survey answer with its related question and answered record.
 	 */
+	@Authorized(Roles.User, Roles.Admin)
 	@Query(() => Answers, { nullable: true })
 	async Answer(
 		@Arg("userId", () => ID) userId: number,
@@ -109,7 +111,7 @@ export class AnswersResolver {
 	 * This mutation allows a user (or admin) to submit an answer to a survey question.
 	 * The answer is automatically linked to the authenticated user.
 	 */
-	@Authorized("user", "admin")
+	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Answers)
 	async createAnswer(
 		@Arg("content", () => CreateAnswersInput)

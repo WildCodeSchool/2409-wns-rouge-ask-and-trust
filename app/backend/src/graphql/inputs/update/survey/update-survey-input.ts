@@ -1,5 +1,6 @@
 import { InputType, Field, ID } from "type-graphql"
 import { Length } from "class-validator"
+import { CreateQuestionsInput } from "../../create/survey/create-questions-input"
 
 /**
  * Represents input data for updating an existing survey.
@@ -17,6 +18,9 @@ import { Length } from "class-validator"
  */
 @InputType()
 export class UpdateSurveyInput {
+	@Field(() => ID)
+	id!: number
+
 	@Field()
 	@Length(1, 255, { message: "Title must be between 1 and 255 chars" })
 	title!: string
@@ -32,4 +36,7 @@ export class UpdateSurveyInput {
 
 	@Field(() => ID)
 	category!: number
+
+	@Field(() => [CreateQuestionsInput])
+	questions?: CreateQuestionsInput[]
 }
