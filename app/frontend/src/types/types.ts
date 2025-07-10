@@ -201,6 +201,19 @@ export type SurveyTableProps = {
 	statusLabelMap: Record<SurveyTableType["status"], string>
 }
 
+export type SurveyTableRowProps = {
+	survey: SurveyTableType
+	isChecked: boolean
+	onCheckboxChange: (checked: CheckedState) => void
+	statusLabel: string
+	formatDate: (date: string) => string
+}
+
+export type SurveyTableHeadProps = Pick<
+	SurveyTableProps,
+	"isHeaderChecked" | "handleSelectAll"
+>
+
 export type SurveyTableActionsProps = {
 	surveyId: number
 	status: string
