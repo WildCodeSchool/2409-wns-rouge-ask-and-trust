@@ -1,4 +1,6 @@
 import FormWrapper from "@/components/sections/auth/form/FormWrapper"
+import { BuildListAnswers } from "@/components/sections/surveys/buildSurvey/question/BuildListAnswers"
+import QuestionTypeSelect from "@/components/sections/surveys/buildSurvey/question/QuestionTypeSelection"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
@@ -18,8 +20,6 @@ import {
 	UseFormRegister,
 	useWatch,
 } from "react-hook-form"
-import { BuildListAnswers } from "@/components/sections/surveys/buildSurvey/question/BuildListAnswers"
-import QuestionTypeSelect from "@/components/sections/surveys/buildSurvey/question/QuestionTypeSelection"
 
 type QuestionProps = {
 	questionId: number
