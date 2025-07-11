@@ -4,10 +4,12 @@ import QuestionTypeSelect from "@/components/sections/surveys/buildSurvey/questi
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
-import { GET_QUESTION } from "@/graphql/survey/question"
-import { UpdateQuestionInput, useQuestions } from "@/hooks/useQuestions"
+import {
+	UpdateQuestionInput,
+	useQuestion,
+	useQuestions,
+} from "@/hooks/useQuestions"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
-import { useQuery } from "@apollo/client"
 import { Trash2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import {
@@ -44,8 +46,7 @@ export function RenderAnswerComponent({
 }: RenderAnswerComponentProps) {
 	switch (questionType) {
 		case TypesOfQuestion.Text:
-			return null
-		case TypesOfQuestion.Boolean:
+		case TypesOfQuestion.Boolean: // @TODO : render list answer for Boolean Question instead of null
 			return null
 		case TypesOfQuestion.Multiple_Choice:
 		case TypesOfQuestion.Select:
@@ -94,10 +95,8 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
 		useState(false)
 
-	// @TODO add error handling
-	const { data } = useQuery<{ question: QuestionUpdate }>(GET_QUESTION, {
-		variables: { questionId },
-	})
+	const { question } = useQuestion(questionId)
+
 	// Allow to manipulate answers as a dynamic array (no state needed)
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -108,7 +107,7 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 
 	const onSubmit = (formData: UpdateQuestionInput) => {
 		console.log("updateQuestionError", updateQuestionError)
-		if (!data?.question.id) return
+		if (!question?.id) return
 
 		const formattedAnswers = formData.answers?.map(({ value }) => ({
 			value,
@@ -117,7 +116,7 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		const { title, type } = formData
 
 		updateQuestion({
-			id: data.question.id,
+			id: question.id,
 			title: title,
 			type: type,
 			answers: formattedAnswers,
@@ -126,14 +125,14 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 
 	// Fill form data with question's data from database
 	useEffect(() => {
-		if (data?.question) {
+		if (question) {
 			reset({
-				title: data.question.title,
-				type: data.question.type,
-				answers: data.question.answers,
+				title: question.title,
+				type: question.type,
+				answers: question.answers,
 			})
 		}
-	}, [data, reset])
+	}, [question, reset])
 
 	const watchedType = useWatch({
 		control,
@@ -141,6 +140,7 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 	})
 	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
 
+	// After saving question, if type has changed and there is no answer, provide default answers
 	useEffect(() => {
 		if (!watchedType) return
 
@@ -150,7 +150,10 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 
 		if (hasTypeChanged && answersAreEmpty) {
 			const defaults = getDefaultAnswersForType(watchedType)
-			defaults.forEach(answer => append(answer))
+
+			for (const defaultAnswer of defaults) {
+				append(defaultAnswer)
+			}
 		}
 
 		prevTypeRef.current = watchedType
@@ -164,7 +167,7 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		deleteQuestion(questionId, surveyId)
 	}
 
-	if (!data) return null
+	if (!question) return null
 
 	return (
 		<li className="list-none">
@@ -174,7 +177,7 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 			>
 				<div className="flex content-center justify-between">
 					<h3 className="flex-1 self-center text-2xl font-bold">
-						{data?.question.title ?? "Nouvelle question"}
+						{question.title ?? "Nouvelle question"}
 					</h3>
 					<Button
 						variant="ghost_destructive"
@@ -187,7 +190,7 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 					/>
 				</div>
 				{openButtonDeleteQuestion && (
-					// mettre focus sur delete
+					// @TODO mettre focus sur delete
 					<div className="flex flex-1 gap-3">
 						<Button
 							type="button"
@@ -197,7 +200,7 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 							onClick={() => {
 								handleClickDelete(
 									questionId,
-									data?.question.survey.id
+									question.survey.id
 								)
 							}}
 							icon={Trash2}
