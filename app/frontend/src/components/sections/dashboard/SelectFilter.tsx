@@ -20,7 +20,7 @@ export function SelectFilter({
 	return (
 		<Select onValueChange={onChange} value="" disabled={disabled}>
 			<SelectTrigger
-				className="border-button-line-border text-button-line-border max-w-52 border bg-white px-4 py-2"
+				className="border-button-line-border text-button-line-border w-48 border bg-white px-4 py-2"
 				icon={
 					<ListFilter className="text-button-line-border h-4 w-4" />
 				}
