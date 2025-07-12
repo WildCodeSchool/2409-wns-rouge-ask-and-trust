@@ -23,6 +23,8 @@ import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-inpu
 import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
 import { MySurveysQueryInput } from "../../inputs/queries/mySurveys-query-input"
 import { MySurveysResult } from "../../../database/results/mySurveyResult"
+import { AllSurveysResult } from "../../../database/results/allSurveysResult"
+import { AllSurveysQueryInput } from "../../inputs/queries/surveys-query-input"
 
 /**
  * Survey Resolver
@@ -33,28 +35,91 @@ import { MySurveysResult } from "../../../database/results/mySurveyResult"
 @Resolver(Survey)
 export class SurveysResolver {
 	/**
-	 * Query to get all surveys.
+	 * GraphQL Query permettant de récupérer toutes les enquêtes.
 	 *
-	 * @returns A Promise that resolves to an array of Survey objects.
+	 * Cette requête prend en charge :
+	 * - la recherche par titre,
+	 * - le filtrage par catégorie,
+	 * - le tri (par temps estimé pour répondre à l'enquête et durée de disponibilité, ASC/DESC),
+	 * - la pagination,
+	 * - ainsi que le comptage total d'enquêtes avant et après filtres.
 	 *
-	 * This query retrieves all surveys, along with their associated user and category information.
+	 * @param filters - Filtres de recherche et options de tri/pagination (champ, ordre, page, limite...).
+	 *
+	 * @returns Un objet `AllSurveysResult` contenant :
+	 * - `allSurveys` : Liste paginée des enquêtes après application des filtres.
+	 * - `totalCount` : Nombre total d’enquêtes correspondant aux filtres.
+	 * - `totalCountAll` : Nombre total d’enquêtes de l’utilisateur sans filtre.
+	 * - `page` et `limit` : Infos de pagination.
+	 *
+	 * @throws AppError - Si aucune enquête n'est trouvée ou en cas d’erreur serveur.
 	 */
-	@Query(() => [Survey])
-	async surveys(): Promise<Survey[]> {
+	@Query(() => AllSurveysResult)
+	async surveys(
+		@Arg("filters", () => AllSurveysQueryInput)
+		filters: AllSurveysQueryInput
+	): Promise<AllSurveysResult> {
 		try {
-			const surveys = await Survey.find({
-				relations: {
-					user: true,
-					category: true,
-					questions: true,
-				},
-			})
+			const {
+				search,
+				categoryIds,
+				sortBy = "estimatedDuration",
+				order = "DESC",
+				page = 1,
+				limit = 12,
+			} = filters
 
-			if (!surveys) {
+			// Retrieve the base query with all surveys created
+			const baseQuery = Survey.createQueryBuilder("survey")
+				.leftJoinAndSelect("survey.user", "user")
+				.leftJoinAndSelect("survey.category", "category")
+				.leftJoinAndSelect("survey.questions", "questions")
+
+			// Get the total number of unfiltered surveys and clone the query to apply filters
+			const [totalCountAll, filteredQuery] = await Promise.all([
+				baseQuery.getCount(),
+				baseQuery.clone(),
+			])
+
+			// Filter by title (search)
+			if (search?.trim()) {
+				filteredQuery.andWhere("survey.title ILIKE :search", {
+					search: `%${search.trim()}%`,
+				})
+			}
+
+			// Filter by category
+			if (categoryIds && categoryIds.length > 0) {
+				filteredQuery.andWhere(
+					"survey.categoryIds IN (:...categoryIds)",
+					{
+						categoryIds,
+					}
+				)
+			}
+
+			// Get the total number of surveys matching the filters (for pagination)
+			const totalCount = await filteredQuery.getCount()
+
+			// Sort results by selected field (sortBy) and order (ASC/DESC)
+			filteredQuery.orderBy(`survey.${sortBy}`, order)
+
+			// Apply pagination
+			filteredQuery.skip((page - 1) * limit).take(limit)
+
+			const allSurveys = await filteredQuery.getMany()
+
+			if (!allSurveys) {
 				throw new AppError("Surveys not found", 404, "NotFoundError")
 			}
 
-			return surveys
+			return {
+				allSurveys,
+				totalCount,
+				totalCountAll,
+				page,
+				limit,
+			}
 		} catch (error) {
 			throw new AppError(
 				"Failed to fetch surveys",
@@ -104,13 +169,27 @@ export class SurveysResolver {
 	}
 
 	/**
-	 * Query to get surveys of the currently authenticated user.
+	 * GraphQL Query permettant de récupérer les enquêtes de l'utilisateur actuellement authentifié.
 	 *
-	 * @param context - The context object that contains the currently authenticated user.
+	 * Cette requête prend en charge :
+	 * - la recherche par titre,
+	 * - le filtrage par statut,
+	 * - le tri (par date de création ou de modification, ASC/DESC),
+	 * - la pagination,
+	 * - ainsi que le comptage total d'enquêtes avant et après filtres.
 	 *
-	 * @returns A Promise that resolves to an array of Survey objects owned by the authenticated user.
+	 * ⚠️ L'accès est restreint aux rôles `User` et `Admin`.
 	 *
-	 * This query allows a user to retrieve only their own surveys.
+	 * @param filters - Filtres de recherche et options de tri/pagination (champ, ordre, page, limite...).
+	 * @param context - Contexte GraphQL contenant l'utilisateur authentifié.
+	 *
+	 * @returns Un objet `MySurveysResult` contenant :
+	 * - `surveys` : Liste paginée des enquêtes après application des filtres.
+	 * - `totalCount` : Nombre total d’enquêtes correspondant aux filtres.
+	 * - `totalCountAll` : Nombre total d’enquêtes de l’utilisateur sans filtre.
+	 * - `page` et `limit` : Infos de pagination.
+	 *
+	 * @throws AppError - Si aucun utilisateur n’est présent dans le contexte ou en cas d’erreur serveur.
 	 */
 	@Authorized(Roles.User, Roles.Admin)
 	@Query(() => MySurveysResult)

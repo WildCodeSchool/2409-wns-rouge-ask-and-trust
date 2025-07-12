@@ -1,22 +1,28 @@
 import { gql } from "@apollo/client"
 
 export const GET_SURVEYS = gql`
-	query Surveys {
-		surveys {
-			id
-			title
-			description
-			status
-			createdAt
-			updatedAt
-			category {
+	query Surveys($filters: AllSurveysQueryInput!) {
+		surveys(filters: $filters) {
+			allSurveys {
 				id
-				name
+				title
+				description
+				status
+				createdAt
+				updatedAt
+				category {
+					id
+					name
+				}
+				user {
+					id
+					email
+				}
 			}
-			user {
-				id
-				email
-			}
+			totalCount
+			totalCountAll
+			page
+			limit
 		}
 	}
 `

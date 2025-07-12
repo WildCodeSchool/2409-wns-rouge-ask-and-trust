@@ -6,7 +6,7 @@ import { Helmet } from "react-helmet"
 import { cn } from "@/lib/utils"
 import { useQuery } from "@apollo/client"
 import { GET_SURVEYS } from "@/graphql/survey/survey"
-import { SurveyCardType } from "@/types/types"
+import { AllSurveysHome, SurveyCardType } from "@/types/types"
 
 export default function Surveys() {
 	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
@@ -32,8 +32,28 @@ export default function Surveys() {
 		}
 	}, [isMobile])
 
-	const { data, loading: isFetching } = useQuery(GET_SURVEYS)
-	const surveys = data?.surveys || []
+	const {
+		data,
+		loading: isFetching,
+		error,
+	} = useQuery<AllSurveysHome>(GET_SURVEYS, {
+		variables: {
+			filters: {
+				page: 1,
+				limit: 12,
+				// search: "",
+				// categoryIds: 1,
+				// sortBy: "estimatedDuration",
+				// order: "DESC",
+			},
+		},
+	})
+	if (error) {
+		console.error("GraphQL Error:", error)
+	}
+
+	const allSurveysData = data?.surveys?.allSurveys ?? []
+	console.log("🚀 ~ Surveys ~ allSurveysData:", allSurveysData)
 
 	return (
 		<>
@@ -91,7 +111,7 @@ export default function Surveys() {
 						isMobile ? "gap-14" : "gap-20"
 					)}
 				>
-					{surveys.map((survey: SurveyCardType) => (
+					{allSurveysData.map((survey: SurveyCardType) => (
 						// Implémenter l'image, le temps estimé et la durée de disponibilité de l'enquête
 
 						<SurveyCard

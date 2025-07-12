@@ -68,6 +68,18 @@ export interface SurveyCardType {
 	timeLeft: string
 }
 
+export type AllSurveysResult = {
+	allSurveys: SurveyCardType[]
+	totalCount: number
+	totalCountAll: number
+	page: number
+	limit: number
+}
+
+export type AllSurveysHome = {
+	surveys: AllSurveysResult
+}
+
 export type Package = {
 	label: string
 	amount: number
