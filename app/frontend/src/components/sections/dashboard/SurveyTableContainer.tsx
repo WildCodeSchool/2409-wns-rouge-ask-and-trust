@@ -1,6 +1,7 @@
 import {
 	DateSortFilter,
 	SurveysDashboardQuery,
+	SurveyStatus,
 	SurveyTableType,
 } from "@/types/types"
 import { CheckedState } from "@radix-ui/react-checkbox"
@@ -8,7 +9,7 @@ import { useEffect, useState } from "react"
 import SurveyTable from "@/components/sections/dashboard/SurveyTable"
 import SurveyTableNav from "@/components/sections/dashboard/SurveyTableNav"
 import SurveyTableFilter from "@/components/sections/dashboard/SurveyTableFilter"
-import { useQuery } from "@apollo/client"
+import { NetworkStatus, useQuery } from "@apollo/client"
 import { GET_MY_SURVEYS } from "@/graphql/survey/survey"
 import SurveyTableSearch from "@/components/sections/dashboard/SurveyTableSearch"
 
@@ -26,11 +27,64 @@ export default function SurveyTableContainer() {
 	const [isHeaderChecked, setIsHeaderChecked] = useState<CheckedState>(false)
 	const [filters, setFilters] = useState<string[]>([])
 	const [searchTerm, setSearchTerm] = useState<string>("")
+	const [debouncedSearch, setDebouncedSearch] = useState("")
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const surveysPerPage = 5
 
-	const { data } = useQuery<SurveysDashboardQuery>(GET_MY_SURVEYS)
-	const surveysData = data?.mySurveys ?? []
+	const selectedStatuses = filters.filter(f =>
+		Object.values(statusLabelMap).includes(f)
+	)
+
+	const selectedSort = filters.find((f): f is DateSortFilter =>
+		DATE_SORT_FILTERS.includes(f as DateSortFilter)
+	)
+
+	useEffect(() => {
+		const handler = setTimeout(() => {
+			setDebouncedSearch(searchTerm)
+		}, 400)
+
+		return () => clearTimeout(handler)
+	}, [searchTerm])
+
+	const { data, loading, networkStatus } = useQuery<SurveysDashboardQuery>(
+		GET_MY_SURVEYS,
+		{
+			variables: {
+				filters: {
+					page: currentPage,
+					limit: surveysPerPage,
+					search: debouncedSearch.trim(),
+					status: selectedStatuses.map(
+						label =>
+							Object.entries(statusLabelMap).find(
+								([, v]) => v === label
+							)?.[0]
+					) as SurveyStatus[],
+					sortBy: "createdAt",
+					order: selectedSort === "Plus ancienne" ? "ASC" : "DESC",
+				},
+				notifyOnNetworkStatusChange: true,
+			},
+		}
+	)
+
+	const isRefetching = networkStatus === NetworkStatus.refetch
+	const isInitialLoading = loading && !data
+
+	const [previousData, setPreviousData] =
+		useState<SurveysDashboardQuery | null>(null)
+
+	useEffect(() => {
+		if (data && !isRefetching) {
+			setPreviousData(data)
+		}
+	}, [data, isRefetching])
+
+	const currentData = data || previousData
+	const surveysData = currentData?.mySurveys?.surveys ?? []
+	const totalCount = currentData?.mySurveys?.totalCount ?? 0
+	const totalCountAll = currentData?.mySurveys?.totalCountAll ?? 0
 
 	const handleSurveyCheckboxChange = (
 		surveyId: number,
@@ -67,62 +121,28 @@ export default function SurveyTableContainer() {
 
 	const atLeastTwoSelected = selectedSurveyIds.length >= 2
 
-	const selectedStatuses = filters.filter(f =>
-		Object.values(statusLabelMap).includes(f)
-	)
-
-	const selectedSort = filters.find((f): f is DateSortFilter =>
-		DATE_SORT_FILTERS.includes(f as DateSortFilter)
-	)
-
-	const filteredSurveys = surveysData.filter(survey => {
-		const statusLabel = statusLabelMap[survey.status]
-		const matchStatus =
-			selectedStatuses.length === 0 ||
-			selectedStatuses.includes(statusLabel)
-		const matchSearch =
-			searchTerm.trim() === "" ||
-			survey.title.toLowerCase().includes(searchTerm.toLowerCase())
-		return matchStatus && matchSearch
-	})
-
-	const sortedSurveys = [...filteredSurveys].sort((a, b) => {
-		switch (selectedSort) {
-			case "Plus récente":
-				return (
-					new Date(b.createdAt).getTime() -
-					new Date(a.createdAt).getTime()
-				)
-			case "Plus ancienne":
-				return (
-					new Date(a.createdAt).getTime() -
-					new Date(b.createdAt).getTime()
-				)
-			default:
-				return 0
-		}
-	})
-
-	const start = (currentPage - 1) * surveysPerPage
-	const end = start + surveysPerPage
-	const paginatedSurveys = sortedSurveys.slice(start, end)
+	const paginatedSurveys = surveysData
 
 	useEffect(() => {
-		const totalPages = Math.ceil(sortedSurveys.length / surveysPerPage)
-
-		if (currentPage > totalPages) {
-			setCurrentPage(Math.max(1, totalPages))
-		}
-
 		setIsHeaderChecked(false)
 		setSelectedSurveyIds([])
-	}, [sortedSurveys.length, currentPage, surveysPerPage])
+	}, [currentPage])
 
-	if (surveysData.length === 0) {
+	if (isInitialLoading && !previousData) {
 		return (
 			<div className="flex h-full w-full items-center justify-center">
 				<p className="text-black-default text-xl font-medium">
-					Vous n'avez pas encore créé d'enquête.
+					Chargement des enquêtes...
+				</p>
+			</div>
+		)
+	}
+
+	if (totalCountAll === 0 && !isRefetching && currentData) {
+		return (
+			<div className="flex h-full w-full items-center justify-center">
+				<p className="text-black-default text-xl font-medium">
+					Vous n'avez pas encore créé d'enquête...
 				</p>
 			</div>
 		)
@@ -132,22 +152,40 @@ export default function SurveyTableContainer() {
 		<div className="flex flex-col gap-10">
 			<div className="flex items-start justify-between max-sm:flex-col max-sm:gap-5">
 				<SurveyTableFilter filters={filters} setFilters={setFilters} />
-				<SurveyTableSearch onSearch={setSearchTerm} />
-			</div>
-			<div>
-				<SurveyTable
-					isHeaderChecked={isHeaderChecked}
-					handleSelectAll={handleSelectAll}
-					surveys={paginatedSurveys}
-					selectedSurveyIds={selectedSurveyIds}
-					handleSurveyCheckboxChange={handleSurveyCheckboxChange}
-					statusLabelMap={statusLabelMap}
+				<SurveyTableSearch
+					value={searchTerm}
+					setValue={setSearchTerm}
 				/>
+			</div>
+			{isRefetching && (
+				<div className="flex items-center justify-center py-4">
+					<p className="text-lg text-gray-600">
+						Chargement des résultats...
+					</p>
+				</div>
+			)}
+			<div>
+				{totalCount > 0 ? (
+					<SurveyTable
+						isHeaderChecked={isHeaderChecked}
+						handleSelectAll={handleSelectAll}
+						surveys={paginatedSurveys}
+						selectedSurveyIds={selectedSurveyIds}
+						handleSurveyCheckboxChange={handleSurveyCheckboxChange}
+						statusLabelMap={statusLabelMap}
+					/>
+				) : (
+					<div className="flex h-full w-full items-center justify-center">
+						<p className="text-black-default text-xl font-medium">
+							Aucune enquête ne correspond à votre recherche...
+						</p>
+					</div>
+				)}
 				<SurveyTableNav
 					showDeleteButton={atLeastTwoSelected}
 					currentPage={currentPage}
 					setCurrentPage={setCurrentPage}
-					sortedSurveys={sortedSurveys}
+					totalCount={totalCount}
 					surveysPerPage={surveysPerPage}
 					selectedSurveyIds={selectedSurveyIds}
 				/>
