@@ -188,11 +188,19 @@ export type SurveyTableType = {
 	updatedAt: string
 }
 
-export type SurveysDashboardQuery = {
-	mySurveys: SurveyTableType[]
+export type MySurveysResult = {
+	surveys: SurveyTableType[]
+	totalCount: number
+	totalCountAll: number
+	page: number
+	limit: number
 }
 
-type SurveyStatus = "draft" | "published" | "archived" | "censored"
+export type SurveysDashboardQuery = {
+	mySurveys: MySurveysResult
+}
+
+export type SurveyStatus = "draft" | "published" | "archived" | "censored"
 
 export type SurveyTableProps = {
 	isHeaderChecked: CheckedState
@@ -228,7 +236,7 @@ export type SurveyTableNavProps = {
 	showDeleteButton: boolean
 	currentPage: number
 	setCurrentPage: (page: number) => void
-	sortedSurveys: SurveyTableType[]
+	totalCount: number
 	surveysPerPage: number
 	selectedSurveyIds: number[]
 }
