@@ -52,13 +52,19 @@ export const GET_SURVEY = gql`
 `
 
 export const GET_MY_SURVEYS = gql`
-	query MySurveys {
-		mySurveys {
-			id
-			title
-			status
-			createdAt
-			updatedAt
+	query MySurveys($filters: MySurveysQueryInput!) {
+		mySurveys(filters: $filters) {
+			surveys {
+				id
+				title
+				status
+				createdAt
+				updatedAt
+			}
+			totalCount
+			totalCountAll
+			page
+			limit
 		}
 	}
 `
