@@ -23,3 +23,5 @@ export const TypesOfQuestion = {
 
 export type QuestionType =
 	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]
+
+export type SurveyStatus = "draft" | "published" | "archived" | "censored"
