@@ -9,7 +9,7 @@ import { useMutation } from "@apollo/client"
 export default function SurveyTableNav({
 	showDeleteButton,
 	currentPage,
-	sortedSurveys,
+	totalCount,
 	surveysPerPage,
 	setCurrentPage,
 	selectedSurveyIds,
@@ -61,7 +61,7 @@ export default function SurveyTableNav({
 			<Pagination
 				className="m-0 w-max max-lg:order-1 max-lg:w-full"
 				currentPage={currentPage}
-				totalCount={sortedSurveys.length}
+				totalCount={totalCount}
 				perPage={surveysPerPage}
 				onPageChange={setCurrentPage}
 			/>
