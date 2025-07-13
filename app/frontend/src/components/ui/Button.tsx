@@ -16,7 +16,7 @@ const buttonVariants = cva(
 				tertiary:
 					"bg-white border-white text-primary-700 hover:bg-primary-700 hover:border-primary-700 hover:text-white focus:ring-primary-700",
 				navbar_btn:
-					"bg-primary-default text-white hover:bg-white font-semibold hover:text-primary-700 focus:ring-primary-default border-none",
+					"bg-primary-default text-white hover:bg-white font-semibold hover:text-primary-700 focus:ring-primary-700 border-none rounded-md",
 				pagination_btn:
 					"bg-transparent text-fg border-none hover:bg-fg hover:text-white focus:ring-primary-700 rounded-md",
 				outline:
