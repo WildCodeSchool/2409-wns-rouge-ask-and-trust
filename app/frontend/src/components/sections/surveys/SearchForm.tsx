@@ -1,26 +1,42 @@
 import { Search } from "lucide-react"
-import { useForm, SubmitHandler } from "react-hook-form"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
-
-interface SearchFormData {
-	search: string
-}
+import { useSearchParams } from "react-router-dom"
+import { Button } from "@/components/ui/Button"
+import { useEffect, useState } from "react"
 
 export default function SearchForm() {
-	const {
-		handleSubmit,
-		formState: { errors },
-	} = useForm<SearchFormData>()
+	const [searchParams, setSearchParams] = useSearchParams()
+	const [value, setValue] = useState<string>(searchParams.get("search") || "")
 
-	const onSubmit: SubmitHandler<SearchFormData> = data => {
-		// TODO: Implement search functionality
-		console.log("Search query:", data.search)
+	useEffect(() => {
+		if (value === "") {
+			const newParams = new URLSearchParams(searchParams)
+			newParams.delete("search")
+			newParams.set("page", "1")
+			setSearchParams(newParams)
+		}
+	}, [value])
+
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+
+		const newParams = new URLSearchParams(searchParams)
+
+		if (value.trim()) {
+			newParams.set("search", value.trim())
+			newParams.set("page", "1")
+		} else {
+			newParams.delete("search")
+			newParams.set("page", "1")
+		}
+
+		setSearchParams(newParams)
 	}
 
 	return (
 		<form
-			onSubmit={handleSubmit(onSubmit)}
+			onSubmit={handleSubmit}
 			className="relative flex flex-1 items-center justify-center"
 		>
 			<Label htmlFor="search" className="sr-only">
@@ -28,18 +44,20 @@ export default function SearchForm() {
 			</Label>
 			<Input
 				id="search"
-				placeholder="Rechercher une enquête"
-				className="text-input-fg focus:ring-primary-700 h-10 w-full overflow-hidden rounded-md border-0 bg-white py-1 pr-10 pl-2 text-ellipsis whitespace-nowrap outline-0 focus:ring-2 focus:ring-offset-2 focus:outline-none"
+				placeholder="Rechercher une enquête..."
 				type="search"
-				errorMessage={errors.search?.message}
+				value={value}
+				errorMessage=""
+				onChange={e => setValue(e.target.value)}
+				className="h-11 w-full bg-white py-2 pr-10 pl-2 text-ellipsis whitespace-nowrap"
 			/>
-			<button
+			<Button
 				type="submit"
-				className="bg-primary-600 absolute right-2 cursor-pointer rounded-md p-2"
-				aria-label="Rechercher"
+				ariaLabel="Rechercher une enquête"
+				className="group absolute right-1.5 p-2"
 			>
-				<Search className="h-4 w-4 text-white" />
-			</button>
+				<Search className="group-hover:text-primary-700 h-4 w-4 text-white transition-colors duration-200 ease-in-out" />
+			</Button>
 		</form>
 	)
 }

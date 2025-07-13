@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import logoFooter from "/logos/logo-footer.svg"
 import { Button } from "@/components/ui/Button"
 import NavAndAuthButtons from "./NavAndAuthButtons"
 import { useAuthContext } from "@/hooks/useAuthContext"
-import { cn } from "@/lib/utils"
+import { cn, slugify } from "@/lib/utils"
 import { useQuery } from "@apollo/client"
 import { GET_CATEGORIES } from "@/graphql/survey/category"
 import { SurveyCategoryType } from "@/types/types"
 
 export default function Header() {
 	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
+	const [searchParams, setSearchParams] = useSearchParams()
+	const [selectedCategory, setSelectedCategory] = useState<string | null>(
+		null
+	)
 	const { user } = useAuthContext()
 
 	useEffect(() => {
@@ -25,6 +29,24 @@ export default function Header() {
 	const { data: categoriesData, loading: loadingCategories } =
 		useQuery(GET_CATEGORIES)
 	const categories = categoriesData?.categories || []
+
+	const filterByCategory = (categorySlug: string, categoryId: string) => {
+		const newParams = new URLSearchParams(searchParams)
+
+		if (newParams.get("category") === categorySlug) {
+			newParams.delete("category")
+			newParams.delete("categoryId")
+			newParams.set("page", "1")
+			setSelectedCategory(null)
+		} else {
+			newParams.set("category", categorySlug)
+			newParams.set("categoryId", categoryId)
+			newParams.set("page", "1")
+			setSelectedCategory(categorySlug)
+		}
+
+		setSearchParams(newParams)
+	}
 
 	return (
 		<header
@@ -49,19 +71,29 @@ export default function Header() {
 				</Link>
 				<NavAndAuthButtons isMobile={isMobile} />
 			</div>
-			<div className="flex items-center gap-3 overflow-x-scroll pb-3">
+			<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3 pl-1">
 				{loadingCategories && (
 					<p className="text-white">Chargement des catégories...</p>
 				)}
-				{categories.map((category: SurveyCategoryType) => (
-					<Button
-						variant="navbar_btn"
-						size="sm"
-						ariaLabel={`Annonces de la catégorie ${category.name}`}
-						children={category.name}
-						className="min-w-fit"
-					/>
-				))}
+				{categories.map((category: SurveyCategoryType) => {
+					const slug = slugify(category.name)
+
+					return (
+						<Button
+							key={category.id}
+							variant="navbar_btn"
+							size="sm"
+							ariaLabel={`Annonces de la catégorie ${category.name}`}
+							children={category.name}
+							className={cn(
+								"min-w-fit",
+								selectedCategory === slug &&
+									"text-primary-700 bg-white"
+							)}
+							onClick={() => filterByCategory(slug, category.id)}
+						/>
+					)
+				})}
 			</div>
 		</header>
 	)

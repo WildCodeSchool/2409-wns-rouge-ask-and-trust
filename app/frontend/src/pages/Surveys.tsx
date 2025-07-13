@@ -7,9 +7,15 @@ import { cn } from "@/lib/utils"
 import { useQuery } from "@apollo/client"
 import { GET_SURVEYS } from "@/graphql/survey/survey"
 import { AllSurveysHome, SurveyCardType } from "@/types/types"
+import Pagination from "@/components/ui/Pagination"
+import { useSearchParams } from "react-router-dom"
+import Loader from "@/components/ui/Loader"
 
 export default function Surveys() {
 	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
+	const [searchParams] = useSearchParams()
+	const [currentPage, setCurrentPage] = useState<number>(1)
+	const surveysPerPage = 9
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -32,6 +38,8 @@ export default function Surveys() {
 		}
 	}, [isMobile])
 
+	const categoryId = searchParams.get("categoryId")
+
 	const {
 		data,
 		loading: isFetching,
@@ -39,10 +47,10 @@ export default function Surveys() {
 	} = useQuery<AllSurveysHome>(GET_SURVEYS, {
 		variables: {
 			filters: {
-				page: 1,
-				limit: 12,
-				// search: "",
-				// categoryIds: 1,
+				page: currentPage,
+				limit: surveysPerPage,
+				search: searchParams.get("search") || "",
+				categoryIds: categoryId ? [parseInt(categoryId, 10)] : [],
 				// sortBy: "estimatedDuration",
 				// order: "DESC",
 			},
@@ -53,7 +61,7 @@ export default function Surveys() {
 	}
 
 	const allSurveysData = data?.surveys?.allSurveys ?? []
-	console.log("🚀 ~ Surveys ~ allSurveysData:", allSurveysData)
+	const totalCount = data?.surveys?.totalCount ?? 0
 
 	return (
 		<>
@@ -100,32 +108,38 @@ export default function Surveys() {
 				>
 					Liste des enquêtes disponibles
 				</h1>
-				{isFetching && (
+				{isFetching ? (
 					<div className="flex items-center justify-center">
-						<p>Chargement des enquêtes...</p>
+						<Loader />
+					</div>
+				) : (
+					<div
+						className={cn(
+							"grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] justify-items-center",
+							isMobile ? "gap-14" : "gap-20"
+						)}
+					>
+						{allSurveysData.map((survey: SurveyCardType) => (
+							<SurveyCard
+								key={survey.id}
+								id={survey.id}
+								picture={img}
+								title={survey.title}
+								description={survey.description}
+								category={survey.category}
+								estimateTime={5}
+								timeLeft="Un mois"
+							/>
+						))}
 					</div>
 				)}
-				<div
-					className={cn(
-						"grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] justify-items-center",
-						isMobile ? "gap-14" : "gap-20"
-					)}
-				>
-					{allSurveysData.map((survey: SurveyCardType) => (
-						// Implémenter l'image, le temps estimé et la durée de disponibilité de l'enquête
-
-						<SurveyCard
-							key={survey.id}
-							id={survey.id}
-							picture={img}
-							title={survey.title}
-							description={survey.description}
-							category={survey.category}
-							estimateTime={5}
-							timeLeft="Un mois"
-						/>
-					))}
-				</div>
+				<Pagination
+					className="mx-auto mt-20 mb-0 w-max"
+					currentPage={currentPage}
+					totalCount={totalCount}
+					perPage={surveysPerPage}
+					onPageChange={setCurrentPage}
+				/>
 			</section>
 			{!isMobile && (
 				<div className="flex items-center justify-center">
