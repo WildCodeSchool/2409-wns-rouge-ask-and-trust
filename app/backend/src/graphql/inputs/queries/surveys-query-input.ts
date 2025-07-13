@@ -1,4 +1,5 @@
-import { IsOptional, IsInt, Min } from "class-validator"
+import { Type } from "class-transformer"
+import { IsOptional, IsInt, Min, IsArray } from "class-validator"
 import { Field, InputType, Int } from "type-graphql"
 
 /**
@@ -21,7 +22,9 @@ export class AllSurveysQueryInput {
 
 	@Field(() => [Int], { nullable: true })
 	@IsOptional()
-	@IsInt()
+	@IsArray()
+	@IsInt({ each: true })
+	@Type(() => Number)
 	categoryIds?: number[]
 
 	@Field(() => Int, { nullable: true })

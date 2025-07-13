@@ -91,7 +91,7 @@ export class SurveysResolver {
 			// Filter by category
 			if (categoryIds && categoryIds.length > 0) {
 				filteredQuery.andWhere(
-					"survey.categoryIds IN (:...categoryIds)",
+					"survey.category.id IN (:...categoryIds)",
 					{
 						categoryIds,
 					}
