@@ -12,4 +12,4 @@ export const slugify = (str: string): string =>
 		.toLowerCase()
 		.trim()
 		.replace(/\s+/g, "-") // espaces → tirets
-		.replace(/[^\w\-]+/g, "") // supprime les caractères spéciaux
+		.replace(/[^\w-]+/g, "") // supprime les caractères spéciaux
