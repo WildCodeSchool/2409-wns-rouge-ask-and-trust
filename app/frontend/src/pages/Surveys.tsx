@@ -10,21 +10,13 @@ import { AllSurveysHome, SurveyCardType } from "@/types/types"
 import Pagination from "@/components/ui/Pagination"
 import { useSearchParams } from "react-router-dom"
 import Loader from "@/components/ui/Loader"
+import useResponsive from "@/hooks/useResponsive"
 
 export default function Surveys() {
-	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
+	const isMobile = useResponsive()
 	const [searchParams] = useSearchParams()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const surveysPerPage = 9
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMobile(window.innerWidth < 768)
-		}
-
-		window.addEventListener("resize", handleResize)
-		return () => window.removeEventListener("resize", handleResize)
-	}, [])
 
 	useEffect(() => {
 		if (isMobile) {

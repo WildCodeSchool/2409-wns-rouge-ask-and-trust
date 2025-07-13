@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import logoFooter from "/logos/logo-footer.svg"
 import { Button } from "@/components/ui/Button"
@@ -8,23 +8,15 @@ import { cn, slugify } from "@/lib/utils"
 import { useQuery } from "@apollo/client"
 import { GET_CATEGORIES } from "@/graphql/survey/category"
 import { SurveyCategoryType } from "@/types/types"
+import useResponsive from "@/hooks/useResponsive"
 
 export default function Header() {
-	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768)
+	const isMobile = useResponsive()
 	const [searchParams, setSearchParams] = useSearchParams()
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(
 		null
 	)
 	const { user } = useAuthContext()
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMobile(window.innerWidth < 768)
-		}
-
-		window.addEventListener("resize", handleResize)
-		return () => window.removeEventListener("resize", handleResize)
-	}, [])
 
 	const { data: categoriesData, loading: loadingCategories } =
 		useQuery(GET_CATEGORIES)

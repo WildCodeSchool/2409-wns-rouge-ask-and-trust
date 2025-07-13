@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import HeaderMobileMenu from "./HeaderMobileMenu"
 import NavAndAuthButtons from "./NavAndAuthButtons"
 import { Button } from "@/components/ui/Button"
+import useResponsive from "@/hooks/useResponsive"
 
 const HEADER_LINKS: readonly LinksType[] = [
 	{
@@ -30,7 +31,7 @@ const HEADER_LINKS: readonly LinksType[] = [
 
 export default function Header() {
 	const [showMenu, setShowMenu] = useState<boolean>(false)
-	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 1024)
+	const isMobile = useResponsive(1024)
 
 	const handleShowMenu = () => {
 		setShowMenu(!showMenu)
@@ -47,15 +48,6 @@ export default function Header() {
 			document.body.classList.remove("no-scroll")
 		}
 	}, [showMenu])
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMobile(window.innerWidth < 1024)
-		}
-
-		window.addEventListener("resize", handleResize)
-		return () => window.removeEventListener("resize", handleResize)
-	}, [])
 
 	return (
 		<header
