@@ -18,6 +18,8 @@ export const GET_SURVEYS = gql`
 					id
 					email
 				}
+				estimatedDuration
+				availableDuration
 			}
 			totalCount
 			totalCountAll

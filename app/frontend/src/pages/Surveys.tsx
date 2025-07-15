@@ -11,12 +11,14 @@ import Pagination from "@/components/ui/Pagination"
 import { useSearchParams } from "react-router-dom"
 import Loader from "@/components/ui/Loader"
 import useResponsive from "@/hooks/useResponsive"
+import SurveyDurationFilter from "@/components/sections/surveys/ui/SurveyDurationFilter"
 
 export default function Surveys() {
 	const isMobile = useResponsive()
 	const [searchParams] = useSearchParams()
 	const [currentPage, setCurrentPage] = useState<number>(1)
-	const surveysPerPage = 9
+	const [sortTimeOption, setSortTimeOption] = useState<string>("")
+	const surveysPerPage = 12
 
 	useEffect(() => {
 		if (isMobile) {
@@ -32,27 +34,37 @@ export default function Surveys() {
 
 	const categoryId = searchParams.get("categoryId")
 
-	const {
-		data,
-		loading: isFetching,
-		error,
-	} = useQuery<AllSurveysHome>(GET_SURVEYS, {
-		variables: {
-			filters: {
-				page: currentPage,
-				limit: surveysPerPage,
-				search: searchParams.get("search") || "",
-				categoryIds: categoryId ? [parseInt(categoryId, 10)] : [],
-				// sortBy: "estimatedDuration",
-				// order: "DESC",
-			},
-		},
-	})
-	if (error) {
-		console.error("GraphQL Error:", error)
+	const getSortParams = (sortTimeOption: string) => {
+		if (!sortTimeOption)
+			return { sortBy: "estimatedDuration", order: "DESC" }
+
+		const [field, direction] = sortTimeOption.split("_")
+		return {
+			sortBy: field as "estimatedDuration" | "availableDuration",
+			order: direction as "ASC" | "DESC",
+		}
 	}
 
+	const { sortBy, order } = getSortParams(sortTimeOption)
+
+	const { data, loading: isFetching } = useQuery<AllSurveysHome>(
+		GET_SURVEYS,
+		{
+			variables: {
+				filters: {
+					page: currentPage,
+					limit: surveysPerPage,
+					search: searchParams.get("search") || "",
+					categoryIds: categoryId ? [parseInt(categoryId, 10)] : [],
+					sortBy,
+					order,
+				},
+			},
+		}
+	)
+
 	const allSurveysData = data?.surveys?.allSurveys ?? []
+	console.log("🚀 ~ Surveys ~ allSurveysData:", allSurveysData)
 	const totalCount = data?.surveys?.totalCount ?? 0
 
 	return (
@@ -100,6 +112,10 @@ export default function Surveys() {
 				>
 					Liste des enquêtes disponibles
 				</h1>
+				<SurveyDurationFilter
+					sortTimeOption={sortTimeOption}
+					setSortTimeOption={setSortTimeOption}
+				/>
 				{isFetching ? (
 					<div className="flex items-center justify-center">
 						<Loader />
@@ -119,10 +135,17 @@ export default function Surveys() {
 								title={survey.title}
 								description={survey.description}
 								category={survey.category}
-								estimateTime={5}
-								timeLeft="Un mois"
+								estimatedDuration={survey.estimatedDuration}
+								availableDuration={survey.availableDuration}
 							/>
 						))}
+					</div>
+				)}
+				{totalCount === 0 && (
+					<div className="flex w-full items-center justify-center">
+						<p className="text-black-default text-xl font-medium">
+							Aucune enquête ne correspond à votre recherche...
+						</p>
 					</div>
 				)}
 				<Pagination

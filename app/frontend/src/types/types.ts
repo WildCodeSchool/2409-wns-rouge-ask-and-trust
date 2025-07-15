@@ -64,8 +64,8 @@ export interface SurveyCardType {
 	title: string
 	description: string
 	category: SurveyCategoryType
-	estimateTime: number
-	timeLeft: string
+	estimatedDuration: number
+	availableDuration: number
 }
 
 export type AllSurveysResult = {
@@ -269,6 +269,11 @@ export type SelectFilterProps = {
 export type SurveyTableFilterProps = {
 	filters: string[]
 	setFilters: (filters: string[]) => void
+}
+
+export type SurveyDurationFilterProps = {
+	sortTimeOption: string
+	setSortTimeOption: (filters: string) => void
 }
 
 export type DateSortFilter = "Plus récente" | "Plus ancienne"
