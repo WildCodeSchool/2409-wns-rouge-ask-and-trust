@@ -49,12 +49,17 @@ export interface NavAndAuthButtonsProps {
 	handleShowMenu?: () => void
 }
 
+export type SurveyCategoryType = {
+	id: string
+	name: string
+}
+
 export interface SurveyCardType {
-	href: string
+	id: string
 	picture: string
 	title: string
-	content: string
-	tag: string
+	description: string
+	category: SurveyCategoryType
 	estimateTime: number
 	timeLeft: string
 }
