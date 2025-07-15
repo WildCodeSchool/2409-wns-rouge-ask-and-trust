@@ -5,8 +5,8 @@ import {
 	UPDATE_QUESTION,
 } from "@/graphql/survey/question"
 import { GET_SURVEY } from "@/graphql/survey/survey"
-import { QuestionType, TypesOfQuestion } from "@/types/types"
-import { useMutation } from "@apollo/client"
+import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
+import { useMutation, useQuery } from "@apollo/client"
 import { AnswerObject } from "./../../../backend/src/graphql/inputs/create/survey/create-questions-input"
 
 export type CreateQuestionInput = {
@@ -92,6 +92,11 @@ export function useQuestions() {
 	}
 
 	const updateQuestion = async (question: UpdateQuestionInput) => {
+		// Clean answers if question type is Text
+		if (question.type === TypesOfQuestion.Text) {
+			question.answers = []
+		}
+
 		const result = await updateQuestionMutation({
 			variables: { data: question },
 			refetchQueries: [
@@ -106,7 +111,6 @@ export function useQuestions() {
 		return result
 	}
 	const deleteQuestion = async (id: number, surveyId: number) => {
-		console.log("surveyId in useQuestion", surveyId)
 		const result = await deleteQuestionMutation({
 			variables: { deleteQuestionId: id },
 			refetchQueries: [
@@ -122,7 +126,6 @@ export function useQuestions() {
 	}
 
 	return {
-		// questions,
 		addQuestion,
 		isCreateQuestionLoading,
 		createQuestionError,
@@ -132,5 +135,27 @@ export function useQuestions() {
 		deleteQuestion,
 		isDeleteQuestionLoading,
 		deleteQuestionError,
+	}
+}
+
+export function useQuestion(questionId?: number) {
+	const { data, loading, error, refetch } = useQuery<{
+		question: QuestionUpdate // @TODO check if type ok
+	}>(GET_QUESTION, {
+		variables: { questionId },
+		skip: !questionId, // Skip the query if questionId is not provided
+	})
+
+	const refetchQuestion = async (id: number) => {
+		if (!id) return null
+		const result = await refetch?.({ questionId: id })
+		return result?.data?.question
+	}
+
+	return {
+		question: data?.question,
+		loading,
+		error,
+		refetchQuestion,
 	}
 }
