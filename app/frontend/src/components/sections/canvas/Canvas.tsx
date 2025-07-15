@@ -3,7 +3,7 @@ import BuildQuestion from "@/components/sections/surveys/buildSurvey/question/Bu
 import { Button } from "@/components/ui/Button"
 import { useQuestions } from "@/hooks/useQuestions"
 import { PlusCircle } from "lucide-react"
-import { useLayoutEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
 interface CanvasProps {
@@ -22,7 +22,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 		useState<HTMLLIElement | null>(null)
 
 	// Scroll to the new question after creation and focus on it
-	useLayoutEffect(() => {
+	useEffect(() => {
 		if (newQuestionId != null && newQuestionElement) {
 			newQuestionElement.scrollIntoView({
 				behavior: "smooth",
@@ -40,8 +40,6 @@ export const Canvas: React.FC<CanvasProps> = ({
 				<EmptyState />
 			) : (
 				questions.map((question: { id: number }) => {
-					console.log("meme ids ?", newQuestionId === question.id)
-
 					return (
 						<BuildQuestion
 							key={question.id}
