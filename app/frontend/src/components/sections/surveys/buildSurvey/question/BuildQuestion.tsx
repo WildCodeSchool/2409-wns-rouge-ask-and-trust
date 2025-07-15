@@ -44,6 +44,7 @@ export function RenderAnswerComponent({
 	remove,
 	append,
 }: RenderAnswerComponentProps) {
+	// Render the appropriate answer component based on the question type
 	switch (questionType) {
 		case TypesOfQuestion.Text:
 		case TypesOfQuestion.Boolean: // @TODO : render list answer for Boolean Question instead of null
@@ -65,6 +66,8 @@ export function RenderAnswerComponent({
 }
 
 const getDefaultAnswersForType = (type: QuestionType) => {
+	// Provide default answers based on the question type
+	// This is useful when the question type changes and there are no answers yet
 	switch (type) {
 		case TypesOfQuestion.Boolean:
 			return [{ value: "Vrai" }, { value: "Faux" }]
@@ -83,56 +86,58 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		control,
 		formState: { errors },
 		reset,
-		// watch,
 	} = useForm<QuestionUpdate>()
-	// 	{
-	// 	defaultValues: {
-	// 		title: "Titre de la question",
-	// 		type: TypesOfQuestion.Text,
-	// 		answers: [],
-	// 	},
-	// }
+	// Load question data from the API
+	const { question, loading, error } = useQuestion(questionId)
+	// Load question update and delete functions from the API
+	const { updateQuestion, deleteQuestion } = useQuestions()
+	// Show / hide delete question button
 	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
 		useState(false)
-
-	const { question } = useQuestion(questionId)
-
 	// Allow to manipulate answers as a dynamic array (no state needed)
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "answers",
 	})
-	const { updateQuestion, updateQuestionError, deleteQuestion } =
-		useQuestions()
 
 	const onSubmit = (formData: UpdateQuestionInput) => {
-		console.log("updateQuestionError", updateQuestionError)
 		if (!question?.id) return
-
+		// Format answers to match the expected structure in API
 		const formattedAnswers = formData.answers?.map(({ value }) => ({
 			value,
 		}))
 
 		const { title, type } = formData
 
+		// Call the updateQuestion function with the formatted data
 		updateQuestion({
 			id: question.id,
 			title: title,
 			type: type,
 			answers: formattedAnswers,
 		})
+
+		// Reset the form with the updated question data
+		reset({
+			title: formData.title,
+			type: formData.type,
+			answers:
+				type === TypesOfQuestion.Text ? [] : (formattedAnswers ?? []),
+		})
 	}
 
-	// Fill form data with question's data from database
 	useEffect(() => {
-		if (question) {
+		if (question && !loading && !error) {
+			// Reset the form with the current question data
+			// This ensures that the form is populated with the latest question data
 			reset({
 				title: question.title,
 				type: question.type,
 				answers: question.answers,
 			})
 		}
-	}, [question, reset])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [question?.id, loading, error, reset])
 
 	const watchedType = useWatch({
 		control,
@@ -142,22 +147,24 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 
 	// After saving question, if type has changed and there is no answer, provide default answers
 	useEffect(() => {
-		if (!watchedType) return
+		if (!watchedType || !question) return
 
+		// Check if the type has changed and if there are no answers yet
 		const hasTypeChanged =
 			prevTypeRef.current && prevTypeRef.current !== watchedType
 		const answersAreEmpty = fields.length === 0
 
 		if (hasTypeChanged && answersAreEmpty) {
+			// If the form has no answers, append default answers based on the type
 			const defaults = getDefaultAnswersForType(watchedType)
-
+			// Append default answers to the form
 			for (const defaultAnswer of defaults) {
 				append(defaultAnswer)
 			}
 		}
-
+		// Always update the previous type reference after checking
 		prevTypeRef.current = watchedType
-	}, [watchedType, append, fields.length])
+	}, [append, fields.length, question, watchedType])
 
 	const handleClickDelete = (
 		questionId: number | undefined,

@@ -92,6 +92,11 @@ export function useQuestions() {
 	}
 
 	const updateQuestion = async (question: UpdateQuestionInput) => {
+		// Clean answers if question type is Text
+		if (question.type === TypesOfQuestion.Text) {
+			question.answers = []
+		}
+
 		const result = await updateQuestionMutation({
 			variables: { data: question },
 			refetchQueries: [
@@ -135,10 +140,10 @@ export function useQuestions() {
 
 export function useQuestion(questionId?: number) {
 	const { data, loading, error, refetch } = useQuery<{
-		question: QuestionUpdate // check type
+		question: QuestionUpdate // @TODO check if type ok
 	}>(GET_QUESTION, {
 		variables: { questionId },
-		skip: !questionId,
+		skip: !questionId, // Skip the query if questionId is not provided
 	})
 
 	const refetchQuestion = async (id: number) => {
