@@ -110,7 +110,7 @@ const AllPackages = () => {
 					<div className="flex flex-row items-center justify-start gap-3 px-3 py-3">
 						<img
 							className="max-w-[36px]"
-							src="../../../public/assets/check.svg"
+							src={imgCheck}
 							alt="img-check"
 						/>
 						<p className="text-lg">Questions illimitées</p>
