@@ -9,7 +9,7 @@ import { Field, InputType, Int } from "type-graphql"
  * - `search` : filtre les enquêtes par mot-clé (titre).
  * - `categoryId` : filtre par identifiant de catégorie.
  * - `estimatedDurationMax` : filtre les enquêtes avec une durée estimée inférieure ou égale (en minutes).
- * - `remainingDurationMax` : filtre celles dont le temps restant avant expiration est inférieur ou égal (en jours).
+ * - `availableDurationMax` : filtre celles dont le temps restant avant expiration est inférieur ou égal (en jours).
  * - `sortBy` : critère de tri (création, durée estimée, temps restant...).
  * - `order` : ordre de tri (ASC ou DESC).
  * - `page` & `limit` : paramètres de pagination.
@@ -27,21 +27,9 @@ export class AllSurveysQueryInput {
 	@Type(() => Number)
 	categoryIds?: number[]
 
-	@Field(() => Int, { nullable: true })
-	@IsOptional()
-	@IsInt()
-	@Min(1)
-	estimatedDurationMax?: number
-
-	@Field(() => Int, { nullable: true })
-	@IsOptional()
-	@IsInt()
-	@Min(1)
-	remainingDurationMax?: number
-
 	@Field({ nullable: true })
 	@IsOptional()
-	sortBy?: "estimatedDuration" | "remainingDuration"
+	sortBy?: "estimatedDuration" | "availableDuration"
 
 	@Field({ nullable: true })
 	@IsOptional()
