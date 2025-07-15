@@ -1,5 +1,5 @@
 import { LucideIcon } from "lucide-react"
-import { UserRole } from "backend/src/types/types"
+import { UserRole } from "./../../../backend/src/types/types"
 import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
 import { CheckedState } from "@radix-ui/react-checkbox"
 
@@ -29,8 +29,16 @@ export interface LinksType {
 	Icon?: LucideIcon
 }
 
-export type UserSignUp = User
-export type UserSignIn = Pick<User, "email" | "password">
+export interface UserAuth {
+	firstname: string
+	lastname: string
+	email: string
+	password: string
+	role: UserRole
+}
+
+export type UserSignUp = UserAuth
+export type UserSignIn = Pick<UserAuth, "email" | "password">
 export type UserSignForm = UserSignUp | UserSignIn
 
 export interface ErrorLayoutProps {
@@ -109,7 +117,7 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	questions: { id: number }[] // @TODO check this change in number
+	questions: { id: number }[]
 }
 
 export type CreateSurveyInput = Survey
