@@ -71,9 +71,7 @@ export default function SurveyTableNav({
 				onClick={() => handleDeleteSurveys(selectedSurveyIds)}
 				className={cn(
 					"transition-all duration-200 ease-in-out max-lg:order-3",
-					showDeleteButton
-						? "opacity-100"
-						: "pointer-events-none opacity-0"
+					!showDeleteButton && "hidden"
 				)}
 			>
 				Supprimer des enquêtes
