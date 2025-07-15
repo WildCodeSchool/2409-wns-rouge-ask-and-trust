@@ -181,15 +181,15 @@ export default function SurveyTableContainer() {
 						</p>
 					</div>
 				)}
-				<SurveyTableNav
-					showDeleteButton={atLeastTwoSelected}
-					currentPage={currentPage}
-					setCurrentPage={setCurrentPage}
-					totalCount={totalCount}
-					surveysPerPage={surveysPerPage}
-					selectedSurveyIds={selectedSurveyIds}
-				/>
 			</div>
+			<SurveyTableNav
+				showDeleteButton={atLeastTwoSelected}
+				currentPage={currentPage}
+				setCurrentPage={setCurrentPage}
+				totalCount={totalCount}
+				surveysPerPage={surveysPerPage}
+				selectedSurveyIds={selectedSurveyIds}
+			/>
 		</div>
 	)
 }
