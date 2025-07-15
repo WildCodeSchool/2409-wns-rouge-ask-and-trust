@@ -22,7 +22,7 @@ function App() {
 	const renderHeader = () => {
 		if (location.pathname.startsWith("/surveys")) {
 			return <HeaderSurveys showCategories />
-		} else if (location.pathname.startsWith("/profile")) {
+		} else if (location.pathname.startsWith("/profil")) {
 			return <HeaderSurveys />
 		}
 		return <Header />
