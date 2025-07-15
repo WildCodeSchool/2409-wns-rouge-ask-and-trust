@@ -100,7 +100,7 @@ function SurveyCreator() {
 									onAddQuestion={() => ""} // @TODO put logic inside Toolbox with useQuestions
 									className="h-full"
 								/>
-								<div className="flex-grow overflow-auto p-4 sm:p-6 lg:p-8">
+								<div className="flex-grow overflow-auto px-4 sm:px-6 lg:px-8">
 									<Canvas
 										className="w-full"
 										questions={data?.survey.questions}
