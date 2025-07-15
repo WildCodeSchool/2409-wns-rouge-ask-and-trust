@@ -81,6 +81,11 @@ export class SurveysResolver {
 					category: true,
 					questions: true,
 				},
+				order: {
+					questions: {
+						id: "ASC",
+					},
+				},
 			})
 			if (!survey) {
 				throw new AppError("Survey not found", 404, "NotFoundError")

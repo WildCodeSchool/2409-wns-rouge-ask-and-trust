@@ -11,7 +11,7 @@ import {
 } from "@/hooks/useQuestions"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
 import { Trash2 } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { forwardRef, useEffect, useRef, useState } from "react"
 import {
 	FieldArrayWithId,
 	FieldValues,
@@ -79,7 +79,10 @@ const getDefaultAnswersForType = (type: QuestionType) => {
 	}
 }
 
-export default function BuildQuestion({ questionId }: QuestionProps) {
+function BuildQuestion(
+	{ questionId }: QuestionProps,
+	ref: React.Ref<HTMLLIElement> | null
+) {
 	const {
 		register,
 		handleSubmit,
@@ -184,7 +187,7 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 	if (!question) return null
 
 	return (
-		<li className="list-none">
+		<li className="list-none" ref={ref} tabIndex={-1}>
 			<FormWrapper
 				onSubmit={handleSubmit(handleSubmitForm)}
 				className="md:max-w-[90vh]"
@@ -273,3 +276,5 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		</li>
 	)
 }
+
+export default forwardRef<HTMLLIElement, QuestionProps>(BuildQuestion)
