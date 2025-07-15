@@ -99,8 +99,63 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		control,
 		name: "answers",
 	})
+	const watchedType = useWatch({
+		control,
+		name: "type",
+	})
+	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
+	const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
 
-	const onSubmit = (formData: UpdateQuestionInput) => {
+	// Reset the form with the current question data
+	// This ensures that the form is populated with the latest question data
+	useEffect(() => {
+		if (question && !loading && !error) {
+			reset({
+				title: question.title,
+				type: question.type,
+				answers: question.answers,
+			})
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [question?.id, loading, error, reset])
+
+	// After saving question, if type has changed and there is no answer, provide default answers
+	useEffect(() => {
+		if (!watchedType || !question) return
+
+		// Check if the type has changed and if there are no answers yet
+		const hasTypeChanged =
+			prevTypeRef.current && prevTypeRef.current !== watchedType
+		const answersAreEmpty = fields.length === 0
+
+		if (hasTypeChanged && answersAreEmpty) {
+			// If the form has no answers, append default answers based on the type
+			const defaults = getDefaultAnswersForType(watchedType)
+			// Append default answers to the form
+			for (const defaultAnswer of defaults) {
+				append(defaultAnswer)
+			}
+		}
+		// Always update the previous type reference after checking
+		prevTypeRef.current = watchedType
+	}, [append, fields.length, question, watchedType])
+
+	// Focus the delete button when it is opened
+	useEffect(() => {
+		if (openButtonDeleteQuestion) {
+			deleteButtonRef.current?.focus()
+		}
+	}, [openButtonDeleteQuestion])
+
+	const handleClickDelete = (
+		questionId: number | undefined,
+		surveyId: number | undefined
+	) => {
+		if (!questionId || !surveyId) return null
+		deleteQuestion(questionId, surveyId)
+	}
+
+	const handleSubmitForm = (formData: UpdateQuestionInput) => {
 		if (!question?.id) return
 		// Format answers to match the expected structure in API
 		const formattedAnswers = formData.answers?.map(({ value }) => ({
@@ -126,60 +181,12 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		})
 	}
 
-	useEffect(() => {
-		if (question && !loading && !error) {
-			// Reset the form with the current question data
-			// This ensures that the form is populated with the latest question data
-			reset({
-				title: question.title,
-				type: question.type,
-				answers: question.answers,
-			})
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [question?.id, loading, error, reset])
-
-	const watchedType = useWatch({
-		control,
-		name: "type",
-	})
-	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
-
-	// After saving question, if type has changed and there is no answer, provide default answers
-	useEffect(() => {
-		if (!watchedType || !question) return
-
-		// Check if the type has changed and if there are no answers yet
-		const hasTypeChanged =
-			prevTypeRef.current && prevTypeRef.current !== watchedType
-		const answersAreEmpty = fields.length === 0
-
-		if (hasTypeChanged && answersAreEmpty) {
-			// If the form has no answers, append default answers based on the type
-			const defaults = getDefaultAnswersForType(watchedType)
-			// Append default answers to the form
-			for (const defaultAnswer of defaults) {
-				append(defaultAnswer)
-			}
-		}
-		// Always update the previous type reference after checking
-		prevTypeRef.current = watchedType
-	}, [append, fields.length, question, watchedType])
-
-	const handleClickDelete = (
-		questionId: number | undefined,
-		surveyId: number | undefined
-	) => {
-		if (!questionId || !surveyId) return null
-		deleteQuestion(questionId, surveyId)
-	}
-
 	if (!question) return null
 
 	return (
 		<li className="list-none">
 			<FormWrapper
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(handleSubmitForm)}
 				className="md:max-w-[90vh]"
 			>
 				<div className="flex content-center justify-between">
@@ -204,6 +211,7 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 							variant="destructive"
 							fullWidth
 							ariaLabel="Supprimer la question"
+							ref={deleteButtonRef}
 							onClick={() => {
 								handleClickDelete(
 									questionId,
