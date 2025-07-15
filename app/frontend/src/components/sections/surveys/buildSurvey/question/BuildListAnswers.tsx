@@ -63,9 +63,9 @@ export function BuildListAnswers({
 			<Label htmlFor="lastname" required>
 				Définir les réponses
 			</Label>
-			{fields.map((_, index) => (
+			{fields.map((field, index) => (
 				<div
-					key={`answer-${index}`}
+					key={field.id || `answer-${index}`}
 					className="flex flex-1 items-center gap-2"
 				>
 					<Input

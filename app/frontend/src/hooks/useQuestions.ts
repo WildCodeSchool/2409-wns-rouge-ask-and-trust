@@ -106,7 +106,6 @@ export function useQuestions() {
 		return result
 	}
 	const deleteQuestion = async (id: number, surveyId: number) => {
-		console.log("surveyId in useQuestion", surveyId)
 		const result = await deleteQuestionMutation({
 			variables: { deleteQuestionId: id },
 			refetchQueries: [

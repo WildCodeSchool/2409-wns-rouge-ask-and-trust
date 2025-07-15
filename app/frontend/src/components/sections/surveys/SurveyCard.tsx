@@ -20,7 +20,7 @@ export default function SurveyCard({
 	estimateTime,
 	timeLeft,
 }: SurveyCardType) {
-	const href = `${id}`
+	const href = `/surveys/respond/${id}`
 	const isExternal = href.startsWith("http")
 
 	// Security: check allowed protocols
