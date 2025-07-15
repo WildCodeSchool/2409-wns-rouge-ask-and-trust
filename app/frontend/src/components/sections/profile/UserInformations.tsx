@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/Button.tsx"
 
 export default function UserInformations() {
 	return (
-		<section className="px-5 sm:px-20">
+		<section className="md:min-w-[428px]">
 			<div className="max-w-[428px] rounded-md shadow-lg shadow-black/10">
 				<div className="bg-primary-default rounded-t-md py-2 text-center text-white">
 					<h4 className="text-2xl font-semibold">

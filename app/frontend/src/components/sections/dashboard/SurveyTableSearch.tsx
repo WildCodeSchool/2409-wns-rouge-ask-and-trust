@@ -26,7 +26,7 @@ export default function SurveyTableSearch({
 	return (
 		<form
 			onSubmit={handleSubmit(onFormSubmit)}
-			className="relative flex max-w-3xs flex-1 items-center justify-center max-sm:order-1"
+			className="relative flex w-full flex-1 items-center justify-center max-sm:order-1 min-sm:max-w-3xs"
 		>
 			<Button
 				type="submit"

@@ -129,8 +129,8 @@ export default function SurveyTableContainer() {
 	}
 
 	return (
-		<div className="flex flex-col gap-10">
-			<div className="flex items-start justify-between max-sm:flex-col max-sm:gap-5">
+		<div className="flex w-full flex-col gap-2">
+			<div className="flex items-center max-sm:flex-col max-sm:gap-5">
 				<SurveyTableFilter filters={filters} setFilters={setFilters} />
 				<SurveyTableSearch onSearch={setSearchTerm} />
 			</div>

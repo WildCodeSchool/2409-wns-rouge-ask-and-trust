@@ -1,13 +1,13 @@
 import {
-	ItemIndicator,
-	ItemText,
-	Portal,
-	Root as Select,
 	Content as SelectContentBase,
 	Group as SelectGroup,
 	Icon as SelectIcon,
 	Item as SelectItemBase,
+	ItemIndicator,
+	ItemText,
 	Label as SelectLabelBase,
+	Portal,
+	Root as Select,
 	ScrollDownButton as SelectScrollDownButtonBase,
 	ScrollUpButton as SelectScrollUpButtonBase,
 	Separator as SelectSeparatorBase,
@@ -30,7 +30,7 @@ const SelectTrigger = forwardRef<
 	<SelectTriggerBase
 		ref={ref}
 		className={cn(
-			"border-black-100 ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-focus group flex h-10 w-full cursor-pointer items-center justify-between rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+			"border-black-100 ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-focus group flex h-10 w-full cursor-pointer items-center justify-between rounded-lg border bg-transparent px-3 py-2 text-sm whitespace-nowrap focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
 			className
 		)}
 		{...props}
