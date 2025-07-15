@@ -10,18 +10,18 @@ import { AllSurveysHome, SurveyCardType } from "@/types/types"
 import Pagination from "@/components/ui/Pagination"
 import { useSearchParams } from "react-router-dom"
 import Loader from "@/components/ui/Loader"
-import useResponsive from "@/hooks/useResponsive"
 import SurveyDurationFilter from "@/components/sections/surveys/ui/SurveyDurationFilter"
+import { useResponsivity } from "@/hooks/useResponsivity"
 
 export default function Surveys() {
-	const isMobile = useResponsive()
+	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const [searchParams] = useSearchParams()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [sortTimeOption, setSortTimeOption] = useState<string>("")
 	const surveysPerPage = 12
 
 	useEffect(() => {
-		if (isMobile) {
+		if (isHorizontalCompact) {
 			document.body.classList.add("hide-scrollbar")
 		} else {
 			document.body.classList.remove("hide-scrollbar")
@@ -30,7 +30,7 @@ export default function Surveys() {
 		return () => {
 			document.body.classList.remove("hide-scrollbar")
 		}
-	}, [isMobile])
+	}, [isHorizontalCompact])
 
 	const categoryId = searchParams.get("categoryId")
 
@@ -64,7 +64,6 @@ export default function Surveys() {
 	)
 
 	const allSurveysData = data?.surveys?.allSurveys ?? []
-	console.log("🚀 ~ Surveys ~ allSurveysData:", allSurveysData)
 	const totalCount = data?.surveys?.totalCount ?? 0
 
 	return (
@@ -101,13 +100,14 @@ export default function Surveys() {
 			<section
 				className={cn(
 					"px-20 max-sm:px-5",
-					isMobile ? "pb-10" : "mb-20"
+					isHorizontalCompact ? "pb-10" : "mb-20"
 				)}
+				ref={rootRef}
 			>
 				<h1
 					className={cn(
 						"text-fg text-center text-3xl font-bold max-lg:text-xl",
-						isMobile ? "mb-14" : "mb-20"
+						isHorizontalCompact ? "mb-14" : "mb-20"
 					)}
 				>
 					Liste des enquêtes disponibles
@@ -124,7 +124,7 @@ export default function Surveys() {
 					<div
 						className={cn(
 							"grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] justify-items-center",
-							isMobile ? "gap-14" : "gap-20"
+							isHorizontalCompact ? "gap-14" : "gap-20"
 						)}
 					>
 						{allSurveysData.map((survey: SurveyCardType) => (
@@ -156,7 +156,7 @@ export default function Surveys() {
 					onPageChange={setCurrentPage}
 				/>
 			</section>
-			{!isMobile && (
+			{!isHorizontalCompact && (
 				<div className="flex items-center justify-center">
 					<Button
 						variant="primary"

@@ -6,7 +6,11 @@ import { useToast } from "@/hooks/useToast"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/hooks/useAuthContext"
 
-export default function NavAndAuthButtons({ isMobile }: { isMobile: boolean }) {
+export default function NavAndAuthButtons({
+	isHorizontalCompact,
+}: {
+	isHorizontalCompact: boolean
+}) {
 	const { user } = useAuthContext()
 	const navigate = useNavigate()
 	const location = useLocation()
@@ -30,7 +34,7 @@ export default function NavAndAuthButtons({ isMobile }: { isMobile: boolean }) {
 			role="navigation"
 		>
 			<SearchForm />
-			{!isMobile &&
+			{!isHorizontalCompact &&
 				(user ? (
 					user.role === "admin" ? (
 						location.pathname === "/admin" ? (

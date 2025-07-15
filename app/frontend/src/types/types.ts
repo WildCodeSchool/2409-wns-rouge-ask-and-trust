@@ -49,7 +49,7 @@ export interface HeaderMobileMenuProps {
 
 export interface NavAndAuthButtonsProps {
 	headerLinks: readonly LinksType[]
-	isMobile: boolean
+	isHorizontalCompact: boolean
 	handleShowMenu?: () => void
 }
 

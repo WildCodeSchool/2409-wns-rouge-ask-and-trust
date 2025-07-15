@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import HeaderMobileMenu from "./HeaderMobileMenu"
 import NavAndAuthButtons from "./NavAndAuthButtons"
 import { Button } from "@/components/ui/Button"
-import useResponsive from "@/hooks/useResponsive"
+import { useResponsivity } from "@/hooks/useResponsivity"
 
 const HEADER_LINKS: readonly LinksType[] = [
 	{
@@ -31,7 +31,7 @@ const HEADER_LINKS: readonly LinksType[] = [
 
 export default function Header() {
 	const [showMenu, setShowMenu] = useState<boolean>(false)
-	const isMobile = useResponsive(1024)
+	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 1024)
 
 	const handleShowMenu = () => {
 		setShowMenu(!showMenu)
@@ -55,6 +55,7 @@ export default function Header() {
 			className="bg-bg mb-20 flex items-center justify-between gap-10 px-5 pt-4"
 			role="contentinfo"
 			aria-label="En-tête de page"
+			ref={rootRef}
 		>
 			<Link to="/" className="max-w-36">
 				<img
@@ -64,7 +65,7 @@ export default function Header() {
 					aria-hidden
 				/>
 			</Link>
-			{isMobile ? (
+			{isHorizontalCompact ? (
 				<>
 					<Button
 						size="square"
@@ -89,7 +90,7 @@ export default function Header() {
 				<>
 					<NavAndAuthButtons
 						headerLinks={HEADER_LINKS}
-						isMobile={false}
+						isHorizontalCompact={false}
 					/>
 				</>
 			)}

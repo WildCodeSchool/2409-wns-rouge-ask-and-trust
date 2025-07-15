@@ -8,10 +8,10 @@ import { cn, slugify } from "@/lib/utils"
 import { useQuery } from "@apollo/client"
 import { GET_CATEGORIES } from "@/graphql/survey/category"
 import { SurveyCategoryType } from "@/types/types"
-import useResponsive from "@/hooks/useResponsive"
+import { useResponsivity } from "@/hooks/useResponsivity"
 
 export default function Header() {
-	const isMobile = useResponsive()
+	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const [searchParams, setSearchParams] = useSearchParams()
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(
 		null
@@ -45,10 +45,11 @@ export default function Header() {
 			lang="fr"
 			className={cn(
 				"bg-primary-600 flex flex-col gap-9 px-6 py-5",
-				isMobile ? "mb-14" : "mb-20"
+				isHorizontalCompact ? "mb-14" : "mb-20"
 			)}
 			role="contentinfo"
 			aria-label="En-tête de page"
+			ref={rootRef}
 		>
 			<div className="flex items-center justify-between gap-20 max-lg:gap-6 max-md:gap-20 max-sm:gap-12">
 				<Link
@@ -61,7 +62,7 @@ export default function Header() {
 						className="w-full"
 					/>
 				</Link>
-				<NavAndAuthButtons isMobile={isMobile} />
+				<NavAndAuthButtons isHorizontalCompact={isHorizontalCompact} />
 			</div>
 			<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3 pl-1">
 				{loadingCategories && (
