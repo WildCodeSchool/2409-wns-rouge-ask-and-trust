@@ -16,8 +16,12 @@ export const Canvas: React.FC<CanvasProps> = ({
 	className = "",
 	questions = [],
 }) => {
-	const { addQuestion, isCreateQuestionLoading, createQuestionError } =
-		useQuestions()
+	const {
+		addQuestion,
+		isCreateQuestionLoading,
+		createQuestionError,
+		resetCreateQuestionError,
+	} = useQuestions()
 	const { id: surveyId } = useParams()
 	const [newQuestionId, setNewQuestionId] = useState<number | null>(null)
 	const [newQuestionElement, setNewQuestionElement] =
@@ -45,8 +49,9 @@ export const Canvas: React.FC<CanvasProps> = ({
 				title: "Oops, nous avons rencontré une erreur.",
 				description: "Veuillez réessayer plus tard.",
 			})
+			resetCreateQuestionError() // Reset the error to avoid permanent toast error
 		}
-	}, [createQuestionError, showToast])
+	}, [createQuestionError, resetCreateQuestionError, showToast])
 
 	const handleAddQuestion = async () => {
 		if (!surveyId) return

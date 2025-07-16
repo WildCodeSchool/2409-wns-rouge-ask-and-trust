@@ -92,13 +92,19 @@ function BuildQuestion(
 		reset,
 	} = useForm<QuestionUpdate>()
 	// Load question data from the API
-	const { question, loading, error } = useQuestion(questionId)
+	const {
+		question,
+		loading,
+		error: getQuestionError,
+	} = useQuestion(questionId)
 	// Load question update and delete functions from the API
 	const {
 		updateQuestion,
 		updateQuestionError,
+		resetUpdateQuestionError,
 		deleteQuestion,
 		deleteQuestionError,
+		resetDeleteQuestionError,
 	} = useQuestions()
 	// Show / hide delete question button
 	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
@@ -116,25 +122,52 @@ function BuildQuestion(
 	const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
 	const { showToast } = useToast()
 
-	// Handle toast notifications for loading states and errors
 	useEffect(() => {
-		if (updateQuestionError || deleteQuestionError || error) {
+		const toastErrors = [
+			{
+				error: updateQuestionError,
+				message: "La question n'a pas pu être mise à jour.",
+				reset: resetUpdateQuestionError,
+			},
+			{
+				error: deleteQuestionError,
+				message: "La question n'a pas pu être supprimée.",
+				reset: resetDeleteQuestionError,
+			},
+		]
+
+		for (const { error, message, reset } of toastErrors) {
+			if (error) {
+				showToast({
+					type: "error",
+					title: "Oops, nous avons rencontré une erreur.",
+					description: message,
+				})
+				reset() // Reset the error to avoid permanent toast error
+			}
+		}
+
+		if (getQuestionError) {
 			showToast({
 				type: "error",
 				title: "Oops, nous avons rencontré une erreur.",
-				description: updateQuestionError
-					? "La question n'a pas pu être mise à jour."
-					: deleteQuestionError
-						? "La question n'a pas pu être supprimée."
-						: "Une erreur est survenue pour charger la question.",
+				description:
+					"Une erreur est survenue pour charger la question.",
 			})
 		}
-	}, [updateQuestionError, deleteQuestionError, error, showToast])
+	}, [
+		updateQuestionError,
+		deleteQuestionError,
+		getQuestionError,
+		showToast,
+		resetUpdateQuestionError,
+		resetDeleteQuestionError,
+	])
 
 	// Reset the form with the current question data
 	// This ensures that the form is populated with the latest question data
 	useEffect(() => {
-		if (question && !loading && !error) {
+		if (question && !loading && !getQuestionError) {
 			reset({
 				title: question.title,
 				type: question.type,
@@ -142,7 +175,7 @@ function BuildQuestion(
 			})
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [question?.id, loading, error, reset])
+	}, [question?.id, loading, getQuestionError, reset])
 
 	// After saving question, if type has changed and there is no answer, provide default answers
 	useEffect(() => {
@@ -184,12 +217,6 @@ function BuildQuestion(
 				type: "success",
 				title: "La question a été supprimée.",
 			})
-		} catch {
-			showToast({
-				type: "error",
-				title: "La question n'a pas pu être supprimée.",
-				description: "Veuillez réessayer plus tard.",
-			})
 		} finally {
 			setOpenButtonDeleteQuestion(false)
 		}
@@ -230,11 +257,7 @@ function BuildQuestion(
 				title: "La question a été mise à jour.",
 			})
 		} catch {
-			showToast({
-				type: "error",
-				title: "La question n'a pas pu être mise à jour.",
-				description: "Veuillez réessayer plus tard.",
-			})
+			//
 		}
 	}
 

@@ -66,19 +66,31 @@ export function getDefaultQuestion(question: {
 export function useQuestions() {
 	const [
 		createQuestionMutation,
-		{ loading: isCreateQuestionLoading, error: createQuestionError },
+		{
+			loading: isCreateQuestionLoading,
+			error: createQuestionError,
+			reset: resetCreateQuestionError,
+		},
 	] = useMutation(CREATE_QUESTION, {
 		refetchQueries: [GET_SURVEY],
 	})
 
 	const [
 		updateQuestionMutation,
-		{ loading: isUpdateQuestionLoading, error: updateQuestionError },
+		{
+			loading: isUpdateQuestionLoading,
+			error: updateQuestionError,
+			reset: resetUpdateQuestionError,
+		},
 	] = useMutation(UPDATE_QUESTION)
 
 	const [
 		deleteQuestionMutation,
-		{ loading: isDeleteQuestionLoading, error: deleteQuestionError },
+		{
+			loading: isDeleteQuestionLoading,
+			error: deleteQuestionError,
+			reset: resetDeleteQuestionError,
+		},
 	] = useMutation(DELETE_QUESTION)
 
 	const addQuestion = async (question: CreateQuestionInput) => {
@@ -132,12 +144,17 @@ export function useQuestions() {
 		addQuestion,
 		isCreateQuestionLoading,
 		createQuestionError,
+		resetCreateQuestionError,
+
 		updateQuestion,
 		isUpdateQuestionLoading,
 		updateQuestionError,
+		resetUpdateQuestionError,
+
 		deleteQuestion,
 		isDeleteQuestionLoading,
 		deleteQuestionError,
+		resetDeleteQuestionError,
 	}
 }
 
