@@ -38,6 +38,13 @@ export interface UserAuth {
 	role: UserRole
 }
 
+export type UserDetails = {
+	user: User
+	userSurveys: Survey[]
+	showResetForm: boolean
+	onToggleResetForm: () => void
+}
+
 export type UserSignUp = UserAuth
 export type UserSignIn = Pick<UserAuth, "email" | "password">
 export type UserSignForm = UserSignUp | UserSignIn
