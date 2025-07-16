@@ -9,7 +9,7 @@ export function UserDetailsPart({
 	onToggleResetForm,
 }: UserDetails) {
 	return (
-		<div className="w-full py-4 max-sm:px-2 sm:min-w-[331px] md:px-1.5 min-lg:px-5">
+		<div className="w-full px-1.5 py-4 sm:min-w-[331px] sm:px-2 md:px-2 lg:px-5">
 			<div className="flex flex-row items-start justify-start gap-2.5 sm:gap-4">
 				<div className="max-w-[109px] rounded-md shadow-lg shadow-black/10">
 					<img

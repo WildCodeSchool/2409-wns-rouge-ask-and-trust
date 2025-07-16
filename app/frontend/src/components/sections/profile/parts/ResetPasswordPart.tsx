@@ -1,4 +1,7 @@
 import { Button } from "@/components/ui/Button.tsx"
+import InputOldPassword from "@/components/sections/profile/form/InputOldPassword.tsx"
+import InputNewPassword from "@/components/sections/profile/form/InputNewPassword.tsx"
+import InputConfirmPassword from "@/components/sections/profile/form/InputConfirmPassword.tsx"
 
 export function ResetPasswordPart() {
 	return (
@@ -8,50 +11,9 @@ export function ResetPasswordPart() {
 			</h5>
 
 			<div className="flex flex-col gap-4">
-				<div className="flex flex-col">
-					<label
-						htmlFor="oldPassword"
-						className="mb-1 text-sm font-medium"
-					>
-						Ancien mot de passe
-					</label>
-					<input
-						id="oldPassword"
-						type="password"
-						placeholder="Ancien mot de passe"
-						className="rounded border px-3 py-2 text-sm"
-					/>
-				</div>
-
-				<div className="flex flex-col">
-					<label
-						htmlFor="newPassword"
-						className="mb-1 text-sm font-medium"
-					>
-						Nouveau mot de passe
-					</label>
-					<input
-						id="newPassword"
-						type="password"
-						placeholder="Nouveau mot de passe"
-						className="rounded border px-3 py-2 text-sm"
-					/>
-				</div>
-
-				<div className="flex flex-col">
-					<label
-						htmlFor="confirmPassword"
-						className="mb-1 text-sm font-medium"
-					>
-						Confirmer le mot de passe
-					</label>
-					<input
-						id="confirmPassword"
-						type="password"
-						placeholder="Confirmer le mot de passe"
-						className="rounded border px-3 py-2 text-sm"
-					/>
-				</div>
+				<InputOldPassword />
+				<InputNewPassword />
+				<InputConfirmPassword />
 
 				<div className="flex justify-end pt-2">
 					<Button
