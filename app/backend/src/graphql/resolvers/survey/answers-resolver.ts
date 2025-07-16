@@ -19,6 +19,7 @@ import { Answers } from "../../../database/entities/survey/answers"
 import { CreateAnswersInput } from "../../inputs/create/survey/create-answers-input"
 import { Context, Roles } from "../../../types/types"
 import { AppError } from "../../../middlewares/error-handler"
+import { Questions } from "../../../database/entities/survey/questions"
 
 /**
  * AnswersResolver
@@ -54,6 +55,9 @@ export class AnswersResolver {
 
 			return answers
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
 			throw new AppError(
 				"Failed to fetch answers",
 				500,
@@ -65,7 +69,8 @@ export class AnswersResolver {
 	/**
 	 * Query to retrieve a specific survey answer by ID.
 	 *
-	 * @param id - The ID of the answer to retrieve.
+	 * @param userId - The ID of the user
+	 * @param questionId - The ID of the question
 	 *
 	 * @returns A Promise resolving to a `Answers` object, or `null` if not found.
 	 *
@@ -86,14 +91,60 @@ export class AnswersResolver {
 				},
 			})
 
-			if (!answer) {
-				throw new AppError("Answer not found", 404, "NotFoundError")
-			}
-
 			return answer
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
 			throw new AppError(
 				"Failed to fetch answer",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
+
+	/**
+	 * Query to retrieve all answers from a user for a specific survey.
+	 *
+	 * @param surveyId - The ID of the survey
+	 * @param context - The GraphQL context containing the authenticated user
+	 *
+	 * @returns A Promise resolving to an array of `Answers` objects.
+	 *
+	 * This query returns all answers submitted by the authenticated user for a specific survey.
+	 */
+	@Authorized(Roles.User, Roles.Admin)
+	@Query(() => [Answers])
+	async answersBySurvey(
+		@Arg("surveyId", () => ID) surveyId: number,
+		@Ctx() context: Context
+	): Promise<Answers[]> {
+		try {
+			const user = context.user
+
+			if (!user) {
+				throw new AppError("User not found", 404, "NotFoundError")
+			}
+
+			const answers = await Answers.find({
+				where: {
+					userId: user.id,
+					question: { survey: { id: surveyId } },
+				},
+				relations: {
+					question: { survey: true },
+					user: true,
+				},
+			})
+
+			return answers
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError(
+				"Failed to fetch survey answers",
 				500,
 				"InternalServerError"
 			)
@@ -114,25 +165,105 @@ export class AnswersResolver {
 	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Answers)
 	async createAnswer(
-		@Arg("content", () => CreateAnswersInput)
-		content: CreateAnswersInput,
+		@Arg("data", () => CreateAnswersInput)
+		data: CreateAnswersInput,
 		@Ctx() context: Context
 	): Promise<Answers> {
 		try {
-			const newAnswer = new Answers()
 			const user = context.user
 
 			if (!user) {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
 
-			Object.assign(newAnswer, content, { user: user })
+			const question = await Questions.findOne({
+				where: { id: data.questionId },
+			})
 
-			await newAnswer.save()
-			return newAnswer
+			if (!question) {
+				throw new AppError("Question not found", 404, "NotFoundError")
+			}
+
+			// Check if the user has already responded to this question
+			const existingAnswer = await Answers.findOne({
+				where: {
+					questionId: data.questionId,
+				},
+			})
+
+			if (existingAnswer) {
+				// Update the existing response
+				existingAnswer.content = data.content
+				return await Answers.save(existingAnswer)
+			} else {
+				// Create a new response
+				const answer = Answers.create({
+					content: data.content,
+					questionId: data.questionId,
+					userId: user.id,
+				})
+				return await Answers.save(answer)
+			}
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
 			throw new AppError(
 				"Failed to create answer",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
+
+	/**
+	 * Mutation to delete all answers from a user for a specific survey.
+	 *
+	 * @param surveyId - The ID of the survey
+	 * @param context - The GraphQL context containing the authenticated user
+	 *
+	 * @returns A Promise resolving to a boolean indicating success.
+	 *
+	 * This mutation deletes all answers submitted by the authenticated user for a specific survey.
+	 */
+	@Authorized(Roles.User, Roles.Admin)
+	@Mutation(() => Boolean)
+	async deleteAnswersBySurvey(
+		@Arg("surveyId", () => ID) surveyId: number,
+		@Ctx() context: Context
+	): Promise<boolean> {
+		try {
+			const user = context.user
+
+			if (!user) {
+				throw new AppError("User not found", 404, "NotFoundError")
+			}
+
+			// First, find all answers for this user and survey
+			const answersToDelete = await Answers.find({
+				where: {
+					userId: user.id,
+					question: { survey: { id: surveyId } },
+				},
+				relations: {
+					question: { survey: true },
+				},
+			})
+
+			if (answersToDelete.length === 0) {
+				return false
+			}
+
+			// Delete each answer individually (required for composite keys)
+			await Promise.all(answersToDelete.map(answer => answer.remove()))
+
+			return true
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError(
+				"Failed to delete survey answers",
 				500,
 				"InternalServerError"
 			)
