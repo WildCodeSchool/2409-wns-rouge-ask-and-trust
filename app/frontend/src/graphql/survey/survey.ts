@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client"
 
 export const GET_SURVEYS = gql`
-	query Surveys($filters: AllSurveysQueryInput!) {
+	query Surveys($filters: AllSurveysQueryInput) {
 		surveys(filters: $filters) {
 			allSurveys {
 				id
@@ -60,7 +60,7 @@ export const GET_SURVEY = gql`
 `
 
 export const GET_MY_SURVEYS = gql`
-	query MySurveys($filters: MySurveysQueryInput!) {
+	query MySurveys($filters: MySurveysQueryInput) {
 		mySurveys(filters: $filters) {
 			surveys {
 				id

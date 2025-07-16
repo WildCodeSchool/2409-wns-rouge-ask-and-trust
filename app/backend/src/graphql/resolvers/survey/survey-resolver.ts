@@ -56,7 +56,7 @@ export class SurveysResolver {
 	 */
 	@Query(() => AllSurveysResult)
 	async surveys(
-		@Arg("filters", () => AllSurveysQueryInput)
+		@Arg("filters", () => AllSurveysQueryInput, { nullable: true })
 		filters: AllSurveysQueryInput
 	): Promise<AllSurveysResult> {
 		try {
@@ -67,7 +67,7 @@ export class SurveysResolver {
 				order = "DESC",
 				page = 1,
 				limit = 12,
-			} = filters
+			} = filters || {}
 
 			// Retrieve the base query with all surveys created
 			const baseQuery = Survey.createQueryBuilder("survey")
@@ -194,7 +194,8 @@ export class SurveysResolver {
 	@Authorized(Roles.User, Roles.Admin)
 	@Query(() => MySurveysResult)
 	async mySurveys(
-		@Arg("filters", () => MySurveysQueryInput) filters: MySurveysQueryInput,
+		@Arg("filters", () => MySurveysQueryInput, { nullable: true })
+		filters: MySurveysQueryInput,
 		@Ctx() context: Context
 	): Promise<MySurveysResult> {
 		try {
@@ -215,7 +216,7 @@ export class SurveysResolver {
 				order = "DESC",
 				page = 1,
 				limit = 5,
-			} = filters
+			} = filters || {}
 
 			// Retrieve the base query with all surveys created by the user
 			const baseQuery = Survey.createQueryBuilder("survey").where(
