@@ -5,7 +5,7 @@ import {
 	SurveyTableType,
 } from "@/types/types"
 import { CheckedState } from "@radix-ui/react-checkbox"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import SurveyTable from "@/components/sections/dashboard/SurveyTable"
 import SurveyTableNav from "@/components/sections/dashboard/SurveyTableNav"
 import SurveyTableFilter from "@/components/sections/dashboard/SurveyTableFilter"
@@ -26,7 +26,6 @@ export default function SurveyTableContainer() {
 	const [selectedSurveyIds, setSelectedSurveyIds] = useState<number[]>([])
 	const [isHeaderChecked, setIsHeaderChecked] = useState<CheckedState>(false)
 	const [filters, setFilters] = useState<string[]>([])
-	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [debouncedSearch, setDebouncedSearch] = useState("")
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const surveysPerPage = 5
@@ -39,13 +38,10 @@ export default function SurveyTableContainer() {
 		DATE_SORT_FILTERS.includes(f as DateSortFilter)
 	)
 
-	useEffect(() => {
-		const handler = setTimeout(() => {
-			setDebouncedSearch(searchTerm)
-		}, 400)
-
-		return () => clearTimeout(handler)
-	}, [searchTerm])
+	const handleSearch = useCallback((query: string) => {
+		setDebouncedSearch(query)
+		setCurrentPage(1)
+	}, [])
 
 	const { data, loading, networkStatus } = useQuery<SurveysDashboardQuery>(
 		GET_MY_SURVEYS,
@@ -54,7 +50,7 @@ export default function SurveyTableContainer() {
 				filters: {
 					page: currentPage,
 					limit: surveysPerPage,
-					search: debouncedSearch.trim(),
+					search: debouncedSearch,
 					status: selectedStatuses.map(
 						label =>
 							Object.entries(statusLabelMap).find(
@@ -152,10 +148,7 @@ export default function SurveyTableContainer() {
 		<div className="flex flex-col gap-10">
 			<div className="flex items-start justify-between max-sm:flex-col max-sm:gap-5">
 				<SurveyTableFilter filters={filters} setFilters={setFilters} />
-				<SurveyTableSearch
-					value={searchTerm}
-					setValue={setSearchTerm}
-				/>
+				<SurveyTableSearch onSearch={handleSearch} />
 			</div>
 			{isRefetching && (
 				<div className="flex items-center justify-center py-4">

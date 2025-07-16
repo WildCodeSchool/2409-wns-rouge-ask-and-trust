@@ -64,7 +64,7 @@ export const SurveyTableActions = ({
 			<Button
 				ariaLabel="Visualiser cette enquête"
 				variant="ghost"
-				to={`/surveys/${surveyId}`}
+				to={`/surveys/preview/${surveyId}`}
 				role="link"
 				className="text-black-default p-0"
 			>

@@ -1,24 +1,31 @@
+import { useEffect } from "react"
+import { useForm } from "react-hook-form"
 import { Search } from "lucide-react"
 import { Label } from "@/components/ui/Label"
 import { Input } from "@/components/ui/Input"
 import { Button } from "@/components/ui/Button"
 
-type SurveyTableSearchProps = {
-	value: string
-	setValue: (query: string) => void
+type Props = {
+	onSearch: (query: string) => void
 }
 
-export default function SurveyTableSearch({
-	value,
-	setValue,
-}: SurveyTableSearchProps) {
+export default function SurveyTableSearch({ onSearch }: Props) {
+	const { register, watch } = useForm({
+		defaultValues: { search: "" },
+	})
+
+	const searchValue = watch("search")
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			onSearch(searchValue.trim())
+		}, 400)
+
+		return () => clearTimeout(timeout)
+	}, [searchValue, onSearch])
+
 	return (
-		<form
-			onSubmit={(e: React.FormEvent<HTMLFormElement>) =>
-				e.preventDefault()
-			}
-			className="relative flex max-w-3xs flex-1 items-center justify-center max-sm:order-1"
-		>
+		<form className="relative flex max-w-3xs flex-1 items-center justify-center max-sm:order-1">
 			<Button
 				type="submit"
 				variant="ghost"
@@ -34,9 +41,8 @@ export default function SurveyTableSearch({
 				type="search"
 				id="search"
 				placeholder="Rechercher une enquête"
-				value={value}
 				errorMessage=""
-				onChange={e => setValue(e.target.value)}
+				{...register("search")}
 				className="border-button-line-border text-input-fg h-10 bg-white pl-14 text-sm"
 			/>
 		</form>
