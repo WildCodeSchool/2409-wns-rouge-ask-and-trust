@@ -66,22 +66,35 @@ export function getDefaultQuestion(question: {
 export function useQuestions() {
 	const [
 		createQuestionMutation,
-		{ loading: isCreateQuestionLoading, error: createQuestionError },
+		{
+			loading: isCreateQuestionLoading,
+			error: createQuestionError,
+			reset: resetCreateQuestionError,
+		},
 	] = useMutation(CREATE_QUESTION, {
 		refetchQueries: [GET_SURVEY],
 	})
 
 	const [
 		updateQuestionMutation,
-		{ loading: isUpdateQuestionLoading, error: updateQuestionError },
+		{
+			loading: isUpdateQuestionLoading,
+			error: updateQuestionError,
+			reset: resetUpdateQuestionError,
+		},
 	] = useMutation(UPDATE_QUESTION)
 
 	const [
 		deleteQuestionMutation,
-		{ loading: isDeleteQuestionLoading, error: deleteQuestionError },
+		{
+			loading: isDeleteQuestionLoading,
+			error: deleteQuestionError,
+			reset: resetDeleteQuestionError,
+		},
 	] = useMutation(DELETE_QUESTION)
 
 	const addQuestion = async (question: CreateQuestionInput) => {
+		if (isCreateQuestionLoading) return // Prevent multiple submissions
 		const completedQuestion = getDefaultQuestion(question)
 
 		const result = await createQuestionMutation({
@@ -92,6 +105,7 @@ export function useQuestions() {
 	}
 
 	const updateQuestion = async (question: UpdateQuestionInput) => {
+		if (isUpdateQuestionLoading) return // Prevent multiple submissions
 		// Clean answers if question type is Text
 		if (question.type === TypesOfQuestion.Text) {
 			question.answers = []
@@ -111,6 +125,7 @@ export function useQuestions() {
 		return result
 	}
 	const deleteQuestion = async (id: number, surveyId: number) => {
+		if (isDeleteQuestionLoading) return // Prevent multiple submissions
 		const result = await deleteQuestionMutation({
 			variables: { deleteQuestionId: id },
 			refetchQueries: [
@@ -129,12 +144,17 @@ export function useQuestions() {
 		addQuestion,
 		isCreateQuestionLoading,
 		createQuestionError,
+		resetCreateQuestionError,
+
 		updateQuestion,
 		isUpdateQuestionLoading,
 		updateQuestionError,
+		resetUpdateQuestionError,
+
 		deleteQuestion,
 		isDeleteQuestionLoading,
 		deleteQuestionError,
+		resetDeleteQuestionError,
 	}
 }
 
