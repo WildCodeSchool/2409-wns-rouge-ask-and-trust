@@ -115,6 +115,7 @@ export default function Surveys() {
 				<SurveyDurationFilter
 					sortTimeOption={sortTimeOption}
 					setSortTimeOption={setSortTimeOption}
+					isHorizontalCompact={isHorizontalCompact}
 				/>
 				{isFetching ? (
 					<div className="flex items-center justify-center">
@@ -123,7 +124,7 @@ export default function Surveys() {
 				) : (
 					<div
 						className={cn(
-							"grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] justify-items-center",
+							"grid grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] justify-items-center",
 							isHorizontalCompact ? "gap-14" : "gap-20"
 						)}
 					>

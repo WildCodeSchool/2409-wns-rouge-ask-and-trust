@@ -1,42 +1,51 @@
-import { Search } from "lucide-react"
+import { useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { useSearchParams } from "react-router-dom"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
-import { useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/Button"
-import { useEffect, useState } from "react"
+import { Search } from "lucide-react"
+
+type FormValues = {
+	search: string
+}
 
 export default function SearchForm() {
 	const [searchParams, setSearchParams] = useSearchParams()
-	const [value, setValue] = useState<string>(searchParams.get("search") || "")
+
+	const { register, handleSubmit, watch } = useForm<FormValues>({
+		defaultValues: {
+			search: searchParams.get("search") || "",
+		},
+	})
+
+	const searchValue = watch("search")
 
 	useEffect(() => {
-		if (value === "") {
+		if (searchValue === "") {
 			const newParams = new URLSearchParams(searchParams)
 			newParams.delete("search")
 			newParams.set("page", "1")
 			setSearchParams(newParams)
 		}
-	}, [value])
+	}, [searchValue, searchParams, setSearchParams])
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault()
-
+	const onSubmit = (data: FormValues) => {
 		const newParams = new URLSearchParams(searchParams)
 
-		if (value.trim()) {
-			newParams.set("search", value.trim())
-			newParams.set("page", "1")
+		if (data.search.trim()) {
+			newParams.set("search", data.search.trim())
 		} else {
 			newParams.delete("search")
-			newParams.set("page", "1")
 		}
+		newParams.set("page", "1")
 
 		setSearchParams(newParams)
 	}
 
 	return (
 		<form
-			onSubmit={handleSubmit}
+			onSubmit={handleSubmit(onSubmit)}
 			className="relative flex flex-1 items-center justify-center"
 		>
 			<Label htmlFor="search" className="sr-only">
@@ -44,11 +53,10 @@ export default function SearchForm() {
 			</Label>
 			<Input
 				id="search"
-				placeholder="Rechercher une enquête..."
 				type="search"
-				value={value}
+				placeholder="Rechercher une enquête..."
 				errorMessage=""
-				onChange={e => setValue(e.target.value)}
+				{...register("search")}
 				className="h-11 w-full bg-white py-2 pr-10 pl-2 text-ellipsis whitespace-nowrap"
 			/>
 			<Button

@@ -2,10 +2,12 @@ import { Chipset } from "@/components/ui/Chipset"
 import { X } from "lucide-react"
 import { SelectFilter } from "@/components/sections/dashboard/SelectFilter"
 import { SurveyDurationFilterProps } from "@/types/types"
+import { cn } from "@/lib/utils"
 
 export default function SurveyDurationFilter({
 	sortTimeOption,
 	setSortTimeOption,
+	isHorizontalCompact,
 }: SurveyDurationFilterProps) {
 	const sortOptions = [
 		{ value: "estimatedDuration_ASC", label: "Durée estimée croissante" },
@@ -30,7 +32,12 @@ export default function SurveyDurationFilter({
 		sortTimeOption
 
 	return (
-		<div className="flex flex-wrap items-center gap-5">
+		<div
+			className={cn(
+				"flex flex-wrap items-center gap-5",
+				isHorizontalCompact ? "mb-14" : "mb-20"
+			)}
+		>
 			<SelectFilter
 				value={sortTimeOption}
 				onChange={handleSortChange}
