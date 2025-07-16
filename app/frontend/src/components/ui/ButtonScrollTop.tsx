@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button"
 import { cn } from "@/lib/utils"
 import { ArrowUp } from "lucide-react"
+import { motion } from "motion/react"
 import React, { useEffect, useState } from "react"
 
 interface ButtonScrollTopProps {
@@ -13,10 +14,9 @@ export const ButtonScrollTop: React.FC<ButtonScrollTopProps> = ({
 	className,
 }) => {
 	const [isVisible, setIsVisible] = useState(false)
+	const [isBouncing, setIsBouncing] = useState(false)
 
 	useEffect(() => {
-		// Listen for scroll events on the container
-		// If scroll position is greater than 50px, show the button
 		const container = containerRef.current
 		if (!container) return
 
@@ -34,6 +34,7 @@ export const ButtonScrollTop: React.FC<ButtonScrollTopProps> = ({
 		if (containerRef.current) {
 			containerRef.current.scrollTo({ top: 0, behavior: "smooth" })
 		}
+		setIsBouncing(true)
 	}
 
 	return (
@@ -42,16 +43,32 @@ export const ButtonScrollTop: React.FC<ButtonScrollTopProps> = ({
 			onClick={handleClick}
 			variant="primary"
 			size="square"
-			icon={ArrowUp}
 			className={cn(
 				className,
 				"fixed right-6 bottom-6 z-50",
-				// Animate button's apparition
 				"transition-opacity duration-200 ease-in-out",
 				isVisible
 					? "pointer-events-auto opacity-100"
 					: "pointer-events-none opacity-0"
 			)}
-		/>
+		>
+			<AnimatedArrowUp
+				isBouncing={isBouncing}
+				onBounceEnd={() => setIsBouncing(false)}
+			/>
+		</Button>
 	)
 }
+
+const AnimatedArrowUp: React.FC<{
+	isBouncing: boolean
+	onBounceEnd: () => void
+}> = ({ isBouncing, onBounceEnd }) => (
+	<motion.div
+		animate={isBouncing ? { y: [-2, -6, 0] } : { y: 0 }}
+		transition={{ duration: 0.3, bounce: 1 }}
+		onAnimationComplete={onBounceEnd}
+	>
+		<ArrowUp />
+	</motion.div>
+)
