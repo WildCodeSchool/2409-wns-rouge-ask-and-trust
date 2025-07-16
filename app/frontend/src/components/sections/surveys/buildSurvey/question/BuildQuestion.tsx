@@ -122,38 +122,20 @@ function BuildQuestion(
 	const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
 	const { showToast } = useToast()
 
+	// Show error toast if there is an error during question update, delete or load
 	useEffect(() => {
-		const toastErrors = [
-			{
-				error: updateQuestionError,
-				message: "La question n'a pas pu être mise à jour.",
-				reset: resetUpdateQuestionError,
-			},
-			{
-				error: deleteQuestionError,
-				message: "La question n'a pas pu être supprimée.",
-				reset: resetDeleteQuestionError,
-			},
-		]
-
-		for (const { error, message, reset } of toastErrors) {
-			if (error) {
-				showToast({
-					type: "error",
-					title: "Oops, nous avons rencontré une erreur.",
-					description: message,
-				})
-				reset() // Reset the error to avoid permanent toast error
-			}
-		}
-
-		if (getQuestionError) {
+		if (updateQuestionError || deleteQuestionError || getQuestionError) {
 			showToast({
 				type: "error",
 				title: "Oops, nous avons rencontré une erreur.",
-				description:
-					"Une erreur est survenue pour charger la question.",
+				description: updateQuestionError
+					? "La question n'a pas pu être mise à jour."
+					: deleteQuestionError
+						? "La question n'a pas pu être supprimée."
+						: "Une erreur est survenue pour charger la question.",
 			})
+			resetUpdateQuestionError()
+			resetDeleteQuestionError()
 		}
 	}, [
 		updateQuestionError,
