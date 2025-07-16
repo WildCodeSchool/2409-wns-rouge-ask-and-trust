@@ -175,7 +175,7 @@ export class AnswersResolver {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
 
-			// Vérifier si la question existe
+			// Check if the question exists
 			const { Questions } = await import(
 				"../../../database/entities/survey/questions"
 			)
@@ -187,30 +187,25 @@ export class AnswersResolver {
 				throw new AppError("Question not found", 404, "NotFoundError")
 			}
 
-			// Vérifier si l'utilisateur a déjà répondu à cette question
+			// Check if the user has already responded to this question
 			const existingAnswer = await Answers.findOne({
 				where: {
-					userId: user.id,
 					questionId: data.questionId,
 				},
 			})
 
 			if (existingAnswer) {
-				// Mettre à jour la réponse existante
+				// Update the existing response
 				existingAnswer.content = data.content
-				await existingAnswer.save()
-				return existingAnswer
+				return await Answers.save(existingAnswer)
 			} else {
-				// Créer une nouvelle réponse
-				const newAnswer = new Answers()
-				newAnswer.content = data.content
-				newAnswer.questionId = data.questionId
-				newAnswer.userId = user.id
-				newAnswer.user = user
-				newAnswer.question = question
-
-				await newAnswer.save()
-				return newAnswer
+				// Create a new response
+				const answer = Answers.create({
+					content: data.content,
+					questionId: data.questionId,
+					userId: user.id,
+				})
+				return await Answers.save(answer)
 			}
 		} catch (error) {
 			if (error instanceof AppError) {
