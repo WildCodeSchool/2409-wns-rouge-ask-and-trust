@@ -252,3 +252,19 @@ export type SurveyTableFilterProps = {
 }
 
 export type DateSortFilter = "Plus récente" | "Plus ancienne"
+
+// Survey Response Types
+export interface QuestionResponse {
+	questionId: number
+	value: string | string[] | boolean
+}
+
+export interface SurveyResponseData {
+	surveyId: number
+	responses: QuestionResponse[]
+	submittedAt?: Date
+}
+
+export interface SurveyResponseFormData {
+	[key: string]: string | string[] | boolean
+}

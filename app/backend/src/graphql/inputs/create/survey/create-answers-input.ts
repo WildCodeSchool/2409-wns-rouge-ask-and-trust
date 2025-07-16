@@ -1,4 +1,4 @@
-import { Length } from "class-validator"
+import { Length, IsNumber } from "class-validator"
 import { InputType, Field } from "type-graphql"
 
 /**
@@ -7,7 +7,7 @@ import { InputType, Field } from "type-graphql"
  *
  * @description
  * - `content`: the answer content for the survey question.
- * - `question`: the question to which this answer is associated (relation to `Questions`).
+ * - `questionId`: the ID of the question being answered.
  * - `createdAt`: timestamp of when the answer was created (automatically set).
  *
  * The class uses the following decorators:
@@ -20,4 +20,8 @@ export class CreateAnswersInput {
 		message: "Content must be between 1 and 1000 characters",
 	})
 	content!: string
+
+	@Field(() => Number)
+	@IsNumber({}, { message: "Question ID must be a number" })
+	questionId!: number
 }
