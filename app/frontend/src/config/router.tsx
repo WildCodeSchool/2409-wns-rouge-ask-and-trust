@@ -5,9 +5,9 @@
 
 import App from "@/App"
 import ProtectedRoute from "@/components/hoc/ProtectedRoute"
+import PublicRoute from "@/components/hoc/PublicRoute"
 import ErrorElement from "@/components/ui/ErrorElement"
 import Loader from "@/components/ui/Loader"
-import NotFound from "@/pages/NotFound"
 import { lazy, Suspense } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
@@ -28,6 +28,7 @@ const SurveyCreate = lazy(() => import("@/pages/SurveyCreate"))
 const PreviewSurveyPage = lazy(() => import("@/pages/PreviewSurvey"))
 const Contact = lazy(() => import("@/pages/Contact"))
 const SurveyUpdate = lazy(() => import("@/pages/SurveyUpdate"))
+const SurveyResponse = lazy(() => import("@/pages/SurveyResponse"))
 
 /**
  * Router confirmation
@@ -46,7 +47,9 @@ const router = createBrowserRouter([
 				index: true,
 				element: (
 					<Suspense fallback={<Loader />}>
-						<Landing />
+						<PublicRoute>
+							<Landing />
+						</PublicRoute>
 					</Suspense>
 				),
 			},
@@ -54,7 +57,9 @@ const router = createBrowserRouter([
 				path: "register",
 				element: (
 					<Suspense fallback={<Loader />}>
-						<Auth />
+						<PublicRoute>
+							<Auth />
+						</PublicRoute>
 					</Suspense>
 				),
 			},
@@ -62,7 +67,9 @@ const router = createBrowserRouter([
 				path: "connexion",
 				element: (
 					<Suspense fallback={<Loader />}>
-						<Auth />
+						<PublicRoute>
+							<Auth />
+						</PublicRoute>
 					</Suspense>
 				),
 			},
@@ -134,7 +141,9 @@ const router = createBrowserRouter([
 				path: "surveys/update/:id",
 				element: (
 					<Suspense fallback={<Loader />}>
-						<SurveyUpdate />
+						<ProtectedRoute>
+							<SurveyUpdate />
+						</ProtectedRoute>
 					</Suspense>
 				),
 			},
@@ -158,11 +167,28 @@ const router = createBrowserRouter([
 					</Suspense>
 				),
 			},
+			{
+				path: "surveys/respond/:id",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<ProtectedRoute>
+							<SurveyResponse />
+						</ProtectedRoute>
+					</Suspense>
+				),
+			},
 		],
 	},
 	{
 		path: "*",
-		element: <NotFound />,
+		errorElement: <ErrorElement />,
+		loader: () => {
+			// Simulate a 404 error for unmatched routes
+			throw new Response("Page non trouvée", {
+				status: 404,
+				statusText: "Not Found",
+			})
+		},
 	},
 ])
 

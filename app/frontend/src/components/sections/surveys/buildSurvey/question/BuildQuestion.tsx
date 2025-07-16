@@ -9,6 +9,7 @@ import {
 	useQuestion,
 	useQuestions,
 } from "@/hooks/useQuestions"
+import { useToast } from "@/hooks/useToast"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
 import { Trash2 } from "lucide-react"
 import { forwardRef, useEffect, useRef, useState } from "react"
@@ -91,9 +92,20 @@ function BuildQuestion(
 		reset,
 	} = useForm<QuestionUpdate>()
 	// Load question data from the API
-	const { question, loading, error } = useQuestion(questionId)
+	const {
+		question,
+		loading,
+		error: getQuestionError,
+	} = useQuestion(questionId)
 	// Load question update and delete functions from the API
-	const { updateQuestion, deleteQuestion } = useQuestions()
+	const {
+		updateQuestion,
+		updateQuestionError,
+		resetUpdateQuestionError,
+		deleteQuestion,
+		deleteQuestionError,
+		resetDeleteQuestionError,
+	} = useQuestions()
 	// Show / hide delete question button
 	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
 		useState(false)
@@ -108,11 +120,36 @@ function BuildQuestion(
 	})
 	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
 	const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
+	const { showToast } = useToast()
+
+	// Show error toast if there is an error during question update, delete or load
+	useEffect(() => {
+		if (updateQuestionError || deleteQuestionError || getQuestionError) {
+			showToast({
+				type: "error",
+				title: "Oops, nous avons rencontré une erreur.",
+				description: updateQuestionError
+					? "La question n'a pas pu être mise à jour."
+					: deleteQuestionError
+						? "La question n'a pas pu être supprimée."
+						: "Une erreur est survenue pour charger la question.",
+			})
+			resetUpdateQuestionError()
+			resetDeleteQuestionError()
+		}
+	}, [
+		updateQuestionError,
+		deleteQuestionError,
+		getQuestionError,
+		showToast,
+		resetUpdateQuestionError,
+		resetDeleteQuestionError,
+	])
 
 	// Reset the form with the current question data
 	// This ensures that the form is populated with the latest question data
 	useEffect(() => {
-		if (question && !loading && !error) {
+		if (question && !loading && !getQuestionError) {
 			reset({
 				title: question.title,
 				type: question.type,
@@ -120,7 +157,7 @@ function BuildQuestion(
 			})
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [question?.id, loading, error, reset])
+	}, [question?.id, loading, getQuestionError, reset])
 
 	// After saving question, if type has changed and there is no answer, provide default answers
 	useEffect(() => {
@@ -150,16 +187,26 @@ function BuildQuestion(
 		}
 	}, [openButtonDeleteQuestion])
 
-	const handleClickDelete = (
+	const handleClickDelete = async (
 		questionId: number | undefined,
 		surveyId: number | undefined
 	) => {
 		if (!questionId || !surveyId) return null
-		deleteQuestion(questionId, surveyId)
+
+		try {
+			await deleteQuestion(questionId, surveyId)
+			showToast({
+				type: "success",
+				title: "La question a été supprimée.",
+			})
+		} finally {
+			setOpenButtonDeleteQuestion(false)
+		}
 	}
 
-	const handleSubmitForm = (formData: UpdateQuestionInput) => {
+	const handleSubmitForm = async (formData: UpdateQuestionInput) => {
 		if (!question?.id) return
+
 		// Format answers to match the expected structure in API
 		const formattedAnswers = formData.answers?.map(({ value }) => ({
 			value,
@@ -167,21 +214,33 @@ function BuildQuestion(
 
 		const { title, type } = formData
 
-		// Call the updateQuestion function with the formatted data
-		updateQuestion({
-			id: question.id,
-			title: title,
-			type: type,
-			answers: formattedAnswers,
-		})
+		try {
+			// Call the updateQuestion function with the formatted data
+			await updateQuestion({
+				id: question.id,
+				title: title,
+				type: type,
+				answers: formattedAnswers,
+			})
 
-		// Reset the form with the updated question data
-		reset({
-			title: formData.title,
-			type: formData.type,
-			answers:
-				type === TypesOfQuestion.Text ? [] : (formattedAnswers ?? []),
-		})
+			// Reset the form with the updated question data
+			reset({
+				title: formData.title,
+				type: formData.type,
+				answers:
+					// If the question type is Text, empty answers
+					type === TypesOfQuestion.Text
+						? []
+						: (formattedAnswers ?? []),
+			})
+
+			showToast({
+				type: "success",
+				title: "La question a été mise à jour.",
+			})
+		} catch {
+			//
+		}
 	}
 
 	if (!question) return null
@@ -200,6 +259,7 @@ function BuildQuestion(
 						variant="ghost_destructive"
 						size="square_sm"
 						ariaLabel="Supprimer cette option"
+						type="button"
 						onClick={() => {
 							setOpenButtonDeleteQuestion(prev => !prev)
 						}}
@@ -207,7 +267,6 @@ function BuildQuestion(
 					/>
 				</div>
 				{openButtonDeleteQuestion && (
-					// @TODO mettre focus sur delete
 					<div className="flex flex-1 gap-3">
 						<Button
 							type="button"
@@ -267,6 +326,7 @@ function BuildQuestion(
 				)}
 				<Button
 					role="submit"
+					type="submit"
 					ariaLabel="Enregistrer la question."
 					fullWidth
 				>

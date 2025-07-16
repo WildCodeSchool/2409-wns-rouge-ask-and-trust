@@ -80,14 +80,15 @@ export default function SurveyForm() {
 		)
 
 		if (isNotFoundError) {
-			navigate("/surveyNotFound", { replace: true })
-			return null
+			throw new Response("Survey not found", { status: 404 })
 		}
+
+		// Pour les autres erreurs GraphQL
+		throw new Response("Error loading survey", { status: 500 })
 	}
 
 	if (surveyId && !surveyLoading && !survey) {
-		navigate("/surveyNotFound", { replace: true })
-		return null
+		throw new Response("Survey not found", { status: 404 })
 	}
 
 	const onFormSubmit = async (form: CreateSurveyInput) => {

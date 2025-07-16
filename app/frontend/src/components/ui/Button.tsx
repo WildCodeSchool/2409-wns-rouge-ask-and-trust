@@ -80,6 +80,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 			children,
 			to,
 			onClick,
+			...props
 		},
 		ref
 	) => {
@@ -127,6 +128,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 					role={role}
 					onClick={onClick}
 					className={classNameContent}
+					{...props}
 				>
 					{childrenContent}
 				</button>

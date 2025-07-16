@@ -23,7 +23,7 @@ export function ContactForm() {
 			type: "success",
 		})
 		reset()
-		// Ici, on pourrait envoyer le formulaire à une API
+		// Here, we could send the form to an API
 	}
 
 	if (isSubmitSuccessful) {
@@ -51,6 +51,8 @@ export function ContactForm() {
 					{...register("name", {
 						required: "Le nom est obligatoire.",
 					})}
+					aria-required
+					aria-invalid={errors.name ? "true" : "false"}
 					errorMessage={errors.name?.message as string}
 				/>
 			</div>
@@ -71,6 +73,8 @@ export function ContactForm() {
 							message: "Email invalide.",
 						},
 					})}
+					aria-required
+					aria-invalid={errors.email ? "true" : "false"}
 					errorMessage={errors.email?.message as string}
 				/>
 			</div>
@@ -87,6 +91,8 @@ export function ContactForm() {
 					{...register("message", {
 						required: "Le message est obligatoire.",
 					})}
+					aria-required
+					aria-invalid={errors.message ? "true" : "false"}
 					errorMessage={errors.message?.message as string}
 				/>
 			</div>

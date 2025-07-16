@@ -39,6 +39,11 @@ export const GET_SURVEY = gql`
 			}
 			questions {
 				id
+				title
+				type
+				answers {
+					value
+				}
 			}
 			createdAt
 			updatedAt
