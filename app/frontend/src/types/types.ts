@@ -119,7 +119,7 @@ export interface Survey {
 	public: boolean
 	category: number | string
 	questions: { id: number }[]
-	users: User
+	user: User
 }
 
 export type CreateSurveyInput = Survey

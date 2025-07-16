@@ -16,7 +16,7 @@ export default function UserInformations() {
 	const user: User = data?.whoami
 
 	const userSurveys: Survey[] = surveys.filter(
-		(survey: Survey) => survey.users?.id === user.id
+		(survey: Survey) => survey.user?.id === user.id
 	)
 
 	return (
