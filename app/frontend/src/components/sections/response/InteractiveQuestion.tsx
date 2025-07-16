@@ -4,7 +4,7 @@ import {
 	SurveyResponseFormData,
 } from "@/types/types"
 import { Label } from "@/components/ui/Label"
-import { UseFormRegister } from "react-hook-form"
+import { UseFormRegister, Control } from "react-hook-form"
 import { TextInput } from "./ui/TextInput"
 import { SelectInput } from "./ui/SelectInput"
 import { BooleanInput } from "./ui/BooleanInput"
@@ -13,6 +13,7 @@ import { MultipleChoiceInput } from "./ui/MultipleChoiceInput"
 type InteractiveQuestionProps = {
 	question: Question
 	register: UseFormRegister<SurveyResponseFormData>
+	control: Control<SurveyResponseFormData>
 	error?: string
 	values?: Record<string, string | boolean | string[]>
 	setValue?: (name: string, value: string | boolean | string[]) => void
@@ -21,6 +22,7 @@ type InteractiveQuestionProps = {
 export default function InteractiveQuestion({
 	question,
 	register,
+	control,
 	error,
 	values,
 	setValue,
@@ -55,27 +57,30 @@ export default function InteractiveQuestion({
 					/>
 				)
 
-			case TypesOfQuestion.Select:
+			case TypesOfQuestion.Select: {
+				const selectOptions = [
+					...new Set(question.answers.map(a => a.value)),
+				]
 				return (
 					<SelectInput
 						name={fieldName}
-						register={register}
-						options={question.answers.map(a => a.value)}
+						control={control}
+						options={selectOptions}
 						placeholder="Sélectionnez une réponse"
 						error={error}
-						value={
-							typeof currentValue === "string" ? currentValue : ""
-						}
 						onChange={value => setValue?.(fieldName, value)}
 					/>
 				)
+			}
 
 			case TypesOfQuestion.Multiple_Choice:
 				return (
 					<MultipleChoiceInput
 						name={fieldName}
 						register={register}
-						options={question.answers.map(a => a.value)}
+						options={[
+							...new Set(question.answers.map(a => a.value)),
+						]}
 						error={error}
 						value={Array.isArray(currentValue) ? currentValue : []}
 						onChange={value => setValue?.(fieldName, value)}

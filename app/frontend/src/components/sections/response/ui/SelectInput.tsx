@@ -6,12 +6,11 @@ import {
 	SelectValue,
 } from "@/components/ui/Select"
 import { SurveyResponseFormData } from "@/types/types"
-import { UseFormRegister } from "react-hook-form"
-import { Input } from "@/components/ui/Input"
+import { Control, Controller, FieldPath } from "react-hook-form"
 
 type SelectInputProps = {
-	name: string
-	register: UseFormRegister<SurveyResponseFormData>
+	name: FieldPath<SurveyResponseFormData>
+	control: Control<SurveyResponseFormData>
 	options: string[]
 	placeholder?: string
 	error?: string
@@ -21,38 +20,56 @@ type SelectInputProps = {
 
 export function SelectInput({
 	name,
-	register,
+	control,
 	options,
 	placeholder,
 	error,
-	value = "",
 	onChange,
 }: SelectInputProps) {
 	return (
 		<div>
-			<Select onValueChange={onChange} value={value}>
-				<SelectTrigger
-					className={error ? "border-destructive-medium" : ""}
-					aria-invalid={error ? "true" : "false"}
-				>
-					<SelectValue
-						placeholder={placeholder || "Sélectionnez une option"}
-					/>
-				</SelectTrigger>
-				<SelectContent>
-					{options.map((option, index) => (
-						<SelectItem key={`${option}_${index}`} value={option}>
-							{option}
-						</SelectItem>
-					))}
-				</SelectContent>
-			</Select>
-			{/* Input caché pour react-hook-form */}
-			<Input
-				type="hidden"
-				{...register(name)}
-				value={value}
-				errorMessage={error}
+			<Controller
+				control={control}
+				name={name}
+				render={({ field }) => {
+					return (
+						<Select
+							value={String(field.value || "")}
+							onValueChange={value => {
+								// Protection: éviter d'écraser une valeur valide avec une chaîne vide
+								if (
+									value === "" &&
+									field.value &&
+									field.value !== ""
+								) {
+									return
+								}
+								field.onChange(value)
+								onChange?.(value)
+							}}
+						>
+							<SelectTrigger
+								className={
+									error ? "border-destructive-medium" : ""
+								}
+								aria-invalid={error ? "true" : "false"}
+							>
+								<SelectValue
+									placeholder={
+										placeholder || "Sélectionnez une option"
+									}
+								/>
+							</SelectTrigger>
+							<SelectContent>
+								{options.map((option, index) => (
+									<SelectItem key={index} value={option}>
+										{option}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					)
+				}}
 			/>
 			{error && (
 				<p className="text-destructive-medium mt-1 text-sm">{error}</p>
