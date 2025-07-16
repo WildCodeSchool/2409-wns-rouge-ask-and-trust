@@ -1,86 +1,50 @@
-import {
-	DateSortFilter,
-	SurveysDashboardQuery,
-	SurveyStatus,
-	SurveyTableType,
-} from "@/types/types"
+import { MySurveysResult } from "@/types/types"
 import { CheckedState } from "@radix-ui/react-checkbox"
 import { useCallback, useEffect, useState } from "react"
 import SurveyTable from "@/components/sections/dashboard/SurveyTable"
 import SurveyTableNav from "@/components/sections/dashboard/SurveyTableNav"
 import SurveyTableFilter from "@/components/sections/dashboard/SurveyTableFilter"
-import { NetworkStatus, useQuery } from "@apollo/client"
-import { GET_MY_SURVEYS } from "@/graphql/survey/survey"
 import SurveyTableSearch from "@/components/sections/dashboard/SurveyTableSearch"
-
-const statusLabelMap: Record<SurveyTableType["status"], string> = {
-	draft: "Brouillon",
-	published: "Publiée",
-	archived: "Archivée",
-	censored: "Censurée",
-}
-
-const DATE_SORT_FILTERS = ["Plus récente", "Plus ancienne"] as const
+import { useSurvey } from "@/hooks/useSurvey"
 
 export default function SurveyTableContainer() {
 	const [selectedSurveyIds, setSelectedSurveyIds] = useState<number[]>([])
 	const [isHeaderChecked, setIsHeaderChecked] = useState<CheckedState>(false)
-	const [filters, setFilters] = useState<string[]>([])
-	const [debouncedSearch, setDebouncedSearch] = useState("")
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const surveysPerPage = 5
 
-	const selectedStatuses = filters.filter(f =>
-		Object.values(statusLabelMap).includes(f)
-	)
-
-	const selectedSort = filters.find((f): f is DateSortFilter =>
-		DATE_SORT_FILTERS.includes(f as DateSortFilter)
-	)
+	const {
+		currentPage,
+		setCurrentPage,
+		setDebouncedSearch,
+		mySurveys,
+		isRefetching,
+		isInitialLoading,
+		filters,
+		setFilters,
+		statusLabelMap,
+		PER_PAGE,
+	} = useSurvey()
 
 	const handleSearch = useCallback((query: string) => {
 		setDebouncedSearch(query)
 		setCurrentPage(1)
 	}, [])
 
-	const { data, loading, networkStatus } = useQuery<SurveysDashboardQuery>(
-		GET_MY_SURVEYS,
-		{
-			variables: {
-				filters: {
-					page: currentPage,
-					limit: surveysPerPage,
-					search: debouncedSearch,
-					status: selectedStatuses.map(
-						label =>
-							Object.entries(statusLabelMap).find(
-								([, v]) => v === label
-							)?.[0]
-					) as SurveyStatus[],
-					sortBy: "createdAt",
-					order: selectedSort === "Plus ancienne" ? "ASC" : "DESC",
-				},
-				notifyOnNetworkStatusChange: true,
-			},
-		}
+	const [previousData, setPreviousData] = useState<MySurveysResult | null>(
+		null
 	)
 
-	const isRefetching = networkStatus === NetworkStatus.refetch
-	const isInitialLoading = loading && !data
-
-	const [previousData, setPreviousData] =
-		useState<SurveysDashboardQuery | null>(null)
-
 	useEffect(() => {
-		if (data && !isRefetching) {
-			setPreviousData(data)
+		if (mySurveys && !isRefetching) {
+			setPreviousData(mySurveys)
 		}
-	}, [data, isRefetching])
+	}, [mySurveys, isRefetching])
 
-	const currentData = data || previousData
-	const surveysData = currentData?.mySurveys?.surveys ?? []
-	const totalCount = currentData?.mySurveys?.totalCount ?? 0
-	const totalCountAll = currentData?.mySurveys?.totalCountAll ?? 0
+	const currentData = mySurveys || previousData
+	const surveysData = currentData?.surveys ?? []
+	const totalCount = currentData?.totalCount ?? 0
+	const totalCountAll = currentData?.totalCountAll ?? 0
+	console.log("🚀 ~ SurveyTableContainer ~ totalCountAll:", totalCountAll)
+	const paginatedSurveys = surveysData
 
 	const handleSurveyCheckboxChange = (
 		surveyId: number,
@@ -116,8 +80,6 @@ export default function SurveyTableContainer() {
 	}
 
 	const atLeastTwoSelected = selectedSurveyIds.length >= 2
-
-	const paginatedSurveys = surveysData
 
 	useEffect(() => {
 		setIsHeaderChecked(false)
@@ -180,7 +142,7 @@ export default function SurveyTableContainer() {
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
 				totalCount={totalCount}
-				surveysPerPage={surveysPerPage}
+				surveysPerPage={PER_PAGE.mine}
 				selectedSurveyIds={selectedSurveyIds}
 			/>
 		</div>

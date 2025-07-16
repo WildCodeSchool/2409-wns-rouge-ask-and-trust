@@ -1,3 +1,4 @@
+import { PaginationProps } from "@/types/types"
 import {
 	PaginationContainer,
 	PaginationContent,
@@ -7,14 +8,6 @@ import {
 	PaginationPrevious,
 	PaginationEllipsis,
 } from "./PaginationContainer"
-
-type PaginationProps = {
-	currentPage: number
-	totalCount: number
-	perPage: number
-	onPageChange: (page: number) => void
-	className?: string
-}
 
 export default function Pagination({
 	currentPage,

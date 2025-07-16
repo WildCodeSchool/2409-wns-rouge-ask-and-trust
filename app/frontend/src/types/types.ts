@@ -130,7 +130,7 @@ export interface Survey {
 
 export type CreateSurveyInput = Survey
 
-export type UpdateSurveyType = Survey
+export type UpdateSurveyInput = Survey
 
 export type Question = {
 	id: number
