@@ -7,11 +7,13 @@ import React, { useEffect, useState } from "react"
 interface ButtonScrollTopProps {
 	containerRef: React.RefObject<HTMLElement | null>
 	className?: string
+	ariaLabel?: string
 }
 
 export const ButtonScrollTop: React.FC<ButtonScrollTopProps> = ({
 	containerRef,
 	className,
+	ariaLabel,
 }) => {
 	const [isVisible, setIsVisible] = useState(false)
 	const [isBouncing, setIsBouncing] = useState(false)
@@ -39,8 +41,9 @@ export const ButtonScrollTop: React.FC<ButtonScrollTopProps> = ({
 
 	return (
 		<Button
-			ariaLabel="Scroll to top"
+			ariaLabel={ariaLabel ?? "Remonter en haut de la page"}
 			onClick={handleClick}
+			type="button"
 			variant="primary"
 			size="square"
 			className={cn(
