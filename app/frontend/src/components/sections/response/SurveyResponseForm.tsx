@@ -2,8 +2,8 @@ import { SurveyResponseFormData, Question } from "@/types/types"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/Button"
 import { useToast } from "@/hooks/useToast"
-import { useAnswers } from "@/hooks/useAnswers"
-import { useState, useEffect } from "react"
+import { useAnswers, type ExistingAnswer } from "@/hooks/useAnswers"
+import { useState, useEffect, useMemo } from "react"
 import InteractiveQuestion from "./InteractiveQuestion"
 
 type SurveyResponseFormProps = {
@@ -18,12 +18,9 @@ export default function SurveyResponseForm({
 	const { showToast } = useToast()
 	const {
 		submitSurveyResponse,
-		deleteAllAnswers,
 		isCreatingAnswer,
-		isDeletingAnswers,
 		createAnswerError,
-		deleteAnswersError,
-		getExistingAnswersForForm,
+		existingAnswers: existingAnswersData,
 		isLoadingAnswers,
 	} = useAnswers(surveyId)
 	const [isSubmitting, setIsSubmitting] = useState(false)
@@ -42,15 +39,56 @@ export default function SurveyResponseForm({
 
 	const watchedValues = watch()
 
+	// Détecter si l'utilisateur a déjà répondu à l'enquête
+	const hasExistingResponses =
+		existingAnswersData && existingAnswersData.length > 0
+
+	// Formatter les réponses existantes pour le formulaire
+	const existingAnswers = useMemo(() => {
+		if (!existingAnswersData || existingAnswersData.length === 0) {
+			return {}
+		}
+
+		const formData: Record<string, string | boolean | string[]> = {}
+
+		existingAnswersData.forEach((answer: ExistingAnswer) => {
+			const fieldName = `question_${answer.questionId}`
+
+			// Parse content based on question type
+			let value: string | boolean | string[] = answer.content
+
+			switch (answer.question.type) {
+				case "boolean":
+					value = answer.content === "Oui"
+					break
+				case "multiple_choice":
+					value = answer.content.includes(", ")
+						? answer.content.split(", ")
+						: [answer.content]
+					break
+				case "select":
+				case "text":
+				default:
+					value = answer.content
+					break
+			}
+
+			formData[fieldName] = value
+		})
+
+		return formData
+	}, [existingAnswersData])
+
 	// Pré-remplir le formulaire avec les réponses existantes
 	useEffect(() => {
-		if (!isLoadingAnswers) {
-			const existingAnswers = getExistingAnswersForForm()
-			if (Object.keys(existingAnswers).length > 0) {
-				reset(existingAnswers)
-			}
+		if (
+			!isLoadingAnswers &&
+			hasExistingResponses &&
+			Object.keys(existingAnswers).length > 0
+		) {
+			reset(existingAnswers)
 		}
-	}, [isLoadingAnswers, reset, getExistingAnswersForForm])
+	}, [isLoadingAnswers, hasExistingResponses, reset, existingAnswers])
 
 	const onSubmit = async (data: SurveyResponseFormData) => {
 		setIsSubmitting(true)
@@ -61,10 +99,16 @@ export default function SurveyResponseForm({
 				responses: data,
 			})
 
+			const successMessage = hasExistingResponses
+				? "Vos réponses ont été mises à jour !"
+				: "Merci pour votre participation à cette enquête !"
+
 			showToast({
 				type: "success",
-				title: "Réponse envoyée",
-				description: "Merci pour votre participation à cette enquête !",
+				title: hasExistingResponses
+					? "Réponses modifiées"
+					: "Réponse envoyée",
+				description: successMessage,
 			})
 		} catch (error) {
 			console.error("Error submitting survey response:", error)
@@ -80,35 +124,13 @@ export default function SurveyResponseForm({
 		}
 	}
 
-	// Function to reset both backend and frontend
-	const handleReset = async () => {
-		try {
-			setIsSubmitting(true)
-
-			// Delete from backend
-			await deleteAllAnswers()
-
-			// Reset frontend form
-			reset()
-
-			showToast({
-				type: "success",
-				title: "Formulaire réinitialisé",
-				description: "Toutes vos réponses ont été supprimées.",
-			})
-		} catch (error) {
-			console.error("Error resetting survey:", error)
-			showToast({
-				type: "error",
-				title: "Erreur",
-				description:
-					deleteAnswersError?.message ||
-					"Impossible de réinitialiser le formulaire.",
-			})
-		} finally {
-			setIsSubmitting(false)
-		}
-	}
+	// Textes dynamiques selon le contexte
+	const buttonText = hasExistingResponses
+		? "Modifier mes réponses"
+		: "Envoyer mes réponses"
+	const loadingText = hasExistingResponses
+		? "Modification en cours..."
+		: "Envoi en cours..."
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -153,28 +175,14 @@ export default function SurveyResponseForm({
 				</div>
 			)}
 
-			<div className="flex gap-4 border-t pt-6">
+			<div className="flex justify-center border-t pt-6">
 				<Button
 					type="submit"
 					disabled={isSubmitting || isCreatingAnswer}
-					className="flex-1"
-					ariaLabel="Envoyer mes réponses"
+					className="px-8"
+					ariaLabel={buttonText}
 				>
-					{isSubmitting
-						? "Envoi en cours..."
-						: "Envoyer mes réponses"}
-				</Button>
-
-				<Button
-					type="button"
-					variant="outline"
-					onClick={handleReset}
-					disabled={
-						isSubmitting || isCreatingAnswer || isDeletingAnswers
-					}
-					ariaLabel="Réinitialiser le formulaire"
-				>
-					{isDeletingAnswers ? "Suppression..." : "Réinitialiser"}
+					{isSubmitting ? loadingText : buttonText}
 				</Button>
 			</div>
 
