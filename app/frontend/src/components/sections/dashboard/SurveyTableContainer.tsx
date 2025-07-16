@@ -43,7 +43,6 @@ export default function SurveyTableContainer() {
 	const surveysData = currentData?.surveys ?? []
 	const totalCount = currentData?.totalCount ?? 0
 	const totalCountAll = currentData?.totalCountAll ?? 0
-	console.log("🚀 ~ SurveyTableContainer ~ totalCountAll:", totalCountAll)
 	const paginatedSurveys = surveysData
 
 	const handleSurveyCheckboxChange = (
@@ -108,7 +107,7 @@ export default function SurveyTableContainer() {
 
 	return (
 		<div className="flex flex-col gap-10">
-			<div className="flex items-start justify-between max-sm:flex-col max-sm:gap-5">
+			<div className="flex items-start justify-between gap-5 max-md:flex-col">
 				<SurveyTableFilter filters={filters} setFilters={setFilters} />
 				<SurveyTableSearch onSearch={handleSearch} />
 			</div>
