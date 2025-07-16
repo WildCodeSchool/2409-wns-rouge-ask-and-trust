@@ -37,7 +37,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 		}
 	}, [newQuestionId, newQuestionElement])
 
-	// Show a toast notification if there is an error
+	// Show a toast notification if there is an error after creating a question
 	useEffect(() => {
 		if (createQuestionError) {
 			showToast({
@@ -50,23 +50,15 @@ export const Canvas: React.FC<CanvasProps> = ({
 
 	const handleAddQuestion = async () => {
 		if (!surveyId) return
-		try {
-			const result = await addQuestion({
-				surveyId: Number(surveyId),
-			})
-			if (result?.id) {
-				showToast({
-					type: "success",
-					title: "Question ajoutée !",
-				})
-				setNewQuestionId(result.id)
-			}
-		} catch {
+		const result = await addQuestion({
+			surveyId: Number(surveyId),
+		})
+		if (result?.id) {
 			showToast({
-				type: "error",
-				title: "Oops, nous avons rencontré une erreur.",
-				description: "Veuillez réessayer plus tard.",
+				type: "success",
+				title: "Question ajoutée !",
 			})
+			setNewQuestionId(result.id)
 		}
 	}
 
