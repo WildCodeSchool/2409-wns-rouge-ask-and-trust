@@ -69,32 +69,32 @@ export class QuestionsResolver {
 	 * @returns A Promise that resolves to the corresponding Questions object, or null if not found.
 	 *
 	 * This query fetches a specific question based on its ID, including its related survey.
+	 * @example Good manage error template
 	 */
 	@Query(() => Questions, { nullable: true })
 	async question(@Arg("id", () => ID) id: number): Promise<Questions | null> {
+		let question: Questions | null = null
+
 		try {
-			const question = await Questions.findOne({
+			question = await Questions.findOne({
 				where: { id },
 				relations: {
 					survey: true,
 				},
 			})
-
-			if (!question) {
-				throw new AppError("Question not found", 404, "NotFoundError")
-			}
-
-			return question
 		} catch (error) {
-			if (error instanceof AppError) {
-				throw error
-			}
 			throw new AppError(
 				"Failed to fetch question",
 				500,
 				"InternalServerError"
 			)
 		}
+
+		if (!question) {
+			throw new AppError("Question not found", 404, "NotFoundError")
+		}
+
+		return question
 	}
 
 	/**
