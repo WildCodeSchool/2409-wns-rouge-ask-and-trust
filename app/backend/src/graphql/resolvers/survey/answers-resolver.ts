@@ -19,6 +19,7 @@ import { Answers } from "../../../database/entities/survey/answers"
 import { CreateAnswersInput } from "../../inputs/create/survey/create-answers-input"
 import { Context, Roles } from "../../../types/types"
 import { AppError } from "../../../middlewares/error-handler"
+import { Questions } from "../../../database/entities/survey/questions"
 
 /**
  * AnswersResolver
@@ -175,10 +176,6 @@ export class AnswersResolver {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
 
-			// Check if the question exists
-			const { Questions } = await import(
-				"../../../database/entities/survey/questions"
-			)
 			const question = await Questions.findOne({
 				where: { id: data.questionId },
 			})
