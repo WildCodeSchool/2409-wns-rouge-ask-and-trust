@@ -82,6 +82,7 @@ export function useQuestions() {
 	] = useMutation(DELETE_QUESTION)
 
 	const addQuestion = async (question: CreateQuestionInput) => {
+		if (isCreateQuestionLoading) return // Prevent multiple submissions
 		const completedQuestion = getDefaultQuestion(question)
 
 		const result = await createQuestionMutation({
@@ -92,6 +93,7 @@ export function useQuestions() {
 	}
 
 	const updateQuestion = async (question: UpdateQuestionInput) => {
+		if (isUpdateQuestionLoading) return // Prevent multiple submissions
 		// Clean answers if question type is Text
 		if (question.type === TypesOfQuestion.Text) {
 			question.answers = []
@@ -111,6 +113,7 @@ export function useQuestions() {
 		return result
 	}
 	const deleteQuestion = async (id: number, surveyId: number) => {
+		if (isDeleteQuestionLoading) return // Prevent multiple submissions
 		const result = await deleteQuestionMutation({
 			variables: { deleteQuestionId: id },
 			refetchQueries: [
