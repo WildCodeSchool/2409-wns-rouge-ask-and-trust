@@ -9,17 +9,17 @@ export function UserDetailsPart({
 	onToggleResetForm,
 }: UserDetails) {
 	return (
-		<div className="w-full max-w-[428px] px-1.5 py-4 sm:px-5">
+		<div className="w-full py-4 max-sm:px-2 sm:min-w-[331px] md:px-1.5 min-lg:px-5">
 			<div className="flex flex-row items-start justify-start gap-2.5 sm:gap-4">
-				<div className="max-w-[109px] rounded-md shadow-lg shadow-black/10 sm:max-w-[145px]">
+				<div className="max-w-[109px] rounded-md shadow-lg shadow-black/10">
 					<img
-						className="max-w-[109px] rounded-md sm:max-w-[145px]"
+						className="max-w-[109px] rounded-md"
 						src={profilePicture}
 						alt="Image utilisateur"
 					/>
 				</div>
 
-				<div className="flex w-full flex-col justify-start">
+				<div className="flex w-full flex-col justify-start gap-2">
 					<h5 className="text-lg font-extrabold">
 						{user.firstname} {user.lastname}
 					</h5>
@@ -32,12 +32,12 @@ export function UserDetailsPart({
 				</div>
 			</div>
 
-			<div className="mt-4 flex flex-row items-center justify-end gap-2">
+			<div className="mt-4 flex flex-row items-center justify-center gap-2">
 				<Button
 					variant="primary"
 					role="link"
 					ariaLabel="Modifier l'utilisateur"
-					className="buttonVariants h-9 rounded-md px-4 text-base"
+					className="buttonVariants h-9 rounded-md px-3 text-base"
 				>
 					Modifier
 				</Button>
@@ -46,7 +46,7 @@ export function UserDetailsPart({
 					ariaLabel="Modifier le mot de passe"
 					variant="secondary"
 					onClick={onToggleResetForm}
-					className="h-9 rounded-md px-4 text-base"
+					className="buttonVariants h-9 rounded-md px-3 text-base"
 				>
 					{showResetForm ? "Fermer" : "Modifier le mot de passe"}
 				</Button>

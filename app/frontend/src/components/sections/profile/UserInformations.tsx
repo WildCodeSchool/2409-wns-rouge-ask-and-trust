@@ -24,8 +24,10 @@ export default function UserInformations() {
 
 	return (
 		<section
-			className={`transition-all duration-300 ${
-				showResetForm ? "md:min-w-[850px]" : "md:min-w-[428px]"
+			className={`duration-100 ${
+				showResetForm
+					? "lg:min-w-[850px]"
+					: "sm:max-w-[331px] lg:min-w-[428px]"
 			}`}
 		>
 			<div className="rounded-md bg-white shadow-lg shadow-black/10">

@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/Button.tsx"
 
 export function ResetPasswordPart() {
 	return (
-		<div className="w-full max-w-[420px] px-6 py-6">
-			<h5 className="mb-4 text-lg font-semibold text-gray-700">
+		<div className="w-full px-6 py-4 sm:min-w-[331px] lg:min-w-[420px]">
+			<h5 className="mb-4 text-lg font-semibold">
 				Modifier le mot de passe
 			</h5>
 
