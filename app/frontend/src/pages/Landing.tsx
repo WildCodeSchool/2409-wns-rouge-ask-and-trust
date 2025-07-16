@@ -15,14 +15,12 @@ const Landing = () => {
 					content="Page d'accueil du site Ark&Trust"
 				/>
 				<meta name="robots" content="noindex, nofollow" />
-				{/* Open Graph */}
 				<meta property="og:title" content="Accueil | Ask&Trust" />
 				<meta
 					property="og:description"
 					content="Page d'accueil du site Ark&Trust"
 				/>
 				<meta property="og:type" content="website" />
-				{/* Twitter Card */}
 				<meta name="twitter:card" content="summary" />
 				<meta name="twitter:title" content="Accueil | Ask&Trust" />
 				<meta

@@ -7,17 +7,15 @@ export default function UserProfilePage() {
 		<>
 			<section className="flex flex-col items-center gap-9 p-5 lg:px-19">
 				<Helmet>
-					<title>Accueil | Ask&Trust</title>
+					<title>Profil utilisateur</title>
 					<meta name="description" content="Profil utilisateur" />
 					<meta name="robots" content="noindex, nofollow" />
-					{/* Open Graph */}
 					<meta property="og:title" content="Profil" />
 					<meta
 						property="og:description"
 						content="Profil utilisateur"
 					/>
 					<meta property="og:type" content="website" />
-					{/* Twitter Card */}
 					<meta name="twitter:card" content="summary" />
 					<meta name="twitter:title" content="Profil" />
 					<meta
