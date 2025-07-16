@@ -5,6 +5,7 @@
 
 import App from "@/App"
 import ProtectedRoute from "@/components/hoc/ProtectedRoute"
+import PublicRoute from "@/components/hoc/PublicRoute"
 import ErrorElement from "@/components/ui/ErrorElement"
 import Loader from "@/components/ui/Loader"
 import { lazy, Suspense } from "react"
@@ -46,7 +47,9 @@ const router = createBrowserRouter([
 				index: true,
 				element: (
 					<Suspense fallback={<Loader />}>
-						<Landing />
+						<PublicRoute>
+							<Landing />
+						</PublicRoute>
 					</Suspense>
 				),
 			},
@@ -54,7 +57,9 @@ const router = createBrowserRouter([
 				path: "register",
 				element: (
 					<Suspense fallback={<Loader />}>
-						<Auth />
+						<PublicRoute>
+							<Auth />
+						</PublicRoute>
 					</Suspense>
 				),
 			},
@@ -62,7 +67,9 @@ const router = createBrowserRouter([
 				path: "connexion",
 				element: (
 					<Suspense fallback={<Loader />}>
-						<Auth />
+						<PublicRoute>
+							<Auth />
+						</PublicRoute>
 					</Suspense>
 				),
 			},
@@ -134,7 +141,9 @@ const router = createBrowserRouter([
 				path: "surveys/update/:id",
 				element: (
 					<Suspense fallback={<Loader />}>
-						<SurveyUpdate />
+						<ProtectedRoute>
+							<SurveyUpdate />
+						</ProtectedRoute>
 					</Suspense>
 				),
 			},

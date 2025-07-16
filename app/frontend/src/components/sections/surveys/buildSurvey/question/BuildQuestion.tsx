@@ -4,12 +4,14 @@ import QuestionTypeSelect from "@/components/sections/surveys/buildSurvey/questi
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
-import { GET_QUESTION } from "@/graphql/survey/question"
-import { UpdateQuestionInput, useQuestions } from "@/hooks/useQuestions"
+import {
+	UpdateQuestionInput,
+	useQuestion,
+	useQuestions,
+} from "@/hooks/useQuestions"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
-import { useQuery } from "@apollo/client"
 import { Trash2 } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { forwardRef, useEffect, useRef, useState } from "react"
 import {
 	FieldArrayWithId,
 	FieldValues,
@@ -42,10 +44,10 @@ export function RenderAnswerComponent({
 	remove,
 	append,
 }: RenderAnswerComponentProps) {
+	// Render the appropriate answer component based on the question type
 	switch (questionType) {
 		case TypesOfQuestion.Text:
-			return null
-		case TypesOfQuestion.Boolean:
+		case TypesOfQuestion.Boolean: // @TODO : render list answer for Boolean Question instead of null
 			return null
 		case TypesOfQuestion.Multiple_Choice:
 		case TypesOfQuestion.Select:
@@ -64,6 +66,8 @@ export function RenderAnswerComponent({
 }
 
 const getDefaultAnswersForType = (type: QuestionType) => {
+	// Provide default answers based on the question type
+	// This is useful when the question type changes and there are no answers yet
 	switch (type) {
 		case TypesOfQuestion.Boolean:
 			return [{ value: "Vrai" }, { value: "Faux" }]
@@ -75,86 +79,76 @@ const getDefaultAnswersForType = (type: QuestionType) => {
 	}
 }
 
-export default function BuildQuestion({ questionId }: QuestionProps) {
+function BuildQuestion(
+	{ questionId }: QuestionProps,
+	ref: React.Ref<HTMLLIElement> | null
+) {
 	const {
 		register,
 		handleSubmit,
 		control,
 		formState: { errors },
 		reset,
-		// watch,
 	} = useForm<QuestionUpdate>()
-	// 	{
-	// 	defaultValues: {
-	// 		title: "Titre de la question",
-	// 		type: TypesOfQuestion.Text,
-	// 		answers: [],
-	// 	},
-	// }
+	// Load question data from the API
+	const { question, loading, error } = useQuestion(questionId)
+	// Load question update and delete functions from the API
+	const { updateQuestion, deleteQuestion } = useQuestions()
+	// Show / hide delete question button
 	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
 		useState(false)
-
-	// @TODO add error handling
-	const { data } = useQuery<{ question: QuestionUpdate }>(GET_QUESTION, {
-		variables: { questionId },
-	})
 	// Allow to manipulate answers as a dynamic array (no state needed)
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "answers",
 	})
-	const { updateQuestion, updateQuestionError, deleteQuestion } =
-		useQuestions()
-
-	const onSubmit = (formData: UpdateQuestionInput) => {
-		console.log("updateQuestionError", updateQuestionError)
-		if (!data?.question.id) return
-
-		const formattedAnswers = formData.answers?.map(({ value }) => ({
-			value,
-		}))
-
-		const { title, type } = formData
-
-		updateQuestion({
-			id: data.question.id,
-			title: title,
-			type: type,
-			answers: formattedAnswers,
-		})
-	}
-
-	// Fill form data with question's data from database
-	useEffect(() => {
-		if (data?.question) {
-			reset({
-				title: data.question.title,
-				type: data.question.type,
-				answers: data.question.answers,
-			})
-		}
-	}, [data, reset])
-
 	const watchedType = useWatch({
 		control,
 		name: "type",
 	})
 	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
+	const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
 
+	// Reset the form with the current question data
+	// This ensures that the form is populated with the latest question data
 	useEffect(() => {
-		if (!watchedType) return
+		if (question && !loading && !error) {
+			reset({
+				title: question.title,
+				type: question.type,
+				answers: question.answers,
+			})
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [question?.id, loading, error, reset])
 
+	// After saving question, if type has changed and there is no answer, provide default answers
+	useEffect(() => {
+		if (!watchedType || !question) return
+
+		// Check if the type has changed and if there are no answers yet
 		const hasTypeChanged =
 			prevTypeRef.current && prevTypeRef.current !== watchedType
 		const answersAreEmpty = fields.length === 0
 
 		if (hasTypeChanged && answersAreEmpty) {
+			// If the form has no answers, append default answers based on the type
 			const defaults = getDefaultAnswersForType(watchedType)
-			defaults.forEach(answer => append(answer))
+			// Append default answers to the form
+			for (const defaultAnswer of defaults) {
+				append(defaultAnswer)
+			}
 		}
-
+		// Always update the previous type reference after checking
 		prevTypeRef.current = watchedType
-	}, [watchedType, append, fields.length])
+	}, [append, fields.length, question, watchedType])
+
+	// Focus the delete button when it is opened
+	useEffect(() => {
+		if (openButtonDeleteQuestion) {
+			deleteButtonRef.current?.focus()
+		}
+	}, [openButtonDeleteQuestion])
 
 	const handleClickDelete = (
 		questionId: number | undefined,
@@ -164,17 +158,43 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		deleteQuestion(questionId, surveyId)
 	}
 
-	if (!data) return null
+	const handleSubmitForm = (formData: UpdateQuestionInput) => {
+		if (!question?.id) return
+		// Format answers to match the expected structure in API
+		const formattedAnswers = formData.answers?.map(({ value }) => ({
+			value,
+		}))
+
+		const { title, type } = formData
+
+		// Call the updateQuestion function with the formatted data
+		updateQuestion({
+			id: question.id,
+			title: title,
+			type: type,
+			answers: formattedAnswers,
+		})
+
+		// Reset the form with the updated question data
+		reset({
+			title: formData.title,
+			type: formData.type,
+			answers:
+				type === TypesOfQuestion.Text ? [] : (formattedAnswers ?? []),
+		})
+	}
+
+	if (!question) return null
 
 	return (
-		<li className="list-none">
+		<li className="list-none" ref={ref} tabIndex={-1}>
 			<FormWrapper
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(handleSubmitForm)}
 				className="md:max-w-[90vh]"
 			>
 				<div className="flex content-center justify-between">
 					<h3 className="flex-1 self-center text-2xl font-bold">
-						{data?.question.title ?? "Nouvelle question"}
+						{question.title ?? "Nouvelle question"}
 					</h3>
 					<Button
 						variant="ghost_destructive"
@@ -187,17 +207,18 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 					/>
 				</div>
 				{openButtonDeleteQuestion && (
-					// mettre focus sur delete
+					// @TODO mettre focus sur delete
 					<div className="flex flex-1 gap-3">
 						<Button
 							type="button"
 							variant="destructive"
 							fullWidth
 							ariaLabel="Supprimer la question"
+							ref={deleteButtonRef}
 							onClick={() => {
 								handleClickDelete(
 									questionId,
-									data?.question.survey.id
+									question.survey.id
 								)
 							}}
 							icon={Trash2}
@@ -255,3 +276,5 @@ export default function BuildQuestion({ questionId }: QuestionProps) {
 		</li>
 	)
 }
+
+export default forwardRef<HTMLLIElement, QuestionProps>(BuildQuestion)
