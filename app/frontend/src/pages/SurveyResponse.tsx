@@ -48,12 +48,12 @@ export default function SurveyResponse() {
 	}
 
 	if (surveyError) {
-		// Laisser ErrorElement gérer les erreurs GraphQL
+		// Let ErrorElement handle GraphQL errors
 		throw new Response("Survey not found", { status: 404 })
 	}
 
 	if (!survey) {
-		// Laisser ErrorElement gérer l'absence de survey
+		// Let ErrorElement handle survey absence
 		throw new Response("Survey not found", { status: 404 })
 	}
 

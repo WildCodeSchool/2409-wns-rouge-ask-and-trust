@@ -109,7 +109,7 @@ export default function ErrorElement() {
 	const error = useRouteError()
 	const errorRef = useRef<HTMLDivElement>(null)
 
-	// Focus automatique pour l'accessibilité
+	// Automatic focus for accessibility
 	useEffect(() => {
 		if (errorRef.current) {
 			errorRef.current.focus()

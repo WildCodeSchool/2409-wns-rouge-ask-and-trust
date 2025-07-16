@@ -36,7 +36,7 @@ export function SelectInput({
 						<Select
 							value={String(field.value || "")}
 							onValueChange={value => {
-								// Protection: éviter d'écraser une valeur valide avec une chaîne vide
+								// Protection: prevent overriding a valid value with an empty string
 								if (
 									value === "" &&
 									field.value &&

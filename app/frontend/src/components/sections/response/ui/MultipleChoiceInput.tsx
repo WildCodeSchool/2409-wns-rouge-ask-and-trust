@@ -68,7 +68,7 @@ export function MultipleChoiceInput({
 					)
 				})}
 			</div>
-			{/* Input caché pour react-hook-form */}
+			{/* Hidden input for react-hook-form */}
 			<Input
 				type="hidden"
 				{...register(name)}

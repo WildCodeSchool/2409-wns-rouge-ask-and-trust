@@ -39,11 +39,11 @@ export default function SurveyResponseForm({
 
 	const watchedValues = watch()
 
-	// Détecter si l'utilisateur a déjà répondu à l'enquête
+	// Detect if the user has already responded to the survey
 	const hasExistingResponses =
 		existingAnswersData && existingAnswersData.length > 0
 
-	// Formatter les réponses existantes pour le formulaire
+	// Format existing responses for the form
 	const existingAnswers = useMemo(() => {
 		if (!existingAnswersData || existingAnswersData.length === 0) {
 			return {}
@@ -79,7 +79,7 @@ export default function SurveyResponseForm({
 		return formData
 	}, [existingAnswersData])
 
-	// Pré-remplir le formulaire avec les réponses existantes
+	// Pre-fill the form with existing responses
 	useEffect(() => {
 		if (
 			!isLoadingAnswers &&
@@ -124,7 +124,7 @@ export default function SurveyResponseForm({
 		}
 	}
 
-	// Textes dynamiques selon le contexte
+	// Dynamic texts based on context
 	const buttonText = hasExistingResponses
 		? "Modifier mes réponses"
 		: "Envoyer mes réponses"

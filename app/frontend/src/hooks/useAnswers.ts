@@ -41,7 +41,7 @@ export function useAnswers(surveyId?: number) {
 		{ loading: isDeletingAnswers, error: deleteAnswersError },
 	] = useMutation(DELETE_ANSWERS_BY_SURVEY)
 
-	// Query pour récupérer les réponses existantes d'un utilisateur pour un sondage
+	// Query to retrieve existing user responses for a survey
 	const {
 		data: existingAnswersData,
 		loading: isLoadingAnswers,

@@ -23,7 +23,7 @@ export function ContactForm() {
 			type: "success",
 		})
 		reset()
-		// Ici, on pourrait envoyer le formulaire à une API
+		// Here, we could send the form to an API
 	}
 
 	if (isSubmitSuccessful) {

@@ -30,7 +30,7 @@ export function BooleanInput({
 				/>
 				<span className="text-black-600">Oui</span>
 			</div>
-			{/* Input caché pour react-hook-form */}
+			{/* Hidden input for react-hook-form */}
 			<Input
 				type="hidden"
 				{...register(name)}
