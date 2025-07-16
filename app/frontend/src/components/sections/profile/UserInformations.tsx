@@ -1,7 +1,24 @@
 import profilePicture from "../../../../public/img/profile/profile-picture.png"
 import { Button } from "@/components/ui/Button.tsx"
+import { Survey, User } from "@/types/types.ts"
+import { useQuery } from "@apollo/client"
+import { WHOAMI } from "@/graphql/auth.ts"
+import { useSurvey } from "@/hooks/useSurvey.ts"
 
 export default function UserInformations() {
+	const { data } = useQuery(WHOAMI)
+	const { surveys, isFetching } = useSurvey()
+
+	if (isFetching) {
+		return <p>Chargement...</p>
+	}
+
+	const user: User = data?.whoami
+
+	const userSurveys: Survey[] = surveys.filter(
+		(survey: Survey) => survey.users?.id === user.id
+	)
+
 	return (
 		<section className="md:min-w-[428px]">
 			<div className="max-w-[428px] rounded-md shadow-lg shadow-black/10">
@@ -21,14 +38,16 @@ export default function UserInformations() {
 					<div className="flex w-full flex-col justify-between">
 						<div className="flex w-full flex-col">
 							<h5 className="text-lg font-extrabold">
-								Firstname Lastname
+								{user.firstname} {user.lastname}
 							</h5>
-							<p className="text-base font-bold">
-								500 enquêtes créées
-							</p>
-							<p className="text-base font-bold">
-								1000 enquêtes répondues
-							</p>
+							<div>
+								<p className="text-base font-bold">
+									{userSurveys?.length} enquêtes créées
+								</p>
+								<p className="text-base font-bold">
+									1000 enquêtes répondues
+								</p>
+							</div>
 						</div>
 
 						<div className="flex flex-row justify-end pt-1.5">

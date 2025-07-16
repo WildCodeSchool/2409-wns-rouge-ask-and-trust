@@ -17,6 +17,7 @@ export interface User {
 	email: string
 	password: string
 	role: UserRole
+	surveys: Survey[]
 	created_at: string
 	updated_at: string
 }
@@ -118,6 +119,7 @@ export interface Survey {
 	public: boolean
 	category: number | string
 	questions: { id: number }[]
+	users: User
 }
 
 export type CreateSurveyInput = Survey

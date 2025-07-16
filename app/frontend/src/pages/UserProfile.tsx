@@ -4,9 +4,14 @@ import SurveyTableContainer from "@/components/sections/dashboard/SurveyTableCon
 export default function UserProfilePage() {
 	return (
 		<>
-			<section className="flex flex-col justify-between gap-9 p-5 xl:flex-row xl:px-19">
-				<UserInformations />
-				<SurveyTableContainer />
+			<section className="flex flex-col gap-9 p-5 lg:px-19">
+				<article className="flex flex-row justify-center gap-10">
+					<UserInformations />
+					<UserInformations />
+				</article>
+				<article>
+					<SurveyTableContainer />
+				</article>
 			</section>
 		</>
 	)
