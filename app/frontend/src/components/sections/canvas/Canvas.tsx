@@ -50,15 +50,23 @@ export const Canvas: React.FC<CanvasProps> = ({
 
 	const handleAddQuestion = async () => {
 		if (!surveyId) return
-		const result = await addQuestion({
-			surveyId: Number(surveyId),
-		})
-		if (result?.id) {
-			showToast({
-				type: "success",
-				title: "Question ajoutée !",
+		try {
+			const result = await addQuestion({
+				surveyId: Number(surveyId),
 			})
-			setNewQuestionId(result.id)
+			if (result?.id) {
+				showToast({
+					type: "success",
+					title: "Question ajoutée !",
+				})
+				setNewQuestionId(result.id)
+			}
+		} catch {
+			showToast({
+				type: "error",
+				title: "Oops, nous avons rencontré une erreur.",
+				description: "Veuillez réessayer plus tard.",
+			})
 		}
 	}
 
