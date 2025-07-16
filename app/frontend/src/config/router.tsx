@@ -7,7 +7,6 @@ import App from "@/App"
 import ProtectedRoute from "@/components/hoc/ProtectedRoute"
 import ErrorElement from "@/components/ui/ErrorElement"
 import Loader from "@/components/ui/Loader"
-import NotFound from "@/pages/NotFound"
 import { lazy, Suspense } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
@@ -173,7 +172,14 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "*",
-		element: <NotFound />,
+		errorElement: <ErrorElement />,
+		loader: () => {
+			// Simulate a 404 error for unmatched routes
+			throw new Response("Page non trouvée", {
+				status: 404,
+				statusText: "Not Found",
+			})
+		},
 	},
 ])
 

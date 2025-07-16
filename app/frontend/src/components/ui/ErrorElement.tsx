@@ -3,6 +3,7 @@ import {
 	isRouteErrorResponse,
 	useNavigate,
 } from "react-router-dom"
+import { useEffect, useRef } from "react"
 import { Button } from "@/components/ui/Button"
 import { ErrorLayoutProps } from "@/types/types"
 
@@ -27,6 +28,11 @@ const errorMessages = {
 			"Vous n'avez pas les permissions nécessaires pour accéder à cette page.",
 		image: "/img/errors/undraw_access-denied_krem.svg",
 	},
+	404: {
+		title: "Page non trouvée",
+		message: "La page que vous cherchez n'existe pas.",
+		image: "/img/errors/undraw_page-not-found_6wni.svg",
+	},
 	500: {
 		title: "Erreur serveur",
 		message:
@@ -42,11 +48,73 @@ const errorMessages = {
 }
 
 /**
+ * Interface for error with common properties
+ */
+interface ErrorWithDetails {
+	constructor?: { name: string }
+	message?: string
+	stack?: string
+	data?: Record<string, unknown>
+}
+
+/**
+ * Technical details component for development mode
+ */
+const TechnicalDetails = ({ error }: { error: unknown }) => {
+	if (!import.meta.env.DEV) return null
+
+	const errorWithDetails = error as ErrorWithDetails
+
+	return (
+		<details className="mt-4 text-left">
+			<summary className="text-destructive-medium hover:text-destructive-medium-dark cursor-pointer text-sm font-medium">
+				Détails techniques (dev uniquement)
+			</summary>
+			<div className="mt-2 rounded bg-gray-100 p-3 text-xs">
+				<div className="mb-2">
+					<strong>Type:</strong>{" "}
+					{errorWithDetails?.constructor?.name || "Unknown"}
+				</div>
+				{errorWithDetails?.message && (
+					<div className="mb-2">
+						<strong>Message:</strong> {errorWithDetails.message}
+					</div>
+				)}
+				{errorWithDetails?.stack && (
+					<div>
+						<strong>Stack trace:</strong>
+						<pre className="mt-1 text-xs whitespace-pre-wrap">
+							{errorWithDetails.stack}
+						</pre>
+					</div>
+				)}
+				{errorWithDetails?.data && (
+					<div className="mt-2">
+						<strong>Data:</strong>
+						<pre className="mt-1 text-xs whitespace-pre-wrap">
+							{JSON.stringify(errorWithDetails.data, null, 2)}
+						</pre>
+					</div>
+				)}
+			</div>
+		</details>
+	)
+}
+
+/**
  * Error element
  * @returns {JSX.Element}
  */
 export default function ErrorElement() {
 	const error = useRouteError()
+	const errorRef = useRef<HTMLDivElement>(null)
+
+	// Focus automatique pour l'accessibilité
+	useEffect(() => {
+		if (errorRef.current) {
+			errorRef.current.focus()
+		}
+	}, [])
 
 	const getErrorContent = (status?: number) => {
 		return (
@@ -60,7 +128,7 @@ export default function ErrorElement() {
 		const errorContent = getErrorContent(error.status)
 
 		return (
-			<ErrorLayout>
+			<ErrorLayout errorRef={errorRef}>
 				<img
 					src={errorContent.image}
 					alt={`Illustration erreur ${error.status}`}
@@ -73,6 +141,7 @@ export default function ErrorElement() {
 				<p className="text-black-default mb-6">
 					{errorContent.message}
 				</p>
+				<TechnicalDetails error={error} />
 				<ButtonGroup />
 			</ErrorLayout>
 		)
@@ -83,7 +152,7 @@ export default function ErrorElement() {
 		const errorContent = getErrorContent(error.status)
 
 		return (
-			<ErrorLayout>
+			<ErrorLayout errorRef={errorRef}>
 				<img
 					src={errorContent.image}
 					alt={`Illustration erreur ${error.status}`}
@@ -98,6 +167,7 @@ export default function ErrorElement() {
 				<p className="text-black-default mb-6 text-sm sm:text-base">
 					{error.data?.message || errorContent.message}
 				</p>
+				<TechnicalDetails error={error} />
 				<ButtonGroup />
 			</ErrorLayout>
 		)
@@ -107,7 +177,7 @@ export default function ErrorElement() {
 	const errorContent = getErrorContent()
 
 	return (
-		<ErrorLayout>
+		<ErrorLayout errorRef={errorRef}>
 			<img
 				src={errorContent.image}
 				alt="Illustration erreur générique"
@@ -120,6 +190,7 @@ export default function ErrorElement() {
 			<p className="text-black-default mb-6 text-sm sm:text-base">
 				{errorContent.message}
 			</p>
+			<TechnicalDetails error={error} />
 			<ButtonGroup />
 		</ErrorLayout>
 	)
@@ -162,12 +233,16 @@ const ButtonGroup = () => {
 
 /**
  * Layout for the error element
- * @param {ErrorLayoutProps} param0 - Children
+ * @param {ErrorLayoutProps & { errorRef: React.RefObject<HTMLDivElement | null> }} param0 - Children and error ref
  * @returns {JSX.Element}
  */
-const ErrorLayout = ({ children }: ErrorLayoutProps) => (
+const ErrorLayout = ({
+	children,
+	errorRef,
+}: ErrorLayoutProps & { errorRef: React.RefObject<HTMLDivElement | null> }) => (
 	<div className="bg-bg relative flex min-h-screen items-center justify-center p-4">
 		<div
+			ref={errorRef}
 			className="w-full max-w-lg p-4 text-center"
 			role="alert"
 			aria-live="polite"
