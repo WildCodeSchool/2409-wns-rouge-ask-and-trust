@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button"
 import { useResponsivity } from "@/hooks/useResponsivity"
+import { cn } from "@/lib/utils"
 import { ToolboxItem, ToolboxProps } from "@/types/types"
 
 /**
@@ -11,7 +12,7 @@ import { ToolboxItem, ToolboxProps } from "@/types/types"
  * @returns {JSX.Element} The adaptive toolbox component.
  */
 export function AdaptiveToolbox({
-	className = "",
+	// className = "",
 	categories = [],
 	items = [],
 	showSearch = false,
@@ -49,12 +50,19 @@ export function AdaptiveToolbox({
 	const renderItem = (item: ToolboxItem) => (
 		<Button
 			key={item.id}
-			className={`toolbox-item ${isCompact ? "compact" : ""}`}
+			className={cn(
+				"align-center hover:bg-primary-100 text-black-700 flex w-full cursor-pointer justify-start rounded-md border-none bg-transparent px-2 py-1.5 text-start text-sm font-medium",
+				isCompact && "justify-center"
+			)}
 			onClick={item.onClick}
 			ariaLabel={item.label}
 		>
-			{item.icon && <span className="icon">{item.icon}</span>}
-			{!isCompact && <span className="label">{item.label}</span>}
+			{item.icon && (
+				<span className="flex justify-center align-middle">
+					{item.icon}
+				</span>
+			)}
+			{!isCompact && <span>{item.label}</span>}
 		</Button>
 	)
 
@@ -62,11 +70,16 @@ export function AdaptiveToolbox({
 	 * Render the categories of the toolbox
 	 * @returns {JSX.Element} The rendered categories
 	 */
+
 	const renderCategories = () =>
 		categories.map(category => (
-			<div key={category.id} className="toolbox-category">
-				<h3 className="category-title">{category.title}</h3>
-				<div className="category-items">
+			<div key={category.id} className="flex w-full flex-col gap-1.5">
+				{!isCompact && (
+					<h3 className="text-primary-700 bg-primary-100 w-full px-4 py-1.5 text-sm font-semibold">
+						{category.title}
+					</h3>
+				)}
+				<div className="px-2">
 					{renderedItems
 						.filter((item: ToolboxItem) =>
 							category.items.some(
@@ -79,23 +92,25 @@ export function AdaptiveToolbox({
 		))
 
 	return (
-		<div
-			ref={rootRef}
-			className={`adaptive-toolbox ${className} ${isHorizontalCompact ? "horizontal-compact" : ""}`}
-		>
-			{showSearch && searchManager && (
-				<div className="toolbox-search">
+		<div ref={rootRef} className={"flex h-full flex-col overflow-hidden"}>
+			{!isCompact && showSearch && searchManager && (
+				<div className="p-3">
 					<input
 						type="text"
+						className="border-black-100 file:text-black-default placeholder:border-black-400 focus-visible:border-primary-700 m-3 flex h-10 w-full rounded-lg border bg-transparent px-3 py-1 text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
 						value={searchManager.value}
 						onChange={e => searchManager.onChange(e.target.value)}
 						placeholder={searchManager.placeholder}
 					/>
 				</div>
 			)}
-			{!hasResults && <div className="no-results">{noResultsText}</div>}
+			{!hasResults && (
+				<div className="text-black-200 size-3.5 p-4 text-center">
+					{noResultsText}
+				</div>
+			)}
 
-			<div className="toolbox-content">
+			<div className="flex flex-1 flex-col gap-1.5 overflow-y-auto bg-white">
 				{categories.length > 0
 					? renderCategories()
 					: renderedItems.map(renderItem)}

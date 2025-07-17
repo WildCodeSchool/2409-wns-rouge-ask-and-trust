@@ -9,14 +9,12 @@ import { useParams } from "react-router-dom"
 import BuildQuestion from "../surveys/buildSurvey/question/BuildQuestion"
 
 interface CanvasProps {
-	className?: string
 	questions: { id: number }[]
 	newQuestionId: number | null
 	setNewQuestionId: (id: number | null) => void
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
-	className = "",
 	questions = [],
 	newQuestionId,
 	setNewQuestionId,
@@ -72,7 +70,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 		<>
 			<div
 				ref={scrollContainerRef}
-				className={`survey-canvas ${className} flex max-h-[calc(100vh-160px)] flex-col gap-10 overflow-y-scroll px-3`}
+				className="mx-[-0.75rem] flex h-screen w-full flex-col gap-10 overflow-y-scroll px-[0.75rem]"
 			>
 				{questions.length === 0 ? (
 					<EmptyState />
@@ -89,12 +87,6 @@ export const Canvas: React.FC<CanvasProps> = ({
 								}
 							>
 								<BuildQuestion questionId={question.id} />
-
-								{/* <Suspense fallback={<div>Chargement...</div>}>
-									<BuildQuestionLoader
-										questionId={question.id}
-									/>
-								</Suspense> */}
 							</div>
 						)
 					})
@@ -110,7 +102,6 @@ export const Canvas: React.FC<CanvasProps> = ({
 					Ajouter une question
 				</Button>
 			</div>
-
 			<ButtonsScrollControl scrollContainerRef={scrollContainerRef} />
 		</>
 	)
