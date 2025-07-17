@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button"
-import { ToolboxItem, ToolboxProps } from "@/types/types"
 import { useResponsivity } from "@/hooks/useResponsivity"
+import { ToolboxItem, ToolboxProps } from "@/types/types"
 
 /**
  * AdaptiveToolbox component

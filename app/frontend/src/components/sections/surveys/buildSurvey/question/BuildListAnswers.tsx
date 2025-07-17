@@ -63,16 +63,15 @@ export function BuildListAnswers({
 			<Label htmlFor="lastname" required>
 				Définir les réponses
 			</Label>
-			{fields.map((answer, index) => (
+			{fields.map((field, index) => (
 				<div
-					key={`answer-${index}`}
+					key={field.id || `answer-${index}`}
 					className="flex flex-1 items-center gap-2"
 				>
 					<Input
 						id={`answer-${index}`}
 						type="text"
 						placeholder="Ex: Alma"
-						value={answer.value}
 						aria-required
 						{...register(`answers.${index}.value`)}
 						aria-invalid={errors?.answers?.[index]}

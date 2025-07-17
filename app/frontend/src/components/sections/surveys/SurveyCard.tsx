@@ -7,19 +7,20 @@ import { Chipset } from "@/components/ui/Chipset"
  * SurveyCard component with external link management and accessibility
  *
  * @param {object} props - Component properties
- * @param {string} props.href - Link destination URL
+ * @param {string} props.id - Link destination URL
  * @returns {JSX.Element} A Link component with appropriate safety and accessibility attributes
  */
 
 export default function SurveyCard({
-	href,
+	id,
 	picture,
 	title,
-	content,
-	tag,
-	estimateTime,
-	timeLeft,
+	description,
+	category,
+	estimatedDuration,
+	availableDuration,
 }: SurveyCardType) {
+	const href = `/surveys/respond/${id}`
 	const isExternal = href.startsWith("http")
 
 	// Security: check allowed protocols
@@ -30,7 +31,7 @@ export default function SurveyCard({
 	return (
 		<Link
 			to={href}
-			className="font-roboto flex max-w-96 flex-col gap-5 overflow-hidden rounded-xl bg-white shadow-[0_7px_29px_rgba(100,100,111,0.2)] transition-shadow duration-200 ease-in-out hover:shadow-[0_7px_29px_rgba(99,107,227,0.5)]"
+			className="flex w-80 flex-col justify-between gap-5 overflow-hidden rounded-xl bg-white shadow-[0_7px_29px_rgba(100,100,111,0.2)] transition-shadow duration-200 ease-in-out hover:shadow-[0_7px_29px_rgba(99,107,227,0.5)]"
 			// Indicates to assistive technologies the current page
 			aria-current={
 				href === window.location.pathname ? "page" : undefined
@@ -54,10 +55,10 @@ export default function SurveyCard({
 			</div>
 			<div className="flex flex-col gap-3 px-5">
 				<h2 className="text-card-fg font-bold">{title}</h2>
-				<p className="text-card-fg text-xs">{content}</p>
+				<p className="text-card-fg text-xs">{description}</p>
 				<Chipset
-					ariaLabel={`Cette annonce concerne la catégorie ${tag}`}
-					children={tag}
+					ariaLabel={`Cette annonce concerne la catégorie ${category.name}`}
+					children={category.name}
 					rounded
 				/>
 			</div>
@@ -65,13 +66,13 @@ export default function SurveyCard({
 				<div className="flex items-center gap-1">
 					<Timer className="h-4 w-4 text-white" aria-hidden />
 					<span className="text-xs leading-none font-semibold text-white">
-						{estimateTime} minutes
+						{estimatedDuration} minutes
 					</span>
 				</div>
 				<div className="flex items-center gap-1">
 					<Hourglass className="h-4 w-4 text-white" aria-hidden />
 					<span className="text-xs leading-none font-semibold text-white">
-						{timeLeft}
+						{availableDuration} jours
 					</span>
 				</div>
 			</div>

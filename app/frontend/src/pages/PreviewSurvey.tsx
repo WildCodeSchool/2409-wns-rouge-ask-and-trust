@@ -12,11 +12,12 @@ import { Callout } from "@/components/ui/Callout"
 
 export default function PreviewSurveyPage() {
 	const { id } = useParams<{ id: string }>()
-	const { surveys, isFetching } = useSurvey()
+	const { allSurveys, isFetching } = useSurvey()
 
-	// Backend surveys only
-	const backendSurveys: SurveyPreview[] = surveys.map(s => ({
+	// Backend allSurveys only
+	const backendSurveys: SurveyPreview[] = allSurveys.map(s => ({
 		...s,
+		public: true,
 		questions: [],
 	}))
 

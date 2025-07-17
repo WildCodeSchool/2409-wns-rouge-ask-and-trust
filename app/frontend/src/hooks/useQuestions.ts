@@ -5,8 +5,13 @@ import {
 	UPDATE_QUESTION,
 } from "@/graphql/survey/question"
 import { GET_SURVEY } from "@/graphql/survey/survey"
-import { QuestionType, TypesOfQuestion } from "@/types/types"
-import { useMutation } from "@apollo/client"
+import {
+	isMultipleAnswerType,
+	Question,
+	QuestionType,
+	TypesOfQuestion,
+} from "@/types/types"
+import { useMutation, useQuery } from "@apollo/client"
 import { AnswerObject } from "./../../../backend/src/graphql/inputs/create/survey/create-questions-input"
 
 export type CreateQuestionInput = {
@@ -44,9 +49,7 @@ export function getDefaultQuestion(question: {
 	const type = question.type ?? TypesOfQuestion.Text
 	let defaultAnswers: AnswerObject[] = []
 	const isNotAnswers = !question.answers || question.answers.length === 0
-	const isQuestionMultipleTypes =
-		type === TypesOfQuestion.Select ||
-		type === TypesOfQuestion.Multiple_Choice
+	const isQuestionMultipleTypes = isMultipleAnswerType(type)
 
 	if (isNotAnswers) {
 		if (isQuestionMultipleTypes) {
@@ -66,22 +69,35 @@ export function getDefaultQuestion(question: {
 export function useQuestions() {
 	const [
 		createQuestionMutation,
-		{ loading: isCreateQuestionLoading, error: createQuestionError },
+		{
+			loading: isCreateQuestionLoading,
+			error: createQuestionError,
+			reset: resetCreateQuestionError,
+		},
 	] = useMutation(CREATE_QUESTION, {
 		refetchQueries: [GET_SURVEY],
 	})
 
 	const [
 		updateQuestionMutation,
-		{ loading: isUpdateQuestionLoading, error: updateQuestionError },
+		{
+			loading: isUpdateQuestionLoading,
+			error: updateQuestionError,
+			reset: resetUpdateQuestionError,
+		},
 	] = useMutation(UPDATE_QUESTION)
 
 	const [
 		deleteQuestionMutation,
-		{ loading: isDeleteQuestionLoading, error: deleteQuestionError },
+		{
+			loading: isDeleteQuestionLoading,
+			error: deleteQuestionError,
+			reset: resetDeleteQuestionError,
+		},
 	] = useMutation(DELETE_QUESTION)
 
 	const addQuestion = async (question: CreateQuestionInput) => {
+		if (isCreateQuestionLoading) return // Prevent multiple submissions
 		const completedQuestion = getDefaultQuestion(question)
 
 		const result = await createQuestionMutation({
@@ -92,6 +108,12 @@ export function useQuestions() {
 	}
 
 	const updateQuestion = async (question: UpdateQuestionInput) => {
+		if (isUpdateQuestionLoading) return // Prevent multiple submissions
+		// Clean answers if question type is Text
+		if (question.type === TypesOfQuestion.Text) {
+			question.answers = []
+		}
+
 		const result = await updateQuestionMutation({
 			variables: { data: question },
 			refetchQueries: [
@@ -106,7 +128,7 @@ export function useQuestions() {
 		return result
 	}
 	const deleteQuestion = async (id: number, surveyId: number) => {
-		console.log("surveyId in useQuestion", surveyId)
+		if (isDeleteQuestionLoading) return // Prevent multiple submissions
 		const result = await deleteQuestionMutation({
 			variables: { deleteQuestionId: id },
 			refetchQueries: [
@@ -122,15 +144,41 @@ export function useQuestions() {
 	}
 
 	return {
-		// questions,
 		addQuestion,
 		isCreateQuestionLoading,
 		createQuestionError,
+		resetCreateQuestionError,
+
 		updateQuestion,
 		isUpdateQuestionLoading,
 		updateQuestionError,
+		resetUpdateQuestionError,
+
 		deleteQuestion,
 		isDeleteQuestionLoading,
 		deleteQuestionError,
+		resetDeleteQuestionError,
+	}
+}
+
+export function useQuestion(questionId?: number) {
+	const { data, loading, error, refetch } = useQuery<{
+		question: Question
+	}>(GET_QUESTION, {
+		variables: { questionId },
+		skip: !questionId, // Skip the query if questionId is not provided
+	})
+
+	const refetchQuestion = async (id: number) => {
+		if (!id) return null
+		const result = await refetch?.({ questionId: id })
+		return result?.data?.question
+	}
+
+	return {
+		question: data?.question,
+		loading,
+		error,
+		refetchQuestion,
 	}
 }

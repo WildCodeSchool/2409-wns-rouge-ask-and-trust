@@ -12,9 +12,14 @@ export type AuthContextProps = {
 
 export interface User {
 	id: string
+	firstname: string
+	lastname: string
 	email: string
-	role: string
-	// ... other user properties
+	password: string
+	role: UserRole
+	surveys: Survey[]
+	created_at: string
+	updated_at: string
 }
 
 export interface LinksType {
@@ -33,6 +38,13 @@ export interface UserAuth {
 	role: UserRole
 }
 
+export type UserDetails = {
+	user: User
+	userSurveys: MySurveysResult | null
+	showResetForm: boolean
+	onToggleResetForm: () => void
+}
+
 export type UserSignUp = UserAuth
 export type UserSignIn = Pick<UserAuth, "email" | "password">
 export type UserSignForm = UserSignUp | UserSignIn
@@ -49,18 +61,35 @@ export interface HeaderMobileMenuProps {
 
 export interface NavAndAuthButtonsProps {
 	headerLinks: readonly LinksType[]
-	isMobile: boolean
+	isHorizontalCompact: boolean
 	handleShowMenu?: () => void
 }
 
+export type SurveyCategoryType = {
+	id: string
+	name: string
+}
+
 export interface SurveyCardType {
-	href: string
+	id: string
 	picture: string
 	title: string
-	content: string
-	tag: string
-	estimateTime: number
-	timeLeft: string
+	description: string
+	category: SurveyCategoryType
+	estimatedDuration: number
+	availableDuration: number
+}
+
+export type AllSurveysResult = {
+	allSurveys: SurveyCardType[]
+	totalCount: number
+	totalCountAll: number
+	page: number
+	limit: number
+}
+
+export type AllSurveysHome = {
+	surveys: AllSurveysResult
 }
 
 export type Package = {
@@ -81,7 +110,7 @@ export type ToolboxItem = {
 	id: string
 	label: string
 	icon?: React.ReactNode
-	onClickType: string
+	onClickType: QuestionType
 	onClick?: () => void
 }
 
@@ -108,18 +137,22 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	questions: { id: number }[] // @TODO check this change in number
+	questions: { id: number }[]
+	user: User
 }
 
 export type CreateSurveyInput = Survey
 
-export type UpdateSurveyType = Survey
+export type UpdateSurveyInput = Survey
 
 export type Question = {
 	id: number
 	title: string
 	type: QuestionType
 	answers: { value: string }[]
+	survey: {
+		id: number
+	}
 }
 
 export interface QuestionUpdate {
@@ -134,7 +167,9 @@ export interface QuestionUpdate {
 
 export const TypesOfQuestion = {
 	Text: "text",
-	Multiple_Choice: "multiple_choice",
+	TextArea: "textarea",
+	Checkbox: "checkbox",
+	Radio: "radio",
 	Boolean: "boolean",
 	Select: "select",
 } as const
@@ -144,13 +179,29 @@ export const TypesOfQuestionLabels: Record<
 	string
 > = {
 	Text: "Texte court",
-	Multiple_Choice: "Liste à choix multiples",
+	TextArea: "Texte long",
+	Checkbox: "Cases à cocher",
+	Radio: "Liste à choix unique",
 	Boolean: "Oui / Non",
-	Select: "Liste à choix unique",
+	Select: "Liste déroulante",
 }
 
 export type QuestionType =
 	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]
+
+export const MultipleAnswersType = [
+	TypesOfQuestion.Checkbox,
+	TypesOfQuestion.Radio,
+	TypesOfQuestion.Select,
+] as const
+
+type MultipleAnswerType = (typeof MultipleAnswersType)[number]
+
+export function isMultipleAnswerType(
+	type: QuestionType
+): type is MultipleAnswerType {
+	return (MultipleAnswersType as readonly string[]).includes(type)
+}
 
 export type InputsProps = {
 	register: UseFormRegister<CreateSurveyInput>
@@ -183,11 +234,19 @@ export type SurveyTableType = {
 	updatedAt: string
 }
 
-export type SurveysDashboardQuery = {
-	mySurveys: SurveyTableType[]
+export type MySurveysResult = {
+	surveys: SurveyTableType[]
+	totalCount: number
+	totalCountAll: number
+	page: number
+	limit: number
 }
 
-type SurveyStatus = "draft" | "published" | "archived" | "censored"
+export type SurveysDashboardQuery = {
+	mySurveys: MySurveysResult
+}
+
+export type SurveyStatus = "draft" | "published" | "archived" | "censored"
 
 export type SurveyTableProps = {
 	isHeaderChecked: CheckedState
@@ -201,6 +260,19 @@ export type SurveyTableProps = {
 	statusLabelMap: Record<SurveyTableType["status"], string>
 }
 
+export type SurveyTableRowProps = {
+	survey: SurveyTableType
+	isChecked: boolean
+	onCheckboxChange: (checked: CheckedState) => void
+	statusLabel: string
+	formatDate: (date: string) => string
+}
+
+export type SurveyTableHeadProps = Pick<
+	SurveyTableProps,
+	"isHeaderChecked" | "handleSelectAll"
+>
+
 export type SurveyTableActionsProps = {
 	surveyId: number
 	status: string
@@ -210,7 +282,7 @@ export type SurveyTableNavProps = {
 	showDeleteButton: boolean
 	currentPage: number
 	setCurrentPage: (page: number) => void
-	sortedSurveys: SurveyTableType[]
+	totalCount: number
 	surveysPerPage: number
 	selectedSurveyIds: number[]
 }
@@ -233,4 +305,26 @@ export type SurveyTableFilterProps = {
 	setFilters: (filters: string[]) => void
 }
 
+export type SurveyDurationFilterProps = {
+	sortTimeOption: string
+	setSortTimeOption: (filters: string) => void
+	isHorizontalCompact: boolean
+}
+
 export type DateSortFilter = "Plus récente" | "Plus ancienne"
+
+// Survey Response Types
+export interface QuestionResponse {
+	questionId: number
+	value: string | string[] | boolean
+}
+
+export interface SurveyResponseData {
+	surveyId: number
+	responses: QuestionResponse[]
+	submittedAt?: Date
+}
+
+export interface SurveyResponseFormData {
+	[key: string]: string | string[] | boolean
+}

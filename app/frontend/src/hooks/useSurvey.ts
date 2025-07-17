@@ -1,46 +1,146 @@
-import { useQuery, useMutation } from "@apollo/client"
+import { useQuery, useMutation, NetworkStatus } from "@apollo/client"
 import {
 	GET_SURVEYS,
 	CREATE_SURVEY,
 	UPDATE_SURVEY,
+	GET_MY_SURVEYS,
+	DELETE_SURVEY,
 } from "@/graphql/survey/survey"
 import { useState, useEffect } from "react"
-import { CreateSurveyInput, UpdateSurveyType } from "@/types/types"
+import {
+	AllSurveysHome,
+	CreateSurveyInput,
+	DateSortFilter,
+	MySurveysResult,
+	SurveyCardType,
+	SurveysDashboardQuery,
+	SurveyStatus,
+	SurveyTableType,
+	UpdateSurveyInput,
+} from "@/types/types"
+import { useSearchParams } from "react-router-dom"
+import { useToast } from "./useToast"
 
-// Number of items per page (modifiable as needed)
-const PAGE_SIZE = 10
+const statusLabelMap: Record<SurveyTableType["status"], string> = {
+	draft: "Brouillon",
+	published: "Publiée",
+	archived: "Archivée",
+	censored: "Censurée",
+}
+
+const DATE_SORT_FILTERS = ["Plus récente", "Plus ancienne"] as const
 
 /**
  * Hook for the survey management.
  */
 export function useSurvey() {
-	const [page, setPage] = useState(1)
-	const [surveys, setSurveys] = useState<CreateSurveyInput[]>([])
+	const [allSurveys, setAllSurveys] = useState<SurveyCardType[]>([])
+	const [mySurveys, setMySurveys] = useState<MySurveysResult | null>(null)
+	const [searchParams] = useSearchParams()
+	const [currentPage, setCurrentPage] = useState<number>(1)
+	const [sortTimeOption, setSortTimeOption] = useState<string>("")
+	const [filters, setFilters] = useState<string[]>([])
+	const [debouncedSearch, setDebouncedSearch] = useState("")
+	const PER_PAGE = {
+		all: 12,
+		mine: 5,
+	}
+	const { showToast } = useToast()
+
+	const categoryId = searchParams.get("categoryId")
+
+	const getSortParams = (sortTimeOption: string) => {
+		if (!sortTimeOption)
+			return { sortBy: "estimatedDuration", order: "DESC" }
+
+		const [field, direction] = sortTimeOption.split("_")
+		return {
+			sortBy: field as "estimatedDuration" | "availableDuration",
+			order: direction as "ASC" | "DESC",
+		}
+	}
+
+	const { sortBy, order } = getSortParams(sortTimeOption)
 
 	// Apollo hooks
-	const { data, loading: isFetching, refetch } = useQuery(GET_SURVEYS)
+	const {
+		data: allSurveysData,
+		loading: isFetching,
+		refetch,
+	} = useQuery<AllSurveysHome>(GET_SURVEYS, {
+		variables: {
+			filters: {
+				page: currentPage,
+				limit: PER_PAGE.all,
+				search: searchParams.get("search") || "",
+				categoryIds: categoryId ? [parseInt(categoryId, 10)] : [],
+				sortBy,
+				order,
+			},
+		},
+	})
+
+	const selectedStatuses = filters.filter(f =>
+		Object.values(statusLabelMap).includes(f)
+	)
+
+	const selectedSort = filters.find((f): f is DateSortFilter =>
+		DATE_SORT_FILTERS.includes(f as DateSortFilter)
+	)
+
+	const {
+		data: mySurveysData,
+		loading,
+		networkStatus,
+	} = useQuery<SurveysDashboardQuery>(GET_MY_SURVEYS, {
+		variables: {
+			filters: {
+				page: currentPage,
+				limit: PER_PAGE.mine,
+				search: debouncedSearch,
+				status: selectedStatuses.map(
+					label =>
+						Object.entries(statusLabelMap).find(
+							([, v]) => v === label
+						)?.[0]
+				) as SurveyStatus[],
+				sortBy: "createdAt",
+				order: selectedSort === "Plus ancienne" ? "ASC" : "DESC",
+			},
+			notifyOnNetworkStatusChange: true,
+		},
+	})
+
+	const isRefetching = networkStatus === NetworkStatus.refetch
+	const isInitialLoading = loading && !mySurveysData
+
+	const totalCount = allSurveysData?.surveys.totalCount ?? 0
+
 	const [createSurvey, { loading: isCreating, error: createError }] =
 		useMutation(CREATE_SURVEY, {
 			refetchQueries: [{ query: GET_SURVEYS }],
 		})
+
 	const [updateSurveyMutation, { loading: isUpdating, error: updateError }] =
 		useMutation(UPDATE_SURVEY, {
 			refetchQueries: [{ query: GET_SURVEYS }],
 		})
 
+	const [doDeleteSurvey] = useMutation(DELETE_SURVEY, {
+		refetchQueries: [GET_MY_SURVEYS],
+	})
+
 	useEffect(() => {
-		if (data && data.surveys) {
-			setSurveys(data.surveys)
+		if (allSurveysData && allSurveysData.surveys.allSurveys) {
+			setAllSurveys(allSurveysData.surveys.allSurveys)
 		}
-	}, [data])
+	}, [allSurveysData])
 
-	const totalPages = Math.ceil(surveys.length / PAGE_SIZE)
-
-	// Client-side pagination (should be improved on the backend if needed)
-	const paginatedSurveys = surveys.slice(
-		(page - 1) * PAGE_SIZE,
-		page * PAGE_SIZE
-	)
+	useEffect(() => {
+		if (mySurveysData && mySurveysData.mySurveys.surveys) {
+			setMySurveys(mySurveysData.mySurveys)
+		}
+	}, [mySurveysData])
 
 	const fetchSurveys = async () => {
 		await refetch()
@@ -57,7 +157,7 @@ export function useSurvey() {
 
 	const updateSurvey = async (
 		id: string,
-		survey: Partial<UpdateSurveyType>
+		survey: Partial<UpdateSurveyInput>
 	) => {
 		const result = await updateSurveyMutation({
 			variables: {
@@ -70,24 +170,101 @@ export function useSurvey() {
 		return result.data?.updateSurvey
 	}
 
-	// Deletion to be added on backend and frontend
-	// const deleteSurvey = async (id: string) => {
-	// 	// Not implemented
-	// }
+	const deleteSurvey = async (surveyId: string) => {
+		try {
+			await doDeleteSurvey({
+				variables: {
+					surveyId: surveyId,
+				},
+			})
+
+			showToast({
+				type: "success",
+				title: "L'enquête a bien été supprimée !",
+				description:
+					"Vous pouvez poursuivre votre lecture du tableau de bord.",
+			})
+		} catch (error) {
+			if (error instanceof Error) {
+				if (
+					error.message.includes(
+						"Access denied! You don't have permission for this action!"
+					)
+				) {
+					showToast({
+						type: "error",
+						title: "Échec de la suppression",
+						description: "Vous n'avez pas les droits nécessaires.",
+					})
+				} else {
+					showToast({
+						type: "error",
+						title: "Erreur lors de la suppression",
+						description:
+							"Une erreur est survenue. Veuillez réessayer plus tard.",
+					})
+				}
+			} else {
+				showToast({
+					type: "error",
+					title: "Erreur inattendue",
+					description: "Une erreur inconnue est survenue.",
+				})
+			}
+		}
+	}
+
+	const deleteSurveys = async (selectedSurveyIds: number[]) => {
+		try {
+			await Promise.all(
+				selectedSurveyIds.map(id =>
+					doDeleteSurvey({
+						variables: { surveyId: id.toString() },
+					})
+				)
+			)
+
+			showToast({
+				type: "success",
+				title: "Les enquêtes ont bien été supprimées !",
+				description:
+					"Vous pouvez poursuivre votre lecture du tableau de bord.",
+			})
+		} catch (error) {
+			console.error("Erreur lors de la suppression :", error)
+
+			showToast({
+				type: "error",
+				title: "Un problème est survenu pendant la suppression des enquêtes...",
+				description: "Veuillez réessayer dans quelques instants.",
+			})
+		}
+	}
 
 	return {
-		surveys: paginatedSurveys,
+		allSurveys,
 		isFetching,
 		isCreating,
 		isUpdating,
 		createError,
 		updateError,
-		page,
-		totalPages,
+		currentPage,
+		setCurrentPage,
+		PER_PAGE,
+		sortTimeOption,
+		setSortTimeOption,
+		totalCount,
+		setDebouncedSearch,
+		mySurveys,
+		isRefetching,
+		isInitialLoading,
+		filters,
+		setFilters,
+		statusLabelMap,
 		fetchSurveys,
 		addSurvey,
 		updateSurvey,
-		//deleteSurvey,
-		setPage,
+		deleteSurvey,
+		deleteSurveys,
 	}
 }

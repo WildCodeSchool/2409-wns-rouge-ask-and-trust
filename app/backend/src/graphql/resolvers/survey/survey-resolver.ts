@@ -21,6 +21,10 @@ import { AppError } from "../../../middlewares/error-handler"
 import { Context, Roles } from "../../../types/types"
 import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-input"
 import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
+import { MySurveysQueryInput } from "../../inputs/queries/mySurveys-query-input"
+import { MySurveysResult } from "../../../database/results/mySurveyResult"
+import { AllSurveysResult } from "../../../database/results/allSurveysResult"
+import { AllSurveysQueryInput } from "../../inputs/queries/surveys-query-input"
 
 /**
  * Survey Resolver
@@ -31,28 +35,91 @@ import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-inpu
 @Resolver(Survey)
 export class SurveysResolver {
 	/**
-	 * Query to get all surveys.
+	 * GraphQL Query to fetch all surveys.
 	 *
-	 * @returns A Promise that resolves to an array of Survey objects.
+	 * This query supports:
+	 * - search by title,
+	 * - filtering by category,
+	 * - sorting (by estimated duration or available duration, ASC/DESC),
+	 * - pagination,
+	 * - as well as counting total surveys before and after filters are applied.
 	 *
-	 * This query retrieves all surveys, along with their associated user and category information.
+	 * @param filters - Search filters and options for sorting/pagination (field, order, page, limit...).
+	 *
+	 * @returns An `AllSurveysResult` object containing:
+	 * - `allSurveys`: Paginated list of surveys after applying filters.
+	 * - `totalCount`: Total number of surveys matching the filters.
+	 * - `totalCountAll`: Total number of surveys without filters.
+	 * - `page` and `limit`: Pagination info.
+	 *
+	 * @throws AppError - If no surveys are found or in case of a server error.
 	 */
-	@Query(() => [Survey])
-	async surveys(): Promise<Survey[]> {
+	@Query(() => AllSurveysResult)
+	async surveys(
+		@Arg("filters", () => AllSurveysQueryInput, { nullable: true })
+		filters: AllSurveysQueryInput
+	): Promise<AllSurveysResult> {
 		try {
-			const surveys = await Survey.find({
-				relations: {
-					user: true,
-					category: true,
-					questions: true,
-				},
-			})
+			const {
+				search,
+				categoryIds,
+				sortBy = "estimatedDuration",
+				order = "DESC",
+				page = 1,
+				limit = 12,
+			} = filters || {}
 
-			if (!surveys) {
+			// Retrieve the base query with all surveys created
+			const baseQuery = Survey.createQueryBuilder("survey")
+				.leftJoinAndSelect("survey.user", "user")
+				.leftJoinAndSelect("survey.category", "category")
+				.leftJoinAndSelect("survey.questions", "questions")
+
+			// Get the total number of unfiltered surveys and clone the query to apply filters
+			const [totalCountAll, filteredQuery] = await Promise.all([
+				baseQuery.getCount(),
+				baseQuery.clone(),
+			])
+
+			// Filter by title (search)
+			if (search?.trim()) {
+				filteredQuery.andWhere("survey.title ILIKE :search", {
+					search: `%${search.trim()}%`,
+				})
+			}
+
+			// Filter by category
+			if (categoryIds && categoryIds.length > 0) {
+				filteredQuery.andWhere(
+					"survey.category.id IN (:...categoryIds)",
+					{
+						categoryIds,
+					}
+				)
+			}
+
+			// Get the total number of surveys matching the filters (for pagination)
+			const totalCount = await filteredQuery.getCount()
+
+			// Sort results by selected field (sortBy) and order (ASC/DESC)
+			filteredQuery.orderBy(`survey.${sortBy}`, order)
+
+			// Apply pagination
+			filteredQuery.skip((page - 1) * limit).take(limit)
+
+			const allSurveys = await filteredQuery.getMany()
+
+			if (!allSurveys) {
 				throw new AppError("Surveys not found", 404, "NotFoundError")
 			}
 
-			return surveys
+			return {
+				allSurveys,
+				totalCount,
+				totalCountAll,
+				page,
+				limit,
+			}
 		} catch (error) {
 			throw new AppError(
 				"Failed to fetch surveys",
@@ -81,6 +148,11 @@ export class SurveysResolver {
 					category: true,
 					questions: true,
 				},
+				order: {
+					questions: {
+						id: "ASC",
+					},
+				},
 			})
 			if (!survey) {
 				throw new AppError("Survey not found", 404, "NotFoundError")
@@ -97,17 +169,35 @@ export class SurveysResolver {
 	}
 
 	/**
-	 * Query to get surveys of the currently authenticated user.
+	 * GraphQL Query to retrieve surveys belonging to the currently authenticated user.
 	 *
-	 * @param context - The context object that contains the currently authenticated user.
+	 * This query supports:
+	 * - search by title,
+	 * - filtering by status,
+	 * - sorting (by creation or update date, ASC/DESC),
+	 * - pagination,
+	 * - as well as counting total surveys before and after filters are applied.
 	 *
-	 * @returns A Promise that resolves to an array of Survey objects owned by the authenticated user.
+	 * ⚠️ Access is restricted to roles `User` and `Admin`.
 	 *
-	 * This query allows a user to retrieve only their own surveys.
+	 * @param filters - Search filters and options for sorting/pagination (field, order, page, limit...).
+	 * @param context - GraphQL context containing the authenticated user.
+	 *
+	 * @returns A `MySurveysResult` object containing:
+	 * - `surveys`: Paginated list of surveys after applying filters.
+	 * - `totalCount`: Total number of surveys matching the filters.
+	 * - `totalCountAll`: Total number of the user's surveys without filters.
+	 * - `page` and `limit`: Pagination information.
+	 *
+	 * @throws AppError - If no user is found in the context or in case of a server error.
 	 */
 	@Authorized(Roles.User, Roles.Admin)
-	@Query(() => [Survey])
-	async mySurveys(@Ctx() context: Context): Promise<Survey[]> {
+	@Query(() => MySurveysResult)
+	async mySurveys(
+		@Arg("filters", () => MySurveysQueryInput, { nullable: true })
+		filters: MySurveysQueryInput,
+		@Ctx() context: Context
+	): Promise<MySurveysResult> {
 		try {
 			const user = context.user
 
@@ -119,16 +209,59 @@ export class SurveysResolver {
 				)
 			}
 
-			return await Survey.find({
-				where: {
-					user: { id: user.id },
-				},
-				relations: {
-					user: true,
-					category: true,
-					questions: true,
-				},
-			})
+			const {
+				search,
+				status,
+				sortBy = "createdAt",
+				order = "DESC",
+				page = 1,
+				limit = 5,
+			} = filters || {}
+
+			// Retrieve the base query with all surveys created by the user
+			const baseQuery = Survey.createQueryBuilder("survey").where(
+				"survey.userId = :userId",
+				{ userId: user.id }
+			)
+
+			// Get the total number of unfiltered surveys and clone the query to apply filters
+			const [totalCountAll, filteredQuery] = await Promise.all([
+				baseQuery.getCount(),
+				baseQuery.clone(),
+			])
+
+			// Filter by title (search)
+			if (search?.trim()) {
+				filteredQuery.andWhere("survey.title ILIKE :search", {
+					search: `%${search.trim()}%`,
+				})
+			}
+
+			// Filter by status
+			if (status && status.length > 0) {
+				filteredQuery.andWhere("survey.status IN (:...status)", {
+					status,
+				})
+			}
+
+			// Get the total number of surveys matching the filters (for pagination)
+			const totalCount = await filteredQuery.getCount()
+
+			// Sort results by selected field (sortBy) and order (ASC/DESC)
+			filteredQuery.orderBy(`survey.${sortBy}`, order)
+
+			// Apply pagination
+			filteredQuery.skip((page - 1) * limit).take(limit)
+
+			const surveys = await filteredQuery.getMany()
+
+			return {
+				surveys,
+				totalCount,
+				totalCountAll,
+				page,
+				limit,
+			}
 		} catch (error) {
 			throw new AppError(
 				"Failed to fetch user surveys",

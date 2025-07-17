@@ -11,8 +11,9 @@ import {
 	Column,
 	Entity,
 	JoinColumn,
-	OneToOne,
+	ManyToOne,
 	PrimaryColumn,
+	CreateDateColumn,
 } from "typeorm"
 import { ObjectType, Field, ID } from "type-graphql"
 import { Questions } from "./questions"
@@ -22,15 +23,14 @@ import { User } from "../user"
  * Answers Entity
  * @description
  * Represents a single answer to a survey question submitted by a user.
- * Each answer is linked to a specific question and to a group of answers
- * representing a full survey submission.
+ * Each answer is linked to a specific question and user.
  *
  * @param name is the entity's name in the database (`Answers`).
  *
  * This class defines the structure of the survey answer entity in the database:
- * - `id`: unique identifier for the answer.
+ * - `id`: unique identifier combining userId and questionId.
  * - `content`: the textual content of the answer.
- * - `questionAnswered`: reference to the group of answers from one user.
+ * - `user`: reference to the user who answered.
  * - `question`: the survey question to which this answer belongs.
  * - `createdAt`: timestamp indicating when the answer was submitted.
  *
@@ -39,7 +39,7 @@ import { User } from "../user"
  * const answer = new Answers()
  * answer.content = "I strongly agree"
  * answer.question = someQuestion
- * answer.questionAnswered = someSubmissionGroup
+ * answer.user = someUser
  * await answer.save()
  * ```
  *
@@ -47,7 +47,7 @@ import { User } from "../user"
  * - `@Entity()`: defines the database table for the entity.
  * - `@PrimaryColumn()`: Part of the composite primary key.
  * - `@Column()`: maps fields to database columns.
- * - `@OneToOne()` + `@JoinColumn()`: links to `Questions` and `SurveyAnswers`.
+ * - `@ManyToOne()` + `@JoinColumn()`: links to `Questions` and `User`.
  * - `@Field()`: exposes fields to the GraphQL schema.
  */
 @ObjectType()
@@ -56,11 +56,11 @@ export class Answers extends BaseEntity {
 	/**
 	 * Unique identifier for the answer
 	 * @description
-	 * Auto-generated primary key.
+	 * Computed from userId and questionId for GraphQL.
 	 */
 	@Field(() => ID)
-	id() {
-		return this.user.id + this.question.id
+	get id(): string {
+		return `${this.userId}_${this.questionId}`
 	}
 
 	/**
@@ -95,19 +95,21 @@ export class Answers extends BaseEntity {
 	/**
 	 * User associated with this answer
 	 * @description
-	 * One-to-one link to the user who answered.
+	 * Many-to-one link to the user who answered.
 	 */
-	@OneToOne(() => User)
-	@JoinColumn()
+	@Field(() => User)
+	@ManyToOne(() => User)
+	@JoinColumn({ name: "userId" })
 	user!: User
 
 	/**
 	 * Question associated with this answer
 	 * @description
-	 * One-to-one link to the question being answered.
+	 * Many-to-one link to the question being answered.
 	 */
-	@OneToOne(() => Questions)
-	@JoinColumn()
+	@Field(() => Questions)
+	@ManyToOne(() => Questions)
+	@JoinColumn({ name: "questionId" })
 	question!: Questions
 
 	/**
@@ -116,6 +118,6 @@ export class Answers extends BaseEntity {
 	 * Automatically set when the answer is saved.
 	 */
 	@Field()
-	@Column({ default: () => "CURRENT_TIMESTAMP" })
+	@CreateDateColumn()
 	createdAt!: Date
 }

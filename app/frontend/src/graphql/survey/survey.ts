@@ -1,22 +1,30 @@
 import { gql } from "@apollo/client"
 
 export const GET_SURVEYS = gql`
-	query Surveys {
-		surveys {
-			id
-			title
-			description
-			status
-			createdAt
-			updatedAt
-			category {
+	query Surveys($filters: AllSurveysQueryInput) {
+		surveys(filters: $filters) {
+			allSurveys {
 				id
-				name
+				title
+				description
+				status
+				createdAt
+				updatedAt
+				category {
+					id
+					name
+				}
+				user {
+					id
+					email
+				}
+				estimatedDuration
+				availableDuration
 			}
-			user {
-				id
-				email
-			}
+			totalCount
+			totalCountAll
+			page
+			limit
 		}
 	}
 `
@@ -39,6 +47,11 @@ export const GET_SURVEY = gql`
 			}
 			questions {
 				id
+				title
+				type
+				answers {
+					value
+				}
 			}
 			createdAt
 			updatedAt
@@ -47,13 +60,19 @@ export const GET_SURVEY = gql`
 `
 
 export const GET_MY_SURVEYS = gql`
-	query MySurveys {
-		mySurveys {
-			id
-			title
-			status
-			createdAt
-			updatedAt
+	query MySurveys($filters: MySurveysQueryInput) {
+		mySurveys(filters: $filters) {
+			surveys {
+				id
+				title
+				status
+				createdAt
+				updatedAt
+			}
+			totalCount
+			totalCountAll
+			page
+			limit
 		}
 	}
 `

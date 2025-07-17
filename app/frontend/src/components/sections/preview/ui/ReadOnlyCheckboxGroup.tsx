@@ -7,8 +7,11 @@ export function ReadOnlyCheckboxGroup({
 }) {
 	return (
 		<div className="flex flex-col gap-2">
-			{options.map(opt => (
-				<label key={opt} className="flex items-center gap-2">
+			{options.map((opt, index) => (
+				<label
+					key={`${opt}_${index}`}
+					className="flex items-center gap-2"
+				>
 					<input
 						type="checkbox"
 						checked={checkedValues.includes(opt)}
