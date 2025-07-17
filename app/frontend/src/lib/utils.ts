@@ -7,9 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 
 export const slugify = (str: string): string =>
 	str
-		.normalize("NFD") // supprime les accents
-		.replace(/[\u0300-\u036f]/g, "")
+		.normalize("NFD") // removes accents
+		.replace(/[\u0300-\u036f]/g, "") // strips diacritics
 		.toLowerCase()
 		.trim()
-		.replace(/\s+/g, "-") // espaces → tirets
-		.replace(/[^\w-]+/g, "") // supprime les caractères spéciaux
+		.replace(/\s+/g, "-") // spaces → hyphens
+		.replace(/[^\w-]+/g, "") // removes special characters

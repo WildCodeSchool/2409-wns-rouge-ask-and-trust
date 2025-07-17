@@ -35,24 +35,24 @@ import { AllSurveysQueryInput } from "../../inputs/queries/surveys-query-input"
 @Resolver(Survey)
 export class SurveysResolver {
 	/**
-	 * GraphQL Query permettant de récupérer toutes les enquêtes.
+	 * GraphQL Query to fetch all surveys.
 	 *
-	 * Cette requête prend en charge :
-	 * - la recherche par titre,
-	 * - le filtrage par catégorie,
-	 * - le tri (par temps estimé pour répondre à l'enquête et durée de disponibilité, ASC/DESC),
-	 * - la pagination,
-	 * - ainsi que le comptage total d'enquêtes avant et après filtres.
+	 * This query supports:
+	 * - search by title,
+	 * - filtering by category,
+	 * - sorting (by estimated duration or available duration, ASC/DESC),
+	 * - pagination,
+	 * - as well as counting total surveys before and after filters are applied.
 	 *
-	 * @param filters - Filtres de recherche et options de tri/pagination (champ, ordre, page, limite...).
+	 * @param filters - Search filters and options for sorting/pagination (field, order, page, limit...).
 	 *
-	 * @returns Un objet `AllSurveysResult` contenant :
-	 * - `allSurveys` : Liste paginée des enquêtes après application des filtres.
-	 * - `totalCount` : Nombre total d’enquêtes correspondant aux filtres.
-	 * - `totalCountAll` : Nombre total d’enquêtes de l’utilisateur sans filtre.
-	 * - `page` et `limit` : Infos de pagination.
+	 * @returns An `AllSurveysResult` object containing:
+	 * - `allSurveys`: Paginated list of surveys after applying filters.
+	 * - `totalCount`: Total number of surveys matching the filters.
+	 * - `totalCountAll`: Total number of surveys without filters.
+	 * - `page` and `limit`: Pagination info.
 	 *
-	 * @throws AppError - Si aucune enquête n'est trouvée ou en cas d’erreur serveur.
+	 * @throws AppError - If no surveys are found or in case of a server error.
 	 */
 	@Query(() => AllSurveysResult)
 	async surveys(
@@ -169,27 +169,27 @@ export class SurveysResolver {
 	}
 
 	/**
-	 * GraphQL Query permettant de récupérer les enquêtes de l'utilisateur actuellement authentifié.
+	 * GraphQL Query to retrieve surveys belonging to the currently authenticated user.
 	 *
-	 * Cette requête prend en charge :
-	 * - la recherche par titre,
-	 * - le filtrage par statut,
-	 * - le tri (par date de création ou de modification, ASC/DESC),
-	 * - la pagination,
-	 * - ainsi que le comptage total d'enquêtes avant et après filtres.
+	 * This query supports:
+	 * - search by title,
+	 * - filtering by status,
+	 * - sorting (by creation or update date, ASC/DESC),
+	 * - pagination,
+	 * - as well as counting total surveys before and after filters are applied.
 	 *
-	 * ⚠️ L'accès est restreint aux rôles `User` et `Admin`.
+	 * ⚠️ Access is restricted to roles `User` and `Admin`.
 	 *
-	 * @param filters - Filtres de recherche et options de tri/pagination (champ, ordre, page, limite...).
-	 * @param context - Contexte GraphQL contenant l'utilisateur authentifié.
+	 * @param filters - Search filters and options for sorting/pagination (field, order, page, limit...).
+	 * @param context - GraphQL context containing the authenticated user.
 	 *
-	 * @returns Un objet `MySurveysResult` contenant :
-	 * - `surveys` : Liste paginée des enquêtes après application des filtres.
-	 * - `totalCount` : Nombre total d’enquêtes correspondant aux filtres.
-	 * - `totalCountAll` : Nombre total d’enquêtes de l’utilisateur sans filtre.
-	 * - `page` et `limit` : Infos de pagination.
+	 * @returns A `MySurveysResult` object containing:
+	 * - `surveys`: Paginated list of surveys after applying filters.
+	 * - `totalCount`: Total number of surveys matching the filters.
+	 * - `totalCountAll`: Total number of the user's surveys without filters.
+	 * - `page` and `limit`: Pagination information.
 	 *
-	 * @throws AppError - Si aucun utilisateur n’est présent dans le contexte ou en cas d’erreur serveur.
+	 * @throws AppError - If no user is found in the context or in case of a server error.
 	 */
 	@Authorized(Roles.User, Roles.Admin)
 	@Query(() => MySurveysResult)
