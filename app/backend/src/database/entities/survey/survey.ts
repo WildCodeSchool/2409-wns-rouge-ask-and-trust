@@ -159,6 +159,30 @@ export class Survey extends BaseEntity {
 		onUpdate: "CURRENT_TIMESTAMP",
 	})
 	updatedAt!: Date
+
+	/**
+	 * Estimated duration to complete the survey (in minutes)
+	 * @description
+	 * Represents the estimated time (in minutes) that a participant might take to complete the survey.
+	 * This is useful for users to know how much time they need to allocate.
+	 *
+	 * Example: 5, 10, 30, etc.
+	 */
+	@Field()
+	@Column({ type: "int", default: 5 })
+	estimatedDuration!: number
+
+	/**
+	 * Duration the survey remains available (in days)
+	 * @description
+	 * Defines the number of days the survey will be accessible to users after its publication.
+	 * This value can help automatically expire or hide surveys after a given period.
+	 *
+	 * Example: 7 (1 week), 30 (1 month), 90 (3 months), etc.
+	 */
+	@Field()
+	@Column({ type: "int", default: 30 })
+	availableDuration!: number
 }
 
 @InputType()

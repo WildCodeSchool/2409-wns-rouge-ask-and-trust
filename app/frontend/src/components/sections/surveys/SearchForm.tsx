@@ -1,21 +1,46 @@
-import { Search } from "lucide-react"
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { useSearchParams } from "react-router-dom"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
+import { Button } from "@/components/ui/Button"
+import { Search } from "lucide-react"
 
-interface SearchFormData {
+type FormValues = {
 	search: string
 }
 
 export default function SearchForm() {
-	const {
-		handleSubmit,
-		formState: { errors },
-	} = useForm<SearchFormData>()
+	const [searchParams, setSearchParams] = useSearchParams()
 
-	const onSubmit: SubmitHandler<SearchFormData> = data => {
-		// TODO: Implement search functionality
-		console.log("Search query:", data.search)
+	const { register, handleSubmit, watch } = useForm<FormValues>({
+		defaultValues: {
+			search: searchParams.get("search") || "",
+		},
+	})
+
+	const searchValue = watch("search")
+
+	useEffect(() => {
+		if (searchValue === "") {
+			const newParams = new URLSearchParams(searchParams)
+			newParams.delete("search")
+			newParams.set("page", "1")
+			setSearchParams(newParams)
+		}
+	}, [searchValue, searchParams, setSearchParams])
+
+	const onSubmit = (data: FormValues) => {
+		const newParams = new URLSearchParams(searchParams)
+
+		if (data.search.trim()) {
+			newParams.set("search", data.search.trim())
+		} else {
+			newParams.delete("search")
+		}
+		newParams.set("page", "1")
+
+		setSearchParams(newParams)
 	}
 
 	return (
@@ -28,18 +53,19 @@ export default function SearchForm() {
 			</Label>
 			<Input
 				id="search"
-				placeholder="Rechercher une enquête"
-				className="text-input-fg focus:ring-primary-700 h-10 w-full overflow-hidden rounded-md border-0 bg-white py-1 pr-10 pl-2 text-ellipsis whitespace-nowrap outline-0 focus:ring-2 focus:ring-offset-2 focus:outline-none"
 				type="search"
-				errorMessage={errors.search?.message}
+				placeholder="Rechercher une enquête..."
+				errorMessage=""
+				{...register("search")}
+				className="h-11 w-full bg-white py-2 pr-10 pl-2 text-ellipsis whitespace-nowrap"
 			/>
-			<button
+			<Button
 				type="submit"
-				className="bg-primary-600 absolute right-2 cursor-pointer rounded-md p-2"
-				aria-label="Rechercher"
+				ariaLabel="Rechercher une enquête"
+				className="group absolute right-1.5 p-2"
 			>
-				<Search className="h-4 w-4 text-white" />
-			</button>
+				<Search className="group-hover:text-primary-700 h-4 w-4 text-white transition-colors duration-200 ease-in-out" />
+			</Button>
 		</form>
 	)
 }

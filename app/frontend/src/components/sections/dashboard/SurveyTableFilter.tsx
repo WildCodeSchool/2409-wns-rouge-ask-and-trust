@@ -52,16 +52,15 @@ export default function SurveyTableFilter({
 	}
 
 	return (
-		<div className="flex flex-wrap items-center justify-center gap-5 max-sm:order-2 min-sm:flex-row min-sm:justify-start">
+		<div className="flex flex-wrap items-center gap-5 max-md:order-2">
 			<SelectFilter
 				value=""
 				onChange={addFilter}
 				options={availableOptions}
 			/>
-			<div className="flex flex-wrap items-center justify-center gap-2.5 min-sm:flex-wrap min-sm:justify-start">
+			<div className="flex flex-wrap items-center gap-2.5">
 				{filters.map(filter => (
 					<Chipset
-						className="rounded-lg"
 						key={filter}
 						variant="filtered"
 						ariaLabel={`Filtre appliqué : ${filter}`}
