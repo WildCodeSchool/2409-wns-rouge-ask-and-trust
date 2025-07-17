@@ -32,8 +32,9 @@ export const MultipleAnswersType = [
 type MultipleAnswerType = (typeof MultipleAnswersType)[number]
 
 export function isMultipleAnswerType(
-	type: QuestionType
+	type: QuestionType | undefined
 ): type is MultipleAnswerType {
+	if (!type) return false
 	return (MultipleAnswersType as readonly string[]).includes(type)
 }
 
