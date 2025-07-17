@@ -1,7 +1,7 @@
-import { CheckedState } from "@radix-ui/react-checkbox"
 import { LucideIcon } from "lucide-react"
-import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
 import { UserRole } from "./../../../backend/src/types/types"
+import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
+import { CheckedState } from "@radix-ui/react-checkbox"
 
 export type AuthContextProps = {
 	user: User | null
@@ -12,9 +12,14 @@ export type AuthContextProps = {
 
 export interface User {
 	id: string
+	firstname: string
+	lastname: string
 	email: string
-	role: string
-	// ... other user properties
+	password: string
+	role: UserRole
+	surveys: Survey[]
+	created_at: string
+	updated_at: string
 }
 
 export interface LinksType {
@@ -31,6 +36,13 @@ export interface UserAuth {
 	email: string
 	password: string
 	role: UserRole
+}
+
+export type UserDetails = {
+	user: User
+	userSurveys: MySurveysResult | null
+	showResetForm: boolean
+	onToggleResetForm: () => void
 }
 
 export type UserSignUp = UserAuth
@@ -126,6 +138,7 @@ export interface Survey {
 	public: boolean
 	category: number | string
 	questions: { id: number }[]
+	user: User
 }
 
 export type CreateSurveyInput = Survey

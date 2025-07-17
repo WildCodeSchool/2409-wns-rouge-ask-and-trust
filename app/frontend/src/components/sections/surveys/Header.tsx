@@ -10,7 +10,7 @@ import { GET_CATEGORIES } from "@/graphql/survey/category"
 import { SurveyCategoryType } from "@/types/types"
 import { useResponsivity } from "@/hooks/useResponsivity"
 
-export default function Header() {
+export default function Header({ showCategories = false }) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const [searchParams, setSearchParams] = useSearchParams()
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(
@@ -64,30 +64,36 @@ export default function Header() {
 				</Link>
 				<NavAndAuthButtons isHorizontalCompact={isHorizontalCompact} />
 			</div>
-			<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3 pl-1">
-				{loadingCategories && (
-					<p className="text-white">Chargement des catégories...</p>
-				)}
-				{categories.map((category: SurveyCategoryType) => {
-					const slug = slugify(category.name)
+			{showCategories && (
+				<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3 pl-1">
+					{loadingCategories && (
+						<p className="text-white">
+							Chargement des catégories...
+						</p>
+					)}
+					{categories.map((category: SurveyCategoryType) => {
+						const slug = slugify(category.name)
 
-					return (
-						<Button
-							key={category.id}
-							variant="navbar_btn"
-							size="sm"
-							ariaLabel={`Annonces de la catégorie ${category.name}`}
-							children={category.name}
-							className={cn(
-								"min-w-fit",
-								selectedCategory === slug &&
-									"text-primary-700 bg-white"
-							)}
-							onClick={() => filterByCategory(slug, category.id)}
-						/>
-					)
-				})}
-			</div>
+						return (
+							<Button
+								key={category.id}
+								variant="navbar_btn"
+								size="sm"
+								ariaLabel={`Annonces de la catégorie ${category.name}`}
+								children={category.name}
+								className={cn(
+									"min-w-fit",
+									selectedCategory === slug &&
+										"text-primary-700 bg-white"
+								)}
+								onClick={() =>
+									filterByCategory(slug, category.id)
+								}
+							/>
+						)
+					})}
+				</div>
+			)}
 		</header>
 	)
 }

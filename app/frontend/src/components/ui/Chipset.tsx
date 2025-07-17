@@ -17,7 +17,7 @@ const chipsetVariants = cva(
 				disabled: "bg-black-400 border-black-400 text-white",
 				outline: "bg-white border-primary-700 text-primary-700",
 				filtered:
-					"bg-primary-100 text-primary-default font-semibold text-sm px-3 h-10 py-2 gap-2",
+					"bg-primary-100 text-primary-default font-semibold text-sm px-3 h-10 py-2 gap-2 rounded-lg",
 			},
 			state: {
 				published:
