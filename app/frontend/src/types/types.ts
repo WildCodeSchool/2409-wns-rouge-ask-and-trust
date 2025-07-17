@@ -49,7 +49,7 @@ export interface HeaderMobileMenuProps {
 
 export interface NavAndAuthButtonsProps {
 	headerLinks: readonly LinksType[]
-	isMobile: boolean
+	isHorizontalCompact: boolean
 	handleShowMenu?: () => void
 }
 
@@ -64,8 +64,20 @@ export interface SurveyCardType {
 	title: string
 	description: string
 	category: SurveyCategoryType
-	estimateTime: number
-	timeLeft: string
+	estimatedDuration: number
+	availableDuration: number
+}
+
+export type AllSurveysResult = {
+	allSurveys: SurveyCardType[]
+	totalCount: number
+	totalCountAll: number
+	page: number
+	limit: number
+}
+
+export type AllSurveysHome = {
+	surveys: AllSurveysResult
 }
 
 export type Package = {
@@ -118,7 +130,7 @@ export interface Survey {
 
 export type CreateSurveyInput = Survey
 
-export type UpdateSurveyType = Survey
+export type UpdateSurveyInput = Survey
 
 export type Question = {
 	id: number
@@ -188,11 +200,19 @@ export type SurveyTableType = {
 	updatedAt: string
 }
 
-export type SurveysDashboardQuery = {
-	mySurveys: SurveyTableType[]
+export type MySurveysResult = {
+	surveys: SurveyTableType[]
+	totalCount: number
+	totalCountAll: number
+	page: number
+	limit: number
 }
 
-type SurveyStatus = "draft" | "published" | "archived" | "censored"
+export type SurveysDashboardQuery = {
+	mySurveys: MySurveysResult
+}
+
+export type SurveyStatus = "draft" | "published" | "archived" | "censored"
 
 export type SurveyTableProps = {
 	isHeaderChecked: CheckedState
@@ -228,7 +248,7 @@ export type SurveyTableNavProps = {
 	showDeleteButton: boolean
 	currentPage: number
 	setCurrentPage: (page: number) => void
-	sortedSurveys: SurveyTableType[]
+	totalCount: number
 	surveysPerPage: number
 	selectedSurveyIds: number[]
 }
@@ -249,6 +269,12 @@ export type SelectFilterProps = {
 export type SurveyTableFilterProps = {
 	filters: string[]
 	setFilters: (filters: string[]) => void
+}
+
+export type SurveyDurationFilterProps = {
+	sortTimeOption: string
+	setSortTimeOption: (filters: string) => void
+	isHorizontalCompact: boolean
 }
 
 export type DateSortFilter = "Plus récente" | "Plus ancienne"

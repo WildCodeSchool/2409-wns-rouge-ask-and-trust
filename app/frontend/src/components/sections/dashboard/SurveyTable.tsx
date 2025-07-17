@@ -16,7 +16,7 @@ export default function SurveyTable({
 	}
 
 	return (
-		<div className="border-border mb-10 overflow-x-auto rounded-xl border">
+		<div className="border-border overflow-x-auto rounded-xl border">
 			<table className="text-black-default min-w-full text-left">
 				<SurveyTableHead
 					isHeaderChecked={isHeaderChecked}
