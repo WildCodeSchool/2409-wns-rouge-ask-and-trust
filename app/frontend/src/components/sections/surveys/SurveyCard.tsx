@@ -17,8 +17,8 @@ export default function SurveyCard({
 	title,
 	description,
 	category,
-	estimateTime,
-	timeLeft,
+	estimatedDuration,
+	availableDuration,
 }: SurveyCardType) {
 	const href = `/surveys/respond/${id}`
 	const isExternal = href.startsWith("http")
@@ -66,13 +66,13 @@ export default function SurveyCard({
 				<div className="flex items-center gap-1">
 					<Timer className="h-4 w-4 text-white" aria-hidden />
 					<span className="text-xs leading-none font-semibold text-white">
-						{estimateTime} minutes
+						{estimatedDuration} minutes
 					</span>
 				</div>
 				<div className="flex items-center gap-1">
 					<Hourglass className="h-4 w-4 text-white" aria-hidden />
 					<span className="text-xs leading-none font-semibold text-white">
-						{timeLeft}
+						{availableDuration} jours
 					</span>
 				</div>
 			</div>

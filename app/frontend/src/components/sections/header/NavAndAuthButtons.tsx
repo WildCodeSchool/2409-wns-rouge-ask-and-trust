@@ -4,14 +4,14 @@ import { HeaderLink } from "./Header"
 
 export default function NavAndAuthButtons({
 	headerLinks,
-	isMobile,
+	isHorizontalCompact,
 	handleShowMenu,
 }: NavAndAuthButtonsProps) {
 	return (
 		<>
 			<nav
 				className={
-					isMobile
+					isHorizontalCompact
 						? "flex flex-col gap-20"
 						: "flex flex-1 items-center justify-between"
 				}
@@ -19,7 +19,7 @@ export default function NavAndAuthButtons({
 			>
 				<ul
 					className={
-						isMobile
+						isHorizontalCompact
 							? "flex flex-col gap-5"
 							: "flex flex-1 items-center justify-center gap-20"
 					}
@@ -37,16 +37,16 @@ export default function NavAndAuthButtons({
 				</ul>
 				<div
 					className={
-						isMobile
+						isHorizontalCompact
 							? "flex flex-col gap-5"
 							: "flex items-center justify-center gap-6"
 					}
 				>
 					<Button
 						to="/register"
-						variant={isMobile ? "outline" : "secondary"}
+						variant={isHorizontalCompact ? "outline" : "secondary"}
 						role="link"
-						fullWidth={isMobile}
+						fullWidth={isHorizontalCompact}
 						ariaLabel="S'inscrire"
 						onClick={handleShowMenu}
 					>
@@ -56,7 +56,7 @@ export default function NavAndAuthButtons({
 						to="/connexion"
 						variant="primary"
 						role="link"
-						fullWidth={isMobile}
+						fullWidth={isHorizontalCompact}
 						ariaLabel="Se connecter"
 						onClick={handleShowMenu}
 					>
