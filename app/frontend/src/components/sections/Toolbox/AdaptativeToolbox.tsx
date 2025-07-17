@@ -12,7 +12,6 @@ import { ToolboxItem, ToolboxProps } from "@/types/types"
  * @returns {JSX.Element} The adaptive toolbox component.
  */
 export function AdaptiveToolbox({
-	// className = "",
 	categories = [],
 	items = [],
 	showSearch = false,
@@ -79,7 +78,7 @@ export function AdaptiveToolbox({
 						{category.title}
 					</h3>
 				)}
-				<div className="px-2">
+				<div className={cn("px-2", isCompact && "px-0")}>
 					{renderedItems
 						.filter((item: ToolboxItem) =>
 							category.items.some(
@@ -92,12 +91,18 @@ export function AdaptiveToolbox({
 		))
 
 	return (
-		<div ref={rootRef} className={"flex h-full flex-col overflow-hidden"}>
+		<div
+			ref={rootRef}
+			className={cn(
+				"flex h-full flex-col overflow-hidden",
+				isCompact ? "w-14" : "w-72"
+			)}
+		>
 			{!isCompact && showSearch && searchManager && (
 				<div className="p-3">
 					<input
 						type="text"
-						className="border-black-100 file:text-black-default placeholder:border-black-400 focus-visible:border-primary-700 m-3 flex h-10 w-full rounded-lg border bg-transparent px-3 py-1 text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+						className="border-black-100 file:text-black-default placeholder:border-black-400 focus-visible:border-primary-700 flex h-10 w-full rounded-lg border bg-transparent px-3 py-1 text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
 						value={searchManager.value}
 						onChange={e => searchManager.onChange(e.target.value)}
 						placeholder={searchManager.placeholder}
@@ -110,7 +115,12 @@ export function AdaptiveToolbox({
 				</div>
 			)}
 
-			<div className="flex flex-1 flex-col gap-1.5 overflow-y-auto bg-white">
+			<div
+				className={cn(
+					"flex flex-1 flex-col gap-1.5 overflow-y-auto bg-white",
+					isCompact && "p-1.5"
+				)}
+			>
 				{categories.length > 0
 					? renderCategories()
 					: renderedItems.map(renderItem)}
