@@ -40,20 +40,6 @@ export const ButtonScroll: React.FC<ButtonScrollProps> = ({
 		const container = containerRef.current
 		if (!container) return
 
-		// const onScroll = () => {
-		// 	if (scrollToTop) {
-		// 		// Display button if scrolled down more than 50px
-		// 		setIsVisible(container.scrollTop > 50)
-		// 	} else {
-		// 		//Display button if scrolled up more than 50px
-		// 		const distanceFromBottom =
-		// 			container.scrollHeight -
-		// 			container.scrollTop -
-		// 			container.clientHeight
-		// 		setIsVisible(distanceFromBottom > 50)
-		// 	}
-		// }
-
 		container.addEventListener("scroll", onScroll)
 		onScroll()
 
