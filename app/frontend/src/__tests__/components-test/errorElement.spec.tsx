@@ -119,9 +119,11 @@ describe("ErrorElement Component", () => {
 			render(<RouterProvider router={router} />)
 
 			// Wait until the buttons are displayed
-			await screen.findByText("Retour à l'accueil")
+			await screen.findByText("Retourner aux enquêtes")
 
-			expect(screen.getByText("Retour à l'accueil")).toBeInTheDocument()
+			expect(
+				screen.getByText("Retourner aux enquêtes")
+			).toBeInTheDocument()
 			expect(screen.getByText("Page précédente")).toBeInTheDocument()
 		})
 	})
