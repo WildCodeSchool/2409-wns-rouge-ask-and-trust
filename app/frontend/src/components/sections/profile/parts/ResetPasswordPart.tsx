@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/Button.tsx"
-import InputOldPassword from "@/components/sections/profile/form/InputOldPassword.tsx"
-import InputNewPassword from "@/components/sections/profile/form/InputNewPassword.tsx"
-import InputConfirmPassword from "@/components/sections/profile/form/InputConfirmPassword.tsx"
+import InputResetPassword from "@/components/sections/profile/form/InputResetPassword.tsx"
 
 export function ResetPasswordPart() {
 	return (
@@ -11,9 +9,21 @@ export function ResetPasswordPart() {
 			</h5>
 
 			<div className="flex flex-col gap-4">
-				<InputOldPassword />
-				<InputNewPassword />
-				<InputConfirmPassword />
+				<InputResetPassword
+					id="oldPassword"
+					label="Ancien mot de passe"
+					placeholder="Ancien mot de passe"
+				/>
+				<InputResetPassword
+					id="newPassord"
+					label="Nouveau mot de passe"
+					placeholder="Nouveau mot de passe"
+				/>
+				<InputResetPassword
+					id="confirmPassword"
+					label="Confirmer mot de passe"
+					placeholder="Confirmer mot de passe"
+				/>
 
 				<div className="flex justify-end pt-2">
 					<Button
