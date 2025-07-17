@@ -2,18 +2,18 @@ import { Field, Int, ObjectType } from "type-graphql"
 import { Survey } from "../entities/survey/survey"
 
 /**
- * Représente la réponse de la requête `mySurveys`, contenant les résultats paginés des enquêtes de l'utilisateur.
- * Cette classe est utilisée pour structurer le retour de la requête avec les données de pagination.
+ * Represents the response of the `mySurveys` query, containing paginated results of the user's surveys.
+ * This class is used to structure the return of the query with pagination data.
  *
  * @description
- * - `surveys` : tableau d'objets `Survey` correspondant aux enquêtes de l'utilisateur.
- * - `totalCount` : nombre total d'enquêtes correspondant aux critères, utile pour la pagination côté client.
- * - `page` : numéro de page actuelle (optionnel, renvoyé pour information).
- * - `limit` : nombre d'enquêtes par page (optionnel, renvoyé pour information).
+ * - `surveys`: array of `Survey` objects corresponding to the user's surveys.
+ * - `totalCount`: total number of surveys matching the criteria, useful for client-side pagination.
+ * - `page`: current page number (optional, returned for information).
+ * - `limit`: number of surveys per page (optional, returned for information).
  *
- * Les décorateurs utilisés sont :
- * - `@ObjectType()` : expose la classe comme un type GraphQL de sortie.
- * - `@Field()` : expose chaque propriété dans le schéma GraphQL.
+ * The decorators used are:
+ * - `@ObjectType()`: exposes the class as a GraphQL output type.
+ * - `@Field()`: exposes each property in the GraphQL schema.
  */
 @ObjectType()
 export class MySurveysResult {

@@ -3,16 +3,16 @@ import { IsOptional, IsInt, Min, IsArray } from "class-validator"
 import { Field, InputType, Int } from "type-graphql"
 
 /**
- * Représente les paramètres d'entrée pour la requête de toutes les enquêtes visibles en page d'accueil.
+ * Represents the input parameters for querying all surveys visible on the homepage.
  *
  * @description
- * - `search` : filtre les enquêtes par mot-clé (titre).
- * - `categoryId` : filtre par identifiant de catégorie.
- * - `estimatedDurationMax` : filtre les enquêtes avec une durée estimée inférieure ou égale (en minutes).
- * - `availableDurationMax` : filtre celles dont le temps restant avant expiration est inférieur ou égal (en jours).
- * - `sortBy` : critère de tri (création, durée estimée, temps restant...).
- * - `order` : ordre de tri (ASC ou DESC).
- * - `page` & `limit` : paramètres de pagination.
+ * - `search`: filters surveys by keyword (title).
+ * - `categoryId`: filters by category ID.
+ * - `estimatedDurationMax`: filters surveys with an estimated duration less than or equal to the given value (in minutes).
+ * - `availableDurationMax`: filters surveys whose remaining time before expiration is less than or equal to the given value (in days).
+ * - `sortBy`: sorting criteria (creation date, estimated duration, remaining time, etc.).
+ * - `order`: sorting order (ASC or DESC).
+ * - `page` & `limit`: pagination parameters.
  */
 @InputType()
 export class AllSurveysQueryInput {
