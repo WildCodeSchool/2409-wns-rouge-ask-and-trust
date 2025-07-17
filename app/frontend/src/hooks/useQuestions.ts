@@ -5,7 +5,12 @@ import {
 	UPDATE_QUESTION,
 } from "@/graphql/survey/question"
 import { GET_SURVEY } from "@/graphql/survey/survey"
-import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
+import {
+	isMultipleAnswerType,
+	Question,
+	QuestionType,
+	TypesOfQuestion,
+} from "@/types/types"
 import { useMutation, useQuery } from "@apollo/client"
 import { AnswerObject } from "./../../../backend/src/graphql/inputs/create/survey/create-questions-input"
 
@@ -44,9 +49,7 @@ export function getDefaultQuestion(question: {
 	const type = question.type ?? TypesOfQuestion.Text
 	let defaultAnswers: AnswerObject[] = []
 	const isNotAnswers = !question.answers || question.answers.length === 0
-	const isQuestionMultipleTypes =
-		type === TypesOfQuestion.Select ||
-		type === TypesOfQuestion.Multiple_Choice
+	const isQuestionMultipleTypes = isMultipleAnswerType(type)
 
 	if (isNotAnswers) {
 		if (isQuestionMultipleTypes) {
@@ -160,7 +163,7 @@ export function useQuestions() {
 
 export function useQuestion(questionId?: number) {
 	const { data, loading, error, refetch } = useQuery<{
-		question: QuestionUpdate // @TODO check if type ok
+		question: Question
 	}>(GET_QUESTION, {
 		variables: { questionId },
 		skip: !questionId, // Skip the query if questionId is not provided
