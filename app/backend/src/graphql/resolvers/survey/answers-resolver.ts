@@ -188,6 +188,7 @@ export class AnswersResolver {
 			const existingAnswer = await Answers.findOne({
 				where: {
 					questionId: data.questionId,
+					userId: user.id,
 				},
 			})
 
