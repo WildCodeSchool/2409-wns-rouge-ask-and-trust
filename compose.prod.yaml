@@ -62,7 +62,7 @@ services:
             # on the right => where it is in the docker container
             - ./nginx:/etc/nginx
         ports:
-            - ${{GATEAWAY_PORT}}:80
+            - ${GATEWAY_PORT}:80
         depends_on:
             - backend
             - frontend
