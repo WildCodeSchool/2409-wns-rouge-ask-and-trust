@@ -1,22 +1,23 @@
 services:
     # Frontend service (React + Vite)
     frontend:
-        image: yohangh/askandtrust-frontend:4fed9eabcc526ee187f48c04e3de7646bcb8b214
+        image: yohangh/askandtrust-frontend:${VERSION}
         # ports:
         #     - "5173:5173" # Exposes port 5173 to access Vite from the host
         environment:
             - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
+            - VITE_NODE_ENV=production
         command: ["npm", "run", "dev", "--host"] # Start Vite in development mode (hot reload enabled)
         # Unused options, but useful in other cases
         # restart: always # Recreate the container in case of failure
         depends_on:
             - backend # Wait for the backend to be ready (useful if necessary)
         networks:
-            - frontend_network # To be configured if a specific network is required
+            - frontend_network_prod # To be configured if a specific network is required
 
     # Backend service (Express.js)
     backend:
-        image: yohangh/askandtrust-backend:4fed9eabcc526ee187f48c04e3de7646bcb8b214
+        image: yohangh/askandtrust-backend:${VERSION}
         # ports:
         #     - "3310:3310" # Exposes port 3310 to access the backend from the host
         environment:
@@ -29,8 +30,8 @@ services:
             db:
                 condition: service_healthy
         networks:
-            - frontend_network
-            - backend_network
+            - frontend_network_prod
+            - backend_network_prod
 
         # Unused options, but useful in other cases
         # restart: always # Recreate the container in case of failure
@@ -39,11 +40,11 @@ services:
         image: postgres:15
         restart: always # Recreate the container in case of failure
         ports:
-            - "5432:5432"
+            - "5432:5432" # Production uses default PostgreSQL port
         env_file:
             - .database.env
         networks:
-            - backend_network
+            - backend_network_prod
         healthcheck: # To ensure that PostgreSQL is ready before starting the backend.
             test:
                 [
@@ -62,22 +63,22 @@ services:
             # on the right => where it is in the docker container
             - ./nginx:/etc/nginx
         ports:
-            - ${{GATEAWAY_PORT}}:80
+            - ${GATEWAY_PORT_PROD}:80 # Production-specific variable
         depends_on:
             - backend
             - frontend
         networks:
-            - backend_network
-            - frontend_network
+            - backend_network_prod
+            - frontend_network_prod
 
 # Networks (useful for isolating services)
 networks:
-    backend_network:
+    backend_network_prod:
         driver: bridge
-    frontend_network:
+    frontend_network_prod:
         driver: bridge
 
 # Volumes (to persist data like databases)
 volumes:
-    db_data: # Volume for the database
+    db_data_prod: # Volume for the database
         driver: local

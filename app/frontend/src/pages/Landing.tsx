@@ -1,8 +1,8 @@
-import Hero from "@/components/sections/landing/Hero.tsx"
-import Information from "@/components/sections/landing/Information.tsx"
-import Poll from "@/components/sections/landing/Poll.tsx"
-import Package from "@/components/sections/landing/Package.tsx"
-import { Button } from "@/components/ui/Button.tsx"
+import Hero from "@/components/sections/landing/Hero"
+import Information from "@/components/sections/landing/Information"
+import Poll from "@/components/sections/landing/Poll"
+import Package from "@/components/sections/landing/Package"
+import { Button } from "@/components/ui/Button"
 import { Helmet } from "react-helmet"
 
 const Landing = () => {
@@ -15,14 +15,12 @@ const Landing = () => {
 					content="Page d'accueil du site Ark&Trust"
 				/>
 				<meta name="robots" content="noindex, nofollow" />
-				{/* Open Graph */}
 				<meta property="og:title" content="Accueil | Ask&Trust" />
 				<meta
 					property="og:description"
 					content="Page d'accueil du site Ark&Trust"
 				/>
 				<meta property="og:type" content="website" />
-				{/* Twitter Card */}
 				<meta name="twitter:card" content="summary" />
 				<meta name="twitter:title" content="Accueil | Ask&Trust" />
 				<meta

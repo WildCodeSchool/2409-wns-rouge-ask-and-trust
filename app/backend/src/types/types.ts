@@ -14,8 +14,31 @@ export const Roles = {
 
 export type UserRole = (typeof Roles)[keyof typeof Roles]
 
-export enum TypeOfQuestion {
-	TEXT = "text",
-	MULTIPLE_CHOICE = "multiple_choice",
-	BOOLEAN = "boolean",
+export const TypesOfQuestion = {
+	Text: "text",
+	TextArea: "textarea",
+	Checkbox: "checkbox",
+	Radio: "radio",
+	Boolean: "boolean",
+	Select: "select",
+} as const
+
+export const MultipleAnswersType = [
+	TypesOfQuestion.Checkbox,
+	TypesOfQuestion.Radio,
+	TypesOfQuestion.Select,
+] as const
+
+type MultipleAnswerType = (typeof MultipleAnswersType)[number]
+
+export function isMultipleAnswerType(
+	type: QuestionType | undefined
+): type is MultipleAnswerType {
+	if (!type) return false
+	return (MultipleAnswersType as readonly string[]).includes(type)
 }
+
+export type QuestionType =
+	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]
+
+export type SurveyStatus = "draft" | "published" | "archived" | "censored"

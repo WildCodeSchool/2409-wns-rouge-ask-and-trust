@@ -16,9 +16,17 @@ import {
 	Resolver,
 } from "type-graphql"
 import { Questions } from "../../../database/entities/survey/questions"
-import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
-import { Context } from "../../../types/types"
+import { Survey } from "../../../database/entities/survey/survey"
 import { AppError } from "../../../middlewares/error-handler"
+import {
+	Context,
+	isMultipleAnswerType,
+	Roles,
+	TypesOfQuestion,
+} from "../../../types/types"
+import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
+import { UpdateQuestionInput } from "../../inputs/update/survey/update-question-input"
+import { isOwnerOrAdmin } from "../../utils/authorizations"
 
 /**
  * QuestionsResolver
@@ -66,22 +74,19 @@ export class QuestionsResolver {
 	 * @returns A Promise that resolves to the corresponding Questions object, or null if not found.
 	 *
 	 * This query fetches a specific question based on its ID, including its related survey.
+	 * @example Good manage error template
 	 */
 	@Query(() => Questions, { nullable: true })
 	async question(@Arg("id", () => ID) id: number): Promise<Questions | null> {
+		let question: Questions | null = null
+
 		try {
-			const question = await Questions.findOne({
+			question = await Questions.findOne({
 				where: { id },
 				relations: {
 					survey: true,
 				},
 			})
-
-			if (!question) {
-				throw new AppError("Question not found", 404, "NotFoundError")
-			}
-
-			return question
 		} catch (error) {
 			throw new AppError(
 				"Failed to fetch question",
@@ -89,12 +94,18 @@ export class QuestionsResolver {
 				"InternalServerError"
 			)
 		}
+
+		if (!question) {
+			throw new AppError("Question not found", 404, "NotFoundError")
+		}
+
+		return question
 	}
 
 	/**
 	 * Mutation to create a new survey question.
 	 *
-	 * @param data - The input data for creating the question (title, type, answers, etc.).
+	 * @param data - The input content for creating the question (title, type, answers, etc.).
 	 * @param context - The GraphQL context containing the authenticated user.
 	 *
 	 * @returns A Promise that resolves to the newly created Questions object.
@@ -102,28 +113,210 @@ export class QuestionsResolver {
 	 * This mutation allows an authenticated user ("user" or "admin" role) to create a new question.
 	 * The created question is optionally linked to a survey and associated with the authenticated user.
 	 */
-	@Authorized("user", "admin")
+	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Questions)
 	async createQuestion(
-		@Arg("content", () => CreateQuestionsInput)
-		content: CreateQuestionsInput,
+		@Arg("data", () => CreateQuestionsInput)
+		data: CreateQuestionsInput,
 		@Ctx() context: Context
 	): Promise<Questions> {
 		try {
+			const user = context.user
+			if (!user) {
+				throw new AppError("User not found", 404, "NotFoundError")
+			}
+
+			if (!Object.values(TypesOfQuestion).includes(data.type)) {
+				throw new AppError(
+					"Invalid question type",
+					400,
+					"BadRequestError"
+				)
+			}
+
 			const newQuestion = new Questions()
+
+			newQuestion.title = data.title
+			newQuestion.answers = data.answers
+			newQuestion.type = data.type
+
+			if (data.surveyId) {
+				const survey = await Survey.findOne({
+					where: { id: data.surveyId },
+					relations: { user: true }, // get survey and its user
+				})
+
+				if (!survey) {
+					throw new AppError("Survey not found", 404, "NotFoundError")
+				}
+
+				if (!isOwnerOrAdmin(survey.user.id, user)) {
+					throw new AppError(
+						"Not authorized to add a question in this survey",
+						403,
+						"ForbiddenError"
+					)
+				}
+
+				newQuestion.survey = survey
+			}
+
+			await newQuestion.save()
+			return newQuestion
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError(
+				"Failed to create question",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
+
+	/**
+	 * Mutation to update an existing survey question.
+	 *
+	 * @param id - The ID of the question to update.
+	 * @param context - The context object that contains the currently authenticated user.
+	 *
+	 * @returns A Promise that resolves to the updated Questions object, or null if the question could not be found or updated.
+	 *
+	 * This mutation allows an admin user to update an existing survey question. Only the admin or the question owner can update questions.
+	 * If the user is not an admin, the mutation will not be executed.
+	 */
+	@Authorized(Roles.User, Roles.Admin)
+	@Mutation(() => Questions, { nullable: true })
+	async updateQuestion(
+		@Arg("data", () => UpdateQuestionInput)
+		data: UpdateQuestionInput,
+		@Ctx() context: Context
+	): Promise<Questions | null> {
+		try {
 			const user = context.user
 
 			if (!user) {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
 
-			Object.assign(newQuestion, content, { user: user })
+			const questionToUpdate = await Questions.findOne({
+				where: { id: data.id },
+				relations: {
+					survey: { user: true }, // get survey and its user
+				},
+			})
 
-			await newQuestion.save()
-			return newQuestion
+			if (!questionToUpdate) {
+				throw new AppError("Question not found", 404, "NotFoundError")
+			}
+
+			if (!isOwnerOrAdmin(questionToUpdate.survey.user.id, user)) {
+				throw new AppError(
+					"Not authorized to update this question",
+					403,
+					"ForbiddenError"
+				)
+			}
+
+			const { id, ...dataWithoutId } = data
+
+			const isNewTypeMultiple =
+				questionToUpdate.type !== data.type &&
+				isMultipleAnswerType(data.type)
+
+			const isAnswersEmpty = questionToUpdate.answers.length === 0
+
+			// If type is changed to a multiple choice and if no answers in database, add default answers
+			if (isNewTypeMultiple && isAnswersEmpty) {
+				dataWithoutId.answers = [
+					{ value: "Réponse 1" },
+					{ value: "Réponse 2" },
+				]
+			}
+
+			const isNewTypeBoolean =
+				questionToUpdate.type !== data.type &&
+				data.type === TypesOfQuestion.Boolean
+
+			if (isNewTypeBoolean && isAnswersEmpty) {
+				dataWithoutId.answers = [{ value: "Vrai" }, { value: "Faux" }]
+			}
+
+			// If type is changed to text, clean answers
+			if (data.type === TypesOfQuestion.Text) {
+				dataWithoutId.answers = []
+			}
+
+			Object.assign(questionToUpdate, dataWithoutId)
+
+			await questionToUpdate.save()
+
+			return questionToUpdate
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
 			throw new AppError(
-				"Failed to create question",
+				"Failed to update question",
+				500,
+				"InternalServerError"
+			)
+		}
+	}
+
+	/**
+	 * Mutation to delete an existing survey question.
+	 *
+	 * @param id - The ID of the question to delete.
+	 * @param context - The context object that contains the currently authenticated user.
+	 *
+	 * @returns A Promise that resolves to the deleted Question object, or null if the question could not be found or deleted.
+	 *
+	 * This mutation allows an admin or user to delete an existing survey question. Only the admin or question owner can delete questions.
+	 * If the user is not an admin or question owner, the mutation will not be executed.
+	 */
+	@Authorized(Roles.User, Roles.Admin)
+	@Mutation(() => Questions, { nullable: true })
+	async deleteQuestion(
+		@Arg("id", () => ID) id: number,
+		@Ctx() context: Context
+	): Promise<Questions | null> {
+		try {
+			const user = context.user
+
+			if (!user) {
+				throw new AppError("User not found", 404, "NotFoundError")
+			}
+			const questionToDelete = await Questions.findOne({
+				where: { id },
+				relations: {
+					survey: { user: true }, // get survey and its user
+				},
+			})
+
+			if (!questionToDelete) {
+				throw new AppError("Question not found", 404, "NotFoundError")
+			}
+
+			if (!isOwnerOrAdmin(questionToDelete.survey.user.id, user)) {
+				throw new AppError(
+					"Not authorized to update this question",
+					403,
+					"ForbiddenError"
+				)
+			}
+
+			await questionToDelete.remove()
+			questionToDelete.id = id
+
+			return questionToDelete
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError(
+				"Failed to delete question",
 				500,
 				"InternalServerError"
 			)
