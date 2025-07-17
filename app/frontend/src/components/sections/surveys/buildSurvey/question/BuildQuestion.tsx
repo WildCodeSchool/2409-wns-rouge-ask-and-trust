@@ -48,10 +48,12 @@ export function RenderAnswerComponent({
 	// Render the appropriate answer component based on the question type
 	switch (questionType) {
 		case TypesOfQuestion.Text:
-		case TypesOfQuestion.Boolean: // @TODO : render list answer for Boolean Question instead of null
+		case TypesOfQuestion.TextArea:
 			return null
-		case TypesOfQuestion.Multiple_Choice:
+		case TypesOfQuestion.Boolean:
+		case TypesOfQuestion.Radio:
 		case TypesOfQuestion.Select:
+		case TypesOfQuestion.Checkbox:
 			return (
 				<BuildListAnswers
 					register={register}
@@ -72,8 +74,9 @@ const getDefaultAnswersForType = (type: QuestionType) => {
 	switch (type) {
 		case TypesOfQuestion.Boolean:
 			return [{ value: "Vrai" }, { value: "Faux" }]
-		case TypesOfQuestion.Multiple_Choice:
+		case TypesOfQuestion.Radio:
 		case TypesOfQuestion.Select:
+		case TypesOfQuestion.Checkbox:
 			return [{ value: "Réponse 1" }, { value: "Réponse 2" }]
 		default:
 			return []
@@ -140,10 +143,10 @@ function BuildQuestion(
 	}, [
 		updateQuestionError,
 		deleteQuestionError,
-		getQuestionError,
 		showToast,
 		resetUpdateQuestionError,
 		resetDeleteQuestionError,
+		getQuestionError,
 	])
 
 	// Reset the form with the current question data
@@ -155,9 +158,11 @@ function BuildQuestion(
 				type: question.type,
 				answers: question.answers,
 			})
+
+			// Init reference to the previous type
+			prevTypeRef.current = question.type
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [question?.id, loading, getQuestionError, reset])
+	}, [question?.id, loading, getQuestionError, reset, question])
 
 	// After saving question, if type has changed and there is no answer, provide default answers
 	useEffect(() => {
@@ -172,9 +177,7 @@ function BuildQuestion(
 			// If the form has no answers, append default answers based on the type
 			const defaults = getDefaultAnswersForType(watchedType)
 			// Append default answers to the form
-			for (const defaultAnswer of defaults) {
-				append(defaultAnswer)
-			}
+			append(defaults) // shouldFocus is false to avoid focusing input immediately
 		}
 		// Always update the previous type reference after checking
 		prevTypeRef.current = watchedType
@@ -238,8 +241,8 @@ function BuildQuestion(
 				type: "success",
 				title: "La question a été mise à jour.",
 			})
-		} catch {
-			//
+		} catch (error) {
+			console.error("Error updating question:", error)
 		}
 	}
 
@@ -276,7 +279,7 @@ function BuildQuestion(
 							ref={deleteButtonRef}
 							onClick={() => {
 								handleClickDelete(
-									questionId,
+									question.id,
 									question.survey.id
 								)
 							}}
