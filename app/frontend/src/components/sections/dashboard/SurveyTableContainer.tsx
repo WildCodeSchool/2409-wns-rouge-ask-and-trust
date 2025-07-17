@@ -24,10 +24,13 @@ export default function SurveyTableContainer() {
 		PER_PAGE,
 	} = useSurvey()
 
-	const handleSearch = useCallback((query: string) => {
-		setDebouncedSearch(query)
-		setCurrentPage(1)
-	}, [])
+	const handleSearch = useCallback(
+		(query: string) => {
+			setDebouncedSearch(query)
+			setCurrentPage(1)
+		},
+		[setDebouncedSearch, setCurrentPage]
+	)
 
 	const [previousData, setPreviousData] = useState<MySurveysResult | null>(
 		null

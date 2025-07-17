@@ -25,7 +25,7 @@ export default function SurveyTableSearch({ onSearch }: Props) {
 	}, [searchValue, onSearch])
 
 	return (
-		<form className="relative flex flex-1 items-center justify-center max-md:order-1 max-md:w-full">
+		<form className="relative flex w-3xs max-w-3xs flex-1 items-center justify-center max-md:order-1 max-md:w-full max-md:max-w-none">
 			<Button
 				type="submit"
 				variant="ghost"
@@ -43,7 +43,7 @@ export default function SurveyTableSearch({ onSearch }: Props) {
 				placeholder="Rechercher une enquête"
 				errorMessage=""
 				{...register("search")}
-				className="border-button-line-border text-input-fg h-10 min-w-3xs bg-white pl-14 text-sm max-md:w-full"
+				className="border-button-line-border text-input-fg h-10 w-3xs bg-white pl-14 text-sm max-md:w-full"
 			/>
 		</form>
 	)
