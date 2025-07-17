@@ -1,4 +1,4 @@
-import { Survey, User } from "@/types/types.ts"
+import { User } from "@/types/types.ts"
 import { useQuery } from "@apollo/client"
 import { WHOAMI } from "@/graphql/auth.ts"
 import { useSurvey } from "@/hooks/useSurvey.ts"
@@ -10,17 +10,13 @@ export default function UserInformations() {
 	const [showResetForm, setShowResetForm] = useState<boolean>(false)
 
 	const { data } = useQuery(WHOAMI)
-	const { surveys, isFetching } = useSurvey()
+	const { mySurveys, isRefetching } = useSurvey()
 
-	if (isFetching) {
+	if (isRefetching) {
 		return <p>Chargement...</p>
 	}
 
 	const user: User = data?.whoami
-
-	const userSurveys: Survey[] = surveys.filter(
-		(survey: Survey) => survey.user?.id === user.id
-	)
 
 	return (
 		<section
@@ -40,7 +36,7 @@ export default function UserInformations() {
 				<div className="flex flex-col md:flex-row">
 					<UserDetailsPart
 						user={user}
-						userSurveys={userSurveys}
+						userSurveys={mySurveys}
 						showResetForm={showResetForm}
 						onToggleResetForm={() =>
 							setShowResetForm((prev: boolean) => !prev)

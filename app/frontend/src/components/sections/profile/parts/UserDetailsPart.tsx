@@ -21,10 +21,10 @@ export function UserDetailsPart({
 
 				<div className="flex w-full flex-col justify-start gap-2">
 					<h5 className="text-lg font-extrabold">
-						{user.firstname} {user.lastname}
+						{user?.firstname} {user?.lastname}
 					</h5>
 					<p className="text-base font-bold">
-						{userSurveys?.length} enquêtes créées
+						{userSurveys?.totalCountAll} enquêtes créées
 					</p>
 					<p className="text-base font-bold">
 						1000 enquêtes répondues

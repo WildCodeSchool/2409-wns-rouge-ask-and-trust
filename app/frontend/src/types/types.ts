@@ -40,7 +40,7 @@ export interface UserAuth {
 
 export type UserDetails = {
 	user: User
-	userSurveys: Survey[]
+	userSurveys: MySurveysResult | null
 	showResetForm: boolean
 	onToggleResetForm: () => void
 }
