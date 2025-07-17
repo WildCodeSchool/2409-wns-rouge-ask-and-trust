@@ -20,7 +20,7 @@ export default function UserInformations() {
 
 	return (
 		<section
-			className={`duration-100 ${
+			className={`transition-all duration-200 ease-in-out ${
 				showResetForm
 					? "lg:min-w-[850px]"
 					: "sm:max-w-[331px] lg:min-w-[428px]"
