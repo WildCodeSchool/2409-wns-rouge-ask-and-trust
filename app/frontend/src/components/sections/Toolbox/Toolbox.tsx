@@ -1,6 +1,6 @@
 import { AdaptiveToolbox } from "@/components/sections/Toolbox/AdaptativeToolbox"
 import { toolboxCategories } from "@/components/sections/Toolbox/toolboxData"
-import { ToolboxCategory, ToolboxItem } from "@/types/types"
+import { QuestionType, ToolboxCategory, ToolboxItem } from "@/types/types"
 import { useState } from "react"
 
 /**
@@ -17,7 +17,7 @@ export function Toolbox({
 	onAddQuestion,
 	className = "",
 }: {
-	onAddQuestion: (type: string) => void
+	onAddQuestion: (type: QuestionType | undefined) => void
 	className?: string
 }) {
 	const [searchValue, setSearchValue] = useState<string>("")
@@ -27,7 +27,7 @@ export function Toolbox({
 		...category,
 		items: category.items.map(item => ({
 			...item,
-			onClick: () => onAddQuestion(item.onClickType),
+			onClick: () => onAddQuestion(item.onClickType), // @TODO update this question
 		})),
 	}))
 

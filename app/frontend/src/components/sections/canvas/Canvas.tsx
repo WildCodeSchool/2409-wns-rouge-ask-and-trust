@@ -1,20 +1,25 @@
 import { EmptyState } from "@/components/sections/canvas/empty-state"
-import BuildQuestion from "@/components/sections/surveys/buildSurvey/question/BuildQuestion"
 import { Button } from "@/components/ui/Button"
+import { ButtonsScrollControl } from "@/components/ui/ButtonsScrollControl"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useToast } from "@/hooks/useToast"
 import { PlusCircle } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
+import BuildQuestion from "../surveys/buildSurvey/question/BuildQuestion"
 
 interface CanvasProps {
 	className?: string
 	questions: { id: number }[]
+	newQuestionId: number | null
+	setNewQuestionId: (id: number | null) => void
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
 	className = "",
 	questions = [],
+	newQuestionId,
+	setNewQuestionId,
 }) => {
 	const {
 		addQuestion,
@@ -23,25 +28,26 @@ export const Canvas: React.FC<CanvasProps> = ({
 		resetCreateQuestionError,
 	} = useQuestions()
 	const { id: surveyId } = useParams()
-	const [newQuestionId, setNewQuestionId] = useState<number | null>(null)
+	const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 	const [newQuestionElement, setNewQuestionElement] =
-		useState<HTMLLIElement | null>(null)
+		useState<HTMLDivElement | null>(null)
 	const { showToast } = useToast()
 
-	// Scroll to the new question after creation and focus on it
+	// @TODO fix this : should scroll in canvas and not in window
 	useEffect(() => {
-		if (newQuestionId != null && newQuestionElement) {
+		if (newQuestionElement) {
 			newQuestionElement.scrollIntoView({
 				behavior: "smooth",
 				block: "center",
 			})
-			newQuestionElement.focus()
+
+			newQuestionElement.focus() // Focus only if new question exists
+
 			setNewQuestionId(null)
 			setNewQuestionElement(null)
 		}
-	}, [newQuestionId, newQuestionElement])
+	}, [newQuestionElement, newQuestionId, setNewQuestionId])
 
-	// Show a toast notification if there is an error after creating a question
 	useEffect(() => {
 		if (createQuestionError) {
 			showToast({
@@ -49,52 +55,63 @@ export const Canvas: React.FC<CanvasProps> = ({
 				title: "Oops, nous avons rencontré une erreur.",
 				description: "Veuillez réessayer plus tard.",
 			})
-			resetCreateQuestionError() // Reset the error to avoid permanent toast error
+			resetCreateQuestionError()
 		}
 	}, [createQuestionError, resetCreateQuestionError, showToast])
 
 	const handleAddQuestion = async () => {
 		if (!surveyId) return
-		const result = await addQuestion({
-			surveyId: Number(surveyId),
-		})
+		const result = await addQuestion({ surveyId: Number(surveyId) })
 		if (result?.id) {
-			showToast({
-				type: "success",
-				title: "Question ajoutée !",
-			})
+			showToast({ type: "success", title: "Question ajoutée !" })
 			setNewQuestionId(result.id)
 		}
 	}
 
 	return (
-		<div className={`survey-canvas ${className} flex flex-col gap-10`}>
-			{questions.length === 0 ? (
-				<EmptyState />
-			) : (
-				questions.map((question: { id: number }) => (
-					<BuildQuestion
-						key={question.id}
-						questionId={Number(question.id)}
-						ref={
-							// Set the ref only for the new question
-							// Enable to scroll to it
-							newQuestionId === question.id
-								? el => setNewQuestionElement(el)
-								: null
-						}
-					/>
-				))
-			)}
-			<Button
-				onClick={handleAddQuestion}
-				disabled={isCreateQuestionLoading}
-				ariaLabel="Add Question"
-				icon={PlusCircle}
-				className="self-center"
+		<>
+			<div
+				ref={scrollContainerRef}
+				className={`survey-canvas ${className} flex max-h-[calc(100vh-160px)] flex-col gap-10 overflow-y-scroll px-3`}
 			>
-				Ajouter une question
-			</Button>
-		</div>
+				{questions.length === 0 ? (
+					<EmptyState />
+				) : (
+					questions.map(question => {
+						const isNew = newQuestionId === question.id
+						return (
+							<div
+								key={question.id}
+								ref={
+									isNew
+										? el => setNewQuestionElement(el)
+										: null
+								}
+							>
+								<BuildQuestion questionId={question.id} />
+
+								{/* <Suspense fallback={<div>Chargement...</div>}>
+									<BuildQuestionLoader
+										questionId={question.id}
+									/>
+								</Suspense> */}
+							</div>
+						)
+					})
+				)}
+
+				<Button
+					onClick={handleAddQuestion}
+					disabled={isCreateQuestionLoading}
+					ariaLabel="Add Question"
+					icon={PlusCircle}
+					className="self-center"
+				>
+					Ajouter une question
+				</Button>
+			</div>
+
+			<ButtonsScrollControl scrollContainerRef={scrollContainerRef} />
+		</>
 	)
 }
