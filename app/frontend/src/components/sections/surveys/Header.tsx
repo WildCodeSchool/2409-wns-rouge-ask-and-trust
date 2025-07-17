@@ -28,12 +28,10 @@ export default function Header({ showCategories = false }) {
 		if (newParams.get("category") === categorySlug) {
 			newParams.delete("category")
 			newParams.delete("categoryId")
-			newParams.set("page", "1")
 			setSelectedCategory(null)
 		} else {
 			newParams.set("category", categorySlug)
 			newParams.set("categoryId", categoryId)
-			newParams.set("page", "1")
 			setSelectedCategory(categorySlug)
 		}
 

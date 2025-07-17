@@ -7,22 +7,7 @@ import { Callout } from "@/components/ui/Callout"
 import { Button } from "@/components/ui/Button"
 import { ArrowLeft } from "lucide-react"
 import SurveyResponseForm from "@/components/sections/response/SurveyResponseForm"
-import { Question } from "@/types/types"
-
-type SurveyWithCategory = {
-	id: number
-	title: string
-	description: string
-	public: boolean
-	category: {
-		id: number
-		name: string
-	}
-	questions: Question[]
-	status: string
-	createdAt: string
-	updatedAt: string
-}
+import { SurveyWithCategory } from "@/types/types"
 
 export default function SurveyResponse() {
 	const { id: surveyId } = useParams<{ id: string }>()
