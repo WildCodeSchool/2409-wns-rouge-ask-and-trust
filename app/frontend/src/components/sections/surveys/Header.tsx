@@ -1,14 +1,14 @@
+import { Button } from "@/components/ui/Button"
+import { GET_CATEGORIES } from "@/graphql/survey/category"
+import { useAuthContext } from "@/hooks/useAuthContext"
+import { useResponsivity } from "@/hooks/useResponsivity"
+import { cn, slugify } from "@/lib/utils"
+import { SurveyCategoryType } from "@/types/types"
+import { useQuery } from "@apollo/client"
 import { useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
-import logoFooter from "/logos/logo-footer.svg"
-import { Button } from "@/components/ui/Button"
 import NavAndAuthButtons from "./NavAndAuthButtons"
-import { useAuthContext } from "@/hooks/useAuthContext"
-import { cn, slugify } from "@/lib/utils"
-import { useQuery } from "@apollo/client"
-import { GET_CATEGORIES } from "@/graphql/survey/category"
-import { SurveyCategoryType } from "@/types/types"
-import { useResponsivity } from "@/hooks/useResponsivity"
+import logoFooter from "/logos/logo-footer.svg"
 
 export default function Header({ showCategories = false }) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
@@ -41,10 +41,7 @@ export default function Header({ showCategories = false }) {
 	return (
 		<header
 			lang="fr"
-			className={cn(
-				"bg-primary-600 flex flex-col gap-9 px-6 py-5",
-				isHorizontalCompact ? "mb-14" : "mb-20"
-			)}
+			className={"bg-primary-600 flex flex-col gap-9 px-6 py-5"}
 			role="contentinfo"
 			aria-label="En-tête de page"
 			ref={rootRef}
