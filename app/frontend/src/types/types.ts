@@ -110,7 +110,7 @@ export type ToolboxItem = {
 	id: string
 	label: string
 	icon?: React.ReactNode
-	onClickType: string
+	onClickType: QuestionType
 	onClick?: () => void
 }
 
@@ -150,6 +150,9 @@ export type Question = {
 	title: string
 	type: QuestionType
 	answers: { value: string }[]
+	survey: {
+		id: number
+	}
 }
 
 export interface QuestionUpdate {
@@ -164,7 +167,9 @@ export interface QuestionUpdate {
 
 export const TypesOfQuestion = {
 	Text: "text",
-	Multiple_Choice: "multiple_choice",
+	TextArea: "textarea",
+	Checkbox: "checkbox",
+	Radio: "radio",
 	Boolean: "boolean",
 	Select: "select",
 } as const
@@ -174,13 +179,29 @@ export const TypesOfQuestionLabels: Record<
 	string
 > = {
 	Text: "Texte court",
-	Multiple_Choice: "Liste à choix multiples",
+	TextArea: "Texte long",
+	Checkbox: "Cases à cocher",
+	Radio: "Liste à choix unique",
 	Boolean: "Oui / Non",
-	Select: "Liste à choix unique",
+	Select: "Liste déroulante",
 }
 
 export type QuestionType =
 	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]
+
+export const MultipleAnswersType = [
+	TypesOfQuestion.Checkbox,
+	TypesOfQuestion.Radio,
+	TypesOfQuestion.Select,
+] as const
+
+type MultipleAnswerType = (typeof MultipleAnswersType)[number]
+
+export function isMultipleAnswerType(
+	type: QuestionType
+): type is MultipleAnswerType {
+	return (MultipleAnswersType as readonly string[]).includes(type)
+}
 
 export type InputsProps = {
 	register: UseFormRegister<CreateSurveyInput>
