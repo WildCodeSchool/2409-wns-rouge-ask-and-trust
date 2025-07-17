@@ -1,49 +1,37 @@
 services:
     # Frontend service (React + Vite)
     frontend:
-        build:
-            context: ./app/frontend # Directory where the Dockerfile is located
-            dockerfile: Dockerfile # Name of the Dockerfile to use
+        image: yohangh/askandtrust-frontend:${VERSION}
         # ports:
-        #   - "5173:5173" # Exposes port 5173 to access Vite from the host
+        #     - "5173:5173" # Exposes port 5173 to access Vite from the host
         environment:
             - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
-            - VITE_NODE_ENV=development
-        volumes:
-            - ./app/frontend/index.html:/app/index.html
-            - ./app/frontend/src:/app/src
-            - ./app/frontend/public:/app/public
-            - ./app/frontend/vite.config.ts:/app/vite.config.ts
+            - VITE_NODE_ENV=staging
         command: ["npm", "run", "dev", "--host"] # Start Vite in development mode (hot reload enabled)
-
         # Unused options, but useful in other cases
         # restart: always # Recreate the container in case of failure
-        # depends_on:
-        #   - backend # Wait for the backend to be ready (useful if necessary)
+        depends_on:
+            - backend # Wait for the backend to be ready (useful if necessary)
         networks:
-            - frontend_network # To be configured if a specific network is required
+            - frontend_network_staging # To be configured if a specific network is required
 
     # Backend service (Express.js)
     backend:
-        build:
-            context: ./app/backend # Directory where the Dockerfile is located
-            dockerfile: Dockerfile # Name of the Dockerfile to use
+        image: yohangh/askandtrust-backend:${VERSION}
         # ports:
         #     - "3310:3310" # Exposes port 3310 to access the backend from the host
         environment:
             - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
             - DB_HOST=db
         env_file:
-            - ./app/backend/.env # Loads environment variables from a file
-        volumes:
-            - ./app/backend/src:/app/src
+            - .env # Loads environment variables from a file
         command: ["npm", "start"] # Start the Express.js server (hot reload enabled with nodemon if configured)
         depends_on:
             db:
                 condition: service_healthy
         networks:
-            - frontend_network
-            - backend_network
+            - frontend_network_staging
+            - backend_network_staging
 
         # Unused options, but useful in other cases
         # restart: always # Recreate the container in case of failure
@@ -52,15 +40,11 @@ services:
         image: postgres:15
         restart: always # Recreate the container in case of failure
         ports:
-            - "5432:5432"
-        environment:
-            - POSTGRES_DB=ask_and_trust
-            - POSTGRES_USER=ask_and_trust
-            - POSTGRES_PASSWORD=superpassword
-        volumes:
-            - db_data:/var/lib/postgresql/data
+            - "5433:5432" # Different port to avoid conflict with production
+        env_file:
+            - .database.env
         networks:
-            - backend_network
+            - backend_network_staging
         healthcheck: # To ensure that PostgreSQL is ready before starting the backend.
             test:
                 [
@@ -71,27 +55,30 @@ services:
             timeout: 5s
             retries: 5
             start_period: 5s
+
     nginx:
         image: nginx
         volumes:
+            # ./nginx => in the host machine
+            # on the right => where it is in the docker container
             - ./nginx:/etc/nginx
         ports:
-            - 8080:80
+            - ${GATEWAY_PORT_STAGING}:80 # Different variable for staging
         depends_on:
             - backend
             - frontend
         networks:
-            - backend_network
-            - frontend_network
+            - backend_network_staging
+            - frontend_network_staging
 
 # Networks (useful for isolating services)
 networks:
-    backend_network:
+    backend_network_staging:
         driver: bridge
-    frontend_network:
+    frontend_network_staging:
         driver: bridge
 
 # Volumes (to persist data like databases)
 volumes:
-    db_data: # Volume for the database
+    db_data_staging: # Volume for the database
         driver: local

@@ -7,10 +7,11 @@ Cette documentation complète couvre la gestion du serveur Ask&Trust, les config
 1. [🔍 Analyse de Configuration Actuelle](#-analyse-de-configuration-actuelle)
 2. [🛠️ Stack Technologique & Commandes](#️-stack-technologique--commandes)
 3. [🔧 Configuration des Services](#-configuration-des-services)
-4. [🐛 Problèmes Identifiés & Solutions](#-problèmes-identifiés--solutions)
-5. [📖 Manuel pour Novices](#-manuel-pour-novices)
-6. [🚨 Résolution des Erreurs](#-résolution-des-erreurs)
-7. [📊 Monitoring & Logs](#-monitoring--logs)
+4. [🐳 Gestion des Environnements](#-gestion-des-environnements)
+5. [🐛 Problèmes Identifiés & Solutions](#-problèmes-identifiés--solutions)
+6. [📖 Manuel pour Novices](#-manuel-pour-novices)
+7. [🚨 Résolution des Erreurs](#-résolution-des-erreurs)
+8. [📊 Monitoring & Logs](#-monitoring--logs)
 
 ---
 
@@ -20,11 +21,21 @@ Cette documentation complète couvre la gestion du serveur Ask&Trust, les config
 
 ```
 .
-├── askandtrust/
+├── askandtrust-prod/           # Environnement de production
 │   └── apps/
 │       ├── CADDY_CMD.md
 │       ├── compose.prod.yml
-│       ├── database.env
+│       ├── fetch-and-deploy-prod.sh
+│       ├── fetch-tag-dockerhub.sh
+│       ├── logs/
+│       │   ├── access.log
+│       │   └── error.log
+│       └── nginx/
+│           └── nginx.conf
+├── askandtrust-staging/        # Environnement de staging
+│   └── apps/
+│       ├── CADDY_CMD.md
+│       ├── compose.staging.yml
 │       ├── fetch-and-deploy.sh
 │       ├── fetch-tag-dockerhub.sh
 │       ├── logs/
@@ -43,16 +54,23 @@ Cette documentation complète couvre la gestion du serveur Ask&Trust, les config
 
 ```bash
 # Domaines configurés dans /etc/caddy/Caddyfile
-092024-rouge-4.wns.wilders.dev              → localhost:8000
-staging.092024-rouge-4.wns.wilders.dev      → localhost:8001  ✅ Fonctionne
-ops.092024-rouge-4.wns.wilders.dev          → localhost:9000
+092024-rouge-4.wns.wilders.dev              → localhost:8000  # Production
+staging.092024-rouge-4.wns.wilders.dev      → localhost:8001  # Staging
+ops.092024-rouge-4.wns.wilders.dev          → localhost:9000  # Operations
 ```
 
-### 🐳 Ports Docker
+### 🐳 Ports Docker par Environnement
 
 ```bash
-# Port défini dans fetch-and-deploy.sh
-GATEWAY_PORT=8001  # Used by staging environment
+# Production (askandtrust-prod)
+GATEWAY_PORT_PROD=8000
+
+# Staging (askandtrust-staging)  
+GATEWAY_PORT_STAGING=8001
+
+# Base de données
+PostgreSQL Production: 5432
+PostgreSQL Staging: 5433
 ```
 
 ---
@@ -103,14 +121,23 @@ npm run create-admin
 
 ### Database (PostgreSQL)
 ```bash
-# Connexion à la base de données
+# Connexion à la base de données production
 psql -h localhost -p 5432 -U ask_and_trust -d ask_and_trust
 
-# Vérification du statut
-pg_isready -U ask_and_trust -d ask_and_trust -h localhost
+# Connexion à la base de données staging
+psql -h localhost -p 5433 -U ask_and_trust -d ask_and_trust
 
-# Backup de la DB
-pg_dump -h localhost -p 5432 -U ask_and_trust ask_and_trust > backup.sql
+# Vérification du statut production
+pg_isready -U ask_and_trust -d ask_and_trust -h localhost -p 5432
+
+# Vérification du statut staging
+pg_isready -U ask_and_trust -d ask_and_trust -h localhost -p 5433
+
+# Backup de la DB production
+pg_dump -h localhost -p 5432 -U ask_and_trust ask_and_trust > backup_prod.sql
+
+# Backup de la DB staging
+pg_dump -h localhost -p 5433 -U ask_and_trust ask_and_trust > backup_staging.sql
 
 # Restauration de la DB
 psql -h localhost -p 5432 -U ask_and_trust ask_and_trust < backup.sql
@@ -123,19 +150,31 @@ docker compose up -d
 docker compose logs -f [service_name]
 docker compose down
 
-# Production (staging)
-cd /path/to/askandtrust/apps
+# Production
+cd ~/askandtrust-prod/apps
+./fetch-and-deploy-prod.sh
+
+# Staging
+cd ~/askandtrust-staging/apps
 ./fetch-and-deploy.sh
 
 # Manuel production
-docker compose -f compose.prod.yml down
-docker compose -f compose.prod.yml pull
-docker compose -f compose.prod.yml up -d
+docker compose -f compose.prod.yml --project-name askandtrust-prod down
+docker compose -f compose.prod.yml --project-name askandtrust-prod pull
+docker compose -f compose.prod.yml --project-name askandtrust-prod up -d
+
+# Manuel staging
+docker compose -f compose.staging.yml --project-name askandtrust-staging down
+docker compose -f compose.staging.yml --project-name askandtrust-staging pull
+docker compose -f compose.staging.yml --project-name askandtrust-staging up -d
 
 # Monitoring conteneurs
 docker ps
 docker stats
 docker logs [container_name]
+
+# Voir les projets séparés
+docker compose ls
 ```
 
 ---
@@ -162,14 +201,23 @@ sudo caddy validate --config /etc/caddy/Caddyfile
 
 ### Nginx (Dans Docker)
 ```bash
-# Vérification config nginx dans le conteneur
-docker exec -it [nginx_container] nginx -t
+# Vérification config nginx production
+docker exec -it askandtrust-prod-nginx-1 nginx -t
 
-# Rechargement nginx
-docker exec -it [nginx_container] nginx -s reload
+# Vérification config nginx staging
+docker exec -it askandtrust-staging-nginx-1 nginx -t
 
-# Logs nginx
-docker logs [nginx_container]
+# Rechargement nginx production
+docker exec -it askandtrust-prod-nginx-1 nginx -s reload
+
+# Rechargement nginx staging
+docker exec -it askandtrust-staging-nginx-1 nginx -s reload
+
+# Logs nginx production
+docker logs askandtrust-prod-nginx-1
+
+# Logs nginx staging
+docker logs askandtrust-staging-nginx-1
 ```
 
 ### Monitoring Système
@@ -190,6 +238,74 @@ tail -f /var/log/syslog
 
 ---
 
+## 🐳 Gestion des Environnements
+
+### 🔄 Déploiement Production
+```bash
+# Navigation vers l'environnement production
+cd ~/askandtrust-prod/apps
+
+# Déploiement automatique
+./fetch-and-deploy-prod.sh
+
+# Vérification des conteneurs production
+docker ps --filter "name=askandtrust-prod"
+
+# Logs production
+docker compose -f compose.prod.yml --project-name askandtrust-prod logs -f
+```
+
+### 🔄 Déploiement Staging
+```bash
+# Navigation vers l'environnement staging
+cd ~/askandtrust-staging/apps
+
+# Déploiement automatique
+./fetch-and-deploy.sh
+
+# Vérification des conteneurs staging
+docker ps --filter "name=askandtrust-staging"
+
+# Logs staging
+docker compose -f compose.staging.yml --project-name askandtrust-staging logs -f
+```
+
+### 🔍 Vérification des Environnements
+```bash
+# Voir tous les conteneurs avec leur projet
+docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"
+
+# Voir les projets Docker Compose
+docker compose ls
+
+# Voir les réseaux par environnement
+docker network ls | grep askandtrust
+
+# Voir les volumes par environnement
+docker volume ls | grep askandtrust
+```
+
+### 🛠️ Maintenance des Environnements
+```bash
+# Nettoyage production
+docker compose -f compose.prod.yml --project-name askandtrust-prod down
+docker system prune -f
+
+# Nettoyage staging
+docker compose -f compose.staging.yml --project-name askandtrust-staging down
+docker system prune -f
+
+# Redémarrage complet production
+cd ~/askandtrust-prod/apps
+./fetch-and-deploy-prod.sh
+
+# Redémarrage complet staging
+cd ~/askandtrust-staging/apps
+./fetch-and-deploy.sh
+```
+
+---
+
 ## 📖 Manuel pour Novices
 
 ### 🚀 Démarrage Rapide
@@ -203,9 +319,15 @@ ssh user@092024-rouge-4.wns.wilders.dev
 # (doit s'afficher automatiquement)
 ```
 
-#### 2. Navigation vers le Projet
+#### 2. Navigation vers les Environnements
 ```bash
-cd ~/askandtrust/apps
+# Production
+cd ~/askandtrust-prod/apps
+pwd  # Vérifier que vous êtes dans le bon dossier
+ls -la  # Voir les fichiers disponibles
+
+# Staging
+cd ~/askandtrust-staging/apps
 pwd  # Vérifier que vous êtes dans le bon dossier
 ls -la  # Voir les fichiers disponibles
 ```
@@ -215,8 +337,11 @@ ls -la  # Voir les fichiers disponibles
 # Services système
 sudo systemctl status caddy
 
-# Conteneurs Docker
-docker ps
+# Conteneurs Docker - Production
+docker ps --filter "name=askandtrust-prod"
+
+# Conteneurs Docker - Staging
+docker ps --filter "name=askandtrust-staging"
 
 # Utilisation des ressources
 free -h
@@ -225,49 +350,77 @@ df -h
 
 #### 4. Déploiement Standard
 ```bash
-# Mise à jour et déploiement automatique
+# Production
+cd ~/askandtrust-prod/apps
+./fetch-and-deploy-prod.sh
+
+# Staging
+cd ~/askandtrust-staging/apps
 ./fetch-and-deploy.sh
 
 # Vérification des logs
-docker compose -f compose.prod.yml logs -f
+docker compose -f compose.prod.yml --project-name askandtrust-prod logs -f
+docker compose -f compose.staging.yml --project-name askandtrust-staging logs -f
 ```
 
 ### 🔍 Commandes de Diagnostic
 
 #### Vérification Réseau
 ```bash
-# Tester la connectivité locale
+# Tester la connectivité production
+curl http://localhost:8000
+curl http://localhost:8000/api/v1
+
+# Tester la connectivité staging
 curl http://localhost:8001
 curl http://localhost:8001/api/v1
 
-# Tester depuis l'extérieur
+# Tester depuis l'extérieur - Production
+curl https://092024-rouge-4.wns.wilders.dev
+curl https://092024-rouge-4.wns.wilders.dev/api/v1
+
+# Tester depuis l'extérieur - Staging
 curl https://staging.092024-rouge-4.wns.wilders.dev
 curl https://staging.092024-rouge-4.wns.wilders.dev/api/v1
 ```
 
 #### Vérification Base de Données
 ```bash
-# Status de PostgreSQL dans Docker
-docker exec -it [db_container] pg_isready -U ask_and_trust
+# Status de PostgreSQL production
+docker exec -it askandtrust-prod-db-1 pg_isready -U ask_and_trust
 
-# Connexion à la DB
-docker exec -it [db_container] psql -U ask_and_trust -d ask_and_trust
+# Status de PostgreSQL staging
+docker exec -it askandtrust-staging-db-1 pg_isready -U ask_and_trust
+
+# Connexion à la DB production
+docker exec -it askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust
+
+# Connexion à la DB staging
+docker exec -it askandtrust-staging-db-1 psql -U ask_and_trust -d ask_and_trust
 ```
 
 #### Vérification des Logs
 ```bash
-# Logs de tous les services
-docker compose -f compose.prod.yml logs
+# Logs production
+docker compose -f compose.prod.yml --project-name askandtrust-prod logs
 
-# Logs d'un service spécifique
-docker compose -f compose.prod.yml logs frontend
-docker compose -f compose.prod.yml logs backend
-docker compose -f compose.prod.yml logs nginx
+# Logs staging
+docker compose -f compose.staging.yml --project-name askandtrust-staging logs
+
+# Logs d'un service spécifique - Production
+docker compose -f compose.prod.yml --project-name askandtrust-prod logs frontend
+docker compose -f compose.prod.yml --project-name askandtrust-prod logs backend
+docker compose -f compose.prod.yml --project-name askandtrust-prod logs nginx
+
+# Logs d'un service spécifique - Staging
+docker compose -f compose.staging.yml --project-name askandtrust-staging logs frontend
+docker compose -f compose.staging.yml --project-name askandtrust-staging logs backend
+docker compose -f compose.staging.yml --project-name askandtrust-staging logs nginx
 
 # Logs système
 sudo journalctl -u caddy
-tail -f logs/access.log
-tail -f logs/error.log
+tail -f ~/askandtrust-prod/apps/logs/access.log
+tail -f ~/askandtrust-staging/apps/logs/access.log
 ```
 
 ### 📝 Checklist de Vérification
@@ -275,16 +428,20 @@ tail -f logs/error.log
 - [ ] **Services actifs**
   - [ ] Caddy: `systemctl status caddy`
   - [ ] Docker: `docker ps`
-  - [ ] Base de données: Conteneur PostgreSQL running
+  - [ ] Base de données production: Conteneur PostgreSQL running sur port 5432
+  - [ ] Base de données staging: Conteneur PostgreSQL running sur port 5433
 
 - [ ] **Connectivité réseau**
-  - [ ] Port 8001 ouvert: `netstat -tulpn | grep 8001`
-  - [ ] DNS configuré: `nslookup staging.092024-rouge-4.wns.wilders.dev`
+  - [ ] Port 8000 ouvert (production): `netstat -tulpn | grep 8000`
+  - [ ] Port 8001 ouvert (staging): `netstat -tulpn | grep 8001`
+  - [ ] DNS production configuré: `nslookup 092024-rouge-4.wns.wilders.dev`
+  - [ ] DNS staging configuré: `nslookup staging.092024-rouge-4.wns.wilders.dev`
 
 - [ ] **Fichiers de configuration**
   - [ ] `/etc/caddy/Caddyfile` correct
-  - [ ] `nginx/nginx.conf` correct
-  - [ ] `.env` avec bonnes variables
+  - [ ] `~/askandtrust-prod/apps/nginx/nginx.conf` correct
+  - [ ] `~/askandtrust-staging/apps/nginx/nginx.conf` correct
+  - [ ] `.env` avec bonnes variables dans chaque environnement
 
 - [ ] **Ressources système**
   - [ ] RAM disponible: `free -h`
@@ -297,14 +454,23 @@ tail -f logs/error.log
 
 ### 502 Bad Gateway
 ```bash
-# 1. Vérifier que le backend est accessible
-docker exec -it [backend_container] curl http://localhost:3310/graphql
+# 1. Vérifier que le backend production est accessible
+docker exec -it askandtrust-prod-backend-1 curl http://localhost:3310/graphql
 
-# 2. Vérifier la configuration nginx
-docker exec -it [nginx_container] cat /etc/nginx/nginx.conf
+# 2. Vérifier que le backend staging est accessible
+docker exec -it askandtrust-staging-backend-1 curl http://localhost:3310/graphql
 
-# 3. Redémarrer nginx
-docker restart [nginx_container]
+# 3. Vérifier la configuration nginx production
+docker exec -it askandtrust-prod-nginx-1 cat /etc/nginx/nginx.conf
+
+# 4. Vérifier la configuration nginx staging
+docker exec -it askandtrust-staging-nginx-1 cat /etc/nginx/nginx.conf
+
+# 5. Redémarrer nginx production
+docker restart askandtrust-prod-nginx-1
+
+# 6. Redémarrer nginx staging
+docker restart askandtrust-staging-nginx-1
 ```
 
 ### Service Unavailable
@@ -322,14 +488,23 @@ sudo journalctl -u caddy -n 50
 
 ### Problèmes de Base de Données
 ```bash
-# 1. Vérifier la connectivité
-docker exec -it [db_container] pg_isready
+# 1. Vérifier la connectivité production
+docker exec -it askandtrust-prod-db-1 pg_isready
 
-# 2. Vérifier les variables d'environnement
-docker exec -it [backend_container] env | grep DB
+# 2. Vérifier la connectivité staging
+docker exec -it askandtrust-staging-db-1 pg_isready
 
-# 3. Redémarrer la base
-docker restart [db_container]
+# 3. Vérifier les variables d'environnement production
+docker exec -it askandtrust-prod-backend-1 env | grep DB
+
+# 4. Vérifier les variables d'environnement staging
+docker exec -it askandtrust-staging-backend-1 env | grep DB
+
+# 5. Redémarrer la base production
+docker restart askandtrust-prod-db-1
+
+# 6. Redémarrer la base staging
+docker restart askandtrust-staging-db-1
 ```
 
 ---
@@ -342,8 +517,11 @@ docker restart [db_container]
 cd ~/scripts
 ./vps-status.sh
 
-# Monitoring en temps réel
-watch -n 5 'docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+# Monitoring en temps réel - Production
+watch -n 5 'docker ps --filter "name=askandtrust-prod" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+
+# Monitoring en temps réel - Staging
+watch -n 5 'docker ps --filter "name=askandtrust-staging" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
 
 # Monitoring des ressources
 watch -n 2 'free -h && echo && df -h'
@@ -353,34 +531,58 @@ watch -n 2 'free -h && echo && df -h'
 
 #### Structure des Logs
 ```
-logs/
-├── access.log          # Logs d'accès Nginx
-├── error.log           # Logs d'erreur Nginx
+askandtrust-prod/apps/logs/
+├── access.log          # Logs d'accès Nginx production
+└── error.log           # Logs d'erreur Nginx production
+
+askandtrust-staging/apps/logs/
+├── access.log          # Logs d'accès Nginx staging
+└── error.log           # Logs d'erreur Nginx staging
+
+scripts/
 └── vps_status_*.log    # Rapports système périodiques
 ```
 
 #### Commandes de Log
 ```bash
-# Logs en temps réel
-tail -f logs/access.log
-tail -f logs/error.log
+# Logs en temps réel - Production
+tail -f ~/askandtrust-prod/apps/logs/access.log
+tail -f ~/askandtrust-prod/apps/logs/error.log
 
-# Recherche dans les logs
-grep "error" logs/error.log
-grep "502" logs/access.log
+# Logs en temps réel - Staging
+tail -f ~/askandtrust-staging/apps/logs/access.log
+tail -f ~/askandtrust-staging/apps/logs/error.log
 
-# Logs Docker
-docker compose -f compose.prod.yml logs --tail=100
+# Recherche dans les logs production
+grep "error" ~/askandtrust-prod/apps/logs/error.log
+grep "502" ~/askandtrust-prod/apps/logs/access.log
+
+# Recherche dans les logs staging
+grep "error" ~/askandtrust-staging/apps/logs/error.log
+grep "502" ~/askandtrust-staging/apps/logs/access.log
+
+# Logs Docker - Production
+docker compose -f compose.prod.yml --project-name askandtrust-prod logs --tail=100
+
+# Logs Docker - Staging
+docker compose -f compose.staging.yml --project-name askandtrust-staging logs --tail=100
 ```
 
 ### 🔔 Alertes et Notifications
 
 #### Configuration d'Alertes Basiques
 ```bash
-# Script de vérification automatique (à ajouter dans crontab)
+# Script de vérification automatique production (à ajouter dans crontab)
+#!/bin/bash
+if ! curl -f -s http://localhost:8000 > /dev/null; then
+    echo "Production service down at $(date)" >> /var/log/service-alerts.log
+    # Ajouter notification email/slack ici
+fi
+
+# Script de vérification automatique staging (à ajouter dans crontab)
 #!/bin/bash
 if ! curl -f -s http://localhost:8001 > /dev/null; then
-    echo "Service down at $(date)" >> /var/log/service-alerts.log
+    echo "Staging service down at $(date)" >> /var/log/service-alerts.log
     # Ajouter notification email/slack ici
 fi
 ```
@@ -391,7 +593,8 @@ fi
 crontab -e
 
 # Ajouter vérifications automatiques
-*/5 * * * * /path/to/health-check.sh
+*/5 * * * * /path/to/health-check-prod.sh
+*/5 * * * * /path/to/health-check-staging.sh
 0 2 * * * /path/to/scripts/vps-status.sh
 ```
 
@@ -404,11 +607,17 @@ crontab -e
 # Nettoyage Docker
 docker system prune -a
 
-# Mise à jour des images
-docker compose -f compose.prod.yml pull
+# Mise à jour des images production
+docker compose -f compose.prod.yml --project-name askandtrust-prod pull
 
-# Backup de la base de données
-docker exec [db_container] pg_dump -U ask_and_trust ask_and_trust > backup_$(date +%Y%m%d).sql
+# Mise à jour des images staging
+docker compose -f compose.staging.yml --project-name askandtrust-staging pull
+
+# Backup de la base de données production
+docker exec askandtrust-prod-db-1 pg_dump -U ask_and_trust ask_and_trust > backup_prod_$(date +%Y%m%d).sql
+
+# Backup de la base de données staging
+docker exec askandtrust-staging-db-1 pg_dump -U ask_and_trust ask_and_trust > backup_staging_$(date +%Y%m%d).sql
 
 # Rotation des logs
 logrotate /etc/logrotate.d/askandtrust
@@ -416,16 +625,27 @@ logrotate /etc/logrotate.d/askandtrust
 
 ### Mise à Jour de Version
 ```bash
-# 1. Récupérer la dernière version
+# 1. Récupérer la dernière version - Production
+cd ~/askandtrust-prod/apps
 ./fetch-tag-dockerhub.sh
 
-# 2. Vérifier la version
+# 2. Récupérer la dernière version - Staging
+cd ~/askandtrust-staging/apps
+./fetch-tag-dockerhub.sh
+
+# 3. Vérifier la version
 cat .env | grep VERSION
 
-# 3. Déployer
+# 4. Déployer production
+cd ~/askandtrust-prod/apps
+./fetch-and-deploy-prod.sh
+
+# 5. Déployer staging
+cd ~/askandtrust-staging/apps
 ./fetch-and-deploy.sh
 
-# 4. Vérifier le déploiement
+# 6. Vérifier le déploiement
+curl https://092024-rouge-4.wns.wilders.dev
 curl https://staging.092024-rouge-4.wns.wilders.dev
 ```
 
@@ -438,7 +658,13 @@ curl https://staging.092024-rouge-4.wns.wilders.dev
 1. **Vérifier les logs** (voir section Monitoring)
 2. **Redémarrer les services** dans l'ordre:
    ```bash
-   docker compose -f compose.prod.yml restart
+   # Production
+   docker compose -f compose.prod.yml --project-name askandtrust-prod restart
+   
+   # Staging
+   docker compose -f compose.staging.yml --project-name askandtrust-staging restart
+   
+   # Caddy
    sudo systemctl restart caddy
    ```
 3. **Vérifier la configuration** (voir Checklist)
@@ -453,163 +679,4 @@ curl https://staging.092024-rouge-4.wns.wilders.dev
 
 ---
 
-*Documentation maintenue par YohanGH - Dernière mise à jour: $(date)*
-
-## 🔧 Corrections Appliquées
-
-### ✅ Corrections Automatiques Effectuées
-
-#### 1. **Fix compose.prod.yaml - Variable GATEWAY_PORT**
-```diff
-- - ${{GATEAWAY_PORT}}:80
-+ - ${GATEWAY_PORT}:80
-```
-
-#### 2. **Fix nginx.conf - Routage API GraphQL**
-```diff
-location /api/v1 {
--   proxy_pass http://backend:3310;
-+   proxy_pass http://backend:3310/graphql;
-+   proxy_set_header Host $host;
-+   proxy_set_header X-Real-IP $remote_addr;
-+   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-+   proxy_set_header X-Forwarded-Proto $scheme;
-}
-```
-
-### 🔧 Correction Manuelle Requise - Configuration Caddy
-
-**Problème**: Le domaine principal ne fonctionne pas car il pointe vers un port inexistant.
-
-**Configuration actuelle** (`/etc/caddy/Caddyfile`):
-```caddyfile
-092024-rouge-4.wns.wilders.dev {
-    reverse_proxy localhost:8000  # ❌ Port 8000 n'existe pas
-}
-```
-
-**Solutions proposées**:
-
-**Option A** - Pointer vers staging (recommandé pour tests):
-```caddyfile
-092024-rouge-4.wns.wilders.dev {
-    reverse_proxy localhost:8001
-}
-```
-
-**Option B** - Créer un environnement de production séparé:
-```caddyfile
-092024-rouge-4.wns.wilders.dev {
-    reverse_proxy localhost:8000
-}
-```
-*Note: Nécessite de créer un nouveau déploiement sur le port 8000*
-
-**Commandes pour appliquer la correction**:
-```bash
-# Éditer le Caddyfile
-sudo nano /etc/caddy/Caddyfile
-
-# Valider la configuration
-sudo caddy validate --config /etc/caddy/Caddyfile
-
-# Recharger Caddy
-sudo caddy reload --config /etc/caddy/Caddyfile
-
-# Vérifier le statut
-systemctl status caddy
-```
-
-## 🎯 Récapitulatif et Prochaines Étapes
-
-### ✅ Corrections Automatiques Appliquées
-1. **compose.prod.yaml**: Typo GATEAWAY_PORT → GATEWAY_PORT corrigée
-2. **nginx.conf**: Routage API corrigé vers `/graphql` avec headers appropriés
-
-### 🔧 Actions Manuelles Requises
-
-#### 1. **Correction Caddy (CRITIQUE)**
-```bash
-# Se connecter au serveur
-ssh user@092024-rouge-4.wns.wilders.dev
-
-# Éditer Caddyfile 
-sudo nano /etc/caddy/Caddyfile
-
-# Changer:
-# 092024-rouge-4.wns.wilders.dev {
-#     reverse_proxy localhost:8000
-# }
-
-# Vers:
-# 092024-rouge-4.wns.wilders.dev {
-#     reverse_proxy localhost:8001
-# }
-
-# Recharger Caddy
-sudo caddy reload --config /etc/caddy/Caddyfile
-```
-
-#### 2. **Redéploiement avec Corrections**
-```bash
-# Aller dans le dossier de déploiement
-cd ~/askandtrust/apps
-
-# Redéployer avec les nouvelles configurations
-./fetch-and-deploy.sh
-
-# Vérifier les logs
-docker compose -f compose.prod.yml logs -f
-```
-
-### 🧪 Tests de Validation
-
-#### Tests à effectuer après corrections:
-```bash
-# 1. Test domaine principal
-curl https://092024-rouge-4.wns.wilders.dev
-# Attendu: Page d'accueil Ask&Trust
-
-# 2. Test staging (doit toujours fonctionner)
-curl https://staging.092024-rouge-4.wns.wilders.dev
-# Attendu: Page d'accueil Ask&Trust
-
-# 3. Test API GraphQL
-curl -X POST https://staging.092024-rouge-4.wns.wilders.dev/api/v1 \
-  -H "Content-Type: application/json" \
-  -d '{"query": "{ __schema { queryType { name } } }"}'
-# Attendu: Réponse GraphQL (plus d'erreur 502)
-
-# 4. Test depuis le serveur
-curl http://localhost:8001
-curl http://localhost:8001/api/v1
-```
-
-### 📊 Statut des Problèmes
-
-### 🚀 Après Validation
-
-#### Si tout fonctionne:
-```bash
-# Commit des changements dans le repo
-git add nginx/nginx.conf compose.prod.yaml SERVER.MD
-git commit -m "fix: correct nginx API routing and compose.prod typo
-
-- Fix nginx proxy_pass to point to /graphql endpoint
-- Add proper proxy headers for nginx
-- Correct GATEAWAY_PORT typo in compose.prod.yaml
-- Add comprehensive server documentation"
-
-git push origin develop
-```
-
-#### Surveillance Continue:
-```bash
-# Monitoring
-watch -n 30 'curl -s -o /dev/null -w "%{http_code}" https://staging.092024-rouge-4.wns.wilders.dev'
-
-# Logs
-tail -f ~/askandtrust/apps/logs/access.log
-docker compose -f ~/askandtrust/apps/compose.prod.yml logs -f
-```
-
+*Documentation maintenue par YohanGH - Dernière mise à jour: 17-01-2025*
