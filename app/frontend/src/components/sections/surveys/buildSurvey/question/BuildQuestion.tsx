@@ -275,6 +275,7 @@ function BuildQuestion(
 							fullWidth
 							ariaLabel="Supprimer la question"
 							ref={deleteButtonRef}
+							autoFocus={openButtonDeleteQuestion}
 							onClick={() => {
 								handleClickDelete(
 									question.id,
