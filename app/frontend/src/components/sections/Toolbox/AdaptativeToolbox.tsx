@@ -95,7 +95,7 @@ export function AdaptiveToolbox({
 			ref={rootRef}
 			className={cn(
 				"flex h-full flex-col overflow-hidden",
-				isCompact ? "w-14" : "w-72"
+				isCompact ? "w-14" : "w-fit"
 			)}
 		>
 			{!isCompact && showSearch && searchManager && (
