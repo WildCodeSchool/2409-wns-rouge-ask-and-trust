@@ -3,7 +3,6 @@ import { Toolbox } from "@/components/sections/Toolbox/Toolbox"
 import { GET_SURVEY } from "@/graphql/survey/survey"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useToast } from "@/hooks/useToast"
-import "@/styles/toolbox.css"
 import { QuestionType, Survey } from "@/types/types"
 import { useQuery } from "@apollo/client"
 import { useEffect, useState } from "react"
@@ -89,28 +88,19 @@ function SurveyCreator() {
 					</Helmet>
 					<div className="min-h-screen bg-gray-50">
 						<section className="bg-white shadow-sm">
-							<div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+							<div className="mx-auto max-w-7xl px-4 py-4 lg:px-8">
 								<h1 className="text-2xl font-semibold text-gray-900">
 									Création de l'enquête
 								</h1>
 							</div>
 						</section>
-
-						<section className="mx-auto py-6 sm:px-6 lg:px-8">
-							<div className="flex h-[calc(100vh-160px)]">
-								<Toolbox
-									onAddQuestion={handleAddQuestion}
-									className="h-full"
-								/>
-								<div className="flex-grow overflow-auto px-4 sm:px-6 lg:px-8">
-									<Canvas
-										className="w-full"
-										questions={data?.survey.questions}
-										newQuestionId={newQuestionId}
-										setNewQuestionId={setNewQuestionId}
-									/>
-								</div>
-							</div>
+						<section className="flex h-screen w-full flex-row gap-4 px-4 py-4 lg:gap-8 lg:p-8">
+							<Toolbox onAddQuestion={handleAddQuestion} />
+							<Canvas
+								questions={data?.survey.questions}
+								newQuestionId={newQuestionId}
+								setNewQuestionId={setNewQuestionId}
+							/>
 						</section>
 					</div>
 				</>

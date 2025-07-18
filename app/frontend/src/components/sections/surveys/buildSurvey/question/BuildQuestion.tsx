@@ -252,7 +252,7 @@ function BuildQuestion(
 		<li className="list-none" ref={ref} tabIndex={-1}>
 			<FormWrapper
 				onSubmit={handleSubmit(handleSubmitForm)}
-				className="md:max-w-[90vh]"
+				className="md:max-w-full lg:max-w-[45rem]"
 			>
 				<div className="flex content-center justify-between">
 					<h3 className="flex-1 self-center text-2xl font-bold">

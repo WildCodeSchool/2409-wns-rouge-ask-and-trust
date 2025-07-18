@@ -1,5 +1,6 @@
 import { AdaptiveToolbox } from "@/components/sections/Toolbox/AdaptativeToolbox"
 import { toolboxCategories } from "@/components/sections/Toolbox/toolboxData"
+import { cn } from "@/lib/utils"
 import { QuestionType, ToolboxCategory, ToolboxItem } from "@/types/types"
 import { useState } from "react"
 
@@ -15,19 +16,15 @@ import { useState } from "react"
  */
 export function Toolbox({
 	onAddQuestion,
-	className = "",
 }: {
 	onAddQuestion: (type: QuestionType | undefined) => void
-	className?: string
 }) {
 	const [searchValue, setSearchValue] = useState<string>("")
-
-	// Inject the search value into the search input
 	const categories: ToolboxCategory[] = toolboxCategories.map(category => ({
 		...category,
 		items: category.items.map(item => ({
 			...item,
-			onClick: () => onAddQuestion(item.onClickType), // @TODO update this question
+			onClick: () => onAddQuestion(item.onClickType),
 		})),
 	}))
 
@@ -35,9 +32,12 @@ export function Toolbox({
 	const allItems: ToolboxItem[] = categories.flatMap(
 		category => category.items
 	)
-
 	return (
-		<div className={`survey-toolbox ${className}`}>
+		<div
+			className={cn(
+				"border-black-50 transition-width z-10 flex h-screen w-fit flex-shrink-0 flex-col overflow-hidden rounded-xl border-1 bg-white shadow-md duration-300 ease-in-out"
+			)}
+		>
 			<AdaptiveToolbox
 				categories={categories}
 				items={allItems}
