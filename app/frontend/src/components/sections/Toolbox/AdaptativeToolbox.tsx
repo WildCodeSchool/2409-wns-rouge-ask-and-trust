@@ -54,7 +54,7 @@ export function AdaptiveToolbox({
 				isCompact && "justify-center"
 			)}
 			onClick={item.onClick}
-			ariaLabel={item.label}
+			ariaLabel={`Ajouter une question de type ${item.label}`}
 		>
 			{item.icon && (
 				<span className="flex justify-center align-middle">
