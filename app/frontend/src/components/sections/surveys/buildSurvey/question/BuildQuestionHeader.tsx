@@ -70,7 +70,7 @@ export const BuildQuestionHeader = ({ question }: BuildQuestionHeaderProps) => {
 					>
 						{question.index}
 					</span>
-					<h3 className="line-h my-0 flex-1 self-center py-0 text-2xl leading-none font-bold">
+					<h3 className="line-h my-0 flex-1 self-center py-0 text-lg leading-none font-bold">
 						{question.title ?? "Nouvelle question"}
 					</h3>
 				</div>
@@ -86,7 +86,7 @@ export const BuildQuestionHeader = ({ question }: BuildQuestionHeaderProps) => {
 				/>
 			</div>
 			{openButtonDeleteQuestion && (
-				<div className="flex flex-1 gap-3">
+				<div className="flex flex-1 flex-col gap-3 md:flex-row">
 					<Button
 						type="button"
 						variant="destructive"
