@@ -41,7 +41,7 @@ export function BuildListAnswers({
 		}
 	}
 
-	console.log("errors.answers", errors.answers)
+	const isBooleanType = questionType === TypesOfQuestion.Boolean
 
 	return (
 		<div className="flex flex-col gap-1">
@@ -65,27 +65,31 @@ export function BuildListAnswers({
 						aria-invalid={errors?.answers?.[index]}
 						errorMessage={errors?.answers?.[index]?.value?.message}
 					/>
-					<Button
-						type="button"
-						variant="ghost_destructive"
-						size="square_sm"
-						ariaLabel="Supprimer cette réponse"
-						onClick={() => remove(index)}
-						icon={Trash2}
-					/>
+					{/* Show remove button only if not Boolean */}
+					{!isBooleanType && (
+						<Button
+							type="button"
+							variant="ghost_destructive"
+							size="square_sm"
+							ariaLabel="Supprimer cette réponse"
+							onClick={() => remove(index)}
+							icon={Trash2}
+						/>
+					)}
 				</div>
 			))}
-
-			<Button
-				type="button"
-				variant="ghost"
-				fullWidth
-				ariaLabel="Ajouter une réponse"
-				icon={PlusCircle}
-				onClick={() => append({ value: "" })}
-			>
-				Ajouter une réponse
-			</Button>
+			{!isBooleanType && (
+				<Button
+					type="button"
+					variant="ghost"
+					fullWidth
+					ariaLabel="Ajouter une réponse"
+					icon={PlusCircle}
+					onClick={() => append({ value: "" })}
+				>
+					Ajouter une réponse
+				</Button>
+			)}
 		</div>
 	)
 }
