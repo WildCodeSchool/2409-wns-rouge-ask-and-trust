@@ -23,7 +23,7 @@ const Poll = () => {
 						60% des grandes entreprises publient leurs enquêtes avec
 						nous
 					</h1>
-					<div className="flex flex-row gap-x-4">
+					<div className="flex flex-row gap-x-5">
 						{companies.map((company, index) => (
 							<CompanyBox key={index} name={company} />
 						))}

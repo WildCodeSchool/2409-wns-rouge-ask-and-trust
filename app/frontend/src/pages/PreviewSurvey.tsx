@@ -55,7 +55,7 @@ export default function PreviewSurveyPage() {
 					content="Page de prévisualisation d'une nouvelle enquête."
 				/>
 			</Helmet>
-			<div className="mx-auto mt-20 max-w-2xl rounded bg-white p-8 shadow">
+			<div className="shadow-component mx-auto mt-20 max-w-2xl rounded bg-white p-8">
 				<h1 className="mb-4 flex items-center gap-2 text-2xl font-bold">
 					{selectedSurvey.title}
 					<Badge variant="secondary">

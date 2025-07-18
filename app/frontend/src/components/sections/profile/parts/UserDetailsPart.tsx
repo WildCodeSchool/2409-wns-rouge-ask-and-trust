@@ -11,7 +11,7 @@ export function UserDetailsPart({
 	return (
 		<div className="w-full px-1.5 py-4 sm:min-w-[331px] sm:px-2 md:px-2 lg:px-5">
 			<div className="flex flex-row items-start justify-start gap-2.5 sm:gap-4">
-				<div className="shadow-component max-w-[109px] rounded-md shadow-black/10">
+				<div className="shadow-component max-w-[109px] rounded-md">
 					<img
 						className="max-w-[109px] rounded-md"
 						src={profilePicture}

@@ -133,7 +133,7 @@ export default function Payment() {
 								type="button"
 								className={`w-full rounded-lg border-2 px-4 py-3 text-left transition-all duration-150 ${
 									selectedPack === idx
-										? "border-primary-700 bg-primary-50 text-primary-700 font-bold shadow"
+										? "border-primary-700 bg-primary-50 text-primary-700 shadow-default font-bold"
 										: "text-black-default hover:border-primary-700 border-gray-200 bg-white"
 								}`}
 								onClick={() => setSelectedPack(idx)}

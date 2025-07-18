@@ -100,7 +100,7 @@ export default function SurveyResponse() {
 
 				{/* Survey Content */}
 				<section className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-					<div className="rounded-lg bg-white p-6 shadow">
+					<div className="shadow-default rounded-lg bg-white p-6">
 						{survey.questions?.length > 0 ? (
 							<SurveyResponseForm
 								surveyId={survey.id}

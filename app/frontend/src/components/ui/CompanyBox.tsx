@@ -4,7 +4,7 @@ interface CompanyBoxProps {
 
 const CompanyBox: React.FC<CompanyBoxProps> = ({ name }) => {
 	return (
-		<div className="flex h-[92px] w-[183px] items-center justify-center rounded-3xl shadow-[0px_5px_15px_rgba(0,0,0,0.35)]">
+		<div className="shadow-default flex h-24 w-44 items-center justify-center rounded-3xl transition-shadow duration-200 ease-in-out hover:shadow-lg">
 			<span className="text-xl font-bold">{name}</span>
 		</div>
 	)
