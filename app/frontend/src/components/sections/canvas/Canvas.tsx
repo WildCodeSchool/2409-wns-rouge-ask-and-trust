@@ -35,6 +35,9 @@ export const Canvas: React.FC<CanvasProps> = ({
 		200,
 		768
 	)
+	const [currentQuestionId, setCurrentQuestionId] = useState<number | null>(
+		null
+	)
 
 	const isCompact = isVerticalCompact || isHorizontalCompact
 
@@ -77,6 +80,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 	const scrollToQuestion = (id: number) => {
 		const el = questionRefs.current[id]
 		if (el) {
+			setCurrentQuestionId(id)
 			el.scrollIntoView({ behavior: "smooth", block: "center" })
 			el.focus?.()
 		}
@@ -121,6 +125,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 				<TableContentQuestions
 					questions={questions}
 					onQuestionClick={scrollToQuestion}
+					currentQuestionId={currentQuestionId}
 				/>
 			)}
 		</>
