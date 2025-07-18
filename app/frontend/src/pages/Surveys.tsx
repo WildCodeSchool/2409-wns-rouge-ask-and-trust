@@ -2,7 +2,7 @@ import SurveyCard from "@/components/sections/surveys/SurveyCard"
 import img from "/img/dev.webp"
 import { Button } from "@/components/ui/Button"
 import { useEffect } from "react"
-import { Helmet } from "react-helmet"
+import { withSEO } from "@/components/hoc/withSEO"
 import { cn } from "@/lib/utils"
 import Pagination from "@/components/ui/Pagination"
 import Loader from "@/components/ui/Loader"
@@ -10,7 +10,7 @@ import SurveyDurationFilter from "@/components/sections/surveys/ui/SurveyDuratio
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { useSurvey } from "@/hooks/useSurvey"
 
-export default function Surveys() {
+function Surveys() {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const {
 		isFetching,
@@ -37,35 +37,6 @@ export default function Surveys() {
 
 	return (
 		<>
-			{/* Update of the metadata */}
-			<Helmet>
-				<title>Liste des enquêtes disponibles</title>
-				<meta
-					name="description"
-					content="Page présentant toutes les enquêtes disponibles sur Ask$Trust."
-				/>
-				<meta name="robots" content="noindex, nofollow" />
-				{/* Open Graph */}
-				<meta
-					property="og:title"
-					content="Liste des enquêtes disponibles"
-				/>
-				<meta
-					property="og:description"
-					content="Page présentant toutes les enquêtes disponibles sur Ask$Trust."
-				/>
-				<meta property="og:type" content="website" />
-				{/* Twitter Card */}
-				<meta name="twitter:card" content="summary" />
-				<meta
-					name="twitter:title"
-					content="Liste des enquêtes disponibles"
-				/>
-				<meta
-					name="twitter:description"
-					content="Page présentant toutes les enquêtes disponibles sur Ask$Trust."
-				/>
-			</Helmet>
 			<section
 				className={cn(
 					"px-20 max-sm:px-5",
@@ -139,3 +110,6 @@ export default function Surveys() {
 		</>
 	)
 }
+
+const SurveysWithSEO = withSEO(Surveys, "surveys")
+export default SurveysWithSEO
