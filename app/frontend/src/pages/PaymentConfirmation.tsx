@@ -65,7 +65,7 @@ export default function PaymentConfirmation(): React.ReactElement {
 				/>
 			</Helmet>
 
-			<div className="container mx-auto flex min-h-[70vh] flex-col items-center justify-center px-4 py-8">
+			<div className="container mx-auto flex min-h-[80vh] flex-col items-center justify-center px-4 pt-20">
 				<div className="w-full max-w-md rounded-xl bg-white p-8 text-center shadow-lg">
 					<h1 className="mb-4 text-2xl font-bold">
 						Confirmation du paiement

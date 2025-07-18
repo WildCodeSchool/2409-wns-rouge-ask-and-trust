@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet"
 
 export default function UserProfilePage() {
 	return (
-		<section className="flex flex-col items-center gap-9 p-5 lg:px-19">
+		<section className="flex flex-col items-center gap-9 px-5 pt-20 lg:px-20">
 			<Helmet>
 				<title>Profil utilisateur</title>
 				<meta name="description" content="Profil utilisateur" />
