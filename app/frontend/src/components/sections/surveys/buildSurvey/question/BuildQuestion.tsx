@@ -11,8 +11,7 @@ import {
 } from "@/hooks/useQuestions"
 import { useToast } from "@/hooks/useToast"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
-import { Trash2 } from "lucide-react"
-import { forwardRef, useEffect, useRef, useState } from "react"
+import { forwardRef, useEffect, useRef } from "react"
 import {
 	FieldArrayWithId,
 	FieldValues,
@@ -23,6 +22,7 @@ import {
 	UseFormRegister,
 	useWatch,
 } from "react-hook-form"
+import { BuildQuestionHeader } from "./BuildQuestionHeader"
 
 type QuestionProps = {
 	questionId: number
@@ -92,13 +92,10 @@ function BuildQuestion(
 		updateQuestion,
 		updateQuestionError,
 		resetUpdateQuestionError,
-		deleteQuestion,
 		deleteQuestionError,
 		resetDeleteQuestionError,
 	} = useQuestions()
-	// Show / hide delete question button
-	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
-		useState(false)
+
 	// Allow to manipulate answers as a dynamic array (no state needed)
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -109,7 +106,7 @@ function BuildQuestion(
 		name: "type",
 	})
 	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
-	const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
+	// const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
 	const { showToast } = useToast()
 
 	// Show error toast if there is an error during question update, delete or load
@@ -179,23 +176,6 @@ function BuildQuestion(
 		prevTypeRef.current = watchedType
 	}, [watchedType, append, fields.length, question])
 
-	const handleClickDelete = async (
-		questionId: number | undefined,
-		surveyId: number | undefined
-	) => {
-		if (!questionId || !surveyId) return null
-
-		try {
-			await deleteQuestion(questionId, surveyId)
-			showToast({
-				type: "success",
-				title: "La question a été supprimée.",
-			})
-		} finally {
-			setOpenButtonDeleteQuestion(false)
-		}
-	}
-
 	const handleSubmitForm = async (formData: UpdateQuestionInput) => {
 		if (!question?.id) return
 
@@ -243,62 +223,17 @@ function BuildQuestion(
 				onSubmit={handleSubmit(handleSubmitForm)}
 				className="w-full md:max-w-full"
 			>
-				<div className="flex content-center justify-between">
-					<div className="flex h-fit items-center justify-start gap-2">
-						<span
-							className={
-								"bg-primary-700 border-primary-700 z-10 flex aspect-square h-6 items-center justify-center rounded-full border text-xs font-medium text-white transition-colors"
-							}
-						>
-							{index}
-						</span>
-						<h3 className="line-h my-0 flex-1 self-center py-0 text-2xl leading-none font-bold">
-							{question.title ?? "Nouvelle question"}
-						</h3>
-					</div>
-					<Button
-						variant="ghost_destructive"
-						size="square_sm"
-						ariaLabel="Supprimer cette option"
-						type="button"
-						onClick={() => {
-							setOpenButtonDeleteQuestion(prev => !prev)
-						}}
-						icon={Trash2}
-					/>
-				</div>
-				{openButtonDeleteQuestion && (
-					<div className="flex flex-1 gap-3">
-						<Button
-							type="button"
-							variant="destructive"
-							fullWidth
-							ariaLabel="Supprimer la question"
-							ref={deleteButtonRef}
-							autoFocus={openButtonDeleteQuestion}
-							onClick={() => {
-								handleClickDelete(
-									question.id,
-									question.survey.id
-								)
-							}}
-							icon={Trash2}
-						>
-							Supprimer la question
-						</Button>
-						<Button
-							type="button"
-							variant="outline"
-							fullWidth
-							ariaLabel="Annuler la suppression de la question"
-							onClick={() => {
-								setOpenButtonDeleteQuestion(false)
-							}}
-						>
-							Annuler
-						</Button>
-					</div>
-				)}
+				{/* Display index, title and delete button */}
+				<BuildQuestionHeader
+					question={{
+						id: question.id,
+						title: question.title,
+						type: question.type,
+						index,
+						surveyId: question.survey.id,
+					}}
+				/>
+
 				<div className="flex flex-col gap-1">
 					<Label htmlFor="title" required>
 						Titre
