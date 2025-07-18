@@ -29,7 +29,7 @@ export const TableContentQuestions = ({
 							<span
 								className={`z-10 flex aspect-square h-6 items-center justify-center rounded-full border text-xs font-medium transition-colors ${
 									shouldHighlight
-										? "bg-primary-700 border-primary-700 text-white" // cercle plein bleu, texte blanc
+										? "bg-primary-700 border-primary-700 text-white"
 										: "border-primary-300 text-primary-700 group-hover:bg-primary-100 group-hover:text-primary-800 bg-white"
 								} `}
 							>
