@@ -121,7 +121,7 @@ export default function Payment() {
 				/>
 			</Helmet>
 
-			<div className="flex min-h-[80vh] items-center justify-center bg-gray-50 px-4 py-8">
+			<div className="flex min-h-[80vh] items-center justify-center bg-gray-50 px-4 pt-10">
 				<div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
 					<h1 className="text-black-default mb-4 text-center text-3xl font-bold">
 						Paiement de Pack d'enquêtes
