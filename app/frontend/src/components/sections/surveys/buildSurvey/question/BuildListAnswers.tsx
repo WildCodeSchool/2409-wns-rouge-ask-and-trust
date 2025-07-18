@@ -11,6 +11,26 @@ import {
 	UseFormRegister,
 } from "react-hook-form"
 
+/**
+ * Component to build and manage a dynamic list of answers for a question.
+ *
+ * Depending on the question type, it renders input fields for answers,
+ * allows adding and removing answers, and adapts behavior for Boolean questions.
+ *
+ * For Boolean type questions, exactly two answers ("True" and "False") are displayed,
+ * and the add/remove buttons are disabled to enforce this constraint.
+ *
+ * @param {object} props - Component properties
+ * @param {FieldArrayWithId<QuestionUpdate, "answers", "id">[]} props.fields - Array of answer fields managed by react-hook-form
+ * @param {UseFormRegister<QuestionUpdate>} props.register - react-hook-form's register function for input registration and validation
+ * @param {FieldValues} props.errors - Form error object to display validation messages
+ * @param {UseFieldArrayRemove} props.remove - Function to remove an answer field by index
+ * @param {UseFieldArrayAppend<QuestionUpdate, "answers">} props.append - Function to append a new answer field
+ * @param {QuestionType} props.questionType - The type of the question to conditionally render inputs
+ *
+ * @returns {JSX.Element} The rendered list of answer inputs with add/remove controls
+ */
+
 type BuildListAnswersProps = {
 	fields: FieldArrayWithId<QuestionUpdate, "answers", "id">[]
 	register: UseFormRegister<QuestionUpdate>
