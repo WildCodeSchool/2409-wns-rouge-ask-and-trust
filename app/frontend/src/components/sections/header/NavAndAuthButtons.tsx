@@ -25,7 +25,7 @@ export default function NavAndAuthButtons({
 					}
 					role="list"
 				>
-					{headerLinks.map(link => (
+					{headerLinks?.map(link => (
 						<li
 							key={link.href}
 							role="listitem"

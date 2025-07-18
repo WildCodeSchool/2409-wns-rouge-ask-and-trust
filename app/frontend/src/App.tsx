@@ -15,7 +15,7 @@ function App() {
 			case "/":
 				return <Header />
 			case "/surveys":
-				return <HeaderSurveys showCategories />
+				return <HeaderSurveys isInSurveys />
 			default:
 				return <HeaderSurveys />
 		}

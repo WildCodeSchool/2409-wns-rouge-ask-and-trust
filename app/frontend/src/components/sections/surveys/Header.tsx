@@ -10,7 +10,7 @@ import { Link, useSearchParams } from "react-router-dom"
 import NavAndAuthButtons from "./NavAndAuthButtons"
 import logoFooter from "/logos/logo-footer.svg"
 
-export default function Header({ showCategories = false }) {
+export default function Header({ isInSurveys = false }) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const [searchParams, setSearchParams] = useSearchParams()
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(
@@ -57,9 +57,12 @@ export default function Header({ showCategories = false }) {
 						className="w-full"
 					/>
 				</Link>
-				<NavAndAuthButtons isHorizontalCompact={isHorizontalCompact} />
+				<NavAndAuthButtons
+					isHorizontalCompact={isHorizontalCompact}
+					isInSurveys={isInSurveys}
+				/>
 			</div>
-			{showCategories && (
+			{isInSurveys && (
 				<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3 pl-1">
 					{loadingCategories && (
 						<p className="text-white">

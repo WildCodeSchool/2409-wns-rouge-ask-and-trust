@@ -74,21 +74,23 @@ export default function SurveyForm() {
 		)
 	}
 
-	if (surveyId && surveyError) {
-		const isNotFoundError = surveyError.graphQLErrors.some(error =>
-			error.message.includes("Survey not found")
-		)
+	if (surveyId) {
+		if (!survey && surveyError) {
+			const isNotFoundError = surveyError.graphQLErrors.some(error =>
+				error.message.includes("Failed to fetch survey")
+			)
 
-		if (isNotFoundError) {
-			throw new Response("Survey not found", { status: 404 })
+			if (isNotFoundError) {
+				throw new Response("Survey not found", { status: 404 })
+			}
+
+			// Pour les autres erreurs GraphQL
+			throw new Response("Error loading survey", { status: 500 })
 		}
 
-		// Pour les autres erreurs GraphQL
-		throw new Response("Error loading survey", { status: 500 })
-	}
-
-	if (surveyId && !surveyLoading && !survey) {
-		throw new Response("Survey not found", { status: 404 })
+		if (!surveyLoading && !survey) {
+			throw new Response("Survey not found", { status: 404 })
+		}
 	}
 
 	const onFormSubmit = async (form: CreateSurveyInput) => {

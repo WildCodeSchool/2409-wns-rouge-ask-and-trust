@@ -5,12 +5,13 @@ import { useMutation } from "@apollo/client"
 import { useToast } from "@/hooks/useToast"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/hooks/useAuthContext"
+import { NavAndAuthButtonsProps } from "@/types/types"
+import { cn } from "@/lib/utils"
 
 export default function NavAndAuthButtons({
 	isHorizontalCompact,
-}: {
-	isHorizontalCompact: boolean
-}) {
+	isInSurveys,
+}: NavAndAuthButtonsProps) {
 	const { user } = useAuthContext()
 	const navigate = useNavigate()
 	const location = useLocation()
@@ -30,10 +31,13 @@ export default function NavAndAuthButtons({
 
 	return (
 		<nav
-			className="flex w-full flex-1 items-center justify-center gap-6"
+			className={cn(
+				"flex w-full flex-1 items-center justify-center gap-6",
+				!isInSurveys && "justify-end"
+			)}
 			role="navigation"
 		>
-			<SearchForm />
+			{isInSurveys && <SearchForm />}
 			{!isHorizontalCompact &&
 				(user ? (
 					user.role === "admin" ? (
