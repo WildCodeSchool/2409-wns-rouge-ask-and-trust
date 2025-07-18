@@ -133,12 +133,12 @@ graph TB
 ### 🌐 Configuration Réseau
 
 ```bash
-# Domaines et Ports
+# Domains and Ports
 Production:     092024-rouge-4.wns.wilders.dev → :8000
 Staging:        staging.092024-rouge-4.wns.wilders.dev → :8001
 Operations:     ops.092024-rouge-4.wns.wilders.dev → :9000
 
-# Services Internes
+# Internal Services
 PostgreSQL Prod:    localhost:5432
 PostgreSQL Staging: localhost:5433
 Backend Prod:       container:3310
@@ -160,15 +160,15 @@ Backend Staging:    container:3310
 ### 📁 Données et Volumes
 
 ```bash
-# Volumes Docker Critiques
-askandtrust-prod_db-data     → Base Production (CRITIQUE)
-askandtrust-staging_db-data  → Base Staging (IMPORTANT)
-askandtrust-prod_logs        → Logs Production (IMPORTANT)
-askandtrust-staging_logs     → Logs Staging (NORMAL)
+# Critical Docker Volumes
+askandtrust-prod_db-data     → Production Database (CRITICAL)
+askandtrust-staging_db-data  → Staging Database (IMPORTANT)
+askandtrust-prod_logs        → Production Logs (IMPORTANT)
+askandtrust-staging_logs     → Staging Logs (NORMAL)
 
-# Emplacements de Sauvegarde
-~/backups/db/               → Sauvegardes locales
-/external/backup/           → Sauvegardes externes (À CONFIGURER)
+# Backup Locations
+~/backups/db/               → Local backups
+/external/backup/           → External backups (TO CONFIGURE)
 ```
 
 ### 🔑 Certificats et Secrets
@@ -196,32 +196,32 @@ askandtrust-staging_logs     → Logs Staging (NORMAL)
 ### 🔍 Détection des Incidents
 
 ```bash
-# Monitoring Automatique
-# 1. Health Checks HTTP
+# Automatic Monitoring
+# 1. HTTP Health Checks
 curl -f https://092024-rouge-4.wns.wilders.dev/health
 
-# 2. Monitoring Base de Données
+# 2. Database Monitoring
 docker exec askandtrust-prod-db-1 pg_isready
 
-# 3. Monitoring Conteneurs
+# 3. Container Monitoring
 docker ps --filter "name=askandtrust-prod" --format "table {{.Names}}\t{{.Status}}"
 
-# 4. Monitoring Ressources
+# 4. Resource Monitoring
 free -h && df -h
 
-# 5. Logs d'Erreur
+# 5. Error Logs
 tail -f ~/askandtrust-prod/apps/logs/error.log | grep -i error
 ```
 
 ### 📊 Matrice de Décision
 
 ```
-Incident détecté → Auto-recovery (5 min) → Succès ? → FIN
-                                        → Échec → Escalade Niveau 1
-                                                → Réparation manuelle (30 min)
-                                                → Succès ? → FIN
-                                                → Échec → Escalade Niveau 2
-                                                        → Activation DRP
+Incident detected → Auto-recovery (5 min) → Success ? → END
+                                        → Failure → Escalation Level 1
+                                                → Manual repair (30 min)
+                                                → Success ? → END
+                                                → Failure → Escalation Level 2
+                                                        → DRP activation
 ```
 
 ---
@@ -249,10 +249,10 @@ DATE=$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR="/home/backup/db"
 FILENAME="askandtrust_prod_${DATE}.sql"
 
-# Création du répertoire
+# Create directory
 mkdir -p ${BACKUP_DIR}
 
-# Sauvegarde
+# Backup
 docker exec askandtrust-prod-db-1 pg_dump \
   -U ask_and_trust \
   -d ask_and_trust \
@@ -263,13 +263,13 @@ docker exec askandtrust-prod-db-1 pg_dump \
 # Compression
 gzip ${BACKUP_DIR}/${FILENAME}
 
-# Vérification
+# Verification
 if [ $? -eq 0 ]; then
-    echo "✅ Sauvegarde réussie: ${FILENAME}.gz"
-    # Suppression des sauvegardes > 7 jours
+    echo "✅ Backup successful: ${FILENAME}.gz"
+    # Delete backups older than 7 days
     find ${BACKUP_DIR} -name "askandtrust_prod_*.sql.gz" -mtime +7 -delete
 else
-    echo "❌ Échec sauvegarde" >&2
+    echo "❌ Backup failed" >&2
     exit 1
 fi
 ```
@@ -280,20 +280,36 @@ fi
 #!/bin/bash
 # backup-config.sh
 
+set -e  # Stop script on error (fail fast)
+
 DATE=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="/home/backup/config"
+BACKUP_DIR="$HOME/backup/config"         # Safe and portable path
 ARCHIVE="askandtrust_config_${DATE}.tar.gz"
 
-mkdir -p ${BACKUP_DIR}
+mkdir -p "$BACKUP_DIR"
 
-# Sauvegarde configurations
-tar -czf ${BACKUP_DIR}/${ARCHIVE} \
-  ~/askandtrust-prod/apps/ \
-  ~/askandtrust-staging/apps/ \
-  /etc/caddy/Caddyfile \
-  ~/.docker/
+# Files/folders to backup
+INCLUDES=()
+[[ -d "$HOME/askandtrust-prod/apps" ]]     && INCLUDES+=("$HOME/askandtrust-prod/apps")
+[[ -d "$HOME/askandtrust-staging/apps" ]]  && INCLUDES+=("$HOME/askandtrust-staging/apps")
+[[ -f "/etc/caddy/Caddyfile" ]]            && INCLUDES+=("/etc/caddy/Caddyfile")
+[[ -d "$HOME/.docker" ]]                   && INCLUDES+=("$HOME/.docker")
 
-echo "✅ Configuration sauvegardée: ${ARCHIVE}"
+if [ "${#INCLUDES[@]}" -eq 0 ]; then
+    echo "❌ No files/folders found to backup."
+    exit 1
+fi
+
+tar -czf "$BACKUP_DIR/$ARCHIVE" "${INCLUDES[@]}" \
+    --warning=no-file-changed \
+    --ignore-failed-read
+
+if [ $? -eq 0 ]; then
+    echo "✅ Configuration backed up: $BACKUP_DIR/$ARCHIVE"
+else
+    echo "❌ Error during backup."
+fi
+
 ```
 
 ### 🔄 Automatisation des Sauvegardes
@@ -302,13 +318,13 @@ echo "✅ Configuration sauvegardée: ${ARCHIVE}"
 # Crontab configuration
 # crontab -e
 
-# Sauvegarde DB toutes les 6h
+# DB backup every 6 hours
 0 */6 * * * /home/scripts/backup-prod-db.sh >> /var/log/backup.log 2>&1
 
-# Sauvegarde config quotidienne à 2h
+# Config backup daily at 2am
 0 2 * * * /home/scripts/backup-config.sh >> /var/log/backup.log 2>&1
 
-# Nettoyage des logs anciens
+# Clean old logs
 0 1 * * 0 find /var/log -name "*.log" -mtime +30 -delete
 ```
 
@@ -316,34 +332,69 @@ echo "✅ Configuration sauvegardée: ${ARCHIVE}"
 
 ```bash
 #!/bin/bash
-# test-restore.sh - Test mensuel de restauration
+# test-restore.sh - Monthly restoration test
 
-echo "🧪 Test de restauration DRP - $(date)"
+set -e
 
-# 1. Création d'un environnement de test
-docker run -d --name test-db -p 5434:5432 \
+echo "🧪 DRP restoration test - $(date)"
+
+# 1. Create test environment
+docker run -d --rm --name test-db -p 5434:5432 \
   -e POSTGRES_DB=ask_and_trust \
   -e POSTGRES_USER=ask_and_trust \
   -e POSTGRES_PASSWORD=test_password \
   postgres:15
 
-# 2. Restauration de la dernière sauvegarde
-LATEST_BACKUP=$(ls -t /home/backup/db/askandtrust_prod_*.sql.gz | head -1)
-gunzip -c ${LATEST_BACKUP} | docker exec -i test-db psql -U ask_and_trust -d ask_and_trust
-
-# 3. Vérification
-TABLES_COUNT=$(docker exec test-db psql -U ask_and_trust -d ask_and_trust -t -c "SELECT count(*) FROM information_schema.tables WHERE table_schema='public'")
-
-if [ ${TABLES_COUNT} -gt 0 ]; then
-    echo "✅ Test de restauration réussi: ${TABLES_COUNT} tables restaurées"
-else
-    echo "❌ Échec du test de restauration" >&2
+# 2. Find latest backup
+LATEST_BACKUP=$(ls -t /home/backup/db/askandtrust_prod_*.sql.gz 2>/dev/null | head -1)
+if [ -z "$LATEST_BACKUP" ]; then
+    echo "❌ No backup file found in /home/backup/db/" >&2
+    docker stop test-db
+    exit 1
 fi
 
-# 4. Nettoyage
-docker stop test-db && docker rm test-db
+echo "Latest backup detected: $LATEST_BACKUP"
 
-echo "Test terminé - $(date)"
+# 3. Wait for PostgreSQL to be ready (max 30s)
+for i in {1..30}; do
+    if docker exec test-db pg_isready -U ask_and_trust > /dev/null 2>&1; then
+        break
+    fi
+    sleep 1
+    if [ $i -eq 30 ]; then
+        echo "❌ PostgreSQL not responding in container after 30s" >&2
+        docker stop test-db
+        exit 2
+    fi
+done
+
+# 4. Restoration
+set +e  # Temporarily disable exit-on-error to capture restoration
+gunzip -c "${LATEST_BACKUP}" | docker exec -i test-db psql -U ask_and_trust -d ask_and_trust
+RESTORE_EXIT_CODE=$?
+set -e
+
+if [ $RESTORE_EXIT_CODE -ne 0 ]; then
+    echo "❌ SQL restoration failed" >&2
+    docker stop test-db
+    exit 3
+fi
+
+# 5. Verification
+TABLES_COUNT=$(docker exec test-db psql -U ask_and_trust -d ask_and_trust -t -c \
+    "SELECT count(*) FROM information_schema.tables WHERE table_schema='public';" | tr -d '[:space:]')
+
+if [[ "$TABLES_COUNT" =~ ^[0-9]+$ ]] && [ "$TABLES_COUNT" -gt 0 ]; then
+    echo "✅ Restoration test successful: $TABLES_COUNT tables restored"
+else
+    echo "❌ Restoration test failed – no tables restored or SQL error" >&2
+fi
+
+# 6. Cleanup
+docker stop test-db > /dev/null
+
+echo "Test completed - $(date)"
+
 ```
 
 ---
@@ -354,38 +405,38 @@ echo "Test terminé - $(date)"
 
 ```bash
 #!/bin/bash
-# emergency-restart.sh - Procédure P1
+# emergency-restart.sh - P1 Procedure
 
-echo "🚨 PROCÉDURE D'URGENCE ACTIVÉE - $(date)"
+echo "🚨 EMERGENCY PROCEDURE ACTIVATED - $(date)"
 
-# 1. Vérification de l'état actuel
-echo "📊 État des services..."
+# 1. Check current status
+echo "📊 Service status..."
 systemctl status caddy
 docker ps --filter "name=askandtrust-prod"
 
-# 2. Arrêt propre des services
-echo "🛑 Arrêt des services..."
+# 2. Clean service shutdown
+echo "🛑 Stopping services..."
 cd ~/askandtrust-prod/apps
 docker compose -f compose.prod.yml --project-name askandtrust-prod down
 
-# 3. Vérification des volumes
-echo "💾 Vérification des données..."
+# 3. Volume verification
+echo "💾 Data verification..."
 docker volume ls | grep askandtrust-prod
 
-# 4. Redémarrage complet
-echo "🚀 Redémarrage production..."
+# 4. Complete restart
+echo "🚀 Production restart..."
 docker compose -f compose.prod.yml --project-name askandtrust-prod up -d
 
-# 5. Tests de validation
-echo "✅ Tests de validation..."
+# 5. Validation tests
+echo "✅ Validation tests..."
 sleep 30
-curl -f http://localhost:8000 || echo "❌ Frontend indisponible"
-docker exec askandtrust-prod-db-1 pg_isready || echo "❌ Base de données indisponible"
+curl -f http://localhost:8000 || echo "❌ Frontend unavailable"
+docker exec askandtrust-prod-db-1 pg_isready || echo "❌ Database unavailable"
 
-# 6. Restart Caddy si nécessaire
+# 6. Restart Caddy if needed
 sudo systemctl restart caddy
 
-echo "🏁 Procédure d'urgence terminée - $(date)"
+echo "🏁 Emergency procedure completed - $(date)"
 ```
 
 ### 🔧 Procédure de Diagnostic Avancé
@@ -394,36 +445,36 @@ echo "🏁 Procédure d'urgence terminée - $(date)"
 #!/bin/bash
 # advanced-diagnostics.sh
 
-echo "🔍 DIAGNOSTIC AVANCÉ - $(date)"
+echo "🔍 ADVANCED DIAGNOSTICS - $(date)"
 
-# 1. État système
-echo "=== SYSTÈME ==="
+# 1. System status
+echo "=== SYSTEM ==="
 free -h
 df -h
 uptime
 
-# 2. État réseau
-echo "=== RÉSEAU ==="
+# 2. Network status
+echo "=== NETWORK ==="
 netstat -tulpn | grep -E "(8000|8001|5432|5433)"
 curl -I https://092024-rouge-4.wns.wilders.dev
 
-# 3. État Docker
+# 3. Docker status
 echo "=== DOCKER ==="
 docker system df
 docker stats --no-stream
 docker compose -f ~/askandtrust-prod/apps/compose.prod.yml ps
 
-# 4. État base de données
-echo "=== BASE DE DONNÉES ==="
+# 4. Database status
+echo "=== DATABASE ==="
 docker exec askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust -c "SELECT count(*) FROM users;"
 docker exec askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust -c "SELECT count(*) FROM surveys;"
 
-# 5. Logs récents
-echo "=== LOGS RÉCENTS ==="
+# 5. Recent logs
+echo "=== RECENT LOGS ==="
 tail -20 ~/askandtrust-prod/apps/logs/error.log
 docker logs askandtrust-prod-backend-1 --tail 20
 
-echo "🏁 Diagnostic terminé - $(date)"
+echo "🏁 Diagnostics completed - $(date)"
 ```
 
 ### 📋 Checklist de Reprise
@@ -470,16 +521,16 @@ echo "🏁 Diagnostic terminé - $(date)"
 ### 🔧 Scénario 1: Panne de Service Applicatif
 
 ```bash
-# Symptômes: 502 Bad Gateway, API non responsive
+# Symptoms: 502 Bad Gateway, API non responsive
 # RTO: 30 minutes | RPO: 5 minutes
 
-echo "🔧 Reprise service applicatif"
+echo "🔧 Application service recovery"
 
-# 1. Diagnostic rapide
+# 1. Quick diagnostics
 docker logs askandtrust-prod-backend-1 --tail 50
 docker logs askandtrust-prod-frontend-1 --tail 50
 
-# 2. Redémarrage sélectif
+# 2. Selective restart
 docker restart askandtrust-prod-backend-1
 docker restart askandtrust-prod-frontend-1
 docker restart askandtrust-prod-nginx-1
@@ -492,49 +543,49 @@ curl -f http://localhost:8000
 ### 💾 Scénario 2: Corruption de Base de Données
 
 ```bash
-# Symptômes: Erreurs DB, corruption détectée
-# RTO: 2 heures | RPO: 6 heures max
+# Symptoms: DB errors, corruption detected
+# RTO: 2 hours | RPO: 6 hours max
 
-echo "💾 Reprise base de données"
+echo "💾 Database recovery"
 
-# 1. Arrêt immédiat du backend
+# 1. Immediate backend shutdown
 docker stop askandtrust-prod-backend-1
 
-# 2. Sauvegarde de l'état actuel
+# 2. Backup current state
 docker exec askandtrust-prod-db-1 pg_dump -U ask_and_trust ask_and_trust > /tmp/corrupted_db_$(date +%Y%m%d_%H%M%S).sql
 
-# 3. Restauration de la dernière sauvegarde valide
+# 3. Restore from latest valid backup
 LATEST_BACKUP=$(ls -t /home/backup/db/askandtrust_prod_*.sql.gz | head -1)
 docker exec -i askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 gunzip -c ${LATEST_BACKUP} | docker exec -i askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust
 
-# 4. Redémarrage du backend
+# 4. Backend restart
 docker start askandtrust-prod-backend-1
 
-# 5. Tests de validation
+# 5. Validation tests
 docker exec askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust -c "SELECT count(*) FROM users;"
 ```
 
 ### 🌐 Scénario 3: Panne Réseau/DNS
 
 ```bash
-# Symptômes: Site inaccessible, DNS timeout
-# RTO: 1 heure | RPO: 0
+# Symptoms: Site inaccessible, DNS timeout
+# RTO: 1 hour | RPO: 0
 
-echo "🌐 Reprise réseau/DNS"
+echo "🌐 Network/DNS recovery"
 
-# 1. Tests de connectivité
+# 1. Connectivity tests
 ping -c 3 8.8.8.8
 nslookup 092024-rouge-4.wns.wilders.dev
 
-# 2. Vérification Caddy
+# 2. Caddy verification
 sudo systemctl status caddy
 sudo caddy validate --config /etc/caddy/Caddyfile
 
-# 3. Redémarrage Caddy
+# 3. Caddy restart
 sudo systemctl restart caddy
 
-# 4. Tests locaux
+# 4. Local tests
 curl -f http://localhost:8000
 curl -f https://092024-rouge-4.wns.wilders.dev
 ```
@@ -548,17 +599,17 @@ curl -f https://092024-rouge-4.wns.wilders.dev
 **🎯 Objectif :** Site de secours opérationnel en < 4 heures
 
 ```bash
-# Configuration Hot Site (À IMPLÉMENTER)
-# Serveur de secours : backup.askandtrust.dev
+# Hot Site configuration (TO IMPLEMENT)
+# Backup server: backup.askandtrust.dev
 
-# 1. Synchronisation des données
+# 1. Data synchronization
 rsync -avz --delete ~/askandtrust-prod/ backup-server:~/askandtrust-prod/
 rsync -avz --delete /home/backup/ backup-server:/home/backup/
 
-# 2. Déploiement sur site de secours
+# 2. Deployment on backup site
 ssh backup-server "cd ~/askandtrust-prod/apps && ./fetch-and-deploy-prod.sh"
 
-# 3. Bascule DNS (À CONFIGURER)
+# 3. DNS failover (TO CONFIGURE)
 # Update DNS A record: 092024-rouge-4.wns.wilders.dev → backup-server-ip
 ```
 
@@ -568,29 +619,29 @@ ssh backup-server "cd ~/askandtrust-prod/apps && ./fetch-and-deploy-prod.sh"
 #!/bin/bash
 # failover-to-hot-site.sh
 
-echo "🔥 ACTIVATION SITE DE SECOURS - $(date)"
+echo "🔥 BACKUP SITE ACTIVATION - $(date)"
 
-# 1. Notification immédiate
-echo "🚨 SITE PRINCIPAL EN PANNE - BASCULE EN COURS"
+# 1. Immediate notification
+echo "🚨 PRIMARY SITE DOWN - FAILOVER IN PROGRESS"
 
-# 2. Sauvegarde finale si possible
-timeout 300 /home/scripts/backup-prod-db.sh || echo "⚠️ Sauvegarde finale échouée"
+# 2. Final backup if possible
+timeout 300 /home/scripts/backup-prod-db.sh || echo "⚠️ Final backup failed"
 
-# 3. Synchronisation vers site de secours
+# 3. Synchronization to backup site
 rsync -avz --timeout=60 ~/askandtrust-prod/ backup-server:~/askandtrust-prod/
 rsync -avz --timeout=60 /home/backup/ backup-server:/home/backup/
 
-# 4. Activation du site de secours
+# 4. Backup site activation
 ssh backup-server "cd ~/askandtrust-prod/apps && ./emergency-restart.sh"
 
-# 5. Tests de validation
-curl -f http://backup-server:8000 || echo "❌ Site de secours non disponible"
+# 5. Validation tests
+curl -f http://backup-server:8000 || echo "❌ Backup site unavailable"
 
-# 6. Bascule DNS (MANUEL pour l'instant)
-echo "⚠️ MANUEL: Basculer DNS vers site de secours"
+# 6. DNS failover (MANUAL for now)
+echo "⚠️ MANUAL: Switch DNS to backup site"
 echo "A record: 092024-rouge-4.wns.wilders.dev → backup-server-ip"
 
-echo "🏁 Bascule terminée - $(date)"
+echo "🏁 Failover completed - $(date)"
 ```
 
 ### 🔄 Procédure de Retour (Failback)
@@ -599,28 +650,28 @@ echo "🏁 Bascule terminée - $(date)"
 #!/bin/bash
 # failback-to-primary.sh
 
-echo "🔄 RETOUR SITE PRINCIPAL - $(date)"
+echo "🔄 RETURN TO PRIMARY SITE - $(date)"
 
-# 1. Validation site principal
+# 1. Primary site validation
 curl -f http://primary-server:8000 || exit 1
 
-# 2. Synchronisation des données récentes
+# 2. Recent data synchronization
 ssh backup-server "/home/scripts/backup-prod-db.sh"
 rsync -avz backup-server:/home/backup/ /home/backup/
 
-# 3. Restauration données récentes sur site principal
+# 3. Restore recent data on primary site
 LATEST_BACKUP=$(ssh backup-server "ls -t /home/backup/db/askandtrust_prod_*.sql.gz | head -1")
 scp backup-server:${LATEST_BACKUP} /tmp/
 gunzip -c /tmp/$(basename ${LATEST_BACKUP}) | docker exec -i askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust
 
-# 4. Tests de validation
+# 4. Validation tests
 docker exec askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust -c "SELECT count(*) FROM users;"
 
-# 5. Bascule DNS retour (MANUEL)
-echo "⚠️ MANUEL: Basculer DNS vers site principal"
+# 5. DNS failback (MANUAL)
+echo "⚠️ MANUAL: Switch DNS back to primary site"
 echo "A record: 092024-rouge-4.wns.wilders.dev → primary-server-ip"
 
-echo "🏁 Retour terminé - $(date)"
+echo "🏁 Return completed - $(date)"
 ```
 
 ---
@@ -632,47 +683,47 @@ echo "🏁 Retour terminé - $(date)"
 ```bash
 #!/bin/bash
 # full-system-restore.sh
-# Utilisation en cas de perte totale du serveur principal
+# Usage in case of total loss of primary server
 
-echo "🏗️ RESTAURATION SYSTÈME COMPLÈTE - $(date)"
+echo "🏗️ COMPLETE SYSTEM RESTORATION - $(date)"
 
-# PRÉREQUIS: Nouveau serveur avec Docker installé
+# PREREQUISITES: New server with Docker installed
 
-# 1. Restauration de la structure
+# 1. Structure restoration
 mkdir -p ~/askandtrust-prod/apps
 mkdir -p ~/askandtrust-staging/apps
 mkdir -p /home/backup/db
 mkdir -p /home/backup/config
 
-# 2. Récupération des configurations
-# Depuis sauvegarde externe ou site de secours
+# 2. Configuration recovery
+# From external backup or backup site
 rsync -avz backup-source:/home/backup/config/ /home/backup/config/
 tar -xzf /home/backup/config/askandtrust_config_latest.tar.gz -C ~/
 
-# 3. Installation des dépendances système
+# 3. System dependencies installation
 sudo apt update
 sudo apt install -y curl postgresql-client
 
-# 4. Configuration Caddy
+# 4. Caddy configuration
 sudo cp /home/backup/config/Caddyfile /etc/caddy/
 sudo systemctl enable caddy
 sudo systemctl start caddy
 
-# 5. Déploiement des applications
+# 5. Application deployment
 cd ~/askandtrust-prod/apps
 ./fetch-and-deploy-prod.sh
 
 cd ~/askandtrust-staging/apps
 ./fetch-and-deploy.sh
 
-# 6. Restauration des données
+# 6. Data restoration
 LATEST_DB_BACKUP=$(ls -t /home/backup/db/askandtrust_prod_*.sql.gz | head -1)
 gunzip -c ${LATEST_DB_BACKUP} | docker exec -i askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust
 
-# 7. Tests complets
+# 7. Complete tests
 ./advanced-diagnostics.sh
 
-echo "🏁 Restauration complète terminée - $(date)"
+echo "🏁 Complete restoration finished - $(date)"
 ```
 
 ### 📊 Checklist Restauration Complète
@@ -715,70 +766,70 @@ echo "🏁 Restauration complète terminée - $(date)"
 #!/bin/bash
 # damage-assessment.sh
 
-echo "📊 ÉVALUATION DES DOMMAGES - $(date)"
+echo "📊 DAMAGE ASSESSMENT - $(date)"
 
-# 1. Évaluation Infrastructure
+# 1. Infrastructure assessment
 echo "=== INFRASTRUCTURE ==="
 systemctl list-units --failed
 docker system df
 df -h
 
-# 2. Évaluation Données
-echo "=== DONNÉES ==="
+# 2. Data assessment
+echo "=== DATA ==="
 docker exec askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust -c "\dt" 2>/dev/null || echo "❌ DB inaccessible"
 ls -la ~/askandtrust-prod/apps/
 ls -la /home/backup/db/
 
-# 3. Évaluation Configuration
+# 3. Configuration assessment
 echo "=== CONFIGURATION ==="
-sudo caddy validate --config /etc/caddy/Caddyfile 2>/dev/null || echo "❌ Caddy config invalide"
-docker compose -f ~/askandtrust-prod/apps/compose.prod.yml config 2>/dev/null || echo "❌ Compose config invalide"
+sudo caddy validate --config /etc/caddy/Caddyfile 2>/dev/null || echo "❌ Caddy config invalid"
+docker compose -f ~/askandtrust-prod/apps/compose.prod.yml config 2>/dev/null || echo "❌ Compose config invalid"
 
-# 4. Évaluation Réseau
-echo "=== RÉSEAU ==="
+# 4. Network assessment
+echo "=== NETWORK ==="
 curl -f https://092024-rouge-4.wns.wilders.dev 2>/dev/null || echo "❌ Site inaccessible"
 nslookup 092024-rouge-4.wns.wilders.dev
 
-# 5. Rapport final
-echo "=== RAPPORT ==="
+# 5. Final report
+echo "=== REPORT ==="
 echo "Timestamp: $(date)"
-echo "Services affectés: [À COMPLÉTER MANUELLEMENT]"
-echo "Données perdues: [À COMPLÉTER MANUELLEMENT]"
-echo "Durée d'indisponibilité estimée: [À COMPLÉTER MANUELLEMENT]"
+echo "Affected services: [TO COMPLETE MANUALLY]"
+echo "Lost data: [TO COMPLETE MANUALLY]"
+echo "Estimated downtime: [TO COMPLETE MANUALLY]"
 
-echo "🏁 Évaluation terminée - $(date)"
+echo "🏁 Assessment completed - $(date)"
 ```
 
 ### 🎯 Plan de Reconstruction Progressive
 
-**🔵 Phase 1 - Stabilisation (0-2h)**
+**🔵 Phase 1 - Stabilization (0-2h)**
 
 ```bash
-# Objectif: Service minimal fonctionnel
-1. Redémarrage des services critiques
-2. Restauration de la dernière sauvegarde DB stable
-3. Page de maintenance si nécessaire
-4. Communication aux utilisateurs
+# Objective: Minimal functional service
+1. Critical services restart
+2. Restore latest stable DB backup
+3. Maintenance page if needed
+4. User communication
 ```
 
-**🟡 Phase 2 - Restauration (2-8h)**
+**🟡 Phase 2 - Restoration (2-8h)**
 
 ```bash
-# Objectif: Service complet restauré
-1. Correction des causes racines
-2. Restauration complète des données
-3. Tests fonctionnels complets
-4. Monitoring renforcé
+# Objective: Complete service restored
+1. Root cause correction
+2. Complete data restoration
+3. Full functional tests
+4. Enhanced monitoring
 ```
 
-**🟢 Phase 3 - Optimisation (8-24h)**
+**🟢 Phase 3 - Optimization (8-24h)**
 
 ```bash
-# Objectif: Performance et stabilité
-1. Optimisation performance
-2. Renforcement sécurité
-3. Amélioration monitoring
-4. Documentation mise à jour
+# Objective: Performance and stability
+1. Performance optimization
+2. Security reinforcement
+3. Monitoring improvement
+4. Documentation update
 ```
 
 ---
@@ -800,9 +851,9 @@ echo "🏁 Évaluation terminée - $(date)"
 #!/bin/bash
 # monthly-drp-test.sh
 
-echo "🧪 TEST DRP MENSUEL - $(date)"
+echo "🧪 MONTHLY DRP TEST - $(date)"
 
-# 1. Création environnement de test
+# 1. Create test environment
 docker network create drp-test-network
 docker run -d --name drp-test-db --network drp-test-network \
   -e POSTGRES_DB=ask_and_trust \
@@ -810,46 +861,46 @@ docker run -d --name drp-test-db --network drp-test-network \
   -e POSTGRES_PASSWORD=test_password \
   postgres:15
 
-# 2. Test de restauration
+# 2. Restoration test
 LATEST_BACKUP=$(ls -t /home/backup/db/askandtrust_prod_*.sql.gz | head -1)
-echo "Utilisation sauvegarde: ${LATEST_BACKUP}"
+echo "Using backup: ${LATEST_BACKUP}"
 
 gunzip -c ${LATEST_BACKUP} | docker exec -i drp-test-db psql -U ask_and_trust -d ask_and_trust
 
-# 3. Validation des données
+# 3. Data validation
 USERS_COUNT=$(docker exec drp-test-db psql -U ask_and_trust -d ask_and_trust -t -c "SELECT count(*) FROM users")
 SURVEYS_COUNT=$(docker exec drp-test-db psql -U ask_and_trust -d ask_and_trust -t -c "SELECT count(*) FROM surveys")
 
-echo "✅ Utilisateurs restaurés: ${USERS_COUNT}"
-echo "✅ Sondages restaurés: ${SURVEYS_COUNT}"
+echo "✅ Users restored: ${USERS_COUNT}"
+echo "✅ Surveys restored: ${SURVEYS_COUNT}"
 
-# 4. Test de performance
+# 4. Performance test
 START_TIME=$(date +%s)
 docker exec drp-test-db psql -U ask_and_trust -d ask_and_trust -c "SELECT * FROM users LIMIT 100" > /dev/null
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 
-echo "✅ Performance requête: ${DURATION}s"
+echo "✅ Query performance: ${DURATION}s"
 
-# 5. Nettoyage
+# 5. Cleanup
 docker stop drp-test-db && docker rm drp-test-db
 docker network rm drp-test-network
 
-# 6. Rapport
+# 6. Report
 cat << EOF > /home/reports/drp_test_$(date +%Y%m%d).md
-# Test DRP - $(date)
+# DRP Test - $(date)
 
-## Résultats
-- ✅ Restauration DB: OK
-- ✅ Données: ${USERS_COUNT} users, ${SURVEYS_COUNT} surveys
+## Results
+- ✅ DB Restoration: OK
+- ✅ Data: ${USERS_COUNT} users, ${SURVEYS_COUNT} surveys
 - ✅ Performance: ${DURATION}s
-- ✅ Procédures: OK
+- ✅ Procedures: OK
 
 ## Actions
-- Prochaine révision: $(date -d "+1 month" +%Y-%m-%d)
+- Next revision: $(date -d "+1 month" +%Y-%m-%d)
 EOF
 
-echo "🏁 Test DRP terminé - $(date)"
+echo "🏁 DRP test completed - $(date)"
 ```
 
 ### 🔥 Simulation de Sinistre Trimestrielle
@@ -858,42 +909,42 @@ echo "🏁 Test DRP terminé - $(date)"
 #!/bin/bash
 # quarterly-disaster-simulation.sh
 
-echo "🔥 SIMULATION SINISTRE TRIMESTRIELLE - $(date)"
+echo "🔥 QUARTERLY DISASTER SIMULATION - $(date)"
 
-# ATTENTION: Test en environnement staging uniquement
+# WARNING: Test in staging environment only
 
-# 1. Arrêt simulé du staging
+# 1. Simulated staging shutdown
 cd ~/askandtrust-staging/apps
 docker compose -f compose.staging.yml --project-name askandtrust-staging down
 
-# 2. "Corruption" simulée (renommage)
+# 2. Simulated "corruption" (rename)
 docker volume ls | grep askandtrust-staging-db-data
 mv /var/lib/docker/volumes/askandtrust-staging_db-data /var/lib/docker/volumes/askandtrust-staging_db-data.corrupted
 
-# 3. Activation procédures DRP
+# 3. Activate DRP procedures
 ./emergency-restart.sh
 
-# 4. Mesure du temps de reprise
+# 4. Recovery time measurement
 START_TIME=$(date +%s)
 
-# Restauration depuis sauvegarde
+# Restoration from backup
 LATEST_BACKUP=$(ls -t /home/backup/db/askandtrust_staging_*.sql.gz | head -1)
 gunzip -c ${LATEST_BACKUP} | docker exec -i askandtrust-staging-db-1 psql -U ask_and_trust -d ask_and_trust
 
-# Test de validation
-curl -f http://localhost:8001 || echo "❌ Staging non fonctionnel"
+# Validation test
+curl -f http://localhost:8001 || echo "❌ Staging not functional"
 
 END_TIME=$(date +%s)
 RECOVERY_TIME=$((END_TIME - START_TIME))
 
-echo "⏱️ Temps de reprise: ${RECOVERY_TIME}s (Objectif: < 14400s)"
+echo "⏱️ Recovery time: ${RECOVERY_TIME}s (Target: < 14400s)"
 
-# 5. Restauration état normal
+# 5. Restore normal state
 docker compose -f compose.staging.yml --project-name askandtrust-staging down
 mv /var/lib/docker/volumes/askandtrust-staging_db-data.corrupted /var/lib/docker/volumes/askandtrust-staging_db-data
 docker compose -f compose.staging.yml --project-name askandtrust-staging up -d
 
-echo "🏁 Simulation terminée - $(date)"
+echo "🏁 Simulation completed - $(date)"
 ```
 
 ---
@@ -939,16 +990,16 @@ echo "🏁 Simulation terminée - $(date)"
 #!/bin/bash
 # drp-review-reminder.sh
 
-# Script à exécuter mensuellement via cron
+# Script to run monthly via cron
 
 LAST_UPDATE=$(stat -c %y "server/Disaster-recovery-plant.MD" | cut -d' ' -f1)
 CURRENT_DATE=$(date +%Y-%m-%d)
 DAYS_SINCE=$(( ($(date -d "$CURRENT_DATE" +%s) - $(date -d "$LAST_UPDATE" +%s)) / 86400 ))
 
 if [ $DAYS_SINCE -gt 90 ]; then
-    echo "⚠️ ALERTE: Plan DRP non mis à jour depuis ${DAYS_SINCE} jours"
-    echo "Action requise: Révision du plan DRP"
-    # Envoyer notification à l'équipe
+    echo "⚠️ ALERT: DRP plan not updated for ${DAYS_SINCE} days"
+    echo "Action required: DRP plan revision"
+    # Send notification to team
 fi
 ```
 
@@ -966,12 +1017,12 @@ fi
 ### 📊 Métriques de Performance
 
 ```bash
-# Métriques à surveiller
+# Metrics to monitor
 - Uptime: 99.9% minimum
-- Response Time: < 2s moyenne
+- Response Time: < 2s average
 - Database Response: < 500ms
-- CPU Usage: < 80% moyenne
-- Memory Usage: < 85% moyenne
+- CPU Usage: < 80% average
+- Memory Usage: < 85% average
 - Disk Usage: < 90% maximum
 ```
 
@@ -1001,14 +1052,14 @@ Contact: drp-lead@askandtrust.dev
 
 ### 🔧 Scripts d'Urgence
 
-**Localisation**: `/home/scripts/emergency/`
+**Location**: `/home/scripts/emergency/`
 
 ```bash
-emergency-restart.sh        → Redémarrage complet
-advanced-diagnostics.sh     → Diagnostic détaillé
-backup-emergency.sh         → Sauvegarde d'urgence
-failover-to-hot-site.sh    → Bascule site secours
-damage-assessment.sh        → Évaluation dommages
+emergency-restart.sh        → Complete restart
+advanced-diagnostics.sh     → Detailed diagnostics
+backup-emergency.sh         → Emergency backup
+failover-to-hot-site.sh    → Backup site failover
+damage-assessment.sh        → Damage assessment
 ```
 
 ---
@@ -1032,26 +1083,26 @@ damage-assessment.sh        → Évaluation dommages
 # monthly-drp-report.sh
 
 cat << EOF > /home/reports/drp_monthly_$(date +%Y%m).md
-# Rapport DRP Mensuel - $(date +%B %Y)
+# Monthly DRP Report - $(date +%B %Y)
 
-## Incidents du Mois
-- Nombre total: [À COMPLÉTER]
-- P1 (Critiques): [À COMPLÉTER]
-- P2 (Majeurs): [À COMPLÉTER]
-- Temps de résolution moyen: [À COMPLÉTER]
+## Monthly Incidents
+- Total count: [TO COMPLETE]
+- P1 (Critical): [TO COMPLETE]
+- P2 (Major): [TO COMPLETE]
+- Average resolution time: [TO COMPLETE]
 
-## Tests et Validations
-- Tests de sauvegarde: [OK/NOK]
-- Test de restauration: [OK/NOK]
-- Mise à jour documentation: [OK/NOK]
+## Tests and Validations
+- Backup tests: [OK/NOK]
+- Restoration test: [OK/NOK]
+- Documentation update: [OK/NOK]
 
-## Actions d'Amélioration
+## Improvement Actions
 - [ACTION 1]
 - [ACTION 2]
 
-## Prochaines Échéances
-- Prochain test trimestriel: $(date -d "+1 month" +%Y-%m-%d)
-- Révision annuelle: $(date -d "+6 months" +%Y-%m-%d)
+## Upcoming Deadlines
+- Next quarterly test: $(date -d "+1 month" +%Y-%m-%d)
+- Annual revision: $(date -d "+6 months" +%Y-%m-%d)
 
 EOF
 ```
