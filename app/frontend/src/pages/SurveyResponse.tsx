@@ -67,7 +67,7 @@ export default function SurveyResponse() {
 
 			<div className="bg-black-50 min-h-screen">
 				{/* Header Section */}
-				<section className="bg-white shadow-sm">
+				<section className="shadow-default bg-white">
 					<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
 						<div className="mb-4 flex items-center gap-4">
 							<Button

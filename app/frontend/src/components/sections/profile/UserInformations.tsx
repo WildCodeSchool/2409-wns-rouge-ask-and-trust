@@ -26,7 +26,7 @@ export default function UserInformations() {
 					: "sm:max-w-[331px] lg:min-w-[428px]"
 			}`}
 		>
-			<div className="rounded-md bg-white shadow-lg shadow-black/10">
+			<div className="shadow-component rounded-md bg-white shadow-black/10">
 				<div className="bg-primary-default rounded-t-md p-2 text-center text-white">
 					<h4 className="text-2xl font-semibold">
 						Informations de l'utilisateur

@@ -87,7 +87,7 @@ function SurveyCreator() {
 						/>
 					</Helmet>
 					<div className="min-h-screen bg-gray-50">
-						<section className="bg-white shadow-sm">
+						<section className="shadow-default bg-white">
 							<div className="mx-auto max-w-7xl px-4 py-4 lg:px-8">
 								<h1 className="text-2xl font-semibold text-gray-900">
 									Création de l'enquête

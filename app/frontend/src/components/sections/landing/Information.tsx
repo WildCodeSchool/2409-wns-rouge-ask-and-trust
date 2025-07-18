@@ -23,7 +23,7 @@ const Information = () => {
 			</div>
 			<div className="relative" aria-label="Fenetres expliquatives">
 				<div className="flex flex-col items-center gap-12 lg:flex-row lg:gap-28">
-					<div className="relative flex max-w-[394px] flex-col rounded-xl shadow-lg shadow-black/10 lg:max-w-[466px]">
+					<div className="shadow-component relative flex max-w-[394px] flex-col rounded-xl shadow-black/10 lg:max-w-[466px]">
 						<div className="bg-primary-default flex gap-2.5 rounded-t-xl px-4 py-3">
 							<div className="flex h-[15px] w-[15px] flex-row rounded-xl bg-white"></div>
 							<div className="flex h-[15px] w-[15px] flex-row rounded-xl bg-white"></div>
@@ -44,7 +44,7 @@ const Information = () => {
 							</p>
 						</div>
 					</div>
-					<div className="rounded-xl shadow-lg shadow-black/10">
+					<div className="shadow-component rounded-xl shadow-black/10">
 						<img src={imgGrpIcons} alt="img-window-content" />
 					</div>
 				</div>
