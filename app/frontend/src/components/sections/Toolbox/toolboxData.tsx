@@ -69,7 +69,7 @@ export const toolboxCategories: ToolboxCategory[] = [
 				id: "paragraph",
 				label: "Paragraphe",
 				icon: <AlignJustify className="text-primary-700 h-5 w-5" />,
-				onClickType: "text",
+				onClickType: "textarea",
 			},
 			// {
 			// 	id: "multi-line",
