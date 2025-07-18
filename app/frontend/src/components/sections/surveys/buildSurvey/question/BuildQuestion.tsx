@@ -26,6 +26,7 @@ import {
 
 type QuestionProps = {
 	questionId: number
+	index: number
 }
 
 type RenderAnswerComponentProps = {
@@ -84,7 +85,7 @@ const getDefaultAnswersForType = (type: QuestionType) => {
 }
 
 function BuildQuestion(
-	{ questionId }: QuestionProps,
+	{ questionId, index }: QuestionProps,
 	ref: React.Ref<HTMLLIElement> | null
 ) {
 	const {
@@ -252,12 +253,21 @@ function BuildQuestion(
 		<li className="list-none" ref={ref} tabIndex={-1}>
 			<FormWrapper
 				onSubmit={handleSubmit(handleSubmitForm)}
-				className="md:max-w-full lg:max-w-[45rem]"
+				className="w-full md:max-w-full"
 			>
 				<div className="flex content-center justify-between">
-					<h3 className="flex-1 self-center text-2xl font-bold">
-						{question.title ?? "Nouvelle question"}
-					</h3>
+					<div className="flex h-fit items-center justify-start gap-2">
+						<span
+							className={
+								"bg-primary-700 border-primary-700 z-10 flex aspect-square h-6 items-center justify-center rounded-full border text-xs font-medium text-white transition-colors"
+							}
+						>
+							{index}
+						</span>
+						<h3 className="line-h my-0 flex-1 self-center py-0 text-2xl leading-none font-bold">
+							{question.title ?? "Nouvelle question"}
+						</h3>
+					</div>
 					<Button
 						variant="ghost_destructive"
 						size="square_sm"
