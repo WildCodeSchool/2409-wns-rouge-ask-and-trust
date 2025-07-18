@@ -20,19 +20,19 @@ export const toolboxCategories: ToolboxCategory[] = [
 		items: [
 			{
 				id: "select",
-				label: "Liste déroulante",
+				label: "liste déroulante",
 				icon: <ListFilter className="text-primary-700 h-5 w-5" />,
 				onClickType: "select",
 			},
 			{
 				id: "checkboxes",
-				label: "Cases à cocher",
+				label: "cases à cocher",
 				icon: <CheckSquare className="text-primary-700 h-5 w-5" />,
 				onClickType: "checkbox",
 			},
 			{
 				id: "radio",
-				label: "Liste à choix unique",
+				label: "liste à choix unique",
 				icon: (
 					<div className="relative flex h-5 w-5 items-center justify-center">
 						<Circle className="text-primary-700 h-5 w-5" />
@@ -61,15 +61,15 @@ export const toolboxCategories: ToolboxCategory[] = [
 		items: [
 			{
 				id: "single-line",
-				label: "Réponse courte",
+				label: "réponse courte",
 				icon: <Type className="text-primary-700 h-5 w-5" />,
 				onClickType: "text",
 			},
 			{
 				id: "paragraph",
-				label: "Paragraphe",
+				label: "paragraphe",
 				icon: <AlignJustify className="text-primary-700 h-5 w-5" />,
-				onClickType: "text",
+				onClickType: "textarea",
 			},
 			// {
 			// 	id: "multi-line",
