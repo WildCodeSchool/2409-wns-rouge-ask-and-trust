@@ -49,7 +49,7 @@ function RadioGroupItem({ className, label, ...props }: RadioGroupItemProps) {
 			<RadioGroupItemPrimitive
 				data-slot="radio-group-item"
 				className={cn(
-					"border-black-100 focus-visible:border-primary-700 aspect-square size-4 cursor-pointer rounded-full border bg-transparent text-black shadow-xs ring-offset-0 transition-colors outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50",
+					"border-black-100 focus-visible:border-primary-700 shadow-small aspect-square size-4 cursor-pointer rounded-full border bg-transparent text-black ring-offset-0 transition-colors outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50",
 
 					className
 				)}
