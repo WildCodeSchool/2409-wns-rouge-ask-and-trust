@@ -95,7 +95,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 				{questions.length === 0 ? (
 					<EmptyState />
 				) : (
-					questions.map(question => {
+					questions.map((question, index) => {
 						const isNew = newQuestionId === question.id
 						return (
 							<div
@@ -105,7 +105,10 @@ export const Canvas: React.FC<CanvasProps> = ({
 									if (isNew) setNewQuestionElement(el)
 								}}
 							>
-								<BuildQuestion questionId={question.id} />
+								<BuildQuestion
+									questionId={question.id}
+									index={index + 1}
+								/>
 							</div>
 						)
 					})
