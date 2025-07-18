@@ -1,5 +1,4 @@
 import FormWrapper from "@/components/sections/auth/form/FormWrapper"
-import { BuildListAnswers } from "@/components/sections/surveys/buildSurvey/question/BuildListAnswers"
 import QuestionTypeSelect from "@/components/sections/surveys/buildSurvey/question/QuestionTypeSelection"
 import { Button } from "@/components/ui/Button"
 import {
@@ -10,63 +9,14 @@ import {
 import { useToast } from "@/hooks/useToast"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
 import { forwardRef, useEffect, useRef } from "react"
-import {
-	FieldArrayWithId,
-	FieldValues,
-	useFieldArray,
-	UseFieldArrayAppend,
-	UseFieldArrayRemove,
-	useForm,
-	UseFormRegister,
-	useWatch,
-} from "react-hook-form"
+import { useFieldArray, useForm, useWatch } from "react-hook-form"
 import { BuildQuestionHeader } from "./BuildQuestionHeader"
 import { QuestionTitleInput } from "./QuestionTitleInput"
+import { RenderAnswersComponent } from "./RenderAnswersComponent"
 
 type QuestionProps = {
 	questionId: number
 	index: number
-}
-
-type RenderAnswerComponentProps = {
-	questionType: QuestionType
-	register: UseFormRegister<QuestionUpdate>
-	errors: FieldValues
-	fields: FieldArrayWithId<QuestionUpdate, "answers", "id">[]
-	remove: UseFieldArrayRemove
-	append: UseFieldArrayAppend<QuestionUpdate, "answers">
-}
-
-export function RenderAnswerComponent({
-	questionType,
-	register,
-	errors,
-	fields,
-	remove,
-	append,
-}: RenderAnswerComponentProps) {
-	// Render the appropriate answer component based on the question type
-	switch (questionType) {
-		case TypesOfQuestion.Text:
-		case TypesOfQuestion.TextArea:
-			return null
-		case TypesOfQuestion.Boolean:
-		case TypesOfQuestion.Radio:
-		case TypesOfQuestion.Select:
-		case TypesOfQuestion.Checkbox:
-			return (
-				<BuildListAnswers
-					register={register}
-					errors={errors}
-					fields={fields}
-					remove={remove}
-					append={append}
-					questionType={questionType}
-				/>
-			)
-		default:
-			throw new Error(`Unsupported question type: ${questionType}`)
-	}
 }
 
 function BuildQuestion(
@@ -105,7 +55,6 @@ function BuildQuestion(
 		name: "type",
 	})
 	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
-	// const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
 	const { showToast } = useToast()
 
 	// Show error toast if there is an error during question update, delete or load
@@ -148,7 +97,6 @@ function BuildQuestion(
 	}, [loading, getQuestionError, reset, question])
 
 	// If type changed to a multiple type, provide default answers with placeholders
-
 	useEffect(() => {
 		if (!watchedType || !question) return
 		if (
@@ -239,7 +187,7 @@ function BuildQuestion(
 				{watchedType && (
 					<>
 						<QuestionTypeSelect control={control} errors={errors} />
-						<RenderAnswerComponent
+						<RenderAnswersComponent
 							questionType={watchedType}
 							register={register}
 							errors={errors}
