@@ -2,8 +2,6 @@ import FormWrapper from "@/components/sections/auth/form/FormWrapper"
 import { BuildListAnswers } from "@/components/sections/surveys/buildSurvey/question/BuildListAnswers"
 import QuestionTypeSelect from "@/components/sections/surveys/buildSurvey/question/QuestionTypeSelection"
 import { Button } from "@/components/ui/Button"
-import { Input } from "@/components/ui/Input"
-import { Label } from "@/components/ui/Label"
 import {
 	UpdateQuestionInput,
 	useQuestion,
@@ -23,6 +21,7 @@ import {
 	useWatch,
 } from "react-hook-form"
 import { BuildQuestionHeader } from "./BuildQuestionHeader"
+import { QuestionTitleInput } from "./QuestionTitleInput"
 
 type QuestionProps = {
 	questionId: number
@@ -233,21 +232,10 @@ function BuildQuestion(
 						surveyId: question.survey.id,
 					}}
 				/>
-
-				<div className="flex flex-col gap-1">
-					<Label htmlFor="title" required>
-						Titre
-					</Label>
-					<Input
-						id="title"
-						placeholder="Titre de la question"
-						{...register("title", {
-							required: "Le titre est requis.",
-						})}
-						aria-invalid={errors.title ? "true" : "false"}
-						errorMessage={errors?.title?.message}
-					/>
-				</div>
+				<QuestionTitleInput
+					register={register}
+					errorsTitle={errors?.title}
+				/>
 				{watchedType && (
 					<>
 						<QuestionTypeSelect control={control} errors={errors} />
