@@ -45,7 +45,7 @@ export function Callout({
 	return (
 		<div
 			className={cn(
-				"my-2 flex items-start gap-2 rounded-md px-4 py-2",
+				"flex items-start gap-2 rounded-md px-4 py-2",
 				typeStyles[type] || typeStyles.default,
 				className
 			)}

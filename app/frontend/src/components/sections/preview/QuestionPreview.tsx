@@ -11,7 +11,7 @@ type QuestionPreviewProps = {
 
 export default function QuestionPreview({ question }: QuestionPreviewProps) {
 	return (
-		<div className="mb-6">
+		<div className="mb-8 last-of-type:mb-0">
 			<Label className="mb-2 block">{question.title}</Label>
 			{question.type === TypesOfQuestion.Text && (
 				<ReadOnlyInput placeholder="Votre réponse..." />
@@ -32,7 +32,7 @@ export default function QuestionPreview({ question }: QuestionPreviewProps) {
 				<ReadOnlySelect options={question.answers.map(a => a.value)} />
 			)}
 
-			{question.type === TypesOfQuestion.Multiple_Choice && (
+			{question.type === TypesOfQuestion.Checkbox && (
 				<ReadOnlyCheckboxGroup
 					options={question.answers.map(a => a.value)}
 				/>
