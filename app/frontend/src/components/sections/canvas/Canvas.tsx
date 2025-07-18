@@ -124,7 +124,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 					Ajouter une question
 				</Button>
 			</div>
-			{!isCompact && (
+			{!isCompact && questions.length > 0 && (
 				<TableContentQuestions
 					questions={questions}
 					onQuestionClick={scrollToQuestion}

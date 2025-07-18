@@ -62,25 +62,11 @@ export function RenderAnswerComponent({
 					fields={fields}
 					remove={remove}
 					append={append}
+					questionType={questionType}
 				/>
 			)
 		default:
 			throw new Error(`Unsupported question type: ${questionType}`)
-	}
-}
-
-const getDefaultAnswersForType = (type: QuestionType) => {
-	// Provide default answers based on the question type
-	// This is useful when the question type changes and there are no answers yet
-	switch (type) {
-		case TypesOfQuestion.Boolean:
-			return [{ value: "Vrai" }, { value: "Faux" }]
-		case TypesOfQuestion.Radio:
-		case TypesOfQuestion.Select:
-		case TypesOfQuestion.Checkbox:
-			return [{ value: "Réponse 1" }, { value: "Réponse 2" }]
-		default:
-			return []
 	}
 }
 
@@ -163,33 +149,35 @@ function BuildQuestion(
 			// Init reference to the previous type
 			prevTypeRef.current = question.type
 		}
-	}, [question?.id, loading, getQuestionError, reset, question])
+	}, [loading, getQuestionError, reset, question])
 
-	// After saving question, if type has changed and there is no answer, provide default answers
+	// If type changed to a multiple type, provide default answers with placeholders
+
 	useEffect(() => {
 		if (!watchedType || !question) return
+		if (
+			watchedType === TypesOfQuestion.Text ||
+			watchedType === TypesOfQuestion.TextArea
+		)
+			return
+		const isTypeWithAnswers = [
+			TypesOfQuestion.Boolean,
+			TypesOfQuestion.Radio,
+			TypesOfQuestion.Select,
+			TypesOfQuestion.Checkbox,
+		].includes(watchedType)
 
-		// Check if the type has changed and if there are no answers yet
-		const hasTypeChanged =
-			prevTypeRef.current && prevTypeRef.current !== watchedType
-		const answersAreEmpty = fields.length === 0
-
-		if (hasTypeChanged && answersAreEmpty) {
-			// If the form has no answers, append default answers based on the type
-			const defaults = getDefaultAnswersForType(watchedType)
-			// Append default answers to the form
-			append(defaults) // shouldFocus is false to avoid focusing input immediately
+		if (
+			prevTypeRef.current !== watchedType &&
+			isTypeWithAnswers &&
+			fields.length === 0
+		) {
+			append({ value: "" })
+			append({ value: "" })
 		}
-		// Always update the previous type reference after checking
+
 		prevTypeRef.current = watchedType
-	}, [append, fields.length, question, watchedType])
-
-	// Focus the delete button when it is opened
-	useEffect(() => {
-		if (openButtonDeleteQuestion) {
-			deleteButtonRef.current?.focus()
-		}
-	}, [openButtonDeleteQuestion])
+	}, [watchedType, append, fields.length, question])
 
 	const handleClickDelete = async (
 		questionId: number | undefined,
