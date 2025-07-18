@@ -848,10 +848,15 @@ echo "🏁 Assessment completed - $(date)"
 ### 🧪 Test de Restauration Mensuel
 
 ```bash
-#!/bin/bash
-# monthly-drp-test.sh
+#!/usr/bin/env bash
 
 echo "🧪 MONTHLY DRP TEST - $(date)"
+
+REPORT_DIR=/home/wns_student/reports
+mkdir -p $REPORT_DIR
+
+# Cleanup on exit
+trap 'docker stop drp-test-db > /dev/null 2>&1; docker rm drp-test-db > /dev/null 2>&1; docker network rm drp-test-network > /dev/null 2>&1' EXIT
 
 # 1. Create test environment
 docker network create drp-test-network
@@ -861,15 +866,32 @@ docker run -d --name drp-test-db --network drp-test-network \
   -e POSTGRES_PASSWORD=test_password \
   postgres:15
 
+# 1b. Wait for Postgres to be ready
+for i in {1..30}; do
+    if docker exec drp-test-db pg_isready -U ask_and_trust > /dev/null 2>&1; then
+        break
+    fi
+    sleep 1
+    if [ $i -eq 30 ]; then
+        echo "❌ PostgreSQL in DRP test container did not start after 30s" >&2
+        exit 1
+    fi
+done
+
 # 2. Restoration test
-LATEST_BACKUP=$(ls -t /home/backup/db/askandtrust_prod_*.sql.gz | head -1)
+LATEST_BACKUP=$(ls -t /home/wns_student/backup/db/askandtrust_prod_*.sql.gz | head -1)
 echo "Using backup: ${LATEST_BACKUP}"
 
 gunzip -c ${LATEST_BACKUP} | docker exec -i drp-test-db psql -U ask_and_trust -d ask_and_trust
+RESTORE_EXIT_CODE=$?
+if [ $RESTORE_EXIT_CODE -ne 0 ]; then
+    echo "❌ Restoration failed!" >&2
+    exit 2
+fi
 
 # 3. Data validation
-USERS_COUNT=$(docker exec drp-test-db psql -U ask_and_trust -d ask_and_trust -t -c "SELECT count(*) FROM users")
-SURVEYS_COUNT=$(docker exec drp-test-db psql -U ask_and_trust -d ask_and_trust -t -c "SELECT count(*) FROM surveys")
+USERS_COUNT=$(docker exec drp-test-db psql -U ask_and_trust -d ask_and_trust -t -c "SELECT count(*) FROM users" | tr -d '[:space:]')
+SURVEYS_COUNT=$(docker exec drp-test-db psql -U ask_and_trust -d ask_and_trust -t -c "SELECT count(*) FROM surveys" | tr -d '[:space:]')
 
 echo "✅ Users restored: ${USERS_COUNT}"
 echo "✅ Surveys restored: ${SURVEYS_COUNT}"
@@ -882,12 +904,8 @@ DURATION=$((END_TIME - START_TIME))
 
 echo "✅ Query performance: ${DURATION}s"
 
-# 5. Cleanup
-docker stop drp-test-db && docker rm drp-test-db
-docker network rm drp-test-network
-
-# 6. Report
-cat << EOF > /home/reports/drp_test_$(date +%Y%m%d).md
+# 5. Report
+cat << EOF > $REPORT_DIR/drp_test_$(date +%Y%m%d).md
 # DRP Test - $(date)
 
 ## Results
@@ -901,48 +919,84 @@ cat << EOF > /home/reports/drp_test_$(date +%Y%m%d).md
 EOF
 
 echo "🏁 DRP test completed - $(date)"
+
 ```
 
 ### 🔥 Simulation de Sinistre Trimestrielle
 
 ```bash
-#!/bin/bash
-# quarterly-disaster-simulation.sh
+#!/usr/bin/env bash
+set -euo pipefail
 
 echo "🔥 QUARTERLY DISASTER SIMULATION - $(date)"
+export GATEWAY_PORT_STAGING=8001
 
-# WARNING: Test in staging environment only
+STAGING_PATH=~/askandtrust-staging/apps
+COMPOSE_FILE=compose.staging.yml
+VOLUME_PATH="/var/lib/docker/volumes/askandtrust-staging_db-data"
+BACKUP_PATTERN="/home/backup/db/askandtrust_staging_*.sql.gz"
+EMERGENCY_SCRIPT="$STAGING_PATH/emergency-restart.sh"
 
 # 1. Simulated staging shutdown
-cd ~/askandtrust-staging/apps
-docker compose -f compose.staging.yml --project-name askandtrust-staging down
+cd "$STAGING_PATH"
+docker compose -f "$COMPOSE_FILE" --project-name askandtrust-staging down
 
-# 2. Simulated "corruption" (rename)
-docker volume ls | grep askandtrust-staging-db-data
-mv /var/lib/docker/volumes/askandtrust-staging_db-data /var/lib/docker/volumes/askandtrust-staging_db-data.corrupted
+# 2. Simulated "corruption" (rename, requires sudo)
+if [ -d "$VOLUME_PATH" ]; then
+    sudo mv "$VOLUME_PATH" "${VOLUME_PATH}.corrupted"
+else
+    echo "⚠️ Volume $VOLUME_PATH not found, skipping corruption."
+fi
 
 # 3. Activate DRP procedures
-./emergency-restart.sh
+if [ -x "$EMERGENCY_SCRIPT" ]; then
+    bash "$EMERGENCY_SCRIPT"
+else
+    echo "❌ Emergency restart script not found: $EMERGENCY_SCRIPT"
+fi
 
 # 4. Recovery time measurement
 START_TIME=$(date +%s)
 
-# Restoration from backup
-LATEST_BACKUP=$(ls -t /home/backup/db/askandtrust_staging_*.sql.gz | head -1)
-gunzip -c ${LATEST_BACKUP} | docker exec -i askandtrust-staging-db-1 psql -U ask_and_trust -d ask_and_trust
+# Restoration from backup (if backup exists)
+LATEST_BACKUP=$(ls -t $BACKUP_PATTERN 2>/dev/null | head -1 || true)
+if [ -z "$LATEST_BACKUP" ]; then
+    echo "❌ No staging backup found matching $BACKUP_PATTERN"
+else
+    # Wait for db container to be ready
+    for i in {1..30}; do
+        if docker ps --format '{{.Names}}' | grep -q "askandtrust-staging-db-1"; then
+            if docker exec askandtrust-staging-db-1 pg_isready -U ask_and_trust > /dev/null 2>&1; then
+                break
+            fi
+        fi
+        sleep 2
+    done
+    if ! docker ps --format '{{.Names}}' | grep -q "askandtrust-staging-db-1"; then
+        echo "❌ Staging DB container not running, cannot restore"
+    else
+        gunzip -c "$LATEST_BACKUP" | docker exec -i askandtrust-staging-db-1 psql -U ask_and_trust -d ask_and_trust || echo "❌ Restore failed"
+    fi
+fi
 
 # Validation test
-curl -f http://localhost:8001 || echo "❌ Staging not functional"
+sleep 5
+if curl -fs http://localhost:$GATEWAY_PORT_STAGING; then
+    echo "✅ Staging functional"
+else
+    echo "❌ Staging not functional"
+fi
 
 END_TIME=$(date +%s)
 RECOVERY_TIME=$((END_TIME - START_TIME))
-
 echo "⏱️ Recovery time: ${RECOVERY_TIME}s (Target: < 14400s)"
 
 # 5. Restore normal state
-docker compose -f compose.staging.yml --project-name askandtrust-staging down
-mv /var/lib/docker/volumes/askandtrust-staging_db-data.corrupted /var/lib/docker/volumes/askandtrust-staging_db-data
-docker compose -f compose.staging.yml --project-name askandtrust-staging up -d
+docker compose -f "$COMPOSE_FILE" --project-name askandtrust-staging down
+if [ -d "${VOLUME_PATH}.corrupted" ]; then
+    sudo mv "${VOLUME_PATH}.corrupted" "$VOLUME_PATH"
+fi
+docker compose -f "$COMPOSE_FILE" --project-name askandtrust-staging up -d
 
 echo "🏁 Simulation completed - $(date)"
 ```
