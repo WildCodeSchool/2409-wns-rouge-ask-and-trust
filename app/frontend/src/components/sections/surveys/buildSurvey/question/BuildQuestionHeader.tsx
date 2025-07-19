@@ -61,7 +61,7 @@ export const BuildQuestionHeader = ({ question }: BuildQuestionHeaderProps) => {
 
 	return (
 		<div>
-			<div className="flex content-center justify-between">
+			<div className="flex items-center justify-between">
 				<div className="flex h-fit items-center justify-start gap-2">
 					<span
 						className={
@@ -70,7 +70,7 @@ export const BuildQuestionHeader = ({ question }: BuildQuestionHeaderProps) => {
 					>
 						{question.index}
 					</span>
-					<h3 className="line-h my-0 flex-1 self-center py-0 text-lg leading-none font-bold">
+					<h3 className="my-0 flex-1 self-center py-0 text-lg leading-none font-bold">
 						{question.title ?? "Nouvelle question"}
 					</h3>
 				</div>
