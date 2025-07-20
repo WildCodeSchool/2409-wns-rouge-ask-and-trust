@@ -138,7 +138,8 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	questions: { id: number; title: string }[]
+	// questions: { id: number; title: string }[]
+	questions: Question[]
 	user: User
 }
 

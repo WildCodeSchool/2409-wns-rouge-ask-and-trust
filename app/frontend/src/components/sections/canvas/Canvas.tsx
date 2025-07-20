@@ -1,35 +1,51 @@
 import { EmptyState } from "@/components/sections/canvas/empty-state"
 import { Button } from "@/components/ui/Button"
+import { GET_SURVEY } from "@/graphql/survey/survey"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useResponsivity } from "@/hooks/useResponsivity"
-import { useToast } from "@/hooks/useToast"
+import { QuestionType, Survey } from "@/types/types"
+import { useQuery } from "@apollo/client"
 import { PlusCircle } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import {
+	startTransition,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react"
 import { useParams } from "react-router-dom"
-import BuildQuestion from "../surveys/buildSurvey/question/BuildQuestion"
+import MemoizedBuildQuestion from "../surveys/buildSurvey/question/BuildQuestion"
 import { TableContentQuestions } from "./TableContentQuestions"
 
 interface CanvasProps {
-	questions: { id: number; title: string }[]
 	newQuestionId: number | null
 	setNewQuestionId: (id: number | null) => void
+	onAddQuestion: (type: QuestionType | undefined) => Promise<void>
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
-	questions = [],
+	onAddQuestion,
 	newQuestionId,
 	setNewQuestionId,
 }) => {
-	const {
-		addQuestion,
-		isCreateQuestionLoading,
-		createQuestionError,
-		resetCreateQuestionError,
-	} = useQuestions()
-	const { id: surveyId } = useParams()
-	const [newQuestionElement, setNewQuestionElement] =
-		useState<HTMLDivElement | null>(null)
-	const { showToast } = useToast()
+	const { isCreateQuestionLoading } = useQuestions()
+	const { id: surveyId } = useParams() //
+	const { data, loading: loadingSurvey } = useQuery<{
+		survey: Survey
+	}>(GET_SURVEY, {
+		variables: {
+			surveyId,
+		},
+		fetchPolicy: "cache-first",
+	})
+
+	const questions = useMemo(() => {
+		return data?.survey?.questions ?? []
+	}, [data?.survey?.questions])
+
+	console.log("Canvas render", newQuestionId, performance.now())
+
 	const questionRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
 	const { rootRef, isVerticalCompact, isHorizontalCompact } = useResponsivity(
 		200,
@@ -41,50 +57,32 @@ export const Canvas: React.FC<CanvasProps> = ({
 
 	const isCompact = isVerticalCompact || isHorizontalCompact
 
-	// @TODO fix this : should scroll in canvas and not in window
 	useEffect(() => {
-		if (newQuestionElement) {
-			newQuestionElement.scrollIntoView({
-				behavior: "smooth",
-				block: "center",
-			})
+		if (newQuestionId && questionRefs.current[newQuestionId]) {
+			const el = questionRefs.current[newQuestionId]
+			if (el) {
+				el.scrollIntoView({ behavior: "smooth", block: "center" })
+				el.focus?.()
 
-			newQuestionElement.focus() // Focus only if new question exists
-
-			setNewQuestionId(null)
-			setNewQuestionElement(null)
+				startTransition(() => {
+					setNewQuestionId(null)
+				})
+			}
 		}
-	}, [newQuestionElement, newQuestionId, setNewQuestionId])
-
-	useEffect(() => {
-		if (createQuestionError) {
-			showToast({
-				type: "error",
-				title: "Oops, nous avons rencontré une erreur.",
-				description: "Veuillez réessayer plus tard.",
-			})
-			resetCreateQuestionError()
-		}
-	}, [createQuestionError, resetCreateQuestionError, showToast])
-
-	const handleAddQuestion = async () => {
-		if (!surveyId) return
-		const result = await addQuestion({ surveyId: Number(surveyId) })
-		if (result?.id) {
-			showToast({ type: "success", title: "Question ajoutée !" })
-			setNewQuestionId(result.id)
-		}
-	}
+	}, [newQuestionId, setNewQuestionId])
 
 	// For questions table content : scroll to question on click
-	const scrollToQuestion = (id: number) => {
+	const scrollToQuestion = useCallback((id: number) => {
 		const el = questionRefs.current[id]
 		if (el) {
 			setCurrentQuestionId(id)
 			el.scrollIntoView({ behavior: "smooth", block: "center" })
 			el.focus?.()
 		}
-	}
+	}, [])
+
+	// do better than this
+	if (!surveyId) return <p>L'id de l'enquête est manquante dans l'url</p>
 
 	return (
 		<>
@@ -92,21 +90,20 @@ export const Canvas: React.FC<CanvasProps> = ({
 				ref={rootRef}
 				className="mx-[-0.75rem] flex h-screen w-full flex-col gap-10 overflow-y-scroll px-[0.75rem]"
 			>
-				{questions.length === 0 ? (
+				{!questions || questions?.length === 0 ? (
 					<EmptyState />
 				) : (
 					questions.map((question, index) => {
-						const isNew = newQuestionId === question.id
 						return (
 							<div
 								key={question.id}
 								ref={el => {
 									questionRefs.current[question.id] = el
-									if (isNew) setNewQuestionElement(el)
 								}}
 							>
-								<BuildQuestion
-									questionId={question.id}
+								<MemoizedBuildQuestion
+									question={question}
+									surveyId={Number(surveyId)}
 									index={index + 1}
 								/>
 							</div>
@@ -115,7 +112,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 				)}
 
 				<Button
-					onClick={handleAddQuestion}
+					onClick={() => onAddQuestion("text")}
 					disabled={isCreateQuestionLoading}
 					ariaLabel="Add Question"
 					icon={PlusCircle}
@@ -124,7 +121,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 					Ajouter une question
 				</Button>
 			</div>
-			{!isCompact && questions.length > 0 && (
+			{!isCompact && questions && questions.length > 0 && (
 				<TableContentQuestions
 					questions={questions}
 					onQuestionClick={scrollToQuestion}

@@ -5,6 +5,10 @@ export const CREATE_QUESTION = gql`
 		createQuestion(data: $data) {
 			id
 			title
+			type
+			answers {
+				value
+			}
 		}
 	}
 `

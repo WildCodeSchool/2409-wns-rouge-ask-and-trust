@@ -1,26 +1,28 @@
 import FormWrapper from "@/components/sections/auth/form/FormWrapper"
 import QuestionTypeSelect from "@/components/sections/surveys/buildSurvey/question/QuestionTypeSelection"
 import { Button } from "@/components/ui/Button"
-import {
-	UpdateQuestionInput,
-	useQuestion,
-	useQuestions,
-} from "@/hooks/useQuestions"
+import { UpdateQuestionInput, useQuestions } from "@/hooks/useQuestions"
 import { useToast } from "@/hooks/useToast"
-import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
-import { forwardRef, useEffect, useRef } from "react"
+import {
+	Question,
+	QuestionType,
+	QuestionUpdate,
+	TypesOfQuestion,
+} from "@/types/types"
+import { forwardRef, memo, useEffect, useRef } from "react"
 import { useFieldArray, useForm, useWatch } from "react-hook-form"
 import { BuildQuestionHeader } from "./BuildQuestionHeader"
 import { QuestionTitleInput } from "./QuestionTitleInput"
 import { RenderAnswersComponent } from "./RenderAnswersComponent"
 
 type QuestionProps = {
-	questionId: number
+	question: Question
 	index: number
+	surveyId: number
 }
 
 function BuildQuestion(
-	{ questionId, index }: QuestionProps,
+	{ question, index, surveyId }: QuestionProps,
 	ref: React.Ref<HTMLLIElement> | null
 ) {
 	const {
@@ -28,14 +30,15 @@ function BuildQuestion(
 		handleSubmit,
 		control,
 		formState: { errors },
-		reset,
-	} = useForm<QuestionUpdate>()
-	// Load question data from the API
-	const {
-		question,
-		loading,
-		error: getQuestionError,
-	} = useQuestion(questionId)
+		// reset,
+	} = useForm<QuestionUpdate>({
+		defaultValues: {
+			title: question.title,
+			type: question.type,
+			answers: question.answers,
+		},
+	})
+
 	// Load question update and delete functions from the API
 	const {
 		updateQuestion,
@@ -54,12 +57,13 @@ function BuildQuestion(
 		control,
 		name: "type",
 	})
-	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
+	const prevTypeRef = useRef<QuestionType>(question.type)
 	const { showToast } = useToast()
 
 	// Show error toast if there is an error during question update, delete or load
+	// @TODO Refacto add this in useQuestions
 	useEffect(() => {
-		if (updateQuestionError || deleteQuestionError || getQuestionError) {
+		if (updateQuestionError || deleteQuestionError) {
 			showToast({
 				type: "error",
 				title: "Oops, nous avons rencontré une erreur.",
@@ -78,25 +82,10 @@ function BuildQuestion(
 		showToast,
 		resetUpdateQuestionError,
 		resetDeleteQuestionError,
-		getQuestionError,
 	])
 
-	// Reset the form with the current question data
-	// This ensures that the form is populated with the latest question data
-	useEffect(() => {
-		if (question && !loading && !getQuestionError) {
-			reset({
-				title: question.title,
-				type: question.type,
-				answers: question.answers,
-			})
-
-			// Init reference to the previous type
-			prevTypeRef.current = question.type
-		}
-	}, [loading, getQuestionError, reset, question])
-
-	// If type changed to a multiple type, provide default answers with placeholders
+	// Watch if question's type changed
+	// If yes, add two answers with placeholders for type with answers if no answers yet
 	useEffect(() => {
 		if (!watchedType || !question) return
 		if (
@@ -104,6 +93,7 @@ function BuildQuestion(
 			watchedType === TypesOfQuestion.TextArea
 		)
 			return
+
 		const isTypeWithAnswers = [
 			TypesOfQuestion.Boolean,
 			TypesOfQuestion.Radio,
@@ -116,12 +106,12 @@ function BuildQuestion(
 			isTypeWithAnswers &&
 			fields.length === 0
 		) {
-			append({ value: "" })
-			append({ value: "" })
+			// Add two empty answers with a placeholder
+			append([{ value: "" }, { value: "" }])
 		}
 
 		prevTypeRef.current = watchedType
-	}, [watchedType, append, fields.length, question])
+	}, [append, fields.length, question, watchedType])
 
 	const handleSubmitForm = async (formData: UpdateQuestionInput) => {
 		if (!question?.id) return
@@ -133,25 +123,38 @@ function BuildQuestion(
 
 		const { title, type } = formData
 
+		const isTypeText =
+			formData.type === TypesOfQuestion.Text ||
+			formData.type === TypesOfQuestion.TextArea
+
 		try {
 			// Call the updateQuestion function with the formatted data
 			await updateQuestion({
 				id: question.id,
 				title: title,
 				type: type,
-				answers: formattedAnswers,
+				answers: isTypeText ? [] : (formattedAnswers ?? []),
 			})
 
+			// await fetchQuestion() // If update is a success, refetch only this question
+			// const { data } = await fetchQuestion({
+			// 	variables: { id: question.id },
+			// })
+
+			// console.log("data", data)
+
+			// console.log("data", data)
+
 			// Reset the form with the updated question data
-			reset({
-				title: formData.title,
-				type: formData.type,
-				answers:
-					// If the question type is Text, empty answers
-					type === TypesOfQuestion.Text
-						? []
-						: (formattedAnswers ?? []),
-			})
+			// reset({
+			// 	title: formData.title,
+			// 	type: formData.type,
+			// 	answers:
+			// 		// If the question type is Text, empty answers
+			// 		type === TypesOfQuestion.Text
+			// 			? []
+			// 			: (formattedAnswers ?? []),
+			// })
 
 			showToast({
 				type: "success",
@@ -177,7 +180,7 @@ function BuildQuestion(
 						title: question.title,
 						type: question.type,
 						index,
-						surveyId: question.survey.id,
+						surveyId,
 					}}
 				/>
 				<QuestionTitleInput
@@ -210,4 +213,20 @@ function BuildQuestion(
 	)
 }
 
-export default forwardRef<HTMLLIElement, QuestionProps>(BuildQuestion)
+const BuildQuestionWithRef = forwardRef<HTMLLIElement, QuestionProps>(
+	BuildQuestion
+)
+
+const MemoizedBuildQuestion = memo(
+	BuildQuestionWithRef,
+	(prevProps, nextProps) => {
+		return (
+			prevProps.question.id === nextProps.question.id &&
+			prevProps.question.title === nextProps.question.title &&
+			prevProps.question.type === nextProps.question.type &&
+			prevProps.index === nextProps.index
+		)
+	}
+)
+
+export default MemoizedBuildQuestion
