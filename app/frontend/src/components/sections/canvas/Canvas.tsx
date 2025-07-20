@@ -44,6 +44,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 		return data?.survey?.questions ?? []
 	}, [data?.survey?.questions])
 
+	console.log("loadingSurvey", loadingSurvey)
 	console.log("Canvas render", newQuestionId, performance.now())
 
 	const questionRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
