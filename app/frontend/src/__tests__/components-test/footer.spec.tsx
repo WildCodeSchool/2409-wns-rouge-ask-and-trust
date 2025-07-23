@@ -30,10 +30,9 @@ describe("footer Components", () => {
 		).toBeInTheDocument()
 		expect(
 			screen.getByRole("navigation", {
-				name: "Navigation du pied de page",
+				name: "Navigation du site",
 			})
 		).toBeInTheDocument()
-		expect(screen.getByRole("separator")).toBeInTheDocument()
 	})
 
 	it("should render all navigation links correctly", () => {
@@ -41,7 +40,7 @@ describe("footer Components", () => {
 
 		const links = screen.getAllByRole("link").length
 
-		expect(links).toEqual(6)
+		expect(links).toEqual(4)
 	})
 
 	it("should have proper ARIA attributes", () => {
@@ -53,9 +52,9 @@ describe("footer Components", () => {
 		)
 		expect(
 			screen.getByRole("navigation", {
-				name: "Navigation du pied de page",
+				name: "Navigation du site",
 			})
-		).toHaveAttribute("aria-label", "Navigation du pied de page")
+		).toHaveAttribute("aria-label", "Navigation du site")
 	})
 
 	it("should display current year in copyright", () => {
