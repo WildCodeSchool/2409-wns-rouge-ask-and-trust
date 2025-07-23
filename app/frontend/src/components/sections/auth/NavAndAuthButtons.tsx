@@ -47,6 +47,7 @@ export default function NavAndAuthButtons({
 							<li
 								className="list-none transition-transform hover:scale-105"
 								key={link.href}
+								role="link"
 							>
 								<Links {...link} />
 							</li>
