@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 import { Menu } from "lucide-react"
 import { useEffect, useState } from "react"
 import HeaderMobileMenu from "./HeaderMobileMenu"
-import NavAndAuthButtons from "./NavAndAuthButtons"
+import NavAndAuthButtons from "../auth/NavAndAuthButtons"
 import { Button } from "@/components/ui/Button"
 import { useResponsivity } from "@/hooks/useResponsivity"
 
@@ -88,10 +88,7 @@ export default function Header() {
 				</>
 			) : (
 				<>
-					<NavAndAuthButtons
-						headerLinks={HEADER_LINKS}
-						isHorizontalCompact={false}
-					/>
+					<NavAndAuthButtons links={HEADER_LINKS} />
 				</>
 			)}
 		</header>
