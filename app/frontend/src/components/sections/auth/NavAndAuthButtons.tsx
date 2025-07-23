@@ -1,5 +1,5 @@
 import { WHOAMI, LOGOUT } from "@/graphql/auth"
-import SearchForm from "./SearchForm"
+import SearchForm from "../surveys/SearchForm"
 import { Button } from "@/components/ui/Button"
 import { useMutation } from "@apollo/client"
 import { useToast } from "@/hooks/useToast"
@@ -7,8 +7,10 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { NavAndAuthButtonsProps } from "@/types/types"
 import { cn } from "@/lib/utils"
+import Links from "@/components/ui/Links"
 
 export default function NavAndAuthButtons({
+	links,
 	isHorizontalCompact,
 	isInSurveys,
 }: NavAndAuthButtonsProps) {
@@ -32,11 +34,26 @@ export default function NavAndAuthButtons({
 	return (
 		<nav
 			className={cn(
-				"flex w-full flex-1 items-center justify-center gap-6",
+				"flex w-full flex-1 items-center justify-between gap-12",
 				!isInSurveys && "justify-end"
 			)}
 			role="navigation"
+			aria-label="Navigation du site"
 		>
+			{links && (
+				<div className="flex flex-1 items-center justify-center gap-12">
+					<ul className="flex items-center justify-center gap-12">
+						{links.map(link => (
+							<li
+								className="list-none transition-transform hover:scale-105"
+								key={link.href}
+							>
+								<Links {...link} />
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
 			{isInSurveys && <SearchForm />}
 			{!isHorizontalCompact &&
 				(user ? (
@@ -97,7 +114,7 @@ export default function NavAndAuthButtons({
 							</Button>
 						</>
 					)
-				) : (
+				) : location.pathname === "/surveys" ? (
 					<div className="flex items-center justify-center gap-6">
 						<Button
 							to="/surveys/create"
@@ -106,6 +123,25 @@ export default function NavAndAuthButtons({
 							ariaLabel="Créer une enquête"
 						>
 							Créer une enquête
+						</Button>
+						<Button
+							to="/connexion"
+							variant="transparent"
+							role="link"
+							ariaLabel="Se connecter"
+						>
+							Se connecter
+						</Button>
+					</div>
+				) : (
+					<div className="flex items-center justify-center gap-6">
+						<Button
+							to="/register"
+							variant="tertiary"
+							role="link"
+							ariaLabel="S'inscrire"
+						>
+							S'inscrire
 						</Button>
 						<Button
 							to="/connexion"

@@ -60,10 +60,10 @@ export interface HeaderMobileMenuProps {
 }
 
 export interface NavAndAuthButtonsProps {
-	headerLinks?: readonly LinksType[]
-	isHorizontalCompact: boolean
+	links?: readonly LinksType[]
+	isHorizontalCompact?: boolean
 	handleShowMenu?: () => void
-	isInSurveys: boolean
+	isInSurveys?: boolean
 }
 
 export type SurveyCategoryType = {

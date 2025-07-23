@@ -1,27 +1,11 @@
 import { Link } from "react-router-dom"
 import { LinksType } from "@/types/types"
 import logoFooter from "/logos/logo-footer.svg"
-import FooterNav from "./FooterNav"
+import NavAndAuthButtons from "../auth/NavAndAuthButtons"
 import { useAuthContext } from "@/hooks/useAuthContext"
 
 export default function Footer() {
-	const { user } = useAuthContext()
-
 	const FOOTER_LINKS: LinksType[] = [
-		{
-			href: user
-				? user.role === "admin"
-					? "/admin"
-					: "/profil"
-				: "/connexion",
-			label: user
-				? user.role === "admin"
-					? "Admin"
-					: "Profil"
-				: "Se connecter",
-			category: "Compte",
-			ariaLabel: "Se connecter ou accéder à son compte",
-		},
 		{
 			href: "/surveys",
 			label: "Liste des enquêtes",
@@ -46,70 +30,51 @@ export default function Footer() {
 			category: "Informations",
 			ariaLabel: "Nous contacter",
 		},
-	].filter(Boolean)
+	] as const
 
-	if (!user) {
-		FOOTER_LINKS.unshift({
-			href: "/register",
-			label: "S'inscrire",
-			category: "Compte",
-			ariaLabel: "Créer un compte",
-		})
-	}
+	const CURRENT_YEAR = new Date().getFullYear()
+
+	const { user } = useAuthContext()
 
 	return (
 		<footer
 			lang="fr"
-			className="bg-primary-700 relative w-full pt-16"
+			className="bg-primary-600 flex w-full flex-col gap-6 px-6 py-5"
 			role="contentinfo"
 			aria-label="Pied de page"
 		>
-			{/* Curved top edge - decorative element */}
-			<div
-				className="absolute top-0 left-0 w-full overflow-hidden"
-				style={{ height: "50px" }}
-				aria-hidden="true"
-			>
-				<svg
-					viewBox="0 0 1440 100"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-					className="absolute bottom-0 h-full w-full"
-					preserveAspectRatio="none"
+			<div className="flex items-center justify-between">
+				{/* Logo desktop */}
+				<Link
+					to={user ? "/surveys" : "/"}
+					className="max-w-36 max-sm:max-w-28"
 				>
-					<path
-						d="M0 0H1440V100C1440 100 1082.5 0 720 0C357.5 0 0 100 0 100V0Z"
-						fill="#fafafa"
+					<img
+						src={logoFooter}
+						alt="Logo AskTrust"
+						className="w-full"
 					/>
-				</svg>
+				</Link>
+				{/* Component for navigation */}
+				<NavAndAuthButtons links={FOOTER_LINKS} />
 			</div>
-
-			<div
-				className="w-full px-4 pb-8"
-				role="navigation"
-				aria-label="Plan du site"
-			>
-				<div className="flex flex-col items-center md:flex-row md:items-end md:justify-between">
-					{/* Logo mobile */}
-					<div className="mt-4 mb-8 md:hidden">
-						<div className="relative flex items-center">
-							<img src={logoFooter} alt="Logo AskTrust" />
-						</div>
-					</div>
-
-					{/* Component for navigation */}
-					<FooterNav footerLinks={FOOTER_LINKS} />
-
-					{/* Logo desktop */}
-					<div
-						className="mr-2 hidden md:order-2 md:block"
-						aria-hidden="true"
-					>
-						<div className="relative flex items-center">
-							<img src={logoFooter} alt="Logo AskTrust" />
-						</div>
-					</div>
-				</div>
+			{/* Copyright */}
+			<div className="text-center md:text-left">
+				<p className="text-primary-50 flex flex-col text-sm md:flex md:flex-row md:flex-wrap md:items-center md:space-x-2">
+					<span>&copy; {CURRENT_YEAR}</span>
+					<span className="hidden md:inline" aria-hidden="true">
+						-
+					</span>
+					<span>Wild Code School</span>
+					<span className="hidden md:inline" aria-hidden="true">
+						-
+					</span>
+					<span>Alternance</span>
+					<span className="hidden md:inline" aria-hidden="true">
+						-
+					</span>
+					<span>Concepteur Développeur d&apos;Applications</span>
+				</p>
 			</div>
 		</footer>
 	)
