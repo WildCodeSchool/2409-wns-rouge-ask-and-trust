@@ -26,9 +26,6 @@ describe("footer Components", () => {
 
 		expect(screen.getByRole("contentinfo")).toBeInTheDocument()
 		expect(
-			screen.getByRole("navigation", { name: "Plan du site" })
-		).toBeInTheDocument()
-		expect(
 			screen.getByRole("navigation", {
 				name: "Navigation du site",
 			})
@@ -40,7 +37,7 @@ describe("footer Components", () => {
 
 		const links = screen.getAllByRole("link").length
 
-		expect(links).toEqual(4)
+		expect(links).toEqual(6)
 	})
 
 	it("should have proper ARIA attributes", () => {
