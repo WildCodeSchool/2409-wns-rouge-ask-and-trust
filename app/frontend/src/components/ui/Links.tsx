@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { LinksType } from "@/types/types"
 import { JSX } from "react"
+import { cn } from "@/lib/utils"
 
 /**
  * Links component with external link management and accessibility
@@ -19,6 +20,7 @@ export default function Links({
 	ariaLabel,
 }: LinksType): JSX.Element {
 	const isExternal = href.startsWith("http")
+	const location = useLocation()
 
 	// Security: check allowed protocols
 	if (isExternal && !href.startsWith("https://")) {
@@ -33,7 +35,11 @@ export default function Links({
 	return (
 		<Link
 			to={href}
-			className="text-primary-50 hover:text-primary-100 font-medium"
+			className={cn(
+				location.pathname === "/"
+					? "text-primary-700 max-lg:transition-padding font-bold max-lg:duration-200 max-lg:ease-in-out max-lg:hover:pl-5"
+					: "text-primary-50 hover:text-primary-100 font-medium"
+			)}
 			// Indicates to assistive technologies the current page
 			aria-current={
 				href === window.location.pathname ? "page" : undefined
