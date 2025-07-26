@@ -38,7 +38,7 @@ describe("footer Components", () => {
 
 		const links = screen.getAllByRole("link").length
 
-		expect(links).toEqual(7)
+		expect(links).toEqual(6)
 	})
 
 	it("should have proper ARIA attributes", () => {
@@ -67,10 +67,10 @@ describe("footer Components", () => {
 
 		const user = userEvent.setup()
 		const contactLink = screen.getByRole("link", {
-			name: "S'inscrire",
+			name: "Se connecter",
 		})
 		await user.click(contactLink)
-		expect(window.location.pathname).toBe("/register")
+		expect(window.location.pathname).toBe("/connexion")
 	})
 
 	it("should not display 'S'inscrire' link when user is connected", () => {
