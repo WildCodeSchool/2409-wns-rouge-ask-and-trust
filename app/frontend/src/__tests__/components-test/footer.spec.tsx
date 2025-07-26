@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest"
 import { BrowserRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
-import Footer, { FooterLink } from "@/components/sections/footer/Footer"
+import Footer from "@/components/sections/footer/Footer"
+import Links from "@/components/ui/Links"
 import userEvent from "@testing-library/user-event"
 import { useAuthContext } from "@/hooks/useAuthContext"
 
@@ -72,7 +73,7 @@ describe("footer Components", () => {
 		expect(window.location.pathname).toBe("/register")
 	})
 
-	it("should not display 'Créer un compte' link when user is connected", () => {
+	it("should not display 'S'inscrire' link when user is connected", () => {
 		;(useAuthContext as Mock).mockReturnValue({ user: { role: "admin" } })
 
 		render(<FooterWrapper />)
@@ -92,7 +93,7 @@ describe("footer Components", () => {
 
 		render(
 			<BrowserRouter>
-				<FooterLink {...externalLink} />
+				<Links {...externalLink} />
 			</BrowserRouter>
 		)
 
@@ -112,7 +113,7 @@ describe("footer Components", () => {
 
 		render(
 			<BrowserRouter>
-				<FooterLink {...noHttpsLink} />
+				<Links {...noHttpsLink} />
 			</BrowserRouter>
 		)
 
@@ -133,7 +134,7 @@ describe("footer Components", () => {
 
 		render(
 			<BrowserRouter>
-				<FooterLink {...httpsLink} />
+				<Links {...httpsLink} />
 			</BrowserRouter>
 		)
 
