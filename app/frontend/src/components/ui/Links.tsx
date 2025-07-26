@@ -36,9 +36,10 @@ export default function Links({
 		<Link
 			to={href}
 			className={cn(
+				"font-semibold",
 				location.pathname === "/"
-					? "text-primary-700 max-lg:transition-padding font-bold max-lg:duration-200 max-lg:ease-in-out max-lg:hover:pl-5"
-					: "text-primary-50 hover:text-primary-100 font-medium"
+					? "text-primary-700"
+					: "text-primary-50"
 			)}
 			// Indicates to assistive technologies the current page
 			aria-current={
