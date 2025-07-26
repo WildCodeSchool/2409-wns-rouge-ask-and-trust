@@ -15,7 +15,7 @@ export default function Footer() {
 		},
 		{
 			href: "/payment",
-			label: "Achat de packs d'enquêtes",
+			label: "Packs d'enquêtes",
 			category: "Enquêtes",
 			ariaLabel: "Acheter des packs d'enquêtes",
 		},
@@ -33,10 +33,10 @@ export default function Footer() {
 		},
 	] as const
 
-	const CURRENT_YEAR = new Date().getFullYear()
-
 	const { user } = useAuthContext()
 	const location = useLocation()
+
+	const CURRENT_YEAR = new Date().getFullYear()
 
 	return (
 		<footer
@@ -48,12 +48,9 @@ export default function Footer() {
 			role="contentinfo"
 			aria-label="Pied de page"
 		>
-			<div className="flex items-center justify-between">
+			<div className="flex items-center justify-between gap-10 max-lg:flex-col max-lg:gap-6">
 				{/* Logo desktop */}
-				<Link
-					to={user ? "/surveys" : "/"}
-					className="max-w-36 max-sm:max-w-28"
-				>
+				<Link to={user ? "/surveys" : "/"} className="max-w-36">
 					<img
 						src={logoFooter}
 						alt="Logo AskTrust"
@@ -65,17 +62,17 @@ export default function Footer() {
 			</div>
 			{/* Copyright */}
 			<div className="text-center md:text-left">
-				<p className="text-primary-600 flex flex-col text-sm md:flex md:flex-row md:flex-wrap md:items-center md:space-x-2">
+				<p className="text-primary-600 flex flex-col text-sm max-lg:justify-center sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:space-x-2">
 					<span>&copy; {CURRENT_YEAR}</span>
-					<span className="hidden md:inline" aria-hidden="true">
+					<span className="hidden sm:inline" aria-hidden="true">
 						-
 					</span>
 					<span>Wild Code School</span>
-					<span className="hidden md:inline" aria-hidden="true">
+					<span className="hidden sm:inline" aria-hidden="true">
 						-
 					</span>
 					<span>Alternance</span>
-					<span className="hidden md:inline" aria-hidden="true">
+					<span className="hidden sm:inline" aria-hidden="true">
 						-
 					</span>
 					<span>Concepteur Développeur d&apos;Applications</span>

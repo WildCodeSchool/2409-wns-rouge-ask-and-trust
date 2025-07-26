@@ -138,7 +138,7 @@ export default function AuthButtons({
 				isHorizontalCompact && "w-full flex-col gap-5"
 			)}
 		>
-			<Button
+			{/* <Button
 				to="/register"
 				variant="secondary"
 				role="link"
@@ -146,7 +146,7 @@ export default function AuthButtons({
 				ariaLabel="S'inscrire"
 			>
 				S'inscrire
-			</Button>
+			</Button> */}
 			<Button
 				to="/connexion"
 				variant="primary"
