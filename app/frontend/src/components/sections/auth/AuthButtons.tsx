@@ -2,16 +2,25 @@ import { Button } from "@/components/ui/Button"
 import { useToast } from "@/hooks/useToast"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/hooks/useAuthContext"
-import { cn } from "@/lib/utils"
 import { AuthButtonsProps } from "@/types/types"
 
 export default function AuthButtons({
 	isHorizontalCompact = false,
+	isInHeader,
+	isInFooter,
 }: AuthButtonsProps) {
 	const { user, logout } = useAuthContext()
 	const navigate = useNavigate()
 	const location = useLocation()
 	const { showToast } = useToast()
+
+	const pathname = location.pathname
+	const isOnLanding = pathname === "/"
+	const isOnSurveys = pathname === "/surveys"
+	const isOnProfile = pathname === "/profil"
+	const isOnAdmin = pathname === "/admin"
+	const shouldHideButtonsInHeader =
+		isHorizontalCompact && isOnSurveys && isInHeader
 
 	const onSignOut = async () => {
 		await logout()
@@ -23,92 +32,71 @@ export default function AuthButtons({
 		})
 	}
 
-	const isOnAdmin = location.pathname === "/admin"
-	const isOnProfile = location.pathname === "/profil"
-	const isOnSurveys = location.pathname === "/surveys"
-	const isOnSurveyDetails =
-		location.pathname.startsWith("/surveys") &&
-		location.pathname !== "/surveys"
+	if (shouldHideButtonsInHeader) {
+		return null
+	}
 
-	if (user) {
-		if (user.role === "admin") {
-			if (isOnAdmin) {
+	if (!user) {
+		// === CAS NON CONNECTÉ ===
+
+		// === CAS SPÉCIFIQUE : Landing Page ===
+		if (isOnLanding) {
+			// Footer → uniquement bouton connexion
+			if (!isInHeader) {
 				return (
 					<Button
-						variant="destructive"
-						ariaLabel="Se déconnecter d'Ask&Trust"
-						onClick={onSignOut}
+						to="/connexion"
+						variant="primary"
+						role="link"
+						ariaLabel="Se connecter"
 					>
-						Se déconnecter
+						Se connecter
 					</Button>
 				)
 			}
 
-			if (!isHorizontalCompact || isOnSurveyDetails) {
-				return (
-					<div className="flex items-center justify-center gap-6">
-						<Button
-							to="/surveys/create"
-							variant="tertiary"
-							role="link"
-							ariaLabel="Créer une enquête"
-						>
-							Créer une enquête
-						</Button>
-						<Button
-							to="/admin"
-							variant="transparent"
-							role="link"
-							ariaLabel="Accéder au panel admin"
-						>
-							Admin
-						</Button>
-					</div>
-				)
-			}
-
-			return null
-		}
-
-		if (isOnProfile) {
+			// Header → bouton inscription + connexion
 			return (
-				<Button
-					variant="destructive"
-					ariaLabel="Se déconnecter d'Ask&Trust"
-					onClick={onSignOut}
-				>
-					Se déconnecter
-				</Button>
-			)
-		}
-
-		if (!isHorizontalCompact) {
-			return (
-				<div className="flex items-center justify-center gap-6">
+				<div className="flex w-full flex-col items-center justify-center gap-5">
 					<Button
-						to="/surveys/create"
-						variant="tertiary"
+						to="/register"
+						variant="secondary"
 						role="link"
-						ariaLabel="Créer une enquête"
+						fullWidth
+						ariaLabel="S'inscrire"
 					>
-						Créer une enquête
+						S'inscrire
 					</Button>
 					<Button
-						to="/profil"
-						variant="transparent"
+						to="/connexion"
+						variant="primary"
 						role="link"
-						ariaLabel="Accéder à sa page profil utilisateur"
+						fullWidth
+						ariaLabel="Se connecter"
 					>
-						Profil
+						Se connecter
 					</Button>
 				</div>
 			)
 		}
 
-		return null
-	}
+		// === CAS GÉNÉRAL POUR TOUTES LES AUTRES PAGES (y compris /surveys) ===
 
-	if (isOnSurveys) {
+		// Footer → uniquement le bouton connexion
+		if (isInFooter) {
+			return (
+				<Button
+					to="/connexion"
+					variant="transparent"
+					role="link"
+					ariaLabel="Se connecter"
+				>
+					Se connecter
+				</Button>
+			)
+		}
+
+		// Header → bouton "Créer une enquête" + "Connexion"
 		return (
 			<div className="flex items-center justify-center gap-6">
 				<Button
@@ -131,22 +119,64 @@ export default function AuthButtons({
 		)
 	}
 
-	return (
-		<div
-			className={cn(
-				"flex items-center justify-center gap-6",
-				isHorizontalCompact && "w-full flex-col gap-5"
-			)}
-		>
+	// === CAS CONNECTÉ ===
+
+	// Pages "profil" ou "admin" → bouton de déconnexion
+	if (isOnProfile || isOnAdmin) {
+		return (
 			<Button
-				to="/connexion"
-				variant="primary"
-				role="link"
-				fullWidth={isHorizontalCompact}
-				ariaLabel="Se connecter"
+				variant="destructive"
+				ariaLabel="Se déconnecter d'Ask&Trust"
+				onClick={onSignOut}
 			>
-				Se connecter
+				Se déconnecter
 			</Button>
+		)
+	}
+
+	// Bouton "secondaire" selon le rôle
+	const secondaryButton =
+		user?.role === "admin" ? (
+			<Button
+				to="/admin"
+				variant="transparent"
+				role="link"
+				ariaLabel="Accéder au panel admin"
+			>
+				Admin
+			</Button>
+		) : (
+			<Button
+				to="/profil"
+				variant="transparent"
+				role="link"
+				ariaLabel="Accéder à sa page profil utilisateur"
+			>
+				Profil
+			</Button>
+		)
+
+	// Footer : 1 seul bouton (le secondaire)
+	if (isInFooter) {
+		return (
+			<div className="flex items-center justify-center">
+				{secondaryButton}
+			</div>
+		)
+	}
+
+	// Sinon (header), 2 boutons
+	return (
+		<div className="flex items-center justify-center gap-6">
+			<Button
+				to="/surveys/create"
+				variant="tertiary"
+				role="link"
+				ariaLabel="Créer une enquête"
+			>
+				Créer une enquête
+			</Button>
+			{secondaryButton}
 		</div>
 	)
 }

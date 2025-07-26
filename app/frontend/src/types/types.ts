@@ -59,11 +59,13 @@ export interface NavAndAuthButtonsProps {
 	handleShowMenu?: () => void
 	isInSurveys?: boolean
 	showMenu?: boolean
+	isInHeader?: boolean
+	isInFooter?: boolean
 }
 
 export type AuthButtonsProps = Pick<
 	NavAndAuthButtonsProps,
-	"isHorizontalCompact"
+	"isHorizontalCompact" | "isInHeader" | "isInFooter"
 >
 
 export type SurveyCategoryType = {

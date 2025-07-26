@@ -1,5 +1,5 @@
 import { LinksType } from "@/types/types"
-import logoHeader from "/logos/logo-header.svg"
+import logo from "/logos/logo-landing.svg"
 import { Link } from "react-router-dom"
 import { Menu, X } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -59,7 +59,7 @@ export default function Header() {
 		>
 			<Link to="/" className="max-w-36">
 				<img
-					src={logoHeader}
+					src={logo}
 					alt="Logo AskTrust"
 					className="w-full"
 					aria-hidden
