@@ -37,7 +37,7 @@ describe("footer Components", () => {
 
 		const links = screen.getAllByRole("link").length
 
-		expect(links).toEqual(6)
+		expect(links).toEqual(7)
 	})
 
 	it("should have proper ARIA attributes", () => {
@@ -66,7 +66,7 @@ describe("footer Components", () => {
 
 		const user = userEvent.setup()
 		const contactLink = screen.getByRole("link", {
-			name: "Créer un compte",
+			name: "S'inscrire",
 		})
 		await user.click(contactLink)
 		expect(window.location.pathname).toBe("/register")
@@ -78,7 +78,7 @@ describe("footer Components", () => {
 		render(<FooterWrapper />)
 
 		expect(
-			screen.queryByRole("link", { name: "Créer un compte" })
+			screen.queryByRole("link", { name: "S'inscrire" })
 		).not.toBeInTheDocument()
 	})
 
