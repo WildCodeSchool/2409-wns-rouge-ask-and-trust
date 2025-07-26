@@ -53,18 +53,18 @@ export interface ErrorLayoutProps {
 	children: React.ReactNode
 }
 
-export interface HeaderMobileMenuProps {
-	showMenu: boolean
-	handleShowMenu: () => void
-	headerLinks: readonly LinksType[]
-}
-
 export interface NavAndAuthButtonsProps {
 	links?: readonly LinksType[]
 	isHorizontalCompact?: boolean
 	handleShowMenu?: () => void
 	isInSurveys?: boolean
+	showMenu?: boolean
 }
+
+export type AuthButtonsProps = Pick<
+	NavAndAuthButtonsProps,
+	"isHorizontalCompact"
+>
 
 export type SurveyCategoryType = {
 	id: string

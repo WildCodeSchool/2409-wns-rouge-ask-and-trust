@@ -7,7 +7,7 @@ import { SurveyCategoryType } from "@/types/types"
 import { useQuery } from "@apollo/client"
 import { useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
-import NavAndAuthButtons from "../auth/NavAndAuthButtons"
+import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
 import logoFooter from "/logos/logo-footer.svg"
 
 export default function Header({ isInSurveys = false }) {
