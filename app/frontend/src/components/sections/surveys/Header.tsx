@@ -60,6 +60,7 @@ export default function Header({ isInSurveys = false }) {
 				<NavAndAuthButtons
 					isHorizontalCompact={isHorizontalCompact}
 					isInSurveys={isInSurveys}
+					isInHeader
 				/>
 			</div>
 			{isInSurveys && (

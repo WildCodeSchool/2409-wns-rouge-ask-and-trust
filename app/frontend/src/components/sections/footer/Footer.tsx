@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom"
 import { LinksType } from "@/types/types"
-import logoFooter from "/logos/logo-header.svg"
+import logoLanding from "/logos/logo-landing.svg"
+import logoSurveys from "/logos/logo-footer.svg"
 import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { cn } from "@/lib/utils"
@@ -37,13 +38,14 @@ export default function Footer() {
 	const location = useLocation()
 
 	const CURRENT_YEAR = new Date().getFullYear()
+	const isInHome = location.pathname === "/"
 
 	return (
 		<footer
 			lang="fr"
 			className={cn(
 				"flex w-full flex-col gap-6 px-6 py-5",
-				location.pathname === "/" ? "bg-bg" : "bg-primary-600"
+				isInHome ? "bg-bg" : "bg-primary-600"
 			)}
 			role="contentinfo"
 			aria-label="Pied de page"
@@ -51,18 +53,31 @@ export default function Footer() {
 			<div className="flex items-center justify-between gap-10 max-lg:flex-col max-lg:gap-6">
 				{/* Logo desktop */}
 				<Link to={user ? "/surveys" : "/"} className="max-w-36">
-					<img
-						src={logoFooter}
-						alt="Logo AskTrust"
-						className="w-full"
-					/>
+					{isInHome ? (
+						<img
+							src={logoLanding}
+							alt="Logo AskTrust"
+							className="w-full"
+						/>
+					) : (
+						<img
+							src={logoSurveys}
+							alt="Logo AskTrust"
+							className="w-full"
+						/>
+					)}
 				</Link>
 				{/* Component for navigation */}
-				<NavAndAuthButtons links={FOOTER_LINKS} />
+				<NavAndAuthButtons links={FOOTER_LINKS} isInFooter />
 			</div>
 			{/* Copyright */}
 			<div className="text-center md:text-left">
-				<p className="text-primary-600 flex flex-col text-sm max-lg:justify-center sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:space-x-2">
+				<p
+					className={cn(
+						isInHome ? "text-primary-700" : "text-primary-50",
+						"flex flex-col text-sm max-lg:justify-center sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:space-x-2"
+					)}
+				>
 					<span>&copy; {CURRENT_YEAR}</span>
 					<span className="hidden sm:inline" aria-hidden="true">
 						-

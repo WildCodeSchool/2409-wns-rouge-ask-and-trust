@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, Variants } from "motion/react"
 import { NavAndAuthButtonsProps } from "@/types/types"
 import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
-import logoHeader from "/logos/logo-header.svg"
+import logo from "/logos/logo-landing.svg"
 import { Link } from "react-router-dom"
 
 const menuVariants: Variants = {
@@ -59,6 +59,7 @@ export default function HeaderMobileMenu({
 							links={links}
 							handleShowMenu={handleShowMenu}
 							isHorizontalCompact={isHorizontalCompact}
+							isInHeader
 						/>
 						<div className="flex items-center justify-center">
 							<Link
@@ -67,7 +68,7 @@ export default function HeaderMobileMenu({
 								onClick={handleShowMenu}
 							>
 								<img
-									src={logoHeader}
+									src={logo}
 									alt="Logo AskTrust"
 									className="w-full"
 									aria-hidden

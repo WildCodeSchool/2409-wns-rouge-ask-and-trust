@@ -9,15 +9,17 @@ export default function NavAndAuthButtons({
 	links,
 	isHorizontalCompact,
 	isInSurveys,
+	isInHeader,
+	isInFooter,
 }: NavAndAuthButtonsProps) {
 	const location = useLocation()
-	const isHome = location.pathname === "/"
+	const isOnLanding = location.pathname === "/"
 
 	// UL layout selon le contexte
 	const listLayoutClass = cn(
 		"flex items-center justify-center gap-10",
 		isHorizontalCompact &&
-			isHome &&
+			isOnLanding &&
 			"flex-col items-start justify-start gap-5",
 		!isHorizontalCompact && "max-sm:flex-col max-sm:gap-5"
 	)
@@ -25,18 +27,17 @@ export default function NavAndAuthButtons({
 	// LI animation selon le layout
 	const listItemClass = cn(
 		"list-none",
-		isHorizontalCompact && isHome
+		isHorizontalCompact && isOnLanding
 			? "transition-all duration-200 ease-in-out hover:pl-5"
 			: "transition-transform hover:scale-105"
 	)
 
 	// Navigation container global
 	const navClass = cn(
-		"flex w-full flex-1 items-center gap-12",
+		"flex w-full flex-1 items-center gap-10 max-lg:gap-6",
 		isInSurveys ? "justify-between" : "justify-end",
-		isHorizontalCompact && isHome
-			? "flex-col gap-20"
-			: "max-lg:flex-col max-lg:gap-6"
+		isHorizontalCompact && isOnLanding && "flex-col gap-20",
+		isInFooter && "max-lg:flex-col"
 	)
 
 	return (
@@ -66,7 +67,11 @@ export default function NavAndAuthButtons({
 				</div>
 			)}
 			{isInSurveys && <SearchForm />}
-			<AuthButtons isHorizontalCompact={isHorizontalCompact} />
+			<AuthButtons
+				isHorizontalCompact={isHorizontalCompact}
+				isInHeader={isInHeader}
+				isInFooter={isInFooter}
+			/>
 		</nav>
 	)
 }
