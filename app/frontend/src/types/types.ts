@@ -27,6 +27,7 @@ export interface LinksType {
 	label: string
 	category: string
 	ariaLabel: string
+	mobileFooter?: boolean
 	Icon?: LucideIcon
 }
 
@@ -53,18 +54,20 @@ export interface ErrorLayoutProps {
 	children: React.ReactNode
 }
 
-export interface HeaderMobileMenuProps {
-	showMenu: boolean
-	handleShowMenu: () => void
-	headerLinks: readonly LinksType[]
+export interface NavAndAuthButtonsProps {
+	links?: readonly LinksType[]
+	isHorizontalCompact?: boolean
+	handleShowMenu?: () => void
+	isInSurveys?: boolean
+	showMenu?: boolean
+	isInHeader?: boolean
+	isInFooter?: boolean
 }
 
-export interface NavAndAuthButtonsProps {
-	headerLinks?: readonly LinksType[]
-	isHorizontalCompact: boolean
-	handleShowMenu?: () => void
-	isInSurveys: boolean
-}
+export type AuthButtonsProps = Pick<
+	NavAndAuthButtonsProps,
+	"isHorizontalCompact" | "isInHeader" | "isInFooter"
+>
 
 export type SurveyCategoryType = {
 	id: string
