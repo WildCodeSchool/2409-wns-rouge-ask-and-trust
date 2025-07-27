@@ -104,6 +104,7 @@ export default function AuthButtons({
 					variant="tertiary"
 					role="link"
 					ariaLabel="Créer une enquête"
+					className="max-sm:hidden"
 				>
 					Créer une enquête
 				</Button>
@@ -173,6 +174,7 @@ export default function AuthButtons({
 				variant="tertiary"
 				role="link"
 				ariaLabel="Créer une enquête"
+				className="max-sm:hidden"
 			>
 				Créer une enquête
 			</Button>

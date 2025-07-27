@@ -27,6 +27,7 @@ export interface LinksType {
 	label: string
 	category: string
 	ariaLabel: string
+	mobileFooter?: boolean
 	Icon?: LucideIcon
 }
 
