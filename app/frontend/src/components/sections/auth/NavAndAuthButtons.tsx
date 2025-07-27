@@ -26,9 +26,9 @@ export default function NavAndAuthButtons({
 
 	// LI animation selon le layout
 	const listItemClass = cn(
-		"list-none",
+		"list-none duration-200 ease-in-out",
 		isHorizontalCompact && isOnLanding
-			? "transition-all duration-200 ease-in-out hover:pl-5"
+			? "transition-all hover:pl-5"
 			: "transition-transform hover:scale-105"
 	)
 

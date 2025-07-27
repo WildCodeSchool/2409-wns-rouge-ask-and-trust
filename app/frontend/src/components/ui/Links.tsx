@@ -18,6 +18,8 @@ export default function Links({
 	label,
 	category,
 	ariaLabel,
+	mobileFooter,
+	Icon,
 }: LinksType): JSX.Element {
 	const isExternal = href.startsWith("http")
 	const location = useLocation()
@@ -39,7 +41,9 @@ export default function Links({
 				"font-semibold",
 				location.pathname === "/"
 					? "text-primary-700"
-					: "text-primary-50"
+					: "text-primary-50",
+				mobileFooter &&
+					"group text-primary-700 flex flex-col items-center gap-1 text-xs font-medium"
 			)}
 			// Indicates to assistive technologies the current page
 			aria-current={
@@ -55,6 +59,12 @@ export default function Links({
 			// data attribute for analytics tracking
 			data-category={category}
 		>
+			{mobileFooter && Icon && (
+				<Icon
+					className="text-primary-700 h-5 w-5 transition-transform duration-200 ease-in-out group-hover:scale-105"
+					aria-hidden
+				/>
+			)}
 			{label}
 		</Link>
 	)
