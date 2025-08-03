@@ -10,7 +10,7 @@ export const TableContentQuestions = ({
 	currentQuestionId,
 }: TableContentQuestionsProps) => {
 	return (
-		<aside className="border-black-50 shadow-default max-h-screen w-[32rem] overflow-y-auto rounded-xl border bg-white p-3">
+		<aside className="border-black-50 shadow-default max-h-screen w-full overflow-y-auto rounded-xl border bg-white p-3">
 			<div className="relative flex flex-col gap-4 align-baseline">
 				{/* Vertical line */}
 				<div className="bg-primary-200 absolute inset-y-0 left-3 w-px" />

@@ -1,16 +1,13 @@
 import { EmptyState } from "@/components/sections/canvas/empty-state"
 import { Button } from "@/components/ui/Button"
-import { GET_SURVEY } from "@/graphql/survey/survey"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useResponsivity } from "@/hooks/useResponsivity"
-import { QuestionType, Survey } from "@/types/types"
-import { useQuery } from "@apollo/client"
+import { Question, QuestionType } from "@/types/types"
 import { PlusCircle } from "lucide-react"
 import {
 	startTransition,
 	useCallback,
 	useEffect,
-	useMemo,
 	useRef,
 	useState,
 } from "react"
@@ -22,28 +19,17 @@ interface CanvasProps {
 	newQuestionId: number | null
 	setNewQuestionId: (id: number | null) => void
 	onAddQuestion: (type: QuestionType | undefined) => Promise<void>
+	questions: Question[]
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
 	onAddQuestion,
 	newQuestionId,
 	setNewQuestionId,
+	questions,
 }) => {
 	const { isCreateQuestionLoading } = useQuestions()
-	const { id: surveyId } = useParams() //
-	// @TODO put this in useSurvey
-	const { data, loading: loadingSurvey } = useQuery<{
-		survey: Survey
-	}>(GET_SURVEY, {
-		variables: {
-			surveyId,
-		},
-		fetchPolicy: "cache-first",
-	})
-
-	const questions = useMemo(() => {
-		return data?.survey?.questions ?? []
-	}, [data?.survey?.questions])
+	const { id: surveyId } = useParams()
 
 	const questionRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
 	const { rootRef, isVerticalCompact, isHorizontalCompact } = useResponsivity(
@@ -85,17 +71,13 @@ export const Canvas: React.FC<CanvasProps> = ({
 		}
 	}, [])
 
-	// do better than this
-	if (!surveyId) return <p>L'id de l'enquête est manquante dans l'url</p>
-
 	return (
 		<>
 			<div
 				ref={rootRef}
 				className="mx-[-0.75rem] flex h-full w-full flex-col gap-4 overflow-y-auto px-[0.75rem]"
 			>
-				{(!questions && !loadingSurvey) ||
-				(questions?.length === 0 && !loadingSurvey) ? (
+				{!questions || questions?.length === 0 ? (
 					<EmptyState />
 				) : (
 					<>
@@ -115,27 +97,42 @@ export const Canvas: React.FC<CanvasProps> = ({
 								</div>
 							)
 						})}
-
-						{!loadingSurvey && (
-							<Button
-								onClick={() => onAddQuestion("text")}
-								disabled={isCreateQuestionLoading}
-								ariaLabel="Add Question"
-								icon={PlusCircle}
-								className="self-center"
-							>
-								Ajouter une question
-							</Button>
-						)}
+						<Button
+							onClick={() => onAddQuestion("text")}
+							disabled={isCreateQuestionLoading}
+							ariaLabel="Add Question"
+							icon={PlusCircle}
+							className="self-center"
+						>
+							Ajouter une question
+						</Button>
 					</>
 				)}
 			</div>
 			{!isCompact && questions && questions.length > 0 && (
-				<TableContentQuestions
-					questions={questions}
-					onQuestionClick={scrollToQuestion}
-					currentQuestionId={currentQuestionId}
-				/>
+				<div className="flex max-w-52 flex-col gap-2">
+					<div className="flex w-full flex-col items-center gap-2">
+						<Button
+							ariaLabel="Publier l'enquête"
+							variant="primary"
+							fullWidth
+						>
+							Publier l'enquête
+						</Button>
+						<Button
+							ariaLabel="Enregistrer en brouillon"
+							variant="outline"
+							fullWidth
+						>
+							Enregistrer
+						</Button>
+					</div>
+					<TableContentQuestions
+						questions={questions}
+						onQuestionClick={scrollToQuestion}
+						currentQuestionId={currentQuestionId}
+					/>
+				</div>
 			)}
 		</>
 	)
