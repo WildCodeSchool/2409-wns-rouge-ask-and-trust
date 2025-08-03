@@ -87,7 +87,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 		<>
 			<div
 				ref={rootRef}
-				className="mx-[-0.75rem] flex h-full w-full flex-col gap-10 overflow-y-auto px-[0.75rem]"
+				className="mx-[-0.75rem] flex h-full w-full flex-col gap-4 overflow-y-auto px-[0.75rem]"
 			>
 				{(!questions && !loadingSurvey) ||
 				(questions?.length === 0 && !loadingSurvey) ? (

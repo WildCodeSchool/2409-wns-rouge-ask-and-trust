@@ -73,12 +73,14 @@ function SurveyCreator() {
 				/>
 			</Helmet>
 			<div className="gborder-4 flex h-[calc(100vh_-_var(--header-height))] flex-col border-4 border-red-700 bg-gray-50">
-				<section className="shadow-default bg-white">
-					<h1 className="h-fit text-2xl font-semibold text-gray-900">
-						Création de l'enquête
-					</h1>
+				<section className="p-4 pb-0 lg:p-4 lg:pb-0">
+					<div className="border-black-50 shadow-default rounded-xl border bg-white p-4">
+						<h1 className="h-fit text-2xl font-semibold text-gray-900">
+							Création de l'enquête
+						</h1>
+					</div>
 				</section>
-				<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-8 lg:p-8">
+				<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
 					<Toolbox onAddQuestion={handleAddQuestion} />
 					<Canvas
 						onAddQuestion={handleAddQuestion}
