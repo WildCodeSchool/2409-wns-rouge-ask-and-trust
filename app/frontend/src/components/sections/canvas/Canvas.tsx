@@ -56,19 +56,24 @@ export const Canvas: React.FC<CanvasProps> = ({
 
 	const isCompact = isVerticalCompact || isHorizontalCompact
 
+	// After creating a new question, scroll to the container's bottom to see the question
 	useEffect(() => {
-		if (newQuestionId && questionRefs.current[newQuestionId]) {
-			const el = questionRefs.current[newQuestionId]
-			if (el) {
-				el.scrollIntoView({ behavior: "smooth", block: "center" })
-				el.focus?.()
+		if (newQuestionId && rootRef.current) {
+			const container = rootRef.current
 
-				startTransition(() => {
-					setNewQuestionId(null)
-				})
-			}
+			container.scrollTo({
+				top: container.scrollHeight,
+				behavior: "smooth",
+			})
+
+			const el = questionRefs.current[newQuestionId]
+			el?.focus?.()
+
+			startTransition(() => {
+				setNewQuestionId(null)
+			})
 		}
-	}, [newQuestionId, setNewQuestionId])
+	}, [newQuestionId, rootRef, setNewQuestionId])
 
 	// For questions table content : scroll to question on click
 	const scrollToQuestion = useCallback((id: number) => {
