@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/hoc/ProtectedRoute"
 import PublicRoute from "@/components/hoc/PublicRoute"
 import ErrorElement from "@/components/ui/ErrorElement"
 import Loader from "@/components/ui/Loader"
+import { SurveyCreatorSkeleton } from "@/pages/SurveyCreator"
 import { lazy, Suspense } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
@@ -131,7 +132,7 @@ const router = createBrowserRouter([
 			{
 				path: "survey-creator",
 				element: (
-					<Suspense fallback={<Loader />}>
+					<Suspense fallback={<SurveyCreatorSkeleton />}>
 						<ProtectedRoute>
 							<SurveyCreator />
 						</ProtectedRoute>
@@ -161,7 +162,7 @@ const router = createBrowserRouter([
 			{
 				path: "surveys/build/:id",
 				element: (
-					<Suspense fallback={<Loader />}>
+					<Suspense fallback={<SurveyCreatorSkeleton />}>
 						<ProtectedRoute>
 							<SurveyCreator />
 						</ProtectedRoute>
