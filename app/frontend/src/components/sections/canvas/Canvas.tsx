@@ -2,15 +2,10 @@ import { EmptyState } from "@/components/sections/canvas/empty-state"
 import { Button } from "@/components/ui/Button"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useResponsivity } from "@/hooks/useResponsivity"
+import { useScrollToElement } from "@/hooks/useScroll"
 import { Question, QuestionType } from "@/types/types"
 import { PlusCircle } from "lucide-react"
-import {
-	startTransition,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from "react"
+import { useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import MemoizedBuildQuestion from "../surveys/buildSurvey/question/BuildQuestion"
 import { TableContentQuestions } from "./TableContentQuestions"
@@ -42,40 +37,22 @@ export const Canvas: React.FC<CanvasProps> = ({
 
 	const isCompact = isVerticalCompact || isHorizontalCompact
 
-	// After creating a new question, scroll to the container's bottom to see the question
-	useEffect(() => {
-		if (newQuestionId && rootRef.current) {
-			const container = rootRef.current
+	// Handle scroll to the new question (after adding a new one) or current question (if click in Table of Content)
+	const scrollTargetId = newQuestionId ?? currentQuestionId
+	const resetScrollId = newQuestionId ? setNewQuestionId : undefined
 
-			container.scrollTo({
-				top: container.scrollHeight,
-				behavior: "smooth",
-			})
+	useScrollToElement(scrollTargetId, rootRef, questionRefs, resetScrollId)
 
-			const el = questionRefs.current[newQuestionId]
-			el?.focus?.()
-
-			startTransition(() => {
-				setNewQuestionId(null)
-			})
-		}
-	}, [newQuestionId, rootRef, setNewQuestionId])
-
-	// For questions table content : scroll to question on click
-	const scrollToQuestion = useCallback((id: number) => {
-		const el = questionRefs.current[id]
-		if (el) {
-			setCurrentQuestionId(id)
-			el.scrollIntoView({ behavior: "smooth", block: "center" })
-			el.focus?.()
-		}
-	}, [])
+	// For questions table content
+	const scrollToQuestion = (id: number) => {
+		setCurrentQuestionId(id)
+	}
 
 	return (
 		<>
 			<div
 				ref={rootRef}
-				className="mx-[-0.75rem] flex h-full w-full flex-col gap-4 overflow-y-auto px-[0.75rem]"
+				className="relative mx-[-0.75rem] flex h-full w-full flex-col gap-4 overflow-y-auto px-[0.75rem]"
 			>
 				{!questions || questions?.length === 0 ? (
 					<EmptyState />
