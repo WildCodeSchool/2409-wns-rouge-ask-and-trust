@@ -31,6 +31,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 }) => {
 	const { isCreateQuestionLoading } = useQuestions()
 	const { id: surveyId } = useParams() //
+	// @TODO put this in useSurvey
 	const { data, loading: loadingSurvey } = useQuery<{
 		survey: Survey
 	}>(GET_SURVEY, {
@@ -43,9 +44,6 @@ export const Canvas: React.FC<CanvasProps> = ({
 	const questions = useMemo(() => {
 		return data?.survey?.questions ?? []
 	}, [data?.survey?.questions])
-
-	console.log("loadingSurvey", loadingSurvey)
-	console.log("Canvas render", newQuestionId, performance.now())
 
 	const questionRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
 	const { rootRef, isVerticalCompact, isHorizontalCompact } = useResponsivity(
@@ -89,38 +87,43 @@ export const Canvas: React.FC<CanvasProps> = ({
 		<>
 			<div
 				ref={rootRef}
-				className="mx-[-0.75rem] flex h-screen w-full flex-col gap-10 overflow-y-scroll px-[0.75rem]"
+				className="mx-[-0.75rem] flex h-full w-full flex-col gap-10 overflow-y-auto px-[0.75rem]"
 			>
-				{!questions || questions?.length === 0 ? (
+				{(!questions && !loadingSurvey) ||
+				(questions?.length === 0 && !loadingSurvey) ? (
 					<EmptyState />
 				) : (
-					questions.map((question, index) => {
-						return (
-							<div
-								key={question.id}
-								ref={el => {
-									questionRefs.current[question.id] = el
-								}}
-							>
-								<MemoizedBuildQuestion
-									question={question}
-									surveyId={Number(surveyId)}
-									index={index + 1}
-								/>
-							</div>
-						)
-					})
-				)}
+					<>
+						{questions.map((question, index) => {
+							return (
+								<div
+									key={question.id}
+									ref={el => {
+										questionRefs.current[question.id] = el
+									}}
+								>
+									<MemoizedBuildQuestion
+										question={question}
+										surveyId={Number(surveyId)}
+										index={index + 1}
+									/>
+								</div>
+							)
+						})}
 
-				<Button
-					onClick={() => onAddQuestion("text")}
-					disabled={isCreateQuestionLoading}
-					ariaLabel="Add Question"
-					icon={PlusCircle}
-					className="self-center"
-				>
-					Ajouter une question
-				</Button>
+						{!loadingSurvey && (
+							<Button
+								onClick={() => onAddQuestion("text")}
+								disabled={isCreateQuestionLoading}
+								ariaLabel="Add Question"
+								icon={PlusCircle}
+								className="self-center"
+							>
+								Ajouter une question
+							</Button>
+						)}
+					</>
+				)}
 			</div>
 			{!isCompact && questions && questions.length > 0 && (
 				<TableContentQuestions

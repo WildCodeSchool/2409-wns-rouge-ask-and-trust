@@ -35,7 +35,7 @@ export function Toolbox({
 	return (
 		<div
 			className={cn(
-				"border-black-50 transition-width shadow-default z-10 flex h-screen w-fit flex-shrink-0 flex-col overflow-hidden rounded-xl border-1 bg-white duration-300 ease-in-out"
+				"border-black-50 transition-width shadow-default z-10 flex h-full w-fit flex-shrink-0 flex-col overflow-hidden rounded-xl border-1 bg-white duration-300 ease-in-out"
 			)}
 		>
 			<AdaptiveToolbox
