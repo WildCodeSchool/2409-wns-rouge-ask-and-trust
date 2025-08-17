@@ -39,7 +39,6 @@ export const Canvas: React.FC<CanvasProps> = ({
 	const [highlightedQuestionId, setHighlightedQuestionId] = useState<
 		number | null
 	>(questions[0]?.id ?? null)
-	console.log("highlightedQuestionId", highlightedQuestionId)
 	const isCompact = isVerticalCompact || isHorizontalCompact
 
 	// Handle scroll to the new question (after adding a new one) or current question (if click in Table of Content)
