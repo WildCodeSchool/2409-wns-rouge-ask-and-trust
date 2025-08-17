@@ -1,31 +1,54 @@
+import { useScrollToElement } from "@/hooks/useScroll"
+import { useRef } from "react"
+
 type TableContentQuestionsProps = {
 	questions: { id: number; title: string }[]
 	onQuestionClick?: (id: number) => void
-	currentQuestionId?: number | null
+	currentQuestionId: number | null
+	highlightedQuestionId: number | null
 }
 
 export const TableContentQuestions = ({
 	questions,
 	onQuestionClick,
 	currentQuestionId,
+	highlightedQuestionId,
 }: TableContentQuestionsProps) => {
+	const containerRef = useRef<HTMLDivElement>(null)
+	const buttonRefs = useRef<{ [key: number]: HTMLButtonElement | null }>({})
+
+	useScrollToElement(
+		highlightedQuestionId ?? currentQuestionId,
+		containerRef,
+		buttonRefs,
+		undefined
+	)
+
 	return (
-		<aside className="border-black-50 shadow-default max-h-screen w-full overflow-y-auto rounded-xl border bg-white p-3">
+		<aside
+			ref={containerRef}
+			className="border-black-50 shadow-default max-h-screen w-full overflow-y-auto rounded-xl border bg-white p-3"
+		>
 			<div className="relative flex flex-col gap-4 align-baseline">
 				{/* Vertical line */}
 				<div className="bg-primary-200 absolute inset-y-0 left-3 w-px" />
 				{/* Questions with their number in a circle */}
 				{questions.map((question, index) => {
 					const isCurrent = question.id === currentQuestionId
+					const isHighlighted = question.id === highlightedQuestionId
 					const shouldHighlight =
-						isCurrent || (!currentQuestionId && index === 0)
+						(isCurrent && !highlightedQuestionId) || isHighlighted
 
 					return (
 						<button
+							ref={el => {
+								buttonRefs.current[question.id] = el
+							}}
 							key={question.id}
 							onClick={() => onQuestionClick?.(question.id)}
-							className="group focus-visible:ring-primary-700 relative flex cursor-pointer items-center gap-2 rounded-md text-left transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+							className={`group focus-visible:ring-primary-700 relative flex cursor-pointer items-center gap-2 rounded-md text-left transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2`}
 						>
+							{/* @TODO add cn() */}
 							<span
 								className={`z-10 flex aspect-square h-6 items-center justify-center rounded-full border text-xs font-medium transition-colors ${
 									shouldHighlight
