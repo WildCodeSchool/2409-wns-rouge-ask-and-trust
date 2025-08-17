@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
 import { PlusCircle, Trash2 } from "lucide-react"
+import { useId } from "react"
 import {
 	FieldArrayWithId,
 	FieldValues,
@@ -48,6 +49,7 @@ export function BuildListAnswers({
 	append,
 	questionType,
 }: BuildListAnswersProps) {
+	const groupLabelId = useId()
 	const getPlaceholder = (index: number): string => {
 		switch (questionType) {
 			case TypesOfQuestion.Boolean:
@@ -65,7 +67,7 @@ export function BuildListAnswers({
 
 	return (
 		<div className="flex flex-col gap-1">
-			<Label htmlFor="answers" required>
+			<Label id={groupLabelId} required>
 				Définir les réponses
 			</Label>
 
@@ -78,6 +80,7 @@ export function BuildListAnswers({
 						id={`answer-${index}`}
 						type="text"
 						placeholder={getPlaceholder(index)}
+						aria-labelledby={groupLabelId}
 						aria-required
 						{...register(`answers.${index}.value`, {
 							required: "La réponse ne peut pas être vide",

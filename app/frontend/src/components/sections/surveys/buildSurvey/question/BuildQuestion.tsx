@@ -30,8 +30,8 @@ function BuildQuestion(
 		register,
 		handleSubmit,
 		control,
-		formState: { errors },
-		// reset,
+		formState: { errors, isDirty },
+		reset,
 	} = useForm<QuestionUpdate>({
 		defaultValues: {
 			title: question.title,
@@ -114,6 +114,17 @@ function BuildQuestion(
 		prevTypeRef.current = watchedType
 	}, [append, fields.length, question, watchedType])
 
+	// After a successful question load, reset the form with the question data
+	// Enable to put back disabled state of the submit button
+	useEffect(() => {
+		if (!question) return
+		reset({
+			title: question.title,
+			type: question.type,
+			answers: question.answers,
+		})
+	}, [question, reset])
+
 	const handleSubmitForm = async (formData: UpdateQuestionInput) => {
 		if (!question?.id) return
 
@@ -183,8 +194,11 @@ function BuildQuestion(
 				<Button
 					role="submit"
 					type="submit"
-					ariaLabel="Enregistrer la question."
+					disabled={!isDirty} // Disable button if form is not dirty
+					aria-disabled={!isDirty}
+					ariaLabel="Enregistrer la question"
 					fullWidth
+					variant={isDirty ? "primary" : "disabled"}
 				>
 					Enregistrer
 				</Button>
