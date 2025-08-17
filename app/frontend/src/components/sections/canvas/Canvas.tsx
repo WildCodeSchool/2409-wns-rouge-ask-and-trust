@@ -15,6 +15,8 @@ interface CanvasProps {
 	setNewQuestionId: (id: number | null) => void
 	onAddQuestion: (type: QuestionType | undefined) => Promise<void>
 	questions: Question[]
+	focusedQuestionId: number | null
+	setFocusedQuestionId: (id: number | null) => void
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
@@ -22,6 +24,8 @@ export const Canvas: React.FC<CanvasProps> = ({
 	newQuestionId,
 	setNewQuestionId,
 	questions,
+	focusedQuestionId,
+	setFocusedQuestionId,
 }) => {
 	const { isCreateQuestionLoading } = useQuestions()
 	const { id: surveyId } = useParams()
@@ -31,21 +35,34 @@ export const Canvas: React.FC<CanvasProps> = ({
 		200,
 		768
 	)
-	const [currentQuestionId, setCurrentQuestionId] = useState<number | null>(
-		null
-	)
 
+	const [highlightedQuestionId, setHighlightedQuestionId] = useState<
+		number | null
+	>(questions[0]?.id ?? null)
+	console.log("highlightedQuestionId", highlightedQuestionId)
 	const isCompact = isVerticalCompact || isHorizontalCompact
 
 	// Handle scroll to the new question (after adding a new one) or current question (if click in Table of Content)
-	const scrollTargetId = newQuestionId ?? currentQuestionId
+	const scrollTargetId = newQuestionId ?? focusedQuestionId
 	const resetScrollId = newQuestionId ? setNewQuestionId : undefined
 
-	useScrollToElement(scrollTargetId, rootRef, questionRefs, resetScrollId)
+	useScrollToElement(
+		scrollTargetId,
+		rootRef,
+		questionRefs,
+		resetScrollId,
+		newQuestionId !== null || focusedQuestionId !== null // focus the question if it's new or focused. If clicked in question's input, keep focus in the input
+	)
 
 	// For questions table content
 	const scrollToQuestion = (id: number) => {
-		setCurrentQuestionId(id)
+		setFocusedQuestionId(id) // focus the clicked question
+		setHighlightedQuestionId(null)
+		// Focus the question in the canvas
+		const el = questionRefs.current[id]
+		if (el) {
+			el.focus()
+		}
 	}
 
 	return (
@@ -61,6 +78,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 						{questions.map((question, index) => {
 							return (
 								<div
+									tabIndex={-1}
 									key={question.id}
 									ref={el => {
 										questionRefs.current[question.id] = el
@@ -70,6 +88,12 @@ export const Canvas: React.FC<CanvasProps> = ({
 										question={question}
 										surveyId={Number(surveyId)}
 										index={index + 1}
+										onClick={() => {
+											setHighlightedQuestionId(
+												question.id
+											)
+											setFocusedQuestionId(null)
+										}}
 									/>
 								</div>
 							)
@@ -101,13 +125,14 @@ export const Canvas: React.FC<CanvasProps> = ({
 							variant="outline"
 							fullWidth
 						>
-							Enregistrer
+							Garder en brouillon
 						</Button>
 					</div>
 					<TableContentQuestions
 						questions={questions}
 						onQuestionClick={scrollToQuestion}
-						currentQuestionId={currentQuestionId}
+						currentQuestionId={focusedQuestionId}
+						highlightedQuestionId={highlightedQuestionId}
 					/>
 				</div>
 			)}
