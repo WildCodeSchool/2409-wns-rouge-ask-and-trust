@@ -1,11 +1,11 @@
 import { RefObject, startTransition, useEffect } from "react"
 
-export function useScrollToElement(
+export function useScrollToElement<T extends HTMLElement = HTMLElement>(
 	newElementId: number | null,
-	containerRef: RefObject<HTMLDivElement | null>,
-	elementsRef: RefObject<{ [key: number]: HTMLDivElement | null }>,
+	containerRef: RefObject<HTMLElement | null>,
+	elementsRef: RefObject<{ [key: number]: T | null }>,
 	setNewElementId?: (id: number | null) => void,
-	isHover = false
+	shouldFocus = false
 ) {
 	useEffect(() => {
 		if (newElementId && containerRef.current) {
@@ -22,7 +22,7 @@ export function useScrollToElement(
 					behavior: "smooth",
 				})
 
-				if (!isHover) {
+				if (shouldFocus) {
 					el.focus?.()
 				}
 
@@ -34,5 +34,5 @@ export function useScrollToElement(
 				}
 			})
 		}
-	}, [newElementId, containerRef, elementsRef, setNewElementId, isHover])
+	}, [newElementId, containerRef, elementsRef, setNewElementId, shouldFocus])
 }
