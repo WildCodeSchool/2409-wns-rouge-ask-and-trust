@@ -12,6 +12,11 @@ function SurveyCreator() {
 	const { id: surveyId } = useParams()
 	// @TODO add errors handling
 	const [newQuestionId, setNewQuestionId] = useState<number | null>(null)
+	// Focused question ID for the current question in the canvas
+	// Use this to focus the question when clicking in the Table of Content
+	const [focusedQuestionId, setFocusedQuestionId] = useState<number | null>(
+		null
+	)
 	const { addQuestion, createQuestionError, resetCreateQuestionError } =
 		useQuestions()
 
@@ -40,6 +45,8 @@ function SurveyCreator() {
 	const handleAddQuestion = useCallback(
 		async (type: QuestionType | undefined) => {
 			if (!surveyId) return
+
+			setFocusedQuestionId(null)
 
 			const result = await addQuestion({
 				surveyId: Number(surveyId),
@@ -89,7 +96,7 @@ function SurveyCreator() {
 					content="Page de création de l'enquête."
 				/>
 			</Helmet>
-			<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col border-4 border-red-700 bg-gray-50">
+			<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50">
 				<section className="p-4 pb-0 lg:p-4 lg:pb-0">
 					<div className="border-black-50 shadow-default flex items-center justify-between rounded-xl border bg-white p-4">
 						<h1 className="h-fit text-2xl font-semibold text-gray-900">
@@ -104,6 +111,8 @@ function SurveyCreator() {
 						newQuestionId={newQuestionId}
 						setNewQuestionId={setNewQuestionId}
 						questions={questions}
+						focusedQuestionId={focusedQuestionId}
+						setFocusedQuestionId={setFocusedQuestionId}
 					/>
 				</section>
 			</div>
