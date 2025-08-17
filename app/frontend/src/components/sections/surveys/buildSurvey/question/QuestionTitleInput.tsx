@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
 import { QuestionUpdate } from "@/types/types"
+import { useId } from "react"
 import { FieldError, UseFormRegister } from "react-hook-form"
 
 /**
@@ -24,13 +25,14 @@ export const QuestionTitleInput = ({
 	register,
 	errorsTitle,
 }: QuestionTitleInputProps) => {
+	const inputId = useId()
 	return (
 		<div className="flex flex-col gap-1">
-			<Label htmlFor="title" required>
+			<Label htmlFor={inputId} required>
 				Titre
 			</Label>
 			<Input
-				id="title"
+				id={inputId}
 				placeholder="Titre de la question"
 				{...register("title", {
 					required: "Le titre est requis.",
