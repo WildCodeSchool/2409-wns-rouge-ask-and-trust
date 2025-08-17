@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
-import { Label } from "@/components/ui/Label"
+import { Legend } from "@/components/ui/Legend"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
 import { PlusCircle, Trash2 } from "lucide-react"
-import { useId } from "react"
 import {
 	FieldArrayWithId,
 	FieldValues,
@@ -49,7 +48,7 @@ export function BuildListAnswers({
 	append,
 	questionType,
 }: BuildListAnswersProps) {
-	const groupLabelId = useId()
+	// const groupLabelId = useId()
 	const getPlaceholder = (index: number): string => {
 		switch (questionType) {
 			case TypesOfQuestion.Boolean:
@@ -66,11 +65,8 @@ export function BuildListAnswers({
 	const isBooleanType = questionType === TypesOfQuestion.Boolean
 
 	return (
-		<div className="flex flex-col gap-1">
-			<Label id={groupLabelId} required>
-				Définir les réponses
-			</Label>
-
+		<fieldset className="flex flex-col gap-1">
+			<Legend>Définir les réponses</Legend>
 			{fields.map((field, index) => (
 				<div
 					key={field.id || `answer-${index}`}
@@ -80,7 +76,6 @@ export function BuildListAnswers({
 						id={`answer-${index}`}
 						type="text"
 						placeholder={getPlaceholder(index)}
-						aria-labelledby={groupLabelId}
 						aria-required
 						{...register(`answers.${index}.value`, {
 							required: "La réponse ne peut pas être vide",
@@ -113,6 +108,6 @@ export function BuildListAnswers({
 					Ajouter une réponse
 				</Button>
 			)}
-		</div>
+		</fieldset>
 	)
 }
