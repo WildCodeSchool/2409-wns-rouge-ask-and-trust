@@ -19,10 +19,11 @@ type QuestionProps = {
 	question: Question
 	index: number
 	surveyId: number
+	onClick: () => void
 }
 
 function BuildQuestion(
-	{ question, index, surveyId }: QuestionProps,
+	{ question, index, surveyId, onClick }: QuestionProps,
 	ref: React.Ref<HTMLLIElement> | null
 ) {
 	const {
@@ -136,26 +137,6 @@ function BuildQuestion(
 				answers: isTypeText ? [] : (formattedAnswers ?? []),
 			})
 
-			// await fetchQuestion() // If update is a success, refetch only this question
-			// const { data } = await fetchQuestion({
-			// 	variables: { id: question.id },
-			// })
-
-			// console.log("data", data)
-
-			// console.log("data", data)
-
-			// Reset the form with the updated question data
-			// reset({
-			// 	title: formData.title,
-			// 	type: formData.type,
-			// 	answers:
-			// 		// If the question type is Text, empty answers
-			// 		type === TypesOfQuestion.Text
-			// 			? []
-			// 			: (formattedAnswers ?? []),
-			// })
-
 			showToast({
 				type: "success",
 				title: "La question a été mise à jour.",
@@ -168,12 +149,11 @@ function BuildQuestion(
 	if (!question) return null
 
 	return (
-		<li className="list-none" ref={ref} tabIndex={-1}>
+		<li className="list-none" ref={ref} tabIndex={-1} onClick={onClick}>
 			<FormWrapper
 				onSubmit={handleSubmit(handleSubmitForm)}
 				className="w-full md:max-w-full"
 			>
-				{/* Display index, title and delete button */}
 				<BuildQuestionHeader
 					question={{
 						id: question.id,
