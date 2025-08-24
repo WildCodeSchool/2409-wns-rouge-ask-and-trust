@@ -5,12 +5,7 @@ import {
 	UPDATE_QUESTION,
 } from "@/graphql/survey/question"
 import { GET_SURVEY } from "@/graphql/survey/survey"
-import {
-	isMultipleAnswerType,
-	Question,
-	QuestionType,
-	TypesOfQuestion,
-} from "@/types/types"
+import { Question, QuestionType, TypesOfQuestion } from "@/types/types"
 import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client"
 import { AnswerObject } from "./../../../backend/src/graphql/inputs/create/survey/create-questions-input"
 
@@ -25,16 +20,6 @@ export type UpdateQuestionInput = Omit<CreateQuestionInput, "surveyId"> & {
 	id: number
 }
 
-const DEFAULT_ANSWERS_MULTIPLE: AnswerObject[] = [
-	{ value: "Réponse 1" },
-	{ value: "Réponse 2" },
-]
-
-const DEFAULT_ANSWERS_BOOLEAN: AnswerObject[] = [
-	{ value: "Vrai" },
-	{ value: "Faux" },
-]
-
 export function getDefaultQuestion(question: {
 	title?: string
 	type?: QuestionType
@@ -47,21 +32,11 @@ export function getDefaultQuestion(question: {
 	surveyId: number
 } {
 	const type = question.type ?? TypesOfQuestion.Text
-	let defaultAnswers: AnswerObject[] = []
-	const isNotAnswers = !question.answers || question.answers.length === 0
-	const isQuestionMultipleTypes = isMultipleAnswerType(type)
 
-	if (isNotAnswers) {
-		if (isQuestionMultipleTypes) {
-			defaultAnswers = DEFAULT_ANSWERS_MULTIPLE
-		} else if (type === TypesOfQuestion.Boolean) {
-			defaultAnswers = DEFAULT_ANSWERS_BOOLEAN
-		}
-	}
 	return {
 		title: question.title ?? "Nouvelle question",
-		type: type,
-		answers: question.answers ?? defaultAnswers,
+		type,
+		answers: question.answers ?? [],
 		surveyId: question.surveyId,
 	}
 }
@@ -116,7 +91,6 @@ export function useQuestions() {
 	const addQuestion = async (question: CreateQuestionInput) => {
 		if (isCreateQuestionLoading) return
 		const completedQuestion = getDefaultQuestion(question)
-
 		const result = await createQuestionMutation({
 			variables: { data: completedQuestion },
 			update: (cache, { data }) => {

@@ -48,7 +48,6 @@ export function BuildListAnswers({
 	append,
 	questionType,
 }: BuildListAnswersProps) {
-	// const groupLabelId = useId()
 	const getPlaceholder = (index: number): string => {
 		switch (questionType) {
 			case TypesOfQuestion.Boolean:

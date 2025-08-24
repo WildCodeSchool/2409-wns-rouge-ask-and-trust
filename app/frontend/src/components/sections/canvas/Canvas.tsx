@@ -68,6 +68,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 					<>
 						{questions.map((question, index) => {
 							return (
+								// @TODO maybe div in MemliozedBuildQuestion
 								<div
 									tabIndex={-1}
 									key={question.id}

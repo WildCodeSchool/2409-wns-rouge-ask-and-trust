@@ -86,33 +86,51 @@ function BuildQuestion(
 	])
 
 	// Watch if question's type changed
-	// If yes, add two answers with placeholders for type with answers if no answers yet
+	// If yes, handle default answers for specific types
 	useEffect(() => {
-		if (!watchedType || !question) return
-		if (
-			watchedType === TypesOfQuestion.Text ||
-			watchedType === TypesOfQuestion.TextArea
-		)
-			return
+		if (!watchedType) return
 
-		const isTypeWithAnswers = [
+		const typesWithAnswers = new Set<QuestionType>([
 			TypesOfQuestion.Boolean,
 			TypesOfQuestion.Radio,
 			TypesOfQuestion.Select,
 			TypesOfQuestion.Checkbox,
-		].includes(watchedType)
+		])
 
-		if (
-			prevTypeRef.current !== watchedType &&
-			isTypeWithAnswers &&
-			fields.length === 0
-		) {
-			// Add two empty answers with a placeholder
-			append([{ value: "" }, { value: "" }])
+		const isTypeWithAnswers = typesWithAnswers.has(watchedType)
+
+		// If type is Text or TextArea, do nothing
+		if (!isTypeWithAnswers) return
+
+		// If type changed
+		if (prevTypeRef.current !== watchedType) {
+			// Boolean type
+			// If no answers, add two empty answers
+			// If one answer, add one empty answer
+			// If more than two answers, keep only the first two answers
+			if (watchedType === TypesOfQuestion.Boolean) {
+				if (fields.length === 0) {
+					append([{ value: "" }, { value: "" }])
+				} else if (fields.length === 1) {
+					append([{ value: "" }])
+				} else if (fields.length > 2) {
+					const firstTwo = fields
+						.slice(0, 2)
+						.map(f => ({ value: f.value }))
+					remove()
+					append(firstTwo)
+				}
+			} else {
+				// Other types than Boolean (Radio / Select / Checkbox)
+				if (fields.length === 0) {
+					append([{ value: "" }, { value: "" }])
+				}
+				// Do nothing if 1 or more answers
+			}
 		}
 
 		prevTypeRef.current = watchedType
-	}, [append, fields.length, question, watchedType])
+	}, [watchedType, append, remove, fields])
 
 	// After a successful question load, reset the form with the question data
 	// Enable to put back disabled state of the submit button
