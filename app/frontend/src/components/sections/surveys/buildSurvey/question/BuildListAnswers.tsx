@@ -62,39 +62,51 @@ export function BuildListAnswers({
 	}
 
 	const isBooleanType = questionType === TypesOfQuestion.Boolean
+	const isMultipleType = (
+		[
+			TypesOfQuestion.Radio,
+			TypesOfQuestion.Checkbox,
+			TypesOfQuestion.Select,
+		] as QuestionType[]
+	).includes(questionType)
 
 	return (
 		<fieldset className="flex flex-col gap-1">
 			<Legend>Définir les réponses</Legend>
-			{fields.map((field, index) => (
-				<div
-					key={field.id || `answer-${index}`}
-					className="flex items-center gap-2"
-				>
-					<Input
-						id={`answer-${index}`}
-						type="text"
-						placeholder={getPlaceholder(index)}
-						aria-required
-						{...register(`answers.${index}.value`, {
-							required: "La réponse ne peut pas être vide",
-						})}
-						aria-invalid={errors?.answers?.[index]}
-						errorMessage={errors?.answers?.[index]?.value?.message}
-					/>
-					{/* Show remove button only if not Boolean */}
-					{!isBooleanType && (
-						<Button
-							type="button"
-							variant="ghost_destructive"
-							size="square_sm"
-							ariaLabel="Supprimer cette réponse"
-							onClick={() => remove(index)}
-							icon={Trash2}
+			{fields.map((field, index) => {
+				const disableRemove = isMultipleType && index < 2
+				return (
+					<div
+						key={field.id || `answer-${index}`}
+						className="flex items-center gap-2"
+					>
+						<Input
+							id={`answer-${index}`}
+							type="text"
+							placeholder={getPlaceholder(index)}
+							aria-required
+							{...register(`answers.${index}.value`, {
+								required: "La réponse ne peut pas être vide",
+							})}
+							aria-invalid={errors?.answers?.[index]}
+							errorMessage={
+								errors?.answers?.[index]?.value?.message
+							}
 						/>
-					)}
-				</div>
-			))}
+						{/* Show remove button only if not Boolean and more than two answers*/}
+						{!isBooleanType && !disableRemove && (
+							<Button
+								type="button"
+								variant="ghost_destructive"
+								size="square_sm"
+								ariaLabel="Supprimer cette réponse"
+								onClick={() => remove(index)}
+								icon={Trash2}
+							/>
+						)}
+					</div>
+				)
+			})}
 			{!isBooleanType && (
 				<Button
 					type="button"
