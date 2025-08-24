@@ -4,7 +4,7 @@ import { useRef } from "react"
 
 type TableContentQuestionsProps = {
 	questions: { id: number; title: string }[]
-	onQuestionClick?: (id: number) => void
+	onQuestionClick: (id: number) => void
 	currentQuestionId: number | null
 	highlightedQuestionId: number | null
 }
@@ -40,30 +40,59 @@ export const TableContentQuestions = ({
 					const shouldHighlight = question.id === activeQuestionId
 
 					return (
-						<button
-							ref={el => {
-								buttonRefs.current[question.id] = el
-							}}
+						<TableQuestionItem
 							key={question.id}
-							onClick={() => onQuestionClick?.(question.id)}
-							className={`group focus-visible:ring-primary-700 relative flex cursor-pointer items-center gap-2 rounded-md text-left transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2`}
-						>
-							<span
-								className={cn(
-									"border-primary-300 text-primary-700 group-hover:bg-primary-100 group-hover:text-primary-800 z-10 flex aspect-square h-6 items-center justify-center rounded-full border bg-white text-xs font-medium transition-colors",
-									shouldHighlight &&
-										"bg-primary-700 border-primary-700 text-white"
-								)}
-							>
-								{index + 1}
-							</span>
-							<span className="group-hover:text-primary-700 overflow-hidden text-sm text-ellipsis whitespace-nowrap text-gray-700 transition-colors group-hover:font-medium">
-								{question.title}
-							</span>
-						</button>
+							id={question.id}
+							index={index}
+							title={question.title}
+							onClick={() => onQuestionClick(question.id)}
+							buttonRefs={buttonRefs}
+							shouldHighlight={shouldHighlight}
+						/>
 					)
 				})}
 			</div>
 		</aside>
+	)
+}
+
+const TableQuestionItem = ({
+	id,
+	index,
+	title,
+	onClick,
+	buttonRefs,
+	shouldHighlight,
+}: {
+	id: number
+	index: number
+	title: string
+	onClick: () => void
+	buttonRefs: React.RefObject<{ [key: number]: HTMLButtonElement | null }>
+	shouldHighlight: boolean
+}) => {
+	return (
+		<button
+			ref={el => {
+				buttonRefs.current[id] = el
+			}}
+			onClick={onClick}
+			className={`group focus-visible:ring-primary-700 relative flex cursor-pointer items-center gap-2 rounded-md text-left transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2`}
+		>
+			<span
+				className={cn(
+					"border-primary-300 text-primary-700 z-10 flex aspect-square h-6 items-center justify-center rounded-full border bg-white text-xs font-medium transition-colors",
+					shouldHighlight &&
+						"bg-primary-700 border-primary-700 text-white",
+					!shouldHighlight &&
+						"group-hover:bg-primary-100 group-hover:text-primary-800"
+				)}
+			>
+				{index + 1}
+			</span>
+			<span className="group-hover:text-primary-700 overflow-hidden text-sm text-ellipsis whitespace-nowrap text-gray-700 transition-colors group-hover:font-medium">
+				{title}
+			</span>
+		</button>
 	)
 }
