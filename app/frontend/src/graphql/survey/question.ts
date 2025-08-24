@@ -44,3 +44,5 @@ export const DELETE_QUESTION = gql`
 		}
 	}
 `
+
+// @TODO add get questions by survey id query

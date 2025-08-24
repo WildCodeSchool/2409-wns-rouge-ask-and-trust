@@ -1,8 +1,10 @@
 import { Canvas } from "@/components/sections/canvas/Canvas"
 import { Toolbox } from "@/components/sections/Toolbox/Toolbox"
+import { GET_SURVEY } from "@/graphql/survey/survey"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useToast } from "@/hooks/useToast"
 import { QuestionType, Survey } from "@/types/types"
+import { useQuery } from "@apollo/client"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Helmet } from "react-helmet"
 import { useParams } from "react-router-dom"
@@ -10,16 +12,14 @@ import { useParams } from "react-router-dom"
 function SurveyCreator() {
 	//  Get survey's id from params
 	const { id: surveyId } = useParams()
-	// @TODO add errors handling
-	const [newQuestionId, setNewQuestionId] = useState<number | null>(null)
 	// Focused question ID for the current question in the canvas
-	// Use this to focus the question when clicking in the Table of Content
 	const [focusedQuestionId, setFocusedQuestionId] = useState<number | null>(
 		null
 	)
+	// Load addQuestion function from the API
 	const { addQuestion, createQuestionError, resetCreateQuestionError } =
 		useQuestions()
-
+	// @TODO mayse getQuestions here and getSurvey infos in Survey details
 	const { data, loading: loadingSurvey } = useQuery<{
 		survey: Survey
 	}>(GET_SURVEY, {
@@ -28,6 +28,7 @@ function SurveyCreator() {
 		},
 		fetchPolicy: "cache-first",
 	})
+
 	const { showToast } = useToast()
 
 	// Show a toast notification if there is an error after creating a question
@@ -41,6 +42,11 @@ function SurveyCreator() {
 			resetCreateQuestionError() // Reset the error to avoid permanent toast error
 		}
 	}, [createQuestionError, resetCreateQuestionError, showToast])
+
+	// Memoize questions to avoid unnecessary re-renders
+	const questions = useMemo(() => {
+		return data?.survey?.questions ?? []
+	}, [data?.survey?.questions])
 
 	const handleAddQuestion = useCallback(
 		async (type: QuestionType | undefined) => {
@@ -58,15 +64,11 @@ function SurveyCreator() {
 					type: "success",
 					title: "Question ajoutée !",
 				})
-				setNewQuestionId(result.id)
+				setFocusedQuestionId(result.id)
 			}
 		},
 		[addQuestion, showToast, surveyId]
 	)
-
-	const questions = useMemo(() => {
-		return data?.survey?.questions ?? []
-	}, [data?.survey?.questions])
 
 	if (loadingSurvey) {
 		return <SurveyCreatorSkeleton />
@@ -97,6 +99,7 @@ function SurveyCreator() {
 				/>
 			</Helmet>
 			<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50">
+				{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
 				<section className="p-4 pb-0 lg:p-4 lg:pb-0">
 					<div className="border-black-50 shadow-default flex items-center justify-between rounded-xl border bg-white p-4">
 						<h1 className="h-fit text-2xl font-semibold text-gray-900">
@@ -108,8 +111,6 @@ function SurveyCreator() {
 					<Toolbox onAddQuestion={handleAddQuestion} />
 					<Canvas
 						onAddQuestion={handleAddQuestion}
-						newQuestionId={newQuestionId}
-						setNewQuestionId={setNewQuestionId}
 						questions={questions}
 						focusedQuestionId={focusedQuestionId}
 						setFocusedQuestionId={setFocusedQuestionId}
@@ -123,8 +124,6 @@ function SurveyCreator() {
 export default SurveyCreator
 
 import { Skeleton } from "@/components/ui/Skeleton"
-import { GET_SURVEY } from "@/graphql/survey/survey"
-import { useQuery } from "@apollo/client"
 
 export function SurveyCreatorSkeleton() {
 	return (

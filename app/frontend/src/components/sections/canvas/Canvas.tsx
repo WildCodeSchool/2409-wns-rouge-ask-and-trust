@@ -11,8 +11,6 @@ import MemoizedBuildQuestion from "../surveys/buildSurvey/question/BuildQuestion
 import { TableContentQuestions } from "./TableContentQuestions"
 
 interface CanvasProps {
-	newQuestionId: number | null
-	setNewQuestionId: (id: number | null) => void
 	onAddQuestion: (type: QuestionType | undefined) => Promise<void>
 	questions: Question[]
 	focusedQuestionId: number | null
@@ -21,36 +19,30 @@ interface CanvasProps {
 
 export const Canvas: React.FC<CanvasProps> = ({
 	onAddQuestion,
-	newQuestionId,
-	setNewQuestionId,
 	questions,
 	focusedQuestionId,
 	setFocusedQuestionId,
 }) => {
 	const { isCreateQuestionLoading } = useQuestions()
 	const { id: surveyId } = useParams()
-
 	const questionRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
 	const { rootRef, isVerticalCompact, isHorizontalCompact } = useResponsivity(
 		200,
 		768
 	)
-
 	const [highlightedQuestionId, setHighlightedQuestionId] = useState<
 		number | null
 	>(questions[0]?.id ?? null)
 	const isCompact = isVerticalCompact || isHorizontalCompact
 
-	// Handle scroll to the new question (after adding a new one) or current question (if click in Table of Content)
-	const scrollTargetId = newQuestionId ?? focusedQuestionId
-	const resetScrollId = newQuestionId ? setNewQuestionId : undefined
+	const resetScrollId = undefined
 
 	useScrollToElement(
-		scrollTargetId,
+		focusedQuestionId,
 		rootRef,
 		questionRefs,
 		resetScrollId,
-		newQuestionId !== null || focusedQuestionId !== null // focus the question if it's new or focused. If clicked in question's input, keep focus in the input
+		focusedQuestionId !== null
 	)
 
 	// For questions table content
@@ -112,6 +104,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 			{!isCompact && questions && questions.length > 0 && (
 				<div className="flex max-w-52 flex-col gap-2">
 					<div className="flex w-full flex-col items-center gap-2">
+						{/* @TODO add real logic to publish survey */}
 						<Button
 							ariaLabel="Publier l'enquête"
 							variant="primary"
@@ -119,6 +112,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 						>
 							Publier l'enquête
 						</Button>
+						{/* @TODO add real logic */}
 						<Button
 							ariaLabel="Enregistrer en brouillon"
 							variant="outline"
