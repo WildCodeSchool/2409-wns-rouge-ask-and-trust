@@ -214,6 +214,7 @@ export class QuestionsResolver {
 				)
 			}
 
+			// @TODO add answers validation and questionToUpdate in a function
 			const { id, ...dataWithoutId } = data
 
 			const isTypeBoolean = data.type === TypesOfQuestion.Boolean
