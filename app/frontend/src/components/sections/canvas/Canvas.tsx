@@ -1,20 +1,24 @@
 import { EmptyState } from "@/components/sections/canvas/empty-state"
-import BuildQuestion from "@/components/sections/surveys/buildSurvey/question/BuildQuestion"
 import { Button } from "@/components/ui/Button"
 import { useQuestions } from "@/hooks/useQuestions"
+import { useResponsivity } from "@/hooks/useResponsivity"
 import { useToast } from "@/hooks/useToast"
 import { PlusCircle } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
+import BuildQuestion from "../surveys/buildSurvey/question/BuildQuestion"
+import { TableContentQuestions } from "./TableContentQuestions"
 
 interface CanvasProps {
-	className?: string
-	questions: { id: number }[]
+	questions: { id: number; title: string }[]
+	newQuestionId: number | null
+	setNewQuestionId: (id: number | null) => void
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
-	className = "",
 	questions = [],
+	newQuestionId,
+	setNewQuestionId,
 }) => {
 	const {
 		addQuestion,
@@ -23,25 +27,35 @@ export const Canvas: React.FC<CanvasProps> = ({
 		resetCreateQuestionError,
 	} = useQuestions()
 	const { id: surveyId } = useParams()
-	const [newQuestionId, setNewQuestionId] = useState<number | null>(null)
 	const [newQuestionElement, setNewQuestionElement] =
-		useState<HTMLLIElement | null>(null)
+		useState<HTMLDivElement | null>(null)
 	const { showToast } = useToast()
+	const questionRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
+	const { rootRef, isVerticalCompact, isHorizontalCompact } = useResponsivity(
+		200,
+		768
+	)
+	const [currentQuestionId, setCurrentQuestionId] = useState<number | null>(
+		null
+	)
 
-	// Scroll to the new question after creation and focus on it
+	const isCompact = isVerticalCompact || isHorizontalCompact
+
+	// @TODO fix this : should scroll in canvas and not in window
 	useEffect(() => {
-		if (newQuestionId != null && newQuestionElement) {
+		if (newQuestionElement) {
 			newQuestionElement.scrollIntoView({
 				behavior: "smooth",
 				block: "center",
 			})
-			newQuestionElement.focus()
+
+			newQuestionElement.focus() // Focus only if new question exists
+
 			setNewQuestionId(null)
 			setNewQuestionElement(null)
 		}
-	}, [newQuestionId, newQuestionElement])
+	}, [newQuestionElement, newQuestionId, setNewQuestionId])
 
-	// Show a toast notification if there is an error after creating a question
 	useEffect(() => {
 		if (createQuestionError) {
 			showToast({
@@ -49,52 +63,74 @@ export const Canvas: React.FC<CanvasProps> = ({
 				title: "Oops, nous avons rencontré une erreur.",
 				description: "Veuillez réessayer plus tard.",
 			})
-			resetCreateQuestionError() // Reset the error to avoid permanent toast error
+			resetCreateQuestionError()
 		}
 	}, [createQuestionError, resetCreateQuestionError, showToast])
 
 	const handleAddQuestion = async () => {
 		if (!surveyId) return
-		const result = await addQuestion({
-			surveyId: Number(surveyId),
-		})
+		const result = await addQuestion({ surveyId: Number(surveyId) })
 		if (result?.id) {
-			showToast({
-				type: "success",
-				title: "Question ajoutée !",
-			})
+			showToast({ type: "success", title: "Question ajoutée !" })
 			setNewQuestionId(result.id)
 		}
 	}
 
+	// For questions table content : scroll to question on click
+	const scrollToQuestion = (id: number) => {
+		const el = questionRefs.current[id]
+		if (el) {
+			setCurrentQuestionId(id)
+			el.scrollIntoView({ behavior: "smooth", block: "center" })
+			el.focus?.()
+		}
+	}
+
 	return (
-		<div className={`survey-canvas ${className} flex flex-col gap-10`}>
-			{questions.length === 0 ? (
-				<EmptyState />
-			) : (
-				questions.map((question: { id: number }) => (
-					<BuildQuestion
-						key={question.id}
-						questionId={Number(question.id)}
-						ref={
-							// Set the ref only for the new question
-							// Enable to scroll to it
-							newQuestionId === question.id
-								? el => setNewQuestionElement(el)
-								: null
-						}
-					/>
-				))
-			)}
-			<Button
-				onClick={handleAddQuestion}
-				disabled={isCreateQuestionLoading}
-				ariaLabel="Add Question"
-				icon={PlusCircle}
-				className="self-center"
+		<>
+			<div
+				ref={rootRef}
+				className="mx-[-0.75rem] flex h-screen w-full flex-col gap-10 overflow-y-scroll px-[0.75rem]"
 			>
-				Ajouter une question
-			</Button>
-		</div>
+				{questions.length === 0 ? (
+					<EmptyState />
+				) : (
+					questions.map((question, index) => {
+						const isNew = newQuestionId === question.id
+						return (
+							<div
+								key={question.id}
+								ref={el => {
+									questionRefs.current[question.id] = el
+									if (isNew) setNewQuestionElement(el)
+								}}
+							>
+								<BuildQuestion
+									questionId={question.id}
+									index={index + 1}
+								/>
+							</div>
+						)
+					})
+				)}
+
+				<Button
+					onClick={handleAddQuestion}
+					disabled={isCreateQuestionLoading}
+					ariaLabel="Add Question"
+					icon={PlusCircle}
+					className="self-center"
+				>
+					Ajouter une question
+				</Button>
+			</div>
+			{!isCompact && (
+				<TableContentQuestions
+					questions={questions}
+					onQuestionClick={scrollToQuestion}
+					currentQuestionId={currentQuestionId}
+				/>
+			)}
+		</>
 	)
 }

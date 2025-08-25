@@ -55,8 +55,8 @@ export default function PreviewSurveyPage() {
 					content="Page de prévisualisation d'une nouvelle enquête."
 				/>
 			</Helmet>
-			<div className="mx-auto max-w-2xl rounded bg-white p-8 shadow">
-				<h1 className="mb-4 flex items-center gap-2 text-2xl font-bold">
+			<div className="shadow-component mx-auto mt-20 max-w-2xl rounded bg-white p-8">
+				<h1 className="mb-6 flex items-center gap-2 text-2xl font-bold">
 					{selectedSurvey.title}
 					<Badge variant="secondary">
 						{typeof selectedSurvey.category === "object"
@@ -64,10 +64,10 @@ export default function PreviewSurveyPage() {
 							: selectedSurvey.category}
 					</Badge>
 				</h1>
-				<Callout type="info" title="Description">
+				<Callout type="info" title="Description" className="mb-6">
 					{selectedSurvey.description}
 				</Callout>
-				<h2 className="mb-4 text-lg font-bold">Questions :</h2>
+				<h2 className="mb-6 text-lg font-bold">Questions :</h2>
 				{/* Render questions */}
 				{isFetching ? (
 					<p>Chargement...</p>

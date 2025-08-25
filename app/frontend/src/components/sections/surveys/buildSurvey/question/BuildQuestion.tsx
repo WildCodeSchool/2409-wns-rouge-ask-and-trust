@@ -26,6 +26,7 @@ import {
 
 type QuestionProps = {
 	questionId: number
+	index: number
 }
 
 type RenderAnswerComponentProps = {
@@ -48,10 +49,12 @@ export function RenderAnswerComponent({
 	// Render the appropriate answer component based on the question type
 	switch (questionType) {
 		case TypesOfQuestion.Text:
-		case TypesOfQuestion.Boolean: // @TODO : render list answer for Boolean Question instead of null
+		case TypesOfQuestion.TextArea:
 			return null
-		case TypesOfQuestion.Multiple_Choice:
+		case TypesOfQuestion.Boolean:
+		case TypesOfQuestion.Radio:
 		case TypesOfQuestion.Select:
+		case TypesOfQuestion.Checkbox:
 			return (
 				<BuildListAnswers
 					register={register}
@@ -72,8 +75,9 @@ const getDefaultAnswersForType = (type: QuestionType) => {
 	switch (type) {
 		case TypesOfQuestion.Boolean:
 			return [{ value: "Vrai" }, { value: "Faux" }]
-		case TypesOfQuestion.Multiple_Choice:
+		case TypesOfQuestion.Radio:
 		case TypesOfQuestion.Select:
+		case TypesOfQuestion.Checkbox:
 			return [{ value: "Réponse 1" }, { value: "Réponse 2" }]
 		default:
 			return []
@@ -81,7 +85,7 @@ const getDefaultAnswersForType = (type: QuestionType) => {
 }
 
 function BuildQuestion(
-	{ questionId }: QuestionProps,
+	{ questionId, index }: QuestionProps,
 	ref: React.Ref<HTMLLIElement> | null
 ) {
 	const {
@@ -140,10 +144,10 @@ function BuildQuestion(
 	}, [
 		updateQuestionError,
 		deleteQuestionError,
-		getQuestionError,
 		showToast,
 		resetUpdateQuestionError,
 		resetDeleteQuestionError,
+		getQuestionError,
 	])
 
 	// Reset the form with the current question data
@@ -155,9 +159,11 @@ function BuildQuestion(
 				type: question.type,
 				answers: question.answers,
 			})
+
+			// Init reference to the previous type
+			prevTypeRef.current = question.type
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [question?.id, loading, getQuestionError, reset])
+	}, [question?.id, loading, getQuestionError, reset, question])
 
 	// After saving question, if type has changed and there is no answer, provide default answers
 	useEffect(() => {
@@ -172,9 +178,7 @@ function BuildQuestion(
 			// If the form has no answers, append default answers based on the type
 			const defaults = getDefaultAnswersForType(watchedType)
 			// Append default answers to the form
-			for (const defaultAnswer of defaults) {
-				append(defaultAnswer)
-			}
+			append(defaults) // shouldFocus is false to avoid focusing input immediately
 		}
 		// Always update the previous type reference after checking
 		prevTypeRef.current = watchedType
@@ -238,8 +242,8 @@ function BuildQuestion(
 				type: "success",
 				title: "La question a été mise à jour.",
 			})
-		} catch {
-			//
+		} catch (error) {
+			console.error("Error updating question:", error)
 		}
 	}
 
@@ -249,12 +253,21 @@ function BuildQuestion(
 		<li className="list-none" ref={ref} tabIndex={-1}>
 			<FormWrapper
 				onSubmit={handleSubmit(handleSubmitForm)}
-				className="md:max-w-[90vh]"
+				className="w-full md:max-w-full"
 			>
 				<div className="flex content-center justify-between">
-					<h3 className="flex-1 self-center text-2xl font-bold">
-						{question.title ?? "Nouvelle question"}
-					</h3>
+					<div className="flex h-fit items-center justify-start gap-2">
+						<span
+							className={
+								"bg-primary-700 border-primary-700 z-10 flex aspect-square h-6 items-center justify-center rounded-full border text-xs font-medium text-white transition-colors"
+							}
+						>
+							{index}
+						</span>
+						<h3 className="line-h my-0 flex-1 self-center py-0 text-2xl leading-none font-bold">
+							{question.title ?? "Nouvelle question"}
+						</h3>
+					</div>
 					<Button
 						variant="ghost_destructive"
 						size="square_sm"
@@ -276,7 +289,7 @@ function BuildQuestion(
 							ref={deleteButtonRef}
 							onClick={() => {
 								handleClickDelete(
-									questionId,
+									question.id,
 									question.survey.id
 								)
 							}}

@@ -25,7 +25,7 @@ function SurveyCreate() {
 				/>
 			</Helmet>
 
-			<div className="flex items-center justify-center max-md:px-4">
+			<div className="flex items-center justify-center pt-20 max-md:px-4">
 				<SurveyForm />
 			</div>
 		</>

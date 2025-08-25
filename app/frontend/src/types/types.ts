@@ -1,7 +1,7 @@
-import { CheckedState } from "@radix-ui/react-checkbox"
 import { LucideIcon } from "lucide-react"
-import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
 import { UserRole } from "./../../../backend/src/types/types"
+import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
+import { CheckedState } from "@radix-ui/react-checkbox"
 
 export type AuthContextProps = {
 	user: User | null
@@ -12,9 +12,14 @@ export type AuthContextProps = {
 
 export interface User {
 	id: string
+	firstname: string
+	lastname: string
 	email: string
-	role: string
-	// ... other user properties
+	password: string
+	role: UserRole
+	surveys: Survey[]
+	created_at: string
+	updated_at: string
 }
 
 export interface LinksType {
@@ -33,6 +38,13 @@ export interface UserAuth {
 	role: UserRole
 }
 
+export type UserDetails = {
+	user: User
+	userSurveys: MySurveysResult | null
+	showResetForm: boolean
+	onToggleResetForm: () => void
+}
+
 export type UserSignUp = UserAuth
 export type UserSignIn = Pick<UserAuth, "email" | "password">
 export type UserSignForm = UserSignUp | UserSignIn
@@ -48,9 +60,10 @@ export interface HeaderMobileMenuProps {
 }
 
 export interface NavAndAuthButtonsProps {
-	headerLinks: readonly LinksType[]
+	headerLinks?: readonly LinksType[]
 	isHorizontalCompact: boolean
 	handleShowMenu?: () => void
+	isInSurveys: boolean
 }
 
 export type SurveyCategoryType = {
@@ -98,7 +111,7 @@ export type ToolboxItem = {
 	id: string
 	label: string
 	icon?: React.ReactNode
-	onClickType: string
+	onClickType: QuestionType
 	onClick?: () => void
 }
 
@@ -126,6 +139,7 @@ export interface Survey {
 	public: boolean
 	category: number | string
 	questions: { id: number }[]
+	user: User
 }
 
 export type CreateSurveyInput = Survey
@@ -137,6 +151,9 @@ export type Question = {
 	title: string
 	type: QuestionType
 	answers: { value: string }[]
+	survey: {
+		id: number
+	}
 }
 
 export interface QuestionUpdate {
@@ -151,7 +168,9 @@ export interface QuestionUpdate {
 
 export const TypesOfQuestion = {
 	Text: "text",
-	Multiple_Choice: "multiple_choice",
+	TextArea: "textarea",
+	Checkbox: "checkbox",
+	Radio: "radio",
 	Boolean: "boolean",
 	Select: "select",
 } as const
@@ -161,13 +180,29 @@ export const TypesOfQuestionLabels: Record<
 	string
 > = {
 	Text: "Texte court",
-	Multiple_Choice: "Liste à choix multiples",
+	TextArea: "Texte long",
+	Checkbox: "Cases à cocher",
+	Radio: "Liste à choix unique",
 	Boolean: "Oui / Non",
-	Select: "Liste à choix unique",
+	Select: "Liste déroulante",
 }
 
 export type QuestionType =
 	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]
+
+export const MultipleAnswersType = [
+	TypesOfQuestion.Checkbox,
+	TypesOfQuestion.Radio,
+	TypesOfQuestion.Select,
+] as const
+
+type MultipleAnswerType = (typeof MultipleAnswersType)[number]
+
+export function isMultipleAnswerType(
+	type: QuestionType
+): type is MultipleAnswerType {
+	return (MultipleAnswersType as readonly string[]).includes(type)
+}
 
 export type InputsProps = {
 	register: UseFormRegister<CreateSurveyInput>
@@ -293,4 +328,19 @@ export interface SurveyResponseData {
 
 export interface SurveyResponseFormData {
 	[key: string]: string | string[] | boolean
+}
+
+export type SurveyWithCategory = {
+	id: number
+	title: string
+	description: string
+	public: boolean
+	category: {
+		id: number
+		name: string
+	}
+	questions: Question[]
+	status: string
+	createdAt: string
+	updatedAt: string
 }

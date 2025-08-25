@@ -121,7 +121,7 @@ export default function Payment() {
 				/>
 			</Helmet>
 
-			<div className="flex min-h-[80vh] items-center justify-center bg-gray-50 px-4 py-8">
+			<div className="flex min-h-[80vh] items-center justify-center bg-gray-50 px-4 pt-10">
 				<div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
 					<h1 className="text-black-default mb-4 text-center text-3xl font-bold">
 						Paiement de Pack d'enquêtes
@@ -133,7 +133,7 @@ export default function Payment() {
 								type="button"
 								className={`w-full rounded-lg border-2 px-4 py-3 text-left transition-all duration-150 ${
 									selectedPack === idx
-										? "border-primary-700 bg-primary-50 text-primary-700 font-bold shadow"
+										? "border-primary-700 bg-primary-50 text-primary-700 shadow-default font-bold"
 										: "text-black-default hover:border-primary-700 border-gray-200 bg-white"
 								}`}
 								onClick={() => setSelectedPack(idx)}

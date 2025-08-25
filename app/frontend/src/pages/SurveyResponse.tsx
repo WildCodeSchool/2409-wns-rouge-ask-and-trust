@@ -7,22 +7,7 @@ import { Callout } from "@/components/ui/Callout"
 import { Button } from "@/components/ui/Button"
 import { ArrowLeft } from "lucide-react"
 import SurveyResponseForm from "@/components/sections/response/SurveyResponseForm"
-import { Question } from "@/types/types"
-
-type SurveyWithCategory = {
-	id: number
-	title: string
-	description: string
-	public: boolean
-	category: {
-		id: number
-		name: string
-	}
-	questions: Question[]
-	status: string
-	createdAt: string
-	updatedAt: string
-}
+import { SurveyWithCategory } from "@/types/types"
 
 export default function SurveyResponse() {
 	const { id: surveyId } = useParams<{ id: string }>()
@@ -82,7 +67,7 @@ export default function SurveyResponse() {
 
 			<div className="bg-black-50 min-h-screen">
 				{/* Header Section */}
-				<section className="bg-white shadow-sm">
+				<section className="shadow-default bg-white">
 					<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
 						<div className="mb-4 flex items-center gap-4">
 							<Button
@@ -115,7 +100,7 @@ export default function SurveyResponse() {
 
 				{/* Survey Content */}
 				<section className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-					<div className="rounded-lg bg-white p-6 shadow">
+					<div className="shadow-default rounded-lg bg-white p-6">
 						{survey.questions?.length > 0 ? (
 							<SurveyResponseForm
 								surveyId={survey.id}

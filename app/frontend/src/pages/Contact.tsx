@@ -27,7 +27,7 @@ export default function Contact() {
 				<meta name="twitter:title" content="Contactez-nous" />
 				<meta name="twitter:description" content="Page de contact." />
 			</Helmet>
-			<div className="container mx-auto px-4 py-12">
+			<div className="container mx-auto px-4 pt-20">
 				<ContactHero />
 				<div className="grid gap-12 lg:grid-cols-3">
 					<div className="lg:col-span-2">
