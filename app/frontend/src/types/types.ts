@@ -60,9 +60,10 @@ export interface HeaderMobileMenuProps {
 }
 
 export interface NavAndAuthButtonsProps {
-	headerLinks: readonly LinksType[]
+	headerLinks?: readonly LinksType[]
 	isHorizontalCompact: boolean
 	handleShowMenu?: () => void
+	isInSurveys: boolean
 }
 
 export type SurveyCategoryType = {
@@ -327,4 +328,19 @@ export interface SurveyResponseData {
 
 export interface SurveyResponseFormData {
 	[key: string]: string | string[] | boolean
+}
+
+export type SurveyWithCategory = {
+	id: number
+	title: string
+	description: string
+	public: boolean
+	category: {
+		id: number
+		name: string
+	}
+	questions: Question[]
+	status: string
+	createdAt: string
+	updatedAt: string
 }

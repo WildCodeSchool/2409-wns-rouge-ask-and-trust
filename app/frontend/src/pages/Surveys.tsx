@@ -39,7 +39,7 @@ function Surveys() {
 		<>
 			<section
 				className={cn(
-					"px-20 max-sm:px-5",
+					"px-20 pt-20 max-sm:px-5",
 					isHorizontalCompact ? "pb-10" : "mb-20"
 				)}
 				ref={rootRef}
