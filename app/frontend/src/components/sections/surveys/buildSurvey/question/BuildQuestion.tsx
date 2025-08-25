@@ -175,7 +175,7 @@ function BuildQuestion({ question, index, surveyId, onClick }: QuestionProps) {
 	if (!question) return null
 
 	return (
-		<div onClick={onClick}>
+		<div className="w-full" onClick={onClick}>
 			<FormWrapper
 				onSubmit={handleSubmit(handleSubmitForm)}
 				className="w-full md:max-w-full"

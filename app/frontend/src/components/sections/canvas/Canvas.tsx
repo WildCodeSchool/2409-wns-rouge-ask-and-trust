@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/Button"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { useScrollToElement } from "@/hooks/useScroll"
+import { cn } from "@/lib/utils"
 import { Question, QuestionType } from "@/types/types"
 import { PlusCircle } from "lucide-react"
 import { useRef, useState } from "react"
@@ -60,7 +61,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 		<>
 			<div
 				ref={rootRef}
-				className="relative mx-[-0.75rem] flex h-full w-full flex-col gap-4 overflow-y-auto px-[0.75rem]"
+				className="relative flex h-full w-full flex-col gap-4 overflow-y-auto md:mx-[-0.75rem] md:px-[0.75rem]"
 			>
 				{!questions || questions?.length === 0 ? (
 					<EmptyState />
@@ -69,7 +70,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 						{questions.map((question, index) => {
 							return (
 								<li
-									className="focus-visible:border-primary-600 list-none rounded-xl focus-visible:ring-2 focus-visible:outline-none"
+									className="focus-visible:border-primary-600 w-full list-none rounded-xl focus-visible:ring-2 focus-visible:outline-none"
 									tabIndex={0}
 									key={question.id}
 									ref={el => {
@@ -95,7 +96,11 @@ export const Canvas: React.FC<CanvasProps> = ({
 							disabled={isCreateQuestionLoading}
 							ariaLabel="Add Question"
 							icon={PlusCircle}
-							className="self-center"
+							className={cn(
+								"self-center",
+								isCompact &&
+									`sticky right-4 bottom-4 left-4 z-10 w-[calc(100%_-_2rem)] shadow-lg`
+							)}
 						>
 							Ajouter une question
 						</Button>

@@ -118,17 +118,6 @@ export type ToolboxItem = {
 	onClick?: () => void
 }
 
-export interface ToolboxProps {
-	className?: string
-	items?: ToolboxItem[]
-	categories?: ToolboxCategory[]
-	showSearch?: boolean
-	searchManager?: SearchManager
-	compactThreshold?: number
-	horizontalThreshold?: number
-	noResultsText?: string
-}
-
 export interface SearchManager {
 	value: string
 	onChange: (value: string) => void
