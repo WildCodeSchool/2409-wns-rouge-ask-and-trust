@@ -1,12 +1,13 @@
-import { LinksType } from "@/types/types"
-import logo from "/logos/logo-landing.svg"
-import { Link } from "react-router-dom"
-import { Menu, X } from "lucide-react"
-import { useEffect, useState } from "react"
-import HeaderMobileMenu from "./HeaderMobileMenu"
 import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
 import { Button } from "@/components/ui/Button"
 import { useResponsivity } from "@/hooks/useResponsivity"
+import { LinksType } from "@/types/types"
+import { Menu, X } from "lucide-react"
+import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
+import HeaderMobileMenu from "./HeaderMobileMenu"
+import logo from "/logos/logo-landing.svg"
+import { useHeightVariable } from "@/hooks/useHeightVariable"
 
 const HEADER_LINKS: readonly LinksType[] = [
 	{
@@ -32,6 +33,10 @@ const HEADER_LINKS: readonly LinksType[] = [
 export default function Header() {
 	const [showMenu, setShowMenu] = useState<boolean>(false)
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 1024)
+
+	// Update header's height variable if change
+	// header's height is different depending on pages
+	useHeightVariable(rootRef, "--header-height")
 
 	const handleShowMenu = () => {
 		setShowMenu(!showMenu)
