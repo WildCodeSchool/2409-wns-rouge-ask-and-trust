@@ -22,10 +22,7 @@ type QuestionProps = {
 	onClick: () => void
 }
 
-function BuildQuestion(
-	{ question, index, surveyId, onClick }: QuestionProps,
-	ref: React.Ref<HTMLLIElement> | null
-) {
+function BuildQuestion({ question, index, surveyId, onClick }: QuestionProps) {
 	const {
 		register,
 		handleSubmit,
@@ -178,7 +175,7 @@ function BuildQuestion(
 	if (!question) return null
 
 	return (
-		<li className="list-none" ref={ref} tabIndex={-1} onClick={onClick}>
+		<div onClick={onClick}>
 			<FormWrapper
 				onSubmit={handleSubmit(handleSubmitForm)}
 				className="w-full md:max-w-full"
@@ -221,7 +218,7 @@ function BuildQuestion(
 					Enregistrer
 				</Button>
 			</FormWrapper>
-		</li>
+		</div>
 	)
 }
 

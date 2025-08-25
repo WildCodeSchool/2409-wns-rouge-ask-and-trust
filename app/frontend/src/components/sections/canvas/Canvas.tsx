@@ -25,7 +25,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 }) => {
 	const { isCreateQuestionLoading } = useQuestions()
 	const { id: surveyId } = useParams()
-	const questionRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
+	const questionRefs = useRef<{ [key: number]: HTMLLIElement | null }>({})
 	const { rootRef, isVerticalCompact, isHorizontalCompact } = useResponsivity(
 		200,
 		768
@@ -68,9 +68,9 @@ export const Canvas: React.FC<CanvasProps> = ({
 					<>
 						{questions.map((question, index) => {
 							return (
-								// @TODO maybe div in MemliozedBuildQuestion
-								<div
-									tabIndex={-1}
+								<li
+									className="focus-visible:border-primary-600 list-none rounded-xl focus-visible:ring-2 focus-visible:outline-none"
+									tabIndex={0}
 									key={question.id}
 									ref={el => {
 										questionRefs.current[question.id] = el
@@ -87,7 +87,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 											setFocusedQuestionId(null)
 										}}
 									/>
-								</div>
+								</li>
 							)
 						})}
 						<Button
