@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
-import { Label } from "@/components/ui/Label"
-import { QuestionUpdate } from "@/types/types"
+import { Legend } from "@/components/ui/Legend"
+import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
 import { PlusCircle, Trash2 } from "lucide-react"
 import {
 	FieldArrayWithId,
@@ -10,37 +10,25 @@ import {
 	UseFieldArrayRemove,
 	UseFormRegister,
 } from "react-hook-form"
+
 /**
- * @description
- * This component allows users to define a dynamic list of answer options
- * for a question, such as for a `<select>`, group of checkboxes, or radio buttons.
+ * Component to build and manage a dynamic list of answers for a question.
  *
- * It uses `react-hook-form`'s `useFieldArray` to manage the `answers` field array.
- * This component is meant to be used during the *creation or editing* of a question,
- * not during form submission or response.
+ * Depending on the question type, it renders input fields for answers,
+ * allows adding and removing answers, and adapts behavior for Boolean questions.
  *
- * Each field represents a label for one answer option, which can be edited or removed.
- * Users can also append new options to the list.
+ * For Boolean type questions, exactly two answers ("True" and "False") are displayed,
+ * and the add/remove buttons are disabled to enforce this constraint.
  *
- * @example
- * ```tsx
- * <BuildListAnswers
- *   fields={fields}
- *   register={register}
- *   errors={formErrors}
- *   remove={remove}
- *   append={append}
- * />
- * ```
+ * @param {object} props - Component properties
+ * @param {FieldArrayWithId<QuestionUpdate, "answers", "id">[]} props.fields - Array of answer fields managed by react-hook-form
+ * @param {UseFormRegister<QuestionUpdate>} props.register - react-hook-form's register function for input registration and validation
+ * @param {FieldValues} props.errors - Form error object to display validation messages
+ * @param {UseFieldArrayRemove} props.remove - Function to remove an answer field by index
+ * @param {UseFieldArrayAppend<QuestionUpdate, "answers">} props.append - Function to append a new answer field
+ * @param {QuestionType} props.questionType - The type of the question to conditionally render inputs
  *
- * @param props - Component props
- * @param props.fields - The current list of answers from `useFieldArray`
- * @param props.register - `react-hook-form` register function for input fields
- * @param props.errors - Object containing validation errors
- * @param props.remove - Function to remove an answer from the list
- * @param props.append - Function to add a new answer to the list
- *
- * @returns  {JSX.Element} A set of input fields allowing users to manage a list of answer options
+ * @returns {JSX.Element} The rendered list of answer inputs with add/remove controls
  */
 
 type BuildListAnswersProps = {
@@ -49,6 +37,7 @@ type BuildListAnswersProps = {
 	errors: FieldValues
 	remove: UseFieldArrayRemove
 	append: UseFieldArrayAppend<QuestionUpdate, "answers">
+	questionType: QuestionType
 }
 
 export function BuildListAnswers({
@@ -57,46 +46,79 @@ export function BuildListAnswers({
 	errors,
 	remove,
 	append,
+	questionType,
 }: BuildListAnswersProps) {
+	const getPlaceholder = (index: number): string => {
+		switch (questionType) {
+			case TypesOfQuestion.Boolean:
+				return index === 0 ? "Vrai" : "Faux"
+			case TypesOfQuestion.Radio:
+			case TypesOfQuestion.Select:
+			case TypesOfQuestion.Checkbox:
+				return `Réponse ${index + 1}`
+			default:
+				return `Option ${index + 1}`
+		}
+	}
+
+	const isBooleanType = questionType === TypesOfQuestion.Boolean
+	const isMultipleType = (
+		[
+			TypesOfQuestion.Radio,
+			TypesOfQuestion.Checkbox,
+			TypesOfQuestion.Select,
+		] as QuestionType[]
+	).includes(questionType)
+
 	return (
-		<div className="flex flex-col gap-1">
-			<Label htmlFor="lastname" required>
-				Définir les réponses
-			</Label>
-			{fields.map((field, index) => (
-				<div
-					key={field.id || `answer-${index}`}
-					className="flex flex-1 items-center gap-2"
+		<fieldset className="flex flex-col gap-1">
+			<Legend>Définir les réponses</Legend>
+			{fields.map((field, index) => {
+				const disableRemove = isMultipleType && index < 2
+				return (
+					<div
+						key={field.id || `answer-${index}`}
+						className="flex items-center gap-2"
+					>
+						<Input
+							id={`answer-${index}`}
+							type="text"
+							placeholder={getPlaceholder(index)}
+							aria-required
+							{...register(`answers.${index}.value`, {
+								required: "La réponse ne peut pas être vide",
+							})}
+							aria-invalid={errors?.answers?.[index]}
+							errorMessage={
+								errors?.answers?.[index]?.value?.message
+							}
+						/>
+						{/* Show remove button only if not Boolean and more than two answers*/}
+						{!isBooleanType && !disableRemove && (
+							<Button
+								type="button"
+								variant="ghost_destructive"
+								size="square_sm"
+								ariaLabel="Supprimer cette réponse"
+								onClick={() => remove(index)}
+								icon={Trash2}
+							/>
+						)}
+					</div>
+				)
+			})}
+			{!isBooleanType && (
+				<Button
+					type="button"
+					variant="ghost"
+					fullWidth
+					ariaLabel="Ajouter une réponse"
+					icon={PlusCircle}
+					onClick={() => append({ value: "" })}
 				>
-					<Input
-						id={`answer-${index}`}
-						type="text"
-						placeholder="Ex: Alma"
-						aria-required
-						{...register(`answers.${index}.value`)}
-						aria-invalid={errors?.answers?.[index]}
-						errorMessage={errors?.answers?.[index]?.message}
-					></Input>
-					<Button
-						type="button"
-						variant="ghost_destructive"
-						size="square_sm"
-						ariaLabel="Supprimer cette option"
-						onClick={() => remove(index)}
-						icon={Trash2}
-					/>
-				</div>
-			))}
-			<Button
-				type="button"
-				variant="ghost"
-				fullWidth
-				ariaLabel="Ajouter une réponse"
-				icon={PlusCircle}
-				onClick={() => append({ value: "Nouvelle réponse" })}
-			>
-				Ajouter une réponse
-			</Button>
-		</div>
+					Ajouter une réponse
+				</Button>
+			)}
+		</fieldset>
 	)
 }

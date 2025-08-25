@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button"
 import { GET_CATEGORIES } from "@/graphql/survey/category"
 import { useAuthContext } from "@/hooks/useAuthContext"
+import { useHeightVariable } from "@/hooks/useHeightVariable"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { cn, slugify } from "@/lib/utils"
 import { SurveyCategoryType } from "@/types/types"
@@ -17,11 +18,14 @@ export default function Header({ isInSurveys = false }) {
 		null
 	)
 	const { user } = useAuthContext()
-
 	const { data: categoriesData, loading: loadingCategories } =
 		useQuery(GET_CATEGORIES)
-	const categories = categoriesData?.categories || []
 
+	// Update header's height variable if change
+	// header's height is different depending on pages
+	useHeightVariable(rootRef, "--header-height")
+
+	const categories = categoriesData?.categories || []
 	const filterByCategory = (categorySlug: string, categoryId: string) => {
 		const newParams = new URLSearchParams(searchParams)
 
