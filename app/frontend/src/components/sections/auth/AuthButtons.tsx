@@ -37,11 +37,11 @@ export default function AuthButtons({
 	}
 
 	if (!user) {
-		// === CAS NON CONNECTÉ ===
+		// === CASE: NOT LOGGED IN ===
 
-		// === CAS SPÉCIFIQUE : Landing Page ===
+		// === SPECIFIC CASE: Landing Page ===
 		if (isOnLanding) {
-			// Footer → uniquement bouton connexion
+			// Footer → only login button
 			if (!isInHeader) {
 				return (
 					<Button
@@ -55,7 +55,7 @@ export default function AuthButtons({
 				)
 			}
 
-			// Header → bouton inscription + connexion
+			// Header → register + login buttons
 			return (
 				<div className="flex w-full flex-col items-center justify-center gap-5">
 					<Button
@@ -80,9 +80,9 @@ export default function AuthButtons({
 			)
 		}
 
-		// === CAS GÉNÉRAL POUR TOUTES LES AUTRES PAGES (y compris /surveys) ===
+		// === GENERAL CASE: All other pages (including /surveys) ===
 
-		// Footer → uniquement le bouton connexion
+		// Footer → only login button
 		if (isInFooter) {
 			return (
 				<Button
@@ -96,7 +96,7 @@ export default function AuthButtons({
 			)
 		}
 
-		// Header → bouton "Créer une enquête" + "Connexion"
+		// Header → "Create a survey" + "Login" buttons
 		return (
 			<div className="flex items-center justify-center gap-6">
 				<Button
@@ -120,9 +120,9 @@ export default function AuthButtons({
 		)
 	}
 
-	// === CAS CONNECTÉ ===
+	// === CASE: LOGGED IN ===
 
-	// Pages "profil" ou "admin" → bouton de déconnexion
+	// Pages "profile" or "admin" → logout button
 	if (isOnProfile || isOnAdmin) {
 		return (
 			<Button
@@ -135,7 +135,7 @@ export default function AuthButtons({
 		)
 	}
 
-	// Bouton "secondaire" selon le rôle
+	// "Secondary" button depends on the role
 	const secondaryButton =
 		user?.role === "admin" ? (
 			<Button
@@ -157,7 +157,7 @@ export default function AuthButtons({
 			</Button>
 		)
 
-	// Footer : 1 seul bouton (le secondaire)
+	// Footer: only 1 button (the secondary one)
 	if (isInFooter) {
 		return (
 			<div className="flex items-center justify-center">
@@ -166,7 +166,7 @@ export default function AuthButtons({
 		)
 	}
 
-	// Sinon (header), 2 boutons
+	// Otherwise (header): 2 buttons
 	return (
 		<div className="flex items-center justify-center gap-6">
 			<Button
