@@ -1,7 +1,7 @@
 import { EmptyState } from "@/components/sections/canvas/empty-state"
 import { Button } from "@/components/ui/Button"
 import { useQuestions } from "@/hooks/useQuestions"
-import { useResponsivity } from "@/hooks/useResponsivity"
+import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useScrollToElement } from "@/hooks/useScroll"
 import { cn } from "@/lib/utils"
 import { Question, QuestionType } from "@/types/types"
@@ -26,21 +26,18 @@ export const Canvas: React.FC<CanvasProps> = ({
 }) => {
 	const { isCreateQuestionLoading } = useQuestions()
 	const { id: surveyId } = useParams()
+	const canvasRef = useRef<HTMLDivElement>(null)
 	const questionRefs = useRef<{ [key: number]: HTMLLIElement | null }>({})
-	const { rootRef, isVerticalCompact, isHorizontalCompact } = useResponsivity(
-		200,
-		768
-	)
+	const { isMobile } = useScreenDetector()
 	const [highlightedQuestionId, setHighlightedQuestionId] = useState<
 		number | null
 	>(questions[0]?.id ?? null)
-	const isCompact = isVerticalCompact || isHorizontalCompact
 
 	const resetScrollId = undefined
 
 	useScrollToElement(
 		focusedQuestionId,
-		rootRef,
+		canvasRef,
 		questionRefs,
 		resetScrollId,
 		focusedQuestionId !== null
@@ -57,10 +54,12 @@ export const Canvas: React.FC<CanvasProps> = ({
 		}
 	}
 
+	const showAsideComponents = !isMobile && questions && questions.length > 0
+
 	return (
 		<>
 			<div
-				ref={rootRef}
+				ref={canvasRef}
 				className="relative flex h-full w-full flex-col gap-4 overflow-y-auto md:mx-[-0.75rem] md:px-[0.75rem]"
 			>
 				{!questions || questions?.length === 0 ? (
@@ -98,8 +97,8 @@ export const Canvas: React.FC<CanvasProps> = ({
 							icon={PlusCircle}
 							className={cn(
 								"self-center",
-								isCompact &&
-									`sticky right-4 bottom-4 left-4 z-10 w-[calc(100%_-_2rem)] shadow-lg`
+								isMobile &&
+									`sticky right-2 bottom-2 left-2 z-10 w-full shadow-lg`
 							)}
 						>
 							Ajouter une question
@@ -107,7 +106,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 					</>
 				)}
 			</div>
-			{!isCompact && questions && questions.length > 0 && (
+			{showAsideComponents && (
 				<div className="flex max-w-52 flex-col gap-2">
 					<div className="flex w-full flex-col items-center gap-2">
 						{/* @TODO add real logic to publish survey */}
