@@ -114,18 +114,9 @@ export function SurveyCreatorSkeleton() {
 				<div className="border-black-50 shadow-default flex h-full w-[250px] flex-col gap-4 rounded-xl border bg-white p-4">
 					<Skeleton className="h-6 w-full" />
 					<div className="flex flex-col gap-2">
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="h-4 w-full" />
+						{Array.from({ length: 4 }).map((_, i) => (
+							<Skeleton key={i} className="h-4 w-full" />
+						))}
 					</div>
 				</div>
 
