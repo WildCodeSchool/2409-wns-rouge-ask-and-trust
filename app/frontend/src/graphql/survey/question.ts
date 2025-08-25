@@ -5,6 +5,10 @@ export const CREATE_QUESTION = gql`
 		createQuestion(data: $data) {
 			id
 			title
+			type
+			answers {
+				value
+			}
 		}
 	}
 `
@@ -40,3 +44,5 @@ export const DELETE_QUESTION = gql`
 		}
 	}
 `
+
+// @TODO add get questions by survey id query

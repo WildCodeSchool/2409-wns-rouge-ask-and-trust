@@ -18,12 +18,7 @@ import {
 import { Questions } from "../../../database/entities/survey/questions"
 import { Survey } from "../../../database/entities/survey/survey"
 import { AppError } from "../../../middlewares/error-handler"
-import {
-	Context,
-	isMultipleAnswerType,
-	Roles,
-	TypesOfQuestion,
-} from "../../../types/types"
+import { Context, Roles, TypesOfQuestion } from "../../../types/types"
 import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
 import { UpdateQuestionInput } from "../../inputs/update/survey/update-question-input"
 import { isOwnerOrAdmin } from "../../utils/authorizations"
@@ -219,28 +214,17 @@ export class QuestionsResolver {
 				)
 			}
 
+			// @TODO add answers validation and questionToUpdate in a function
 			const { id, ...dataWithoutId } = data
 
-			const isNewTypeMultiple =
-				questionToUpdate.type !== data.type &&
-				isMultipleAnswerType(data.type)
+			const isTypeBoolean = data.type === TypesOfQuestion.Boolean
 
-			const isAnswersEmpty = questionToUpdate.answers.length === 0
-
-			// If type is changed to a multiple choice and if no answers in database, add default answers
-			if (isNewTypeMultiple && isAnswersEmpty) {
-				dataWithoutId.answers = [
-					{ value: "Réponse 1" },
-					{ value: "Réponse 2" },
-				]
-			}
-
-			const isNewTypeBoolean =
-				questionToUpdate.type !== data.type &&
-				data.type === TypesOfQuestion.Boolean
-
-			if (isNewTypeBoolean && isAnswersEmpty) {
-				dataWithoutId.answers = [{ value: "Vrai" }, { value: "Faux" }]
+			if (isTypeBoolean && data.answers && data.answers?.length > 2) {
+				throw new AppError(
+					"A Boolean question can only have up to 2 answers",
+					400,
+					"ValidationError"
+				)
 			}
 
 			// If type is changed to text, clean answers
