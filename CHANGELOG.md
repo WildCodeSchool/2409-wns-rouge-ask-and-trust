@@ -2,6 +2,128 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v1.5.0...v2.1.0) (2025-07-17)
+
+### Features
+
+- add a Skeleton component ([10b50af](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/10b50af8f011088f24c17e63f4d3044bfca6aa3a))
+- add a type for my surveys filtered ([bcc0b0f](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/bcc0b0fb4e12f4d64eb26f194fe149512424555e))
+- add an util fonction to normalise url ([04a1180](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/04a1180b5e4c42391afe069e8b7131b6eaffedc8))
+- add environment sample file and update routing for survey response ([f8d8801](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f8d8801583bb1f38674ab06a244ba8ce715d7971))
+- add focus on delete question button if opened and clean comments ([649105d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/649105d642b63ce1af173e4011cd8213b3e4db02))
+- add loading check to block multiple submissions in useQuestions ([0d6e06d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0d6e06d16d3748eadc3918e88e71ce07b89da173))
+- add scrolling to new question after creation ([40b6da4](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/40b6da472358746b35eb006b4a227f840932c4fd))
+- add try catch and toas error in add question ([0ab326d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0ab326dde7abe45997f19142dbeaf1a2d25da5ef))
+- add utils authorisations in resolver utils ([73fe543](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/73fe543a91e3cfcdcdfbee1c0df925841577d349))
+- added ui component radio button ([5d53ccd](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/5d53ccda1770186a6a90fb14a0914a6051ce2604))
+- allow surveys on the home page to be filtered by category and title ([cc6e36d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/cc6e36d7c2165aa09817d36c4b91f2b769ad8db0))
+- allow to filter mySurveys query for the user dashboard ([123848b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/123848bb6b5a0f96439dadbd9debe151f8418ffe))
+- allows surveys to be sorted according to completion date and validity period ([9703c00](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/9703c00e113efae09491c47ce55c6f5c0cc88fe6))
+- clean build question and answers ([cabd304](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/cabd304c7a2f85ab373504a0dd126e2eb65d1f63))
+- clean error handling in add question ([9ad7865](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/9ad7865e59a837ff5f370e167b860d43acf14704))
+- clean errors handling and add reset errors to avoid permanent error toast ([f136d9b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f136d9b85d1a7a1b116828a3b09df0efc7e067a8))
+- create a class for the response of mySurveys filtered ([a4d97c9](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/a4d97c9bcc83345db28427d5c92cec33eeb14eae))
+- create an input for filter mySurveys ([01c0d74](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/01c0d7417ab094fa6783ce923e88d924eec60734))
+- display all surveys and categories in home page ([d2d54f0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/d2d54f090c0b8dff3172e1287a66f934c7b299a9))
+- edit MySurveys query to filter the results ([e7fb065](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/e7fb065e33accbf06603cbc120a9685f877efb17))
+- edit style and a props ([55ed842](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/55ed842964aa99c46b07d02633632a810ad76813))
+- enhance accessibility and error handling in forms and error elements ([ad248d0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/ad248d0f622e6dc9e02acfac75084d99d1415286))
+- enhance survey response form with existing answer handling and dynamic feedback ([8d01701](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/8d017016c382d3376972c37eda6d190335de528d))
+- enhance survey response functionality with new components and GraphQL queries ([5dec124](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/5dec1241fc7c8bac72190a21fc7008cd30af620d))
+- filters can be nullable ([f2507d5](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f2507d5a4f0b5f07c64e577841487e1210bccbbc))
+- implement survey response form with enhanced answer handling and error management ([f9ac417](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f9ac4179d72c187d5537b5144f2303e7283c34b8))
+- implement toasts in Canvas and BuildQuestion and fix button type ([fd5645a](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/fd5645aa49278ddfcdb90b899c57b5ad0a520511))
+- refacto checking user is owner or admin and cleaned errors handling ([d0f1316](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/d0f1316adaf1f097e268b3ecbecc76f06bc0ec0f))
+- refacto get question and add hook useQuestion ([77f137a](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/77f137a2b9489dae4c8c0f819af06442b9fef5da))
+- refacto useEffect toast handling in build question ([f96c4b7](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f96c4b7b3d2fd341df6d5d9b4cb39364ac19e47a))
+- remove the logic to filter, paginate and research from frontend ([4ec5741](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/4ec5741d5479af76ff4c942472bb21523bcc8d70))
+- use react hook form instead of nativ form ([55aee32](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/55aee32c1e262c35cac4257236a8c36d8b70e61a))
+- wIP ([8bca8b0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/8bca8b0e6316a5cefc39fb645fe943dc9757f5c5))
+
+### Bug Fixes
+
+- add button's type attritbute by spreading props ([7d370b2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/7d370b2908a0f55beda0fd2331fdc0c7f3ab960e))
+- change useLayoutEffect in useEffect and clean log ([c0e8d6c](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/c0e8d6c6af00348551030987818feab9a6b9d31b))
+- clean useless vertical padding ([3e566a0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/3e566a0e68e5d61d797c300fee594bcbd7fda9da))
+- ensure user-specific answer retrieval by adding userId filter in AnswersResolver ([0ef05fa](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0ef05fa2351550b34745ee36266cf33adcbf902f))
+- improve error handling in question retrieval logic ([e7db3a2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/e7db3a249314cdcbd08fec53aec467c0bc72a9ab))
+- in BuildListAnswers, answers are now editable ([19ae701](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/19ae701be631fcf1324a7c73cd8fce161bf3b191))
+- Merge branch 'staging' of https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust into develop ([3b6873a](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/3b6873a7cdb10b0709393151d9e4386e69b68ae2))
+- **minor:** fix a visual bug in survey dashboard ([da8953b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/da8953b86a1d80ad8fb2fefc98620e7790582723))
+- **minor:** fix for the category filter in home page ([78830a3](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/78830a3a10b185da854549736b75355e89085423))
+- **minor:** fix style ([4a399f8](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/4a399f8279c76bc3b382afe7f087a7707d066c81))
+- **minor:** fix the survey preview ([baee0d2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/baee0d26143ee5367a24d31776182a2cd903f90d))
+- **minor:** fix to push commit ([44b50e4](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/44b50e4a7098660da40c9cc7c1e0260a58a4c0e7))
+- **minor:** prevent to go in landing, register or sign in page if connected ([0d3bb33](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0d3bb3341e80b3e9d2c9101cc168442c971aa024))
+- remove redundant import of Questions in AnswersResolver and streamline question retrieval logic ([f9e33c5](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f9e33c512129e61d8875b34db9f348cc2645ae01))
+
+### [1.3.1](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v1.3.0...v1.3.1) (2025-06-12)
+
+## [1.3.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v1.1.0...v1.3.0) (2025-06-12)
+
+## 1.1.0 (2025-06-12)
+
+## [2.0.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v1.5.0...v2.0.0) (2025-07-17)
+
+### Features
+
+- add a Skeleton component ([10b50af](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/10b50af8f011088f24c17e63f4d3044bfca6aa3a))
+- add a type for my surveys filtered ([bcc0b0f](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/bcc0b0fb4e12f4d64eb26f194fe149512424555e))
+- add an util fonction to normalise url ([04a1180](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/04a1180b5e4c42391afe069e8b7131b6eaffedc8))
+- add environment sample file and update routing for survey response ([f8d8801](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f8d8801583bb1f38674ab06a244ba8ce715d7971))
+- add focus on delete question button if opened and clean comments ([649105d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/649105d642b63ce1af173e4011cd8213b3e4db02))
+- add loading check to block multiple submissions in useQuestions ([0d6e06d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0d6e06d16d3748eadc3918e88e71ce07b89da173))
+- add scrolling to new question after creation ([40b6da4](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/40b6da472358746b35eb006b4a227f840932c4fd))
+- add try catch and toas error in add question ([0ab326d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0ab326dde7abe45997f19142dbeaf1a2d25da5ef))
+- add utils authorisations in resolver utils ([73fe543](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/73fe543a91e3cfcdcdfbee1c0df925841577d349))
+- added ui component radio button ([5d53ccd](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/5d53ccda1770186a6a90fb14a0914a6051ce2604))
+- allow surveys on the home page to be filtered by category and title ([cc6e36d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/cc6e36d7c2165aa09817d36c4b91f2b769ad8db0))
+- allow to filter mySurveys query for the user dashboard ([123848b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/123848bb6b5a0f96439dadbd9debe151f8418ffe))
+- allows surveys to be sorted according to completion date and validity period ([9703c00](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/9703c00e113efae09491c47ce55c6f5c0cc88fe6))
+- clean build question and answers ([cabd304](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/cabd304c7a2f85ab373504a0dd126e2eb65d1f63))
+- clean error handling in add question ([9ad7865](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/9ad7865e59a837ff5f370e167b860d43acf14704))
+- clean errors handling and add reset errors to avoid permanent error toast ([f136d9b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f136d9b85d1a7a1b116828a3b09df0efc7e067a8))
+- create a class for the response of mySurveys filtered ([a4d97c9](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/a4d97c9bcc83345db28427d5c92cec33eeb14eae))
+- create an input for filter mySurveys ([01c0d74](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/01c0d7417ab094fa6783ce923e88d924eec60734))
+- display all surveys and categories in home page ([d2d54f0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/d2d54f090c0b8dff3172e1287a66f934c7b299a9))
+- edit MySurveys query to filter the results ([e7fb065](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/e7fb065e33accbf06603cbc120a9685f877efb17))
+- edit style and a props ([55ed842](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/55ed842964aa99c46b07d02633632a810ad76813))
+- enhance accessibility and error handling in forms and error elements ([ad248d0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/ad248d0f622e6dc9e02acfac75084d99d1415286))
+- enhance survey response form with existing answer handling and dynamic feedback ([8d01701](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/8d017016c382d3376972c37eda6d190335de528d))
+- enhance survey response functionality with new components and GraphQL queries ([5dec124](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/5dec1241fc7c8bac72190a21fc7008cd30af620d))
+- filters can be nullable ([f2507d5](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f2507d5a4f0b5f07c64e577841487e1210bccbbc))
+- implement survey response form with enhanced answer handling and error management ([f9ac417](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f9ac4179d72c187d5537b5144f2303e7283c34b8))
+- implement toasts in Canvas and BuildQuestion and fix button type ([fd5645a](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/fd5645aa49278ddfcdb90b899c57b5ad0a520511))
+- refacto checking user is owner or admin and cleaned errors handling ([d0f1316](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/d0f1316adaf1f097e268b3ecbecc76f06bc0ec0f))
+- refacto get question and add hook useQuestion ([77f137a](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/77f137a2b9489dae4c8c0f819af06442b9fef5da))
+- refacto useEffect toast handling in build question ([f96c4b7](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f96c4b7b3d2fd341df6d5d9b4cb39364ac19e47a))
+- remove the logic to filter, paginate and research from frontend ([4ec5741](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/4ec5741d5479af76ff4c942472bb21523bcc8d70))
+- use react hook form instead of nativ form ([55aee32](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/55aee32c1e262c35cac4257236a8c36d8b70e61a))
+- wIP ([8bca8b0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/8bca8b0e6316a5cefc39fb645fe943dc9757f5c5))
+
+### Bug Fixes
+
+- add button's type attritbute by spreading props ([7d370b2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/7d370b2908a0f55beda0fd2331fdc0c7f3ab960e))
+- change useLayoutEffect in useEffect and clean log ([c0e8d6c](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/c0e8d6c6af00348551030987818feab9a6b9d31b))
+- clean useless vertical padding ([3e566a0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/3e566a0e68e5d61d797c300fee594bcbd7fda9da))
+- ensure user-specific answer retrieval by adding userId filter in AnswersResolver ([0ef05fa](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0ef05fa2351550b34745ee36266cf33adcbf902f))
+- improve error handling in question retrieval logic ([e7db3a2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/e7db3a249314cdcbd08fec53aec467c0bc72a9ab))
+- in BuildListAnswers, answers are now editable ([19ae701](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/19ae701be631fcf1324a7c73cd8fce161bf3b191))
+- Merge branch 'staging' of https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust into develop ([3b6873a](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/3b6873a7cdb10b0709393151d9e4386e69b68ae2))
+- **minor:** fix a visual bug in survey dashboard ([da8953b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/da8953b86a1d80ad8fb2fefc98620e7790582723))
+- **minor:** fix for the category filter in home page ([78830a3](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/78830a3a10b185da854549736b75355e89085423))
+- **minor:** fix style ([4a399f8](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/4a399f8279c76bc3b382afe7f087a7707d066c81))
+- **minor:** fix the survey preview ([baee0d2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/baee0d26143ee5367a24d31776182a2cd903f90d))
+- **minor:** fix to push commit ([44b50e4](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/44b50e4a7098660da40c9cc7c1e0260a58a4c0e7))
+- **minor:** prevent to go in landing, register or sign in page if connected ([0d3bb33](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0d3bb3341e80b3e9d2c9101cc168442c971aa024))
+- remove redundant import of Questions in AnswersResolver and streamline question retrieval logic ([f9e33c5](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f9e33c512129e61d8875b34db9f348cc2645ae01))
+
+### [1.3.1](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v1.3.0...v1.3.1) (2025-06-12)
+
+## [1.3.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v1.1.0...v1.3.0) (2025-06-12)
+
+## 1.1.0 (2025-06-12)
+
 ## [1.5.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v1.3.3...v1.5.0) (2025-07-10)
 
 ### ⚠ BREAKING CHANGES
