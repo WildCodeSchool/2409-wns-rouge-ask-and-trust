@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, Variants } from "motion/react"
-import { HeaderMobileMenuProps } from "@/types/types"
-import NavAndAuthButtons from "./NavAndAuthButtons"
-import logoHeader from "/logos/logo-header.svg"
+import { NavAndAuthButtonsProps } from "@/types/types"
+import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
+import logo from "/logos/logo-landing.svg"
 import { Link } from "react-router-dom"
 
 const menuVariants: Variants = {
@@ -26,15 +26,16 @@ const menuVariants: Variants = {
 
 export default function HeaderMobileMenu({
 	showMenu,
+	isHorizontalCompact,
 	handleShowMenu,
-	headerLinks,
-}: HeaderMobileMenuProps) {
+	links,
+}: NavAndAuthButtonsProps) {
 	return (
 		<AnimatePresence>
 			{showMenu && (
 				<>
 					<motion.div
-						className="fixed inset-0 z-40 h-full w-full bg-transparent backdrop-blur-xl"
+						className="fixed inset-0 z-30 h-full w-full bg-transparent backdrop-blur-xl"
 						onClick={handleShowMenu}
 						initial="closed"
 						animate="open"
@@ -48,25 +49,26 @@ export default function HeaderMobileMenu({
 						}}
 					/>
 					<motion.div
-						className="bg-primary-50 absolute top-0 right-0 z-50 flex h-dvh w-60 flex-col justify-between gap-20 overflow-hidden p-5"
+						className="bg-primary-50 absolute top-0 right-0 z-40 flex h-dvh w-60 flex-col justify-between gap-20 overflow-hidden p-6"
 						initial="closed"
 						animate="open"
 						exit="closed"
 						variants={menuVariants}
 					>
 						<NavAndAuthButtons
-							headerLinks={headerLinks}
-							isMobile
+							links={links}
 							handleShowMenu={handleShowMenu}
+							isHorizontalCompact={isHorizontalCompact}
+							isInHeader
 						/>
 						<div className="flex items-center justify-center">
 							<Link
 								to="/"
-								className="max-w-36"
+								className="w-full"
 								onClick={handleShowMenu}
 							>
 								<img
-									src={logoHeader}
+									src={logo}
 									alt="Logo AskTrust"
 									className="w-full"
 									aria-hidden

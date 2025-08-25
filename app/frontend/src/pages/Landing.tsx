@@ -32,7 +32,7 @@ const Landing = () => {
 			<Information />
 			<Poll />
 			<Package />
-			<div className="flex flex-row justify-center px-5 pt-4 pb-30 lg:pt-15 lg:pb-55">
+			<div className="flex flex-row justify-center px-5 pt-4 lg:pt-15">
 				<Button
 					to="register"
 					variant="secondary"

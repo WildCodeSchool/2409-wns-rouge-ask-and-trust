@@ -1,10 +1,10 @@
 import { LinksType } from "@/types/types"
-import logoHeader from "/logos/logo-header.svg"
+import logo from "/logos/logo-landing.svg"
 import { Link } from "react-router-dom"
-import { Menu } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { useEffect, useState } from "react"
 import HeaderMobileMenu from "./HeaderMobileMenu"
-import NavAndAuthButtons from "./NavAndAuthButtons"
+import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
 import { Button } from "@/components/ui/Button"
 import { useResponsivity } from "@/hooks/useResponsivity"
 
@@ -59,7 +59,7 @@ export default function Header() {
 		>
 			<Link to="/" className="max-w-36">
 				<img
-					src={logoHeader}
+					src={logo}
 					alt="Logo AskTrust"
 					className="w-full"
 					aria-hidden
@@ -70,78 +70,35 @@ export default function Header() {
 					<Button
 						size="square"
 						variant="tertiary"
-						className="border-0 bg-transparent hover:bg-transparent"
+						className="z-50 border-0 bg-transparent hover:bg-transparent"
 						ariaLabel="Ouvrir le menu"
 						onClick={handleShowMenu}
 						aria-expanded={showMenu}
 					>
-						<Menu
-							className="text-primary-default h-12 w-12 cursor-pointer"
-							aria-hidden
-						/>
+						{showMenu ? (
+							<X
+								className="text-primary-default h-6 w-6 cursor-pointer"
+								aria-hidden
+							/>
+						) : (
+							<Menu
+								className="text-primary-default h-12 w-12 cursor-pointer"
+								aria-hidden
+							/>
+						)}
 					</Button>
 					<HeaderMobileMenu
 						showMenu={showMenu}
+						isHorizontalCompact={isHorizontalCompact}
 						handleShowMenu={handleShowMenu}
-						headerLinks={HEADER_LINKS}
+						links={HEADER_LINKS}
 					/>
 				</>
 			) : (
 				<>
-					<NavAndAuthButtons
-						headerLinks={HEADER_LINKS}
-						isHorizontalCompact={false}
-					/>
+					<NavAndAuthButtons links={HEADER_LINKS} />
 				</>
 			)}
 		</header>
 	)
 }
-
-/**
- * Header link component with external link management and accessibility
- *
- * @param {object} props - Component properties
- * @param {string} props.href - Link destination URL
- * @param {string} props.label - The link text
- * @param {string} props.category - Link category for grouping
- * @param {string} props.ariaLabel - The personalized ARIA label for accessibility
- * @returns {JSX.Element} A Link component with appropriate safety and accessibility attributes
- */
-function HeaderLink({ href, label, category, ariaLabel }: LinksType) {
-	const isExternal = href.startsWith("http")
-
-	// Security: check allowed protocols
-	if (isExternal && !href.startsWith("https://")) {
-		console.warn("Warning: Non-HTTPS external link detected")
-	}
-
-	// ariaLabel generation for accessibility
-	const finalAriaLabel =
-		ariaLabel ||
-		`${label} ${category ? `- ${category}` : ""} ${isExternal ? "(s'ouvre dans un nouvel onglet)" : ""}`
-
-	return (
-		<Link
-			to={href}
-			className="text-primary-700 max-lg:transition-padding font-bold max-lg:duration-200 max-lg:ease-in-out max-lg:hover:pl-5"
-			// Indicates to assistive technologies the current page
-			aria-current={
-				href === window.location.pathname ? "page" : undefined
-			}
-			// Security: protects against tabnabbing by preventing access to window.opener
-			// and prevents the external site from controlling our window
-			rel={isExternal ? "noopener noreferrer" : undefined}
-			// Opens external links in a new tab to preserve navigation context on our site
-			target={isExternal ? "_blank" : undefined}
-			// Provides a descriptive label for assistive technologies
-			aria-label={finalAriaLabel}
-			// data attribute for analytics tracking
-			data-category={category}
-		>
-			{label}
-		</Link>
-	)
-}
-
-export { HeaderLink }
