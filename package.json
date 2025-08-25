@@ -1,6 +1,6 @@
 {
 	"name": "ask-and-trust",
-	"version": "1.5.0",
+	"version": "2.1.0",
 	"private": true,
 	"description": "Development of an online survey platform",
 	"directories": {

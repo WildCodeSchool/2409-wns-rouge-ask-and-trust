@@ -44,7 +44,7 @@ export default function SearchForm() {
 	return (
 		<form
 			onSubmit={handleSubmit(onSubmit)}
-			className="relative flex flex-1 items-center justify-center"
+			className="relative flex w-full flex-1 items-center justify-center"
 		>
 			<Label htmlFor="search" className="sr-only">
 				Rechercher une enquête
