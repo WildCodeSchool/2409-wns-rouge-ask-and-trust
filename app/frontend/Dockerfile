@@ -5,8 +5,8 @@ WORKDIR /app
 # COPY only necessary files
 COPY package.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies (allow legacy peer deps to tolerate React 19 conflicts)
+RUN npm install --legacy-peer-deps
 
 # COPY tsconfig files
 COPY tsconfig.json tsconfig.app.json tsconfig.node.json ./

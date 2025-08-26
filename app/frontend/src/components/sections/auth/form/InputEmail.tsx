@@ -39,6 +39,10 @@ export default function InputEmail<T extends UserSignForm>({
 						value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 						message: "Format d'email invalide",
 					},
+					maxLength: {
+						value: 255,
+						message: "Adresse e-mail trop longue",
+					},
 				})}
 				aria-invalid={errors.email ? "true" : "false"}
 				errorMessage={errorMessage}
