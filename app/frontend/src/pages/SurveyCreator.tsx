@@ -1,3 +1,4 @@
+import { withSEO } from "@/components/hoc/withSEO"
 import { Canvas } from "@/components/sections/canvas/Canvas"
 import { Toolbox } from "@/components/sections/Toolbox/Toolbox"
 import { Button } from "@/components/ui/Button"
@@ -6,15 +7,14 @@ import { Skeleton } from "@/components/ui/Skeleton"
 import { GET_SURVEY } from "@/graphql/survey/survey"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
+import { useSurvey } from "@/hooks/useSurvey"
 import { useToast } from "@/hooks/useToast"
 import { cn } from "@/lib/utils"
-import { QuestionType, Survey } from "@/types/types"
+import { QuestionType, Survey, SurveyStatusType } from "@/types/types"
 import { useQuery } from "@apollo/client"
 import { ChevronDown } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
-import { withSEO } from "@/components/hoc/withSEO"
-
 
 function SurveyCreator() {
 	//  Get survey's id from params
@@ -85,11 +85,7 @@ function SurveyCreator() {
 		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50 max-md:h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))]">
 			{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
 			<section className="p-4 pb-0 lg:p-4 lg:pb-0">
-				<div className="border-black-50 shadow-default flex items-center justify-between rounded-xl border bg-white p-4">
-					<h1 className="h-fit text-2xl font-semibold text-gray-900">
-						Création de l'enquête
-					</h1>
-				</div>
+				<SurveyHeader surveyStatus={data?.survey.status} />
 			</section>
 			<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
 				{!isMobile && <Toolbox onAddQuestion={handleAddQuestion} />}
@@ -107,14 +103,33 @@ function SurveyCreator() {
 const SurveyCreatorWithSEO = withSEO(SurveyCreator, "surveyCreator")
 export default SurveyCreatorWithSEO
 
-
-export function SurveyHeader() {
+export function SurveyHeader({
+	surveyStatus,
+}: {
+	surveyStatus: SurveyStatusType | undefined
+}) {
 	const { isMobile } = useScreenDetector()
 	const [open, setOpen] = useState(false)
 
 	// @TODO refacto in components
 	// @TODO add form in collapse to edit survey's data
-	// CHECK maybe put surveys button in header page
+
+	const translateStatus = useCallback(
+		(status: SurveyStatusType | undefined) => {
+			switch (status) {
+				case "draft":
+					return "brouillon"
+				case "published":
+					return "publiée"
+				case "archived":
+					return "archivée"
+				case "censored":
+					return "censurée"
+			}
+		},
+		[]
+	)
+
 	return (
 		<div className="flex flex-col gap-4">
 			{isMobile && <SurveyButtons />}
@@ -133,11 +148,11 @@ export function SurveyHeader() {
 								</h1>
 								<Chipset
 									ariaLabel="draft"
-									state="draft"
+									state={surveyStatus || "draft"}
 									size="sm"
 									rounded
 								>
-									brouillon
+									{translateStatus(surveyStatus)}
 								</Chipset>
 								{!isMobile && (
 									<ChevronDown
@@ -178,6 +193,45 @@ export function SurveyHeader() {
 
 function SurveyButtons() {
 	const { id: surveyId } = useParams()
+	const { updateSurveyStatus, isStatusUpdateError, resetStatusUpdateError } =
+		useSurvey()
+	const { showToast } = useToast()
+
+	const onPublishSurvey = useCallback(
+		async (surveyId: string, status: SurveyStatusType) => {
+			if (!surveyId) return
+			try {
+				const result = await updateSurveyStatus(surveyId, status)
+				if (result) {
+					showToast({
+						type: "success",
+						title: "Enquête publiée !",
+						description: "Vous pouvez partager votre enquête",
+					})
+				}
+			} catch (err) {
+				console.error("Erreur lors de la mise à jour du statut :", err)
+			}
+		},
+		[updateSurveyStatus, showToast]
+	)
+
+	useEffect(() => {
+		if (isStatusUpdateError) {
+			showToast({
+				type: "error",
+				title: "Oops, nous avons rencontré une erreur",
+				description: "L'enquête n'a pas pu être publiée",
+			})
+			resetStatusUpdateError() // Reset the error to avoid permanent toast error
+		}
+	}, [
+		updateSurveyStatus,
+		resetStatusUpdateError,
+		showToast,
+		isStatusUpdateError,
+	])
+
 	return (
 		<div className="flex justify-end gap-2">
 			<Button
@@ -188,7 +242,18 @@ function SurveyButtons() {
 			>
 				Aperçu
 			</Button>
-			<Button variant="primary" ariaLabel="Publier l'enquête" size="sm">
+			{/* @TODO if survey is already published, show other button as
+			"partager" */}
+			<Button
+				variant="primary"
+				ariaLabel="Publier l'enquête"
+				size="sm"
+				onClick={() => {
+					if (surveyId) {
+						onPublishSurvey(surveyId, "published")
+					}
+				}}
+			>
 				Publier
 			</Button>
 		</div>

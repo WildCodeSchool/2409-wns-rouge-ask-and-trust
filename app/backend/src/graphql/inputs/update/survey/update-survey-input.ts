@@ -1,5 +1,6 @@
 import { IsIn, IsOptional, Length } from "class-validator"
 import { Field, ID, InputType } from "type-graphql"
+import { SurveyStatus } from "../../../../types/types"
 import { CreateQuestionsInput } from "../../create/survey/create-questions-input"
 
 /**
@@ -39,8 +40,8 @@ export class UpdateSurveyInput {
 
 	@Field({ nullable: true })
 	@IsOptional()
-	@IsIn(["draft", "publish", "archive", "censored"], {
-		message: "Status must be one of: draft, publish, archive, censored",
+	@IsIn(Object.values(SurveyStatus), {
+		message: "Status must be one of: draft, published, archived, censored",
 	})
 	status?: string
 

@@ -113,6 +113,15 @@ export const UPDATE_SURVEY = gql`
 	}
 `
 
+export const UPDATE_SURVEY_STATUS = gql`
+	mutation UpdateSurveyStatus($data: UpdateSurveyInput!) {
+		updateSurvey(data: $data) {
+			id
+			status
+		}
+	}
+`
+
 export const DELETE_SURVEY = gql`
 	mutation DeleteSurvey($surveyId: ID!) {
 		deleteSurvey(id: $surveyId) {

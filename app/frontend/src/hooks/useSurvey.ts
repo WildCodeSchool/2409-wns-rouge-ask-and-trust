@@ -1,23 +1,25 @@
-import { useQuery, useMutation, NetworkStatus } from "@apollo/client"
-import {
-	GET_SURVEYS,
-	CREATE_SURVEY,
-	UPDATE_SURVEY,
-	GET_MY_SURVEYS,
-	DELETE_SURVEY,
-	GET_SURVEY,
-} from "@/graphql/survey/survey"
 import { GET_CATEGORIES } from "@/graphql/survey/category"
-import { useState } from "react"
+import {
+	CREATE_SURVEY,
+	DELETE_SURVEY,
+	GET_MY_SURVEYS,
+	GET_SURVEY,
+	GET_SURVEYS,
+	UPDATE_SURVEY,
+	UPDATE_SURVEY_STATUS,
+} from "@/graphql/survey/survey"
 import {
 	AllSurveysHome,
 	CreateSurveyInput,
 	DateSortFilter,
 	SurveysDashboardQuery,
 	SurveyStatus,
+	SurveyStatusType,
 	SurveyTableType,
 	UpdateSurveyInput,
 } from "@/types/types"
+import { NetworkStatus, useMutation, useQuery } from "@apollo/client"
+import { useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { useToast } from "./useToast"
 
@@ -142,6 +144,15 @@ export function useSurvey(surveyId?: string) {
 			refetchQueries: [{ query: GET_SURVEYS }],
 		})
 
+	const [
+		updateSurveyStatusMutation,
+		{
+			loading: isStatusUpdating,
+			error: isStatusUpdateError,
+			reset: resetStatusUpdateError,
+		},
+	] = useMutation(UPDATE_SURVEY_STATUS)
+
 	const [doDeleteSurvey] = useMutation(DELETE_SURVEY, {
 		refetchQueries: [GET_MY_SURVEYS],
 	})
@@ -170,6 +181,17 @@ export function useSurvey(surveyId?: string) {
 					id,
 				},
 			},
+		})
+		return result.data?.updateSurvey
+	}
+
+	const updateSurveyStatus = async (id: string, status: SurveyStatusType) => {
+		const result = await updateSurveyStatusMutation({
+			variables: { data: { id, status } },
+			refetchQueries: [
+				{ query: GET_SURVEY, variables: { surveyId: id } },
+			],
+			awaitRefetchQueries: true,
 		})
 		return result.data?.updateSurvey
 	}
@@ -276,5 +298,10 @@ export function useSurvey(surveyId?: string) {
 		updateSurvey,
 		deleteSurvey,
 		deleteSurveys,
+
+		updateSurveyStatus,
+		isStatusUpdating,
+		isStatusUpdateError,
+		resetStatusUpdateError,
 	}
 }
