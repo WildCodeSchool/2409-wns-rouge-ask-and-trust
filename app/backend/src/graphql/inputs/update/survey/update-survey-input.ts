@@ -1,5 +1,5 @@
-import { InputType, Field, ID } from "type-graphql"
-import { Length } from "class-validator"
+import { IsIn, IsOptional, Length } from "class-validator"
+import { Field, ID, InputType } from "type-graphql"
 import { CreateQuestionsInput } from "../../create/survey/create-questions-input"
 
 /**
@@ -21,22 +21,34 @@ export class UpdateSurveyInput {
 	@Field(() => ID)
 	id!: number
 
-	@Field()
+	@Field({ nullable: true })
+	@IsOptional()
 	@Length(1, 255, { message: "Title must be between 1 and 255 chars" })
-	title!: string
+	title?: string
 
-	@Field()
+	@Field({ nullable: true })
+	@IsOptional()
 	@Length(1, 5000, {
 		message: "Description must be between 1 and 5000 chars",
 	})
-	description!: string
+	description?: string
 
 	@Field({ nullable: true })
-	public!: boolean
+	@IsOptional()
+	public?: boolean
 
-	@Field(() => ID)
-	category!: number
+	@Field({ nullable: true })
+	@IsOptional()
+	@IsIn(["draft", "publish", "archive", "censored"], {
+		message: "Status must be one of: draft, publish, archive, censored",
+	})
+	status?: string
 
-	@Field(() => [CreateQuestionsInput])
+	@Field(() => ID, { nullable: true })
+	@IsOptional()
+	category?: number
+
+	@Field(() => [CreateQuestionsInput], { nullable: true })
+	@IsOptional()
 	questions?: CreateQuestionsInput[]
 }

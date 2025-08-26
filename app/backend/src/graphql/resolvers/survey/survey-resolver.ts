@@ -17,14 +17,14 @@ import {
 } from "type-graphql"
 import { Category } from "../../../database/entities/survey/category"
 import { Survey } from "../../../database/entities/survey/survey"
+import { AllSurveysResult } from "../../../database/results/allSurveysResult"
+import { MySurveysResult } from "../../../database/results/mySurveyResult"
 import { AppError } from "../../../middlewares/error-handler"
 import { Context, Roles } from "../../../types/types"
 import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-input"
-import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
 import { MySurveysQueryInput } from "../../inputs/queries/mySurveys-query-input"
-import { MySurveysResult } from "../../../database/results/mySurveyResult"
-import { AllSurveysResult } from "../../../database/results/allSurveysResult"
 import { AllSurveysQueryInput } from "../../inputs/queries/surveys-query-input"
+import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
 
 /**
  * Survey Resolver
@@ -377,7 +377,11 @@ export class SurveysResolver {
 				survey.category = categorySurvey
 			}
 
-			Object.assign(survey, updateData)
+			// Apply only defined fields to avoid overwriting with undefined
+			const sanitizedUpdate = Object.fromEntries(
+				Object.entries(updateData).filter(([, v]) => v !== undefined)
+			)
+			Object.assign(survey, sanitizedUpdate)
 
 			await survey.save()
 			return survey
