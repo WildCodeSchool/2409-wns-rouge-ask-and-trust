@@ -223,7 +223,7 @@ function SurveyButtons({ status }: { status: SurveyStatusType | undefined }) {
 	const { copyToClipboard } = useCopyClipboard()
 
 	const onPublishSurvey = useCallback(
-		async (surveyId: string, status: SurveyStatusType) => {
+		async (surveyId: string | undefined, status: SurveyStatusType) => {
 			if (!surveyId) return
 			try {
 				const result = await updateSurveyStatus(surveyId, status)
@@ -279,11 +279,7 @@ function SurveyButtons({ status }: { status: SurveyStatusType | undefined }) {
 					variant="primary"
 					ariaLabel="Publier l'enquête"
 					size="sm"
-					onClick={() => {
-						if (surveyId) {
-							onPublishSurvey(surveyId, "published")
-						}
-					}}
+					onClick={() => onPublishSurvey(surveyId, "published")}
 				>
 					Publier
 				</Button>
