@@ -5,9 +5,8 @@ services:
         # ports:
         #     - "5173:5173" # Exposes port 5173 to access Vite from the host
         environment:
-            - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
             - VITE_NODE_ENV=staging
-        command: ["npm", "run", "dev", "--host"] # Start Vite in development mode (hot reload enabled)
+        command: ["npm", "run", "preview", "--", "--host", "--strictPort"] # Serve built assets (no HMR)
         # Unused options, but useful in other cases
         # restart: always # Recreate the container in case of failure
         depends_on:
