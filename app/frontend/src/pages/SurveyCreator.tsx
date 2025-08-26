@@ -10,7 +10,12 @@ import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useSurvey } from "@/hooks/useSurvey"
 import { useToast } from "@/hooks/useToast"
 import { cn } from "@/lib/utils"
-import { QuestionType, Survey, SurveyStatusType } from "@/types/types"
+import {
+	QuestionType,
+	Survey,
+	SurveyStatus,
+	SurveyStatusType,
+} from "@/types/types"
 import { useQuery } from "@apollo/client"
 import { ChevronDown } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
@@ -132,7 +137,7 @@ export function SurveyHeader({
 
 	return (
 		<div className="flex flex-col gap-4">
-			{isMobile && <SurveyButtons />}
+			{isMobile && <SurveyButtons status={surveyStatus} />}
 			<div className="shadow-default border-black-50 rounded-xl border bg-white">
 				<div className="flex w-full flex-col justify-between gap-2 p-4">
 					<div className="flex w-full items-center gap-2">
@@ -166,7 +171,9 @@ export function SurveyHeader({
 							</div>
 						</button>
 						<div className="flex items-center gap-12">
-							{!isMobile && <SurveyButtons />}
+							{!isMobile && (
+								<SurveyButtons status={surveyStatus} />
+							)}
 							{isMobile && (
 								<ChevronDown
 									size={20}
@@ -191,7 +198,7 @@ export function SurveyHeader({
 	)
 }
 
-function SurveyButtons() {
+function SurveyButtons({ status }: { status: SurveyStatusType | undefined }) {
 	const { id: surveyId } = useParams()
 	const { updateSurveyStatus, isStatusUpdateError, resetStatusUpdateError } =
 		useSurvey()
@@ -215,6 +222,29 @@ function SurveyButtons() {
 		},
 		[updateSurveyStatus, showToast]
 	)
+
+	const copyLinkToClipboard = useCallback(async () => {
+		if (!surveyId) return
+
+		const surveyUrl = `${window.location.origin}/surveys/respond/${surveyId}`
+
+		try {
+			await navigator.clipboard.writeText(surveyUrl)
+			showToast({
+				type: "success",
+				title: "Lien copié !",
+				description:
+					"Le lien de l'enquête a été copié dans le presse-papiers",
+			})
+		} catch (error) {
+			showToast({
+				type: "error",
+				title: "Impossible de copier le lien",
+				description: "Veuillez copier le lien manuellement",
+			})
+			console.error("Erreur lors de la copie du lien :", error)
+		}
+	}, [surveyId, showToast])
 
 	useEffect(() => {
 		if (isStatusUpdateError) {
@@ -240,22 +270,31 @@ function SurveyButtons() {
 				size="sm"
 				to={`/surveys/respond/${surveyId}`}
 			>
-				Aperçu
+				Voir l'enquête
 			</Button>
-			{/* @TODO if survey is already published, show other button as
-			"partager" */}
-			<Button
-				variant="primary"
-				ariaLabel="Publier l'enquête"
-				size="sm"
-				onClick={() => {
-					if (surveyId) {
-						onPublishSurvey(surveyId, "published")
-					}
-				}}
-			>
-				Publier
-			</Button>
+			{status === SurveyStatus.Draft ? (
+				<Button
+					variant="primary"
+					ariaLabel="Publier l'enquête"
+					size="sm"
+					onClick={() => {
+						if (surveyId) {
+							onPublishSurvey(surveyId, "published")
+						}
+					}}
+				>
+					Publier
+				</Button>
+			) : (
+				<Button
+					variant="primary"
+					ariaLabel="Partager l'enquête"
+					size="sm"
+					onClick={copyLinkToClipboard}
+				>
+					Partager
+				</Button>
+			)}
 		</div>
 	)
 }
