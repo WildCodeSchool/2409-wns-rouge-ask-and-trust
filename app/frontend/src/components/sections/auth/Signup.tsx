@@ -6,18 +6,14 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import FormButtonSubmit from "./form/FormButtonSubmit"
 import FormTitle from "./form/FormTitle"
 import FormWrapper from "./form/FormWrapper"
+import { FormProvider } from "react-hook-form"
 import InputEmail from "./form/InputEmail"
 import InputFirstname from "./form/InputFirstname"
 import InputLastname from "./form/InputLastname"
 import InputPassword from "./form/InputPassword"
 
 export default function Signup() {
-	const {
-		register,
-		handleSubmit,
-		reset,
-		formState: { errors },
-	} = useForm<UserSignUp>({
+	const methods = useForm<UserSignUp>({
 		mode: "onBlur",
 		defaultValues: {
 			firstname: "",
@@ -26,6 +22,13 @@ export default function Signup() {
 			password: "",
 		},
 	})
+
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = methods
 
 	const [Register] = useMutation(REGISTER, {
 		refetchQueries: [WHOAMI],
@@ -86,13 +89,18 @@ export default function Signup() {
 	}
 
 	return (
-		<FormWrapper onSubmit={handleSubmit(onSubmit)}>
-			<FormTitle isSignUp />
-			<InputFirstname register={register} errors={errors} />
-			<InputLastname register={register} errors={errors} />
-			<InputEmail<UserSignUp> register={register} errors={errors} />
-			<InputPassword<UserSignUp> register={register} errors={errors} />
-			<FormButtonSubmit type="sign-up" />
-		</FormWrapper>
+		<FormProvider {...methods}>
+			<FormWrapper onSubmit={handleSubmit(onSubmit)}>
+				<FormTitle isSignUp />
+				<InputFirstname register={register} errors={errors} />
+				<InputLastname register={register} errors={errors} />
+				<InputEmail<UserSignUp> register={register} errors={errors} />
+				<InputPassword<UserSignUp>
+					register={register}
+					errors={errors}
+				/>
+				<FormButtonSubmit type="sign-up" />
+			</FormWrapper>
+		</FormProvider>
 	)
 }

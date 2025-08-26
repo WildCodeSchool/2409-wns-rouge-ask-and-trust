@@ -2,12 +2,13 @@
 
 @font-face {
 	font-family: "Roboto";
-	/* src: url("../public/fonts/Roboto-VariableFont_wdth,wght.woff2"); */
-	src:
+	/* src: url("../public/fonts/Roboto-VariableFont_wdth,wght.woff2");
 		url("/fonts/Roboto-VariableFont_wdth,wght.woff2") format("woff2"),
-		url("/fonts/Roboto-VariableFont_wdth,wght.woff") format("woff"),
-		url("/fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype"),
-		url("/fonts/Roboto-VariableFont_wdth,wght.eot") format("eot");
+        url("/fonts/Roboto-VariableFont_wdth,wght.woff") format("woff"),
+        url("/fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype"),
+        url("/fonts/Roboto-VariableFont_wdth,wght.eot") format("eot");
+	*/
+	src: url("/fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
 	font-weight: 100 900;
 	font-style: normal;
 }

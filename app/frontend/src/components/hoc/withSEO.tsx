@@ -7,7 +7,7 @@
  */
 
 import { ComponentRef, ComponentType, forwardRef, useEffect } from "react"
-import { Helmet } from "react-helmet"
+import { Helmet } from "react-helmet-async"
 import {
 	STATIC_PAGES_SEO,
 	DYNAMIC_PAGES_SEO,
