@@ -1,19 +1,9 @@
-import { Helmet } from "react-helmet"
+import { withSEO } from "@/components/hoc/withSEO"
 
-export default function TermsOfUse() {
+function TermsOfUse() {
 	return (
-		<>
-			<Helmet>
-				<title>Mentions Légales | Ask&Trust</title>
-				<meta
-					name="description"
-					content="Mentions légales et informations juridiques concernant notre service de formulaires en ligne."
-				/>
-				<meta name="robots" content="index, follow" />
-				<link rel="canonical" href="/terms-of-use" />
-			</Helmet>
-
-			<section className="bg-bg container mx-auto max-w-4xl px-4 pt-20">
+		<main className="bg-bg container mx-auto max-w-4xl px-4 py-8">
+			<section className="mb-10">
 				<h1
 					className="text-primary mb-6 text-3xl font-bold"
 					id="main-heading"
@@ -248,6 +238,9 @@ export default function TermsOfUse() {
 					</article>
 				</div>
 			</section>
-		</>
+		</main>
 	)
 }
+
+const TermsOfUseWithSEO = withSEO(TermsOfUse, "termsOfUse")
+export default TermsOfUseWithSEO

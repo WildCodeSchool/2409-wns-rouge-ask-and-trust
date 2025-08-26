@@ -5,9 +5,10 @@ import { useQuestions } from "@/hooks/useQuestions"
 import { useToast } from "@/hooks/useToast"
 import { QuestionType, Survey } from "@/types/types"
 import { useQuery } from "@apollo/client"
+import { withSEO } from "@/components/hoc/withSEO"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { Helmet } from "react-helmet"
 import { useParams } from "react-router-dom"
+import { Skeleton } from "@/components/ui/Skeleton"
 
 function SurveyCreator() {
 	//  Get survey's id from params
@@ -75,55 +76,30 @@ function SurveyCreator() {
 	}
 
 	return (
-		<>
-			<Helmet>
-				<title>Survey Creator</title>
-				<meta
-					name="description"
-					content="Page de création de l'enquête."
+		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50">
+			{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
+			<section className="p-4 pb-0 lg:p-4 lg:pb-0">
+				<div className="border-black-50 shadow-default flex items-center justify-between rounded-xl border bg-white p-4">
+					<h1 className="h-fit text-2xl font-semibold text-gray-900">
+						Création de l'enquête
+					</h1>
+				</div>
+			</section>
+			<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
+				<Toolbox onAddQuestion={handleAddQuestion} />
+				<Canvas
+					onAddQuestion={handleAddQuestion}
+					questions={questions}
+					focusedQuestionId={focusedQuestionId}
+					setFocusedQuestionId={setFocusedQuestionId}
 				/>
-				<meta name="robots" content="noindex, nofollow" />
-				{/* Open Graph */}
-				<meta property="og:title" content="Création de l'enquête" />
-				<meta
-					property="og:description"
-					content="Page de création de l'enquête."
-				/>
-				<meta property="og:type" content="website" />
-				{/* Twitter Card */}
-				<meta name="twitter:card" content="summary" />
-				<meta name="twitter:title" content="Création de l'enquête" />
-				<meta
-					name="twitter:description"
-					content="Page de création de l'enquête."
-				/>
-			</Helmet>
-			<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50">
-				{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
-				<section className="p-4 pb-0 lg:p-4 lg:pb-0">
-					<div className="border-black-50 shadow-default flex items-center justify-between rounded-xl border bg-white p-4">
-						<h1 className="h-fit text-2xl font-semibold text-gray-900">
-							Création de l'enquête
-						</h1>
-					</div>
-				</section>
-				<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
-					<Toolbox onAddQuestion={handleAddQuestion} />
-					<Canvas
-						onAddQuestion={handleAddQuestion}
-						questions={questions}
-						focusedQuestionId={focusedQuestionId}
-						setFocusedQuestionId={setFocusedQuestionId}
-					/>
-				</section>
-			</div>
-		</>
+			</section>
+		</div>
 	)
 }
 
-export default SurveyCreator
-
-import { Skeleton } from "@/components/ui/Skeleton"
+const SurveyCreatorWithSEO = withSEO(SurveyCreator, "surveyCreator")
+export default SurveyCreatorWithSEO
 
 export function SurveyCreatorSkeleton() {
 	return (

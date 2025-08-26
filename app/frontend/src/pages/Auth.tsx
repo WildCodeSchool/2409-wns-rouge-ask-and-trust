@@ -1,6 +1,7 @@
 import Signin from "@/components/sections/auth/Signin"
 import Signup from "@/components/sections/auth/Signup"
 import { Link, useLocation } from "react-router-dom"
+import { withSEO } from "@/components/hoc/withSEO"
 
 const routes = [
 	{
@@ -43,4 +44,5 @@ const Auth = () => {
 	)
 }
 
-export default Auth
+const AuthWithSEO = withSEO(Auth, "auth")
+export default AuthWithSEO

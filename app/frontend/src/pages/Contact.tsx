@@ -11,45 +11,36 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/Card"
-import { Helmet } from "react-helmet"
+import { withSEO } from "@/components/hoc/withSEO"
 
-export default function Contact() {
+function ContactPage() {
 	return (
-		<>
-			<Helmet>
-				<title>Contactez-nous</title>
-				<meta name="description" content="Page de contact." />
-				<meta name="robots" content="index, follow" />
-				<meta property="og:title" content="Contactez-nous" />
-				<meta property="og:description" content="Page de contact." />
-				<meta property="og:type" content="website" />
-				<meta name="twitter:card" content="summary" />
-				<meta name="twitter:title" content="Contactez-nous" />
-				<meta name="twitter:description" content="Page de contact." />
-			</Helmet>
-			<div className="container mx-auto px-4 pt-20">
-				<ContactHero />
-				<div className="grid gap-12 lg:grid-cols-3">
-					<div className="lg:col-span-2">
-						<Card>
-							<CardHeader>
-								<CardTitle>Envoyez-nous un message</CardTitle>
-								<CardDescription>
-									Remplissez le formulaire ci-dessous et nous
-									vous répondrons dans les plus brefs délais.
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<ContactForm />
-							</CardContent>
-						</Card>
-					</div>
-					<ContactInfo />
+		<div className="container mx-auto px-4 py-12">
+			<ContactHero />
+			<div className="grid gap-12 lg:grid-cols-3">
+				<div className="lg:col-span-2">
+					<Card>
+						<CardHeader>
+							<CardTitle>Envoyez-nous un message</CardTitle>
+							<CardDescription>
+								Remplissez le formulaire ci-dessous et nous vous
+								répondrons dans les plus brefs délais.
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<ContactForm />
+						</CardContent>
+					</Card>
 				</div>
-				<ContactFAQ />
-				<ContactMap />
-				<ContactCTA />
+				<ContactInfo />
 			</div>
-		</>
+			<ContactFAQ />
+			<ContactMap />
+			<ContactCTA />
+		</div>
 	)
 }
+
+// Export with SEO automatically handled via the "contact" key
+const ContactWithSEO = withSEO(ContactPage, "contact")
+export default ContactWithSEO
