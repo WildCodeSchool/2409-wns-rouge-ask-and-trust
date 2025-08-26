@@ -96,7 +96,7 @@ function Payment() {
 	}
 
 	return (
-		<div className="flex min-h-[80vh] items-center justify-center bg-gray-50 px-4 py-8">
+		<div className="flex h-[calc(100vh_-_var(--header-height))] items-center justify-center bg-gray-50 px-4 max-md:pb-[calc(var(--footer-height))]">
 			<div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
 				<h1 className="text-black-default mb-4 text-center text-3xl font-bold">
 					Paiement de Pack d'enquêtes

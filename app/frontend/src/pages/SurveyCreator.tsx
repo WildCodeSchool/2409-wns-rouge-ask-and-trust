@@ -76,7 +76,7 @@ function SurveyCreator() {
 	}
 
 	return (
-		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50">
+		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50 max-md:h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))]">
 			{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
 			<section className="p-4 pb-0 lg:p-4 lg:pb-0">
 				<div className="border-black-50 shadow-default flex items-center justify-between rounded-xl border bg-white p-4">

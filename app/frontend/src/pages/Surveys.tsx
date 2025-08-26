@@ -40,7 +40,9 @@ function Surveys() {
 			<section
 				className={cn(
 					"px-20 pt-20 max-sm:px-5",
-					isHorizontalCompact ? "pb-10" : "mb-20"
+					isHorizontalCompact
+						? "pb-[calc(var(--footer-height)+80px)]"
+						: "mb-20"
 				)}
 				ref={rootRef}
 			>
@@ -83,7 +85,7 @@ function Surveys() {
 					</div>
 				)}
 				{totalCount === 0 && (
-					<div className="flex w-full items-center justify-center">
+					<div className="flex w-full items-center justify-center text-center">
 						<p className="text-black-default text-xl font-medium">
 							Aucune enquête ne correspond à votre recherche...
 						</p>
@@ -98,7 +100,7 @@ function Surveys() {
 				/>
 			</section>
 			{!isHorizontalCompact && (
-				<div className="flex items-center justify-center">
+				<div className="mb-20 flex items-center justify-center">
 					<Button
 						variant="primary"
 						ariaLabel="Création d'une enquête"

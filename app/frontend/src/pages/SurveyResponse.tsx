@@ -51,7 +51,7 @@ function SurveyResponse() {
 	}
 
 	return (
-		<div className="bg-black-50 min-h-screen">
+		<div className="bg-black-50 h-[calc(100vh_-_var(--header-height))]">
 			{/* Header Section */}
 			<section className="bg-white shadow-sm">
 				<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
@@ -85,7 +85,7 @@ function SurveyResponse() {
 			</section>
 
 			{/* Survey Content */}
-			<section className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+			<section className="mx-auto max-w-4xl px-4 py-8 max-md:pb-[calc(var(--footer-height)+32px)] sm:px-6 lg:px-8">
 				<div className="rounded-lg bg-white p-6 shadow">
 					{survey.questions?.length > 0 ? (
 						<SurveyResponseForm
