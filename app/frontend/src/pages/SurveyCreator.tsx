@@ -91,7 +91,10 @@ function SurveyCreator() {
 		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50 max-md:h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))]">
 			{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
 			<section className="w-full p-4 pb-0 lg:p-4 lg:pb-0">
-				<SurveyHeader surveyStatus={data?.survey.status} />
+				<SurveyHeader
+					surveyStatus={data?.survey.status}
+					surveyTitle={data?.survey.title}
+				/>
 			</section>
 			<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
 				{!isMobile && <Toolbox onAddQuestion={handleAddQuestion} />}
@@ -108,8 +111,10 @@ function SurveyCreator() {
 
 function SurveyHeader({
 	surveyStatus,
+	surveyTitle,
 }: {
 	surveyStatus: SurveyStatusType | undefined
+	surveyTitle: string | undefined
 }) {
 	const { isMobile } = useScreenDetector()
 	const [open, setOpen] = useState(false)
@@ -133,6 +138,7 @@ function SurveyHeader({
 		[]
 	)
 
+	const translatedStatus = translateStatus(surveyStatus)
 	return (
 		<div className="flex flex-col gap-4">
 			{isMobile && <SurveyButtons status={surveyStatus} />}
@@ -140,28 +146,41 @@ function SurveyHeader({
 				<div className="flex w-full flex-col justify-between gap-2 p-4">
 					<div className="flex w-full items-center gap-2">
 						<button
-							className="flex w-full items-center justify-between"
+							className="flex w-full min-w-0 cursor-pointer items-center justify-between"
 							onClick={() => {
 								setOpen(!open)
 							}}
 						>
-							<div className="flex items-center gap-4">
-								<h1 className="text-lg font-semibold text-gray-900">
-									Création de l'enquête
-								</h1>
-								<Chipset
-									ariaLabel="draft"
-									state={surveyStatus || "draft"}
-									size="sm"
-									rounded
-								>
-									{translateStatus(surveyStatus)}
-								</Chipset>
+							<div className="flex min-w-0 items-center gap-4">
+								<div className="flex min-w-0 flex-col items-start">
+									<div className="flex min-w-0 items-center gap-2">
+										<h1 className="text-lg font-semibold text-gray-900">
+											Création de l'enquête
+										</h1>
+										<Chipset
+											ariaLabel={`L'enquête possède le statut ${translatedStatus}`}
+											state={surveyStatus || "draft"}
+											size="sm"
+											rounded
+										>
+											{translatedStatus}
+										</Chipset>
+									</div>
+									<h3
+										className={cn(
+											"text-start text-base text-gray-600",
+											isMobile && "line-clamp-2",
+											!isMobile && "line-clamp-1"
+										)}
+									>
+										{surveyTitle}
+									</h3>
+								</div>
 								{!isMobile && (
 									<ChevronDown
 										size={20}
 										className={cn(
-											"rotate-0 transform transition-transform duration-300",
+											"transform transition-transform duration-300",
 											open && "rotate-180"
 										)}
 									/>
