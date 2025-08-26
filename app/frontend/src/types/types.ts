@@ -130,10 +130,19 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	// questions: { id: number; title: string }[]
+	status: SurveyStatusType
 	questions: Question[]
 	user: User
 }
+
+export const SurveyStatus = {
+	Draft: "draft",
+	Published: "published",
+	Archived: "archived",
+	Censored: "censored",
+} as const
+
+export type SurveyStatusType = (typeof SurveyStatus)[keyof typeof SurveyStatus]
 
 export type CreateSurveyInput = Survey
 
