@@ -98,7 +98,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 							className={cn(
 								"self-center",
 								isMobile &&
-									`sticky right-2 bottom-2 left-2 z-10 w-full shadow-lg`
+									`sticky right-2 bottom-2 left-2 z-10 shadow-lg`
 							)}
 						>
 							Ajouter une question
@@ -108,24 +108,6 @@ export const Canvas: React.FC<CanvasProps> = ({
 			</div>
 			{showAsideComponents && (
 				<div className="flex max-w-52 flex-col gap-2">
-					<div className="flex w-full flex-col items-center gap-2">
-						{/* @TODO add real logic to publish survey */}
-						<Button
-							ariaLabel="Publier l'enquête"
-							variant="primary"
-							fullWidth
-						>
-							Publier l'enquête
-						</Button>
-						{/* @TODO add real logic */}
-						<Button
-							ariaLabel="Enregistrer en brouillon"
-							variant="outline"
-							fullWidth
-						>
-							Garder en brouillon
-						</Button>
-					</div>
 					<TableContentQuestions
 						questions={questions}
 						onQuestionClick={scrollToQuestion}

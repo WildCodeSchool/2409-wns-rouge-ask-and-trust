@@ -1,13 +1,20 @@
 import { Canvas } from "@/components/sections/canvas/Canvas"
 import { Toolbox } from "@/components/sections/Toolbox/Toolbox"
+import { Button } from "@/components/ui/Button"
+import { Chipset } from "@/components/ui/Chipset"
 import { Skeleton } from "@/components/ui/Skeleton"
 import { GET_SURVEY } from "@/graphql/survey/survey"
 import { useQuestions } from "@/hooks/useQuestions"
+import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useToast } from "@/hooks/useToast"
+import { cn } from "@/lib/utils"
 import { QuestionType, Survey } from "@/types/types"
 import { useQuery } from "@apollo/client"
+import { ChevronDown } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
+import { withSEO } from "@/components/hoc/withSEO"
+
 
 function SurveyCreator() {
 	//  Get survey's id from params
@@ -100,8 +107,93 @@ function SurveyCreator() {
 const SurveyCreatorWithSEO = withSEO(SurveyCreator, "surveyCreator")
 export default SurveyCreatorWithSEO
 
-import { withSEO } from "@/components/hoc/withSEO"
-import { useScreenDetector } from "@/hooks/useScreenDetector"
+
+export function SurveyHeader() {
+	const { isMobile } = useScreenDetector()
+	const [open, setOpen] = useState(false)
+
+	// @TODO refacto in components
+	// @TODO add form in collapse to edit survey's data
+	// CHECK maybe put surveys button in header page
+	return (
+		<div className="flex flex-col gap-4">
+			{isMobile && <SurveyButtons />}
+			<div className="shadow-default border-black-50 rounded-xl border bg-white">
+				<div className="flex w-full flex-col justify-between gap-2 p-4">
+					<div className="flex w-full items-center gap-2">
+						<button
+							className="flex w-full items-center justify-between"
+							onClick={() => {
+								setOpen(!open)
+							}}
+						>
+							<div className="flex items-center gap-4">
+								<h1 className="text-lg font-semibold text-gray-900">
+									Création de l'enquête
+								</h1>
+								<Chipset
+									ariaLabel="draft"
+									state="draft"
+									size="sm"
+									rounded
+								>
+									brouillon
+								</Chipset>
+								{!isMobile && (
+									<ChevronDown
+										size={20}
+										className={cn(
+											"rotate-0 transform transition-transform duration-300",
+											open && "rotate-180"
+										)}
+									/>
+								)}
+							</div>
+						</button>
+						<div className="flex items-center gap-12">
+							{!isMobile && <SurveyButtons />}
+							{isMobile && (
+								<ChevronDown
+									size={20}
+									className={cn(
+										"rotate-0 transform transition-transform duration-300",
+										open && "rotate-180"
+									)}
+								/>
+							)}
+						</div>
+					</div>
+				</div>
+				{/* Collapse */}
+				{open && (
+					<div className="flex p-4">
+						@TODO : add form to update survey data and shadcn
+						collapse
+					</div>
+				)}
+			</div>
+		</div>
+	)
+}
+
+function SurveyButtons() {
+	const { id: surveyId } = useParams()
+	return (
+		<div className="flex justify-end gap-2">
+			<Button
+				variant="outline"
+				ariaLabel="Voir l'enquête"
+				size="sm"
+				to={`/surveys/respond/${surveyId}`}
+			>
+				Aperçu
+			</Button>
+			<Button variant="primary" ariaLabel="Publier l'enquête" size="sm">
+				Publier
+			</Button>
+		</div>
+	)
+}
 
 export function SurveyCreatorSkeleton() {
 	const { isMobile } = useScreenDetector()
