@@ -5,7 +5,7 @@
 
 import Loader from "@/components/ui/Loader"
 import { useAuthContext } from "@/hooks/useAuthContext"
-import { useNavigate } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 
 /**
  * PublicRoute Component
@@ -23,17 +23,15 @@ import { useNavigate } from "react-router-dom"
  */
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const { user, isLoading } = useAuthContext()
-	const navigate = useNavigate()
 
 	// Show loader while auth status is loading
 	if (isLoading) {
 		return <Loader />
 	}
 
-	// Redirect authenticated users to surveys page
+	// Redirect authenticated users to surveys page (without setState during render)
 	if (user) {
-		navigate("/surveys", { replace: true })
-		return null
+		return <Navigate to="/surveys" replace />
 	}
 
 	// Render public content if user is not authenticated

@@ -26,7 +26,7 @@ const buttonVariants = cva(
 				destructive:
 					"bg-destructive-medium border-destructive-medium text-white hover:bg-white hover:text-destructive-medium focus:ring-destructive-medium",
 				disabled:
-					"bg-black-400 border-black-400 text-white focus:ring-black-400 pointer-events-none cursor-not-allowed",
+					"bg-black-50 border-black-50 text-black-500 focus:ring-black-400 pointer-events-none cursor-not-allowed",
 				ghost: "bg-transparent border-none text-primary-700 hover:underline focus:ring-primary-700",
 				ghost_destructive:
 					"bg-transparent border-none text-destructive-medium hover:underline focus:ring-primary-700 active:outline-none hover:bg-destructive-medium hover:text-white active:bg-transparent",
@@ -35,8 +35,8 @@ const buttonVariants = cva(
 				sm: "px-3 py-1 text-sm",
 				md: "px-5 py-2 text-base",
 				lg: "px-6 py-3 text-lg",
-				square: "w-12 h-12",
-				square_sm: "w-10 h-10",
+				square: "w-12 aspect-square",
+				square_sm: "w-10 aspect-square",
 			},
 			nav: {
 				selected: "bg-white text-primary-700",
@@ -98,11 +98,11 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 		const childrenContent = (
 			<>
 				{Icon && iconPosition === "left" && (
-					<Icon className="h-5 w-5" aria-hidden />
+					<Icon className="h-5 w-5 shrink-0" aria-hidden />
 				)}
 				{children}
 				{Icon && iconPosition === "right" && (
-					<Icon className="h-5 w-5" aria-hidden />
+					<Icon className="h-5 w-5 shrink-0" aria-hidden />
 				)}
 			</>
 		)

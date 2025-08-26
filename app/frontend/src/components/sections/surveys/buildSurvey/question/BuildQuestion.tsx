@@ -1,117 +1,51 @@
 import FormWrapper from "@/components/sections/auth/form/FormWrapper"
-import { BuildListAnswers } from "@/components/sections/surveys/buildSurvey/question/BuildListAnswers"
 import QuestionTypeSelect from "@/components/sections/surveys/buildSurvey/question/QuestionTypeSelection"
 import { Button } from "@/components/ui/Button"
-import { Input } from "@/components/ui/Input"
-import { Label } from "@/components/ui/Label"
-import {
-	UpdateQuestionInput,
-	useQuestion,
-	useQuestions,
-} from "@/hooks/useQuestions"
+import { UpdateQuestionInput, useQuestions } from "@/hooks/useQuestions"
 import { useToast } from "@/hooks/useToast"
-import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
-import { Trash2 } from "lucide-react"
-import { forwardRef, useEffect, useRef, useState } from "react"
 import {
-	FieldArrayWithId,
-	FieldValues,
-	useFieldArray,
-	UseFieldArrayAppend,
-	UseFieldArrayRemove,
-	useForm,
-	UseFormRegister,
-	useWatch,
-} from "react-hook-form"
+	Question,
+	QuestionType,
+	QuestionUpdate,
+	TypesOfQuestion,
+} from "@/types/types"
+import { forwardRef, memo, useEffect, useRef } from "react"
+import { useFieldArray, useForm, useWatch } from "react-hook-form"
+import { BuildQuestionHeader } from "./BuildQuestionHeader"
+import { QuestionTitleInput } from "./QuestionTitleInput"
+import { RenderAnswersComponent } from "./RenderAnswersComponent"
 
 type QuestionProps = {
-	questionId: number
+	question: Question
+	index: number
+	surveyId: number
+	onClick: () => void
 }
 
-type RenderAnswerComponentProps = {
-	questionType: QuestionType
-	register: UseFormRegister<QuestionUpdate>
-	errors: FieldValues
-	fields: FieldArrayWithId<QuestionUpdate, "answers", "id">[]
-	remove: UseFieldArrayRemove
-	append: UseFieldArrayAppend<QuestionUpdate, "answers">
-}
-
-export function RenderAnswerComponent({
-	questionType,
-	register,
-	errors,
-	fields,
-	remove,
-	append,
-}: RenderAnswerComponentProps) {
-	// Render the appropriate answer component based on the question type
-	switch (questionType) {
-		case TypesOfQuestion.Text:
-		case TypesOfQuestion.TextArea:
-			return null
-		case TypesOfQuestion.Boolean:
-		case TypesOfQuestion.Radio:
-		case TypesOfQuestion.Select:
-		case TypesOfQuestion.Checkbox:
-			return (
-				<BuildListAnswers
-					register={register}
-					errors={errors}
-					fields={fields}
-					remove={remove}
-					append={append}
-				/>
-			)
-		default:
-			throw new Error(`Unsupported question type: ${questionType}`)
-	}
-}
-
-const getDefaultAnswersForType = (type: QuestionType) => {
-	// Provide default answers based on the question type
-	// This is useful when the question type changes and there are no answers yet
-	switch (type) {
-		case TypesOfQuestion.Boolean:
-			return [{ value: "Vrai" }, { value: "Faux" }]
-		case TypesOfQuestion.Radio:
-		case TypesOfQuestion.Select:
-		case TypesOfQuestion.Checkbox:
-			return [{ value: "Réponse 1" }, { value: "Réponse 2" }]
-		default:
-			return []
-	}
-}
-
-function BuildQuestion(
-	{ questionId }: QuestionProps,
-	ref: React.Ref<HTMLLIElement> | null
-) {
+function BuildQuestion({ question, index, surveyId, onClick }: QuestionProps) {
 	const {
 		register,
 		handleSubmit,
 		control,
-		formState: { errors },
+		formState: { errors, isDirty },
 		reset,
-	} = useForm<QuestionUpdate>()
-	// Load question data from the API
-	const {
-		question,
-		loading,
-		error: getQuestionError,
-	} = useQuestion(questionId)
+	} = useForm<QuestionUpdate>({
+		defaultValues: {
+			title: question.title,
+			type: question.type,
+			answers: question.answers,
+		},
+	})
+
 	// Load question update and delete functions from the API
 	const {
 		updateQuestion,
 		updateQuestionError,
 		resetUpdateQuestionError,
-		deleteQuestion,
 		deleteQuestionError,
 		resetDeleteQuestionError,
 	} = useQuestions()
-	// Show / hide delete question button
-	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
-		useState(false)
+
 	// Allow to manipulate answers as a dynamic array (no state needed)
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -121,13 +55,13 @@ function BuildQuestion(
 		control,
 		name: "type",
 	})
-	const prevTypeRef = useRef<QuestionType>(TypesOfQuestion.Text)
-	const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
+	const prevTypeRef = useRef<QuestionType>(question.type)
 	const { showToast } = useToast()
 
 	// Show error toast if there is an error during question update, delete or load
+	// @TODO Refacto add this in useQuestions
 	useEffect(() => {
-		if (updateQuestionError || deleteQuestionError || getQuestionError) {
+		if (updateQuestionError || deleteQuestionError) {
 			showToast({
 				type: "error",
 				title: "Oops, nous avons rencontré une erreur.",
@@ -146,66 +80,65 @@ function BuildQuestion(
 		showToast,
 		resetUpdateQuestionError,
 		resetDeleteQuestionError,
-		getQuestionError,
 	])
 
-	// Reset the form with the current question data
-	// This ensures that the form is populated with the latest question data
+	// Watch if question's type changed
+	// If yes, handle default answers for specific types
 	useEffect(() => {
-		if (question && !loading && !getQuestionError) {
-			reset({
-				title: question.title,
-				type: question.type,
-				answers: question.answers,
-			})
+		if (!watchedType) return
 
-			// Init reference to the previous type
-			prevTypeRef.current = question.type
+		const typesWithAnswers = new Set<QuestionType>([
+			TypesOfQuestion.Boolean,
+			TypesOfQuestion.Radio,
+			TypesOfQuestion.Select,
+			TypesOfQuestion.Checkbox,
+		])
+
+		const isTypeWithAnswers = typesWithAnswers.has(watchedType)
+
+		// If type is Text or TextArea, do nothing
+		if (!isTypeWithAnswers) return
+
+		// If type changed
+		if (prevTypeRef.current !== watchedType) {
+			// Boolean type
+			// If no answers, add two empty answers
+			// If one answer, add one empty answer
+			// If more than two answers, keep only the first two answers
+			if (watchedType === TypesOfQuestion.Boolean) {
+				if (fields.length === 0) {
+					append([{ value: "" }, { value: "" }])
+				} else if (fields.length === 1) {
+					append([{ value: "" }])
+				} else if (fields.length > 2) {
+					const firstTwo = fields
+						.slice(0, 2)
+						.map(f => ({ value: f.value }))
+					remove()
+					append(firstTwo)
+				}
+			} else {
+				// Other types than Boolean (Radio / Select / Checkbox)
+				if (fields.length === 0) {
+					append([{ value: "" }, { value: "" }])
+				}
+				// Do nothing if 1 or more answers
+			}
 		}
-	}, [question?.id, loading, getQuestionError, reset, question])
 
-	// After saving question, if type has changed and there is no answer, provide default answers
-	useEffect(() => {
-		if (!watchedType || !question) return
-
-		// Check if the type has changed and if there are no answers yet
-		const hasTypeChanged =
-			prevTypeRef.current && prevTypeRef.current !== watchedType
-		const answersAreEmpty = fields.length === 0
-
-		if (hasTypeChanged && answersAreEmpty) {
-			// If the form has no answers, append default answers based on the type
-			const defaults = getDefaultAnswersForType(watchedType)
-			// Append default answers to the form
-			append(defaults) // shouldFocus is false to avoid focusing input immediately
-		}
-		// Always update the previous type reference after checking
 		prevTypeRef.current = watchedType
-	}, [append, fields.length, question, watchedType])
+	}, [watchedType, append, remove, fields])
 
-	// Focus the delete button when it is opened
+	// After a successful question load, reset the form with the question data
+	// Enable to put back disabled state of the submit button
 	useEffect(() => {
-		if (openButtonDeleteQuestion) {
-			deleteButtonRef.current?.focus()
-		}
-	}, [openButtonDeleteQuestion])
-
-	const handleClickDelete = async (
-		questionId: number | undefined,
-		surveyId: number | undefined
-	) => {
-		if (!questionId || !surveyId) return null
-
-		try {
-			await deleteQuestion(questionId, surveyId)
-			showToast({
-				type: "success",
-				title: "La question a été supprimée.",
-			})
-		} finally {
-			setOpenButtonDeleteQuestion(false)
-		}
-	}
+		if (!question) return
+		reset({
+			title: question.title,
+			type: question.type,
+			answers: question.answers,
+		})
+	}, [question, reset])
 
 	const handleSubmitForm = async (formData: UpdateQuestionInput) => {
 		if (!question?.id) return
@@ -217,24 +150,17 @@ function BuildQuestion(
 
 		const { title, type } = formData
 
+		const isTypeText =
+			formData.type === TypesOfQuestion.Text ||
+			formData.type === TypesOfQuestion.TextArea
+
 		try {
 			// Call the updateQuestion function with the formatted data
 			await updateQuestion({
 				id: question.id,
 				title: title,
 				type: type,
-				answers: formattedAnswers,
-			})
-
-			// Reset the form with the updated question data
-			reset({
-				title: formData.title,
-				type: formData.type,
-				answers:
-					// If the question type is Text, empty answers
-					type === TypesOfQuestion.Text
-						? []
-						: (formattedAnswers ?? []),
+				answers: isTypeText ? [] : (formattedAnswers ?? []),
 			})
 
 			showToast({
@@ -249,75 +175,28 @@ function BuildQuestion(
 	if (!question) return null
 
 	return (
-		<li className="list-none" ref={ref} tabIndex={-1}>
+		<div onClick={onClick}>
 			<FormWrapper
 				onSubmit={handleSubmit(handleSubmitForm)}
-				className="md:max-w-[90vh]"
+				className="w-full md:max-w-full"
 			>
-				<div className="flex content-center justify-between">
-					<h3 className="flex-1 self-center text-2xl font-bold">
-						{question.title ?? "Nouvelle question"}
-					</h3>
-					<Button
-						variant="ghost_destructive"
-						size="square_sm"
-						ariaLabel="Supprimer cette option"
-						type="button"
-						onClick={() => {
-							setOpenButtonDeleteQuestion(prev => !prev)
-						}}
-						icon={Trash2}
-					/>
-				</div>
-				{openButtonDeleteQuestion && (
-					<div className="flex flex-1 gap-3">
-						<Button
-							type="button"
-							variant="destructive"
-							fullWidth
-							ariaLabel="Supprimer la question"
-							ref={deleteButtonRef}
-							onClick={() => {
-								handleClickDelete(
-									question.id,
-									question.survey.id
-								)
-							}}
-							icon={Trash2}
-						>
-							Supprimer la question
-						</Button>
-						<Button
-							type="button"
-							variant="outline"
-							fullWidth
-							ariaLabel="Annuler la suppression de la question"
-							onClick={() => {
-								setOpenButtonDeleteQuestion(false)
-							}}
-						>
-							Annuler
-						</Button>
-					</div>
-				)}
-				<div className="flex flex-col gap-1">
-					<Label htmlFor="title" required>
-						Titre
-					</Label>
-					<Input
-						id="title"
-						placeholder="Titre de la question"
-						{...register("title", {
-							required: "Le titre est requis.",
-						})}
-						aria-invalid={errors.title ? "true" : "false"}
-						errorMessage={errors?.title?.message}
-					/>
-				</div>
+				<BuildQuestionHeader
+					question={{
+						id: question.id,
+						title: question.title,
+						type: question.type,
+						index,
+						surveyId,
+					}}
+				/>
+				<QuestionTitleInput
+					register={register}
+					errorsTitle={errors?.title}
+				/>
 				{watchedType && (
 					<>
 						<QuestionTypeSelect control={control} errors={errors} />
-						<RenderAnswerComponent
+						<RenderAnswersComponent
 							questionType={watchedType}
 							register={register}
 							errors={errors}
@@ -330,14 +209,33 @@ function BuildQuestion(
 				<Button
 					role="submit"
 					type="submit"
-					ariaLabel="Enregistrer la question."
+					disabled={!isDirty} // Disable button if form is not dirty
+					aria-disabled={!isDirty}
+					ariaLabel="Enregistrer la question"
 					fullWidth
+					variant={isDirty ? "primary" : "disabled"}
 				>
 					Enregistrer
 				</Button>
 			</FormWrapper>
-		</li>
+		</div>
 	)
 }
 
-export default forwardRef<HTMLLIElement, QuestionProps>(BuildQuestion)
+const BuildQuestionWithRef = forwardRef<HTMLLIElement, QuestionProps>(
+	BuildQuestion
+)
+
+const MemoizedBuildQuestion = memo(
+	BuildQuestionWithRef,
+	(prevProps, nextProps) => {
+		return (
+			prevProps.question.id === nextProps.question.id &&
+			prevProps.question.title === nextProps.question.title &&
+			prevProps.question.type === nextProps.question.type &&
+			prevProps.index === nextProps.index
+		)
+	}
+)
+
+export default MemoizedBuildQuestion

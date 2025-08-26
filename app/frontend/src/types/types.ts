@@ -1,7 +1,7 @@
-import { LucideIcon } from "lucide-react"
-import { UserRole } from "./../../../backend/src/types/types"
-import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
 import { CheckedState } from "@radix-ui/react-checkbox"
+import { LucideIcon } from "lucide-react"
+import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
+import { UserRole } from "./../../../backend/src/types/types"
 
 export type AuthContextProps = {
 	user: User | null
@@ -27,6 +27,7 @@ export interface LinksType {
 	label: string
 	category: string
 	ariaLabel: string
+	mobileFooter?: boolean
 	Icon?: LucideIcon
 }
 
@@ -53,17 +54,20 @@ export interface ErrorLayoutProps {
 	children: React.ReactNode
 }
 
-export interface HeaderMobileMenuProps {
-	showMenu: boolean
-	handleShowMenu: () => void
-	headerLinks: readonly LinksType[]
+export interface NavAndAuthButtonsProps {
+	links?: readonly LinksType[]
+	isHorizontalCompact?: boolean
+	handleShowMenu?: () => void
+	isInSurveys?: boolean
+	showMenu?: boolean
+	isInHeader?: boolean
+	isInFooter?: boolean
 }
 
-export interface NavAndAuthButtonsProps {
-	headerLinks: readonly LinksType[]
-	isHorizontalCompact: boolean
-	handleShowMenu?: () => void
-}
+export type AuthButtonsProps = Pick<
+	NavAndAuthButtonsProps,
+	"isHorizontalCompact" | "isInHeader" | "isInFooter"
+>
 
 export type SurveyCategoryType = {
 	id: string
@@ -137,7 +141,8 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	questions: { id: number }[]
+	// questions: { id: number; title: string }[]
+	questions: Question[]
 	user: User
 }
 
@@ -327,4 +332,19 @@ export interface SurveyResponseData {
 
 export interface SurveyResponseFormData {
 	[key: string]: string | string[] | boolean
+}
+
+export type SurveyWithCategory = {
+	id: number
+	title: string
+	description: string
+	public: boolean
+	category: {
+		id: number
+		name: string
+	}
+	questions: Question[]
+	status: string
+	createdAt: string
+	updatedAt: string
 }

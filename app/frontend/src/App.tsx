@@ -11,12 +11,14 @@ function App() {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 
 	const renderHeader = () => {
-		if (location.pathname.startsWith("/surveys")) {
-			return <HeaderSurveys showCategories />
-		} else if (location.pathname.startsWith("/profil")) {
-			return <HeaderSurveys />
+		switch (location.pathname) {
+			case "/":
+				return <Header />
+			case "/surveys":
+				return <HeaderSurveys isInSurveys />
+			default:
+				return <HeaderSurveys />
 		}
-		return <Header />
 	}
 
 	const renderFooter = () => {

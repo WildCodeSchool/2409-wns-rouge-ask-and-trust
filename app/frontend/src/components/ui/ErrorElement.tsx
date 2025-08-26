@@ -211,12 +211,12 @@ const ButtonGroup = () => {
 				aria-label="Navigation de récupération"
 			>
 				<Button
-					onClick={() => navigate("/")}
+					onClick={() => navigate("/surveys")}
 					ariaLabel="Retourner à la page d'accueil"
 					size="lg"
 					className="w-full sm:w-auto"
 				>
-					Retour à l'accueil
+					Retourner aux enquêtes
 				</Button>
 				<Button
 					onClick={() => navigate(-1)}
