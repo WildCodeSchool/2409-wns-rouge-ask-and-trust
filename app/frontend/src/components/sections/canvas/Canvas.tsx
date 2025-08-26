@@ -107,14 +107,12 @@ export const Canvas: React.FC<CanvasProps> = ({
 				)}
 			</div>
 			{showAsideComponents && (
-				<div className="flex max-w-52 flex-col gap-2">
-					<TableContentQuestions
-						questions={questions}
-						onQuestionClick={scrollToQuestion}
-						currentQuestionId={focusedQuestionId}
-						highlightedQuestionId={highlightedQuestionId}
-					/>
-				</div>
+				<TableContentQuestions
+					questions={questions}
+					onQuestionClick={scrollToQuestion}
+					currentQuestionId={focusedQuestionId}
+					highlightedQuestionId={highlightedQuestionId}
+				/>
 			)}
 		</>
 	)
