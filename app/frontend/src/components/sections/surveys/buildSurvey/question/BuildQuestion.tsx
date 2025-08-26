@@ -9,7 +9,7 @@ import {
 	QuestionUpdate,
 	TypesOfQuestion,
 } from "@/types/types"
-import { forwardRef, memo, useEffect, useRef } from "react"
+import { memo, useEffect, useRef } from "react"
 import { useFieldArray, useForm, useWatch } from "react-hook-form"
 import { BuildQuestionHeader } from "./BuildQuestionHeader"
 import { QuestionTitleInput } from "./QuestionTitleInput"
@@ -222,20 +222,11 @@ function BuildQuestion({ question, index, surveyId, onClick }: QuestionProps) {
 	)
 }
 
-const BuildQuestionWithRef = forwardRef<HTMLLIElement, QuestionProps>(
-	BuildQuestion
-)
-
-const MemoizedBuildQuestion = memo(
-	BuildQuestionWithRef,
-	(prevProps, nextProps) => {
-		return (
-			prevProps.question.id === nextProps.question.id &&
-			prevProps.question.title === nextProps.question.title &&
-			prevProps.question.type === nextProps.question.type &&
-			prevProps.index === nextProps.index
-		)
-	}
-)
-
-export default MemoizedBuildQuestion
+export default memo(BuildQuestion, (prev, next) => {
+	return (
+		prev.question.id === next.question.id &&
+		prev.question.title === next.question.title &&
+		prev.question.type === next.question.type &&
+		prev.index === next.index
+	)
+})
