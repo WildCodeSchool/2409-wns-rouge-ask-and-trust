@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button"
 import { Chipset } from "@/components/ui/Chipset"
 import { Skeleton } from "@/components/ui/Skeleton"
 import { GET_SURVEY } from "@/graphql/survey/survey"
+import { useCopyClipboard } from "@/hooks/useCopyClipBoard"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useSurvey } from "@/hooks/useSurvey"
@@ -203,6 +204,7 @@ function SurveyButtons({ status }: { status: SurveyStatusType | undefined }) {
 	const { updateSurveyStatus, isStatusUpdateError, resetStatusUpdateError } =
 		useSurvey()
 	const { showToast } = useToast()
+	const { copyToClipboard } = useCopyClipboard()
 
 	const onPublishSurvey = useCallback(
 		async (surveyId: string, status: SurveyStatusType) => {
@@ -223,28 +225,12 @@ function SurveyButtons({ status }: { status: SurveyStatusType | undefined }) {
 		[updateSurveyStatus, showToast]
 	)
 
-	const copyLinkToClipboard = useCallback(async () => {
+	const onClickCopy = () => {
 		if (!surveyId) return
 
 		const surveyUrl = `${window.location.origin}/surveys/respond/${surveyId}`
-
-		try {
-			await navigator.clipboard.writeText(surveyUrl)
-			showToast({
-				type: "success",
-				title: "Lien copié !",
-				description:
-					"Le lien de l'enquête a été copié dans le presse-papiers",
-			})
-		} catch (error) {
-			showToast({
-				type: "error",
-				title: "Impossible de copier le lien",
-				description: "Veuillez copier le lien manuellement",
-			})
-			console.error("Erreur lors de la copie du lien :", error)
-		}
-	}, [surveyId, showToast])
+		copyToClipboard(surveyUrl)
+	}
 
 	useEffect(() => {
 		if (isStatusUpdateError) {
@@ -290,7 +276,7 @@ function SurveyButtons({ status }: { status: SurveyStatusType | undefined }) {
 					variant="primary"
 					ariaLabel="Partager l'enquête"
 					size="sm"
-					onClick={copyLinkToClipboard}
+					onClick={onClickCopy}
 				>
 					Partager
 				</Button>
