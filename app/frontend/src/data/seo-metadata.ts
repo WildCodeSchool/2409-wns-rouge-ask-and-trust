@@ -133,6 +133,15 @@ export interface DynamicSEOGenerator {
  * ```
  */
 export const STATIC_PAGES_SEO: Record<string, SEOMetadata> = {
+	admin: {
+		title: "Administration | Ask&Trust",
+		description: "Espace d'administration de la plateforme Ask&Trust",
+		robots: "noindex, nofollow",
+		ogTitle: "Administration | Ask&Trust",
+		ogDescription: "Espace d'administration de la plateforme Ask&Trust",
+		ogType: "website",
+		twitterCard: "summary",
+	},
 	landing: {
 		title: "Accueil | Ask&Trust",
 		description:
