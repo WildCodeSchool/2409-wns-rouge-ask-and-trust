@@ -35,3 +35,16 @@ export const LOGOUT = gql`
 		logout
 	}
 `
+
+export const GET_USERS = gql`
+	query GetUsers {
+		getUsers {
+			id
+			email
+			firstname
+			lastname
+			role
+			createdAt
+		}
+	}
+`

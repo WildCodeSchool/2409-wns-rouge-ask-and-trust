@@ -348,3 +348,14 @@ export type SurveyWithCategory = {
 	createdAt: string
 	updatedAt: string
 }
+
+export type RawUser = {
+	id: number | string
+	email: string
+	firstname: string
+	lastname: string
+	role: string
+	createdAt?: string
+	updatedAt?: string
+	surveys?: { id: number | string }[]
+}
