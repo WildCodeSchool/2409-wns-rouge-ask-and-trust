@@ -106,10 +106,7 @@ function SurveyCreator() {
 	)
 }
 
-const SurveyCreatorWithSEO = withSEO(SurveyCreator, "surveyCreator")
-export default SurveyCreatorWithSEO
-
-export function SurveyHeader({
+function SurveyHeader({
 	surveyStatus,
 }: {
 	surveyStatus: SurveyStatusType | undefined
@@ -338,3 +335,6 @@ export function SurveyCreatorSkeleton() {
 		</div>
 	)
 }
+
+const SurveyCreatorWithSEO = withSEO(SurveyCreator, "surveyCreator")
+export default SurveyCreatorWithSEO
