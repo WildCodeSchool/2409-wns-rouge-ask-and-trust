@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button"
 import { Chipset } from "@/components/ui/Chipset"
 import { Skeleton } from "@/components/ui/Skeleton"
 import { GET_SURVEY } from "@/graphql/survey/survey"
-import { useCopyClipboard } from "@/hooks/useCopyClipBoard"
+import { useCopyClipboard } from "@/hooks/useCopyClipboard"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useSurvey } from "@/hooks/useSurvey"
@@ -90,7 +90,7 @@ function SurveyCreator() {
 	return (
 		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50 max-md:h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))]">
 			{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
-			<section className="p-4 pb-0 lg:p-4 lg:pb-0">
+			<section className="w-full p-4 pb-0 lg:p-4 lg:pb-0">
 				<SurveyHeader surveyStatus={data?.survey.status} />
 			</section>
 			<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
