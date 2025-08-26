@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button"
 import { ArrowLeft } from "lucide-react"
 import SurveyResponseForm from "@/components/sections/response/SurveyResponseForm"
 import { SurveyWithCategory } from "@/types/types"
+import { cn } from "@/lib/utils"
 
 function SurveyResponse() {
 	const { id: surveyId } = useParams<{ id: string }>()
@@ -50,8 +51,15 @@ function SurveyResponse() {
 		throw new Response("Survey not found", { status: 404 })
 	}
 
+	const questions = survey.questions?.length > 0
+
 	return (
-		<div className="bg-black-50 h-[calc(100vh_-_var(--header-height))]">
+		<div
+			className={cn(
+				"bg-black-50",
+				!questions && "h-[calc(100vh_-_var(--header-height))]"
+			)}
+		>
 			{/* Header Section */}
 			<section className="bg-white shadow-sm">
 				<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
@@ -87,7 +95,7 @@ function SurveyResponse() {
 			{/* Survey Content */}
 			<section className="mx-auto max-w-4xl px-4 py-8 max-md:pb-[calc(var(--footer-height)+32px)] sm:px-6 lg:px-8">
 				<div className="rounded-lg bg-white p-6 shadow">
-					{survey.questions?.length > 0 ? (
+					{questions ? (
 						<SurveyResponseForm
 							surveyId={survey.id}
 							questions={survey.questions}
