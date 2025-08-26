@@ -1,7 +1,7 @@
 import { Chipset } from "@/components/ui/Chipset"
 import { Button } from "@/components/ui/Button"
 import { User } from "@/types/types"
-import { Eye, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
 
 export default function UserTableRow({
 	user,
@@ -40,14 +40,6 @@ export default function UserTableRow({
 			</td>
 			<td className="px-5 py-4">
 				<div className="flex items-center gap-5">
-					<Button
-						ariaLabel="Voir l'utilisateur"
-						variant="ghost"
-						role="button"
-						className="text-black-default p-0"
-					>
-						<Eye className="h-5 w-5 cursor-pointer" />
-					</Button>
 					<Button
 						ariaLabel="Supprimer l'utilisateur"
 						variant="ghost"
