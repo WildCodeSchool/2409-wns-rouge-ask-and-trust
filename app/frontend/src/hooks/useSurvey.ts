@@ -190,6 +190,7 @@ export function useSurvey(surveyId?: string) {
 			variables: { data: { id, status } },
 			refetchQueries: [
 				{ query: GET_SURVEY, variables: { surveyId: id } },
+				{ query: GET_SURVEYS },
 			],
 			awaitRefetchQueries: true,
 		})
