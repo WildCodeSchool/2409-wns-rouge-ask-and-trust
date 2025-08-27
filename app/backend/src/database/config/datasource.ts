@@ -7,9 +7,9 @@ const dataSource = new DataSource({
 	username: process.env.POSTGRES_USER,
 	password: process.env.POSTGRES_PASSWORD,
 	database: process.env.POSTGRES_DB,
-	entities: ["./src/database/entities/**/*.ts"],
-	synchronize: true,
-	migrations: ["./src/database/migrations/*.ts"],
+	entities: [__dirname + "./src/database/entities/**/*.ts"],
+	synchronize: process.env.IS_DEV === "true", // in prod environment, IS_DEV is false and Typeorm runs migrations scripts.
+	migrations: [__dirname + "./src/database/migrations/*.ts"],
 	migrationsTableName: "migrations",
 	logging: true,
 })

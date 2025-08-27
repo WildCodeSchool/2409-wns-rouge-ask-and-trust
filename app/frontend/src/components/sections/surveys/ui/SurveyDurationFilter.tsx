@@ -1,8 +1,8 @@
-import { Chipset } from "@/components/ui/Chipset"
-import { X } from "lucide-react"
 import { SelectFilter } from "@/components/sections/dashboard/SelectFilter"
-import { SurveyDurationFilterProps } from "@/types/types"
+import { Chipset } from "@/components/ui/Chipset"
 import { cn } from "@/lib/utils"
+import { SurveyDurationFilterProps } from "@/types/types"
+import { X } from "lucide-react"
 
 export default function SurveyDurationFilter({
 	sortTimeOption,
@@ -35,7 +35,7 @@ export default function SurveyDurationFilter({
 		<div
 			className={cn(
 				"flex flex-wrap items-center gap-5",
-				isHorizontalCompact ? "mb-14" : "mb-20"
+				isHorizontalCompact ? "mb-8" : "mb-10"
 			)}
 		>
 			<SelectFilter
