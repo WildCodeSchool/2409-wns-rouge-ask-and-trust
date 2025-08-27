@@ -377,11 +377,7 @@ export class SurveysResolver {
 				survey.category = categorySurvey
 			}
 
-			// Apply only defined fields to avoid overwriting with undefined
-			const sanitizedUpdate = Object.fromEntries(
-				Object.entries(updateData).filter(([, v]) => v !== undefined)
-			)
-			Object.assign(survey, sanitizedUpdate)
+			Object.assign(survey, updateData)
 
 			await survey.save()
 			return survey
