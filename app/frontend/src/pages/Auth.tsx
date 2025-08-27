@@ -31,7 +31,7 @@ const Auth = () => {
 	const { component, label, ariaLabel, link } = currentRoute
 
 	return (
-		<div className="flex h-[100%] flex-col items-center gap-4 px-4 py-16 md:px-0">
+		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col items-center justify-center gap-4 px-4 max-md:pb-[calc(var(--footer-height))] md:px-0">
 			{component}
 			<Link
 				aria-label={`Aller à la page ${ariaLabel}`}

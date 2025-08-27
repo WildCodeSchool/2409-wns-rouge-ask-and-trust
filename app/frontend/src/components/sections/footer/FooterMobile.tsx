@@ -1,5 +1,7 @@
+import { useRef } from "react"
 import Links from "@/components/ui/Links"
 import { useAuthContext } from "@/hooks/useAuthContext"
+import { useHeightVariable } from "@/hooks/useHeightVariable"
 import { LinksType } from "@/types/types"
 import {
 	House,
@@ -12,6 +14,9 @@ import {
 
 export default function FooterMobile() {
 	const { user } = useAuthContext()
+	const footerRef = useRef<HTMLElement>(null)
+
+	useHeightVariable(footerRef, "--footer-height")
 
 	const FOOTER_LINKS: LinksType[] = [
 		{
@@ -67,7 +72,10 @@ export default function FooterMobile() {
 	].filter(Boolean)
 
 	return (
-		<footer className="bg-bg border-primary-700 fixed bottom-0 flex w-full justify-between border-t px-5 py-2.5 sm:justify-around">
+		<footer
+			className="bg-bg border-primary-700 fixed bottom-0 flex w-full justify-between border-t px-5 py-2.5 sm:justify-around"
+			ref={footerRef}
+		>
 			{FOOTER_LINKS.map(link => (
 				<Links
 					key={link.href}

@@ -6,6 +6,13 @@ import Links from "@/components/ui/Links"
 import userEvent from "@testing-library/user-event"
 import { useAuthContext } from "@/hooks/useAuthContext"
 
+// Mock ResizeObserver
+class ResizeObserverMock {
+	observe() {}
+	unobserve() {}
+	disconnect() {}
+}
+
 // Wrapper require in react router
 const FooterWrapper = () => (
 	<BrowserRouter>
@@ -17,7 +24,13 @@ vi.mock("@/hooks/useAuthContext", () => ({
 	useAuthContext: vi.fn(),
 }))
 
+// Mock du hook useHeightVariable
+vi.mock("@/hooks/useHeightVariable", () => ({
+	useHeightVariable: vi.fn(),
+}))
+
 beforeEach(() => {
+	global.ResizeObserver = ResizeObserverMock
 	;(useAuthContext as Mock).mockReturnValue({ user: null })
 })
 

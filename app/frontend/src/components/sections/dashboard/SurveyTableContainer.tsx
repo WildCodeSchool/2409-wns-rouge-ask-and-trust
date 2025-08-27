@@ -132,7 +132,7 @@ export default function SurveyTableContainer() {
 						statusLabelMap={statusLabelMap}
 					/>
 				) : (
-					<div className="flex h-full w-full items-center justify-center">
+					<div className="flex h-full w-full items-center justify-center text-center">
 						<p className="text-black-default text-xl font-medium">
 							Aucune enquête ne correspond à votre recherche...
 						</p>

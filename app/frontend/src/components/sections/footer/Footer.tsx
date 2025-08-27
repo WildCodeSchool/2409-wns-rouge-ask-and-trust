@@ -5,8 +5,13 @@ import logoSurveys from "/logos/logo-footer.svg"
 import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { cn } from "@/lib/utils"
+import { useRef } from "react"
+import { useHeightVariable } from "@/hooks/useHeightVariable"
 
 export default function Footer() {
+	const footerRef = useRef<HTMLElement>(null)
+	useHeightVariable(footerRef, "--footer-height")
+
 	const FOOTER_LINKS: LinksType[] = [
 		{
 			href: "/surveys",
@@ -49,6 +54,7 @@ export default function Footer() {
 			)}
 			role="contentinfo"
 			aria-label="Pied de page"
+			ref={footerRef}
 		>
 			<div className="flex items-center justify-between gap-10 max-lg:flex-col max-lg:gap-6">
 				{/* Logo desktop */}
