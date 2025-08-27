@@ -35,7 +35,7 @@ export const BuildQuestionHeader = ({ question }: BuildQuestionHeaderProps) => {
 	// Show / hide delete question button
 	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
 		useState(false)
-	const { deleteQuestion } = useQuestions()
+	const { deleteQuestion, isDeleteQuestionLoading } = useQuestions()
 
 	const handleClickDelete = async (
 		questionId: number | undefined,
@@ -93,6 +93,8 @@ export const BuildQuestionHeader = ({ question }: BuildQuestionHeaderProps) => {
 						fullWidth
 						ariaLabel="Supprimer la question"
 						autoFocus={openButtonDeleteQuestion}
+						disabled={isDeleteQuestionLoading}
+						loadingSpinner={isDeleteQuestionLoading}
 						onClick={() => {
 							handleClickDelete(question.id, question.surveyId)
 						}}

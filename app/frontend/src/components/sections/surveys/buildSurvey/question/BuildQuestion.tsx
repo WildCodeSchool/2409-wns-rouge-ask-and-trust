@@ -40,6 +40,7 @@ function BuildQuestion({ question, index, surveyId, onClick }: QuestionProps) {
 	// Load question update and delete functions from the API
 	const {
 		updateQuestion,
+		isUpdateQuestionLoading,
 		updateQuestionError,
 		resetUpdateQuestionError,
 		deleteQuestionError,
@@ -209,11 +210,12 @@ function BuildQuestion({ question, index, surveyId, onClick }: QuestionProps) {
 				<Button
 					role="submit"
 					type="submit"
-					disabled={!isDirty} // Disable button if form is not dirty
+					disabled={!isDirty || isUpdateQuestionLoading} // Disable button if form is not dirty
 					aria-disabled={!isDirty}
 					ariaLabel="Enregistrer la question"
 					fullWidth
 					variant={isDirty ? "primary" : "disabled"}
+					loadingSpinner={isUpdateQuestionLoading}
 				>
 					Enregistrer
 				</Button>
