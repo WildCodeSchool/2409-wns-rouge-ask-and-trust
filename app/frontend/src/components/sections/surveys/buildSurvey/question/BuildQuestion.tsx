@@ -3,6 +3,7 @@ import QuestionTypeSelect from "@/components/sections/surveys/buildSurvey/questi
 import { Button } from "@/components/ui/Button"
 import { UpdateQuestionInput, useQuestions } from "@/hooks/useQuestions"
 import { useToast } from "@/hooks/useToast"
+import { useToastOnChange } from "@/hooks/useToastOnChange"
 import {
 	Question,
 	QuestionType,
@@ -43,8 +44,6 @@ function BuildQuestion({ question, index, surveyId, onClick }: QuestionProps) {
 		isUpdateQuestionLoading,
 		updateQuestionError,
 		resetUpdateQuestionError,
-		deleteQuestionError,
-		resetDeleteQuestionError,
 	} = useQuestions()
 
 	// Allow to manipulate answers as a dynamic array (no state needed)
@@ -59,29 +58,15 @@ function BuildQuestion({ question, index, surveyId, onClick }: QuestionProps) {
 	const prevTypeRef = useRef<QuestionType>(question.type)
 	const { showToast } = useToast()
 
-	// Show error toast if there is an error during question update, delete or load
 	// @TODO Refacto add this in useQuestions
-	useEffect(() => {
-		if (updateQuestionError || deleteQuestionError) {
-			showToast({
-				type: "error",
-				title: "Oops, nous avons rencontré une erreur.",
-				description: updateQuestionError
-					? "La question n'a pas pu être mise à jour."
-					: deleteQuestionError
-						? "La question n'a pas pu être supprimée."
-						: "Une erreur est survenue pour charger la question.",
-			})
-			resetUpdateQuestionError()
-			resetDeleteQuestionError()
-		}
-	}, [
-		updateQuestionError,
-		deleteQuestionError,
-		showToast,
-		resetUpdateQuestionError,
-		resetDeleteQuestionError,
-	])
+	useToastOnChange({
+		trigger: updateQuestionError,
+		// Reset error after toast to avoid persitent errors
+		resetTrigger: resetUpdateQuestionError,
+		type: "error",
+		title: "Oops, nous avons rencontré une erreur.",
+		description: "La question n'a pas pu être mise à jour.",
+	})
 
 	// Watch if question's type changed
 	// If yes, handle default answers for specific types
