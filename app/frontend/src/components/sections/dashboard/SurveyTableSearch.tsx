@@ -7,9 +7,17 @@ import { Button } from "@/components/ui/Button"
 
 type Props = {
 	onSearch: (query: string) => void
+	placeholder?: string
+	ariaLabel?: string
+	label?: string
 }
 
-export default function SurveyTableSearch({ onSearch }: Props) {
+export default function SurveyTableSearch({
+	onSearch,
+	placeholder,
+	ariaLabel,
+	label,
+}: Props) {
 	const { register, watch } = useForm({
 		defaultValues: { search: "" },
 	})
@@ -29,18 +37,18 @@ export default function SurveyTableSearch({ onSearch }: Props) {
 			<Button
 				type="submit"
 				variant="ghost"
-				ariaLabel="Rechercher une enquête"
+				ariaLabel={ariaLabel || "Rechercher une enquête"}
 				className="absolute left-2 p-2"
 			>
 				<Search className="text-input-fg h-4 w-4" />
 			</Button>
 			<Label htmlFor="search" className="sr-only">
-				Rechercher une enquête
+				{label || "Rechercher une enquête"}
 			</Label>
 			<Input
 				type="search"
 				id="search"
-				placeholder="Rechercher une enquête"
+				placeholder={placeholder || "Rechercher une enquête"}
 				errorMessage=""
 				{...register("search")}
 				className="border-button-line-border text-input-fg h-10 w-3xs bg-white pl-14 text-sm max-md:w-full"
