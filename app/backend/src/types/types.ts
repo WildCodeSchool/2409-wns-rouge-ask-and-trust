@@ -41,4 +41,11 @@ export function isMultipleAnswerType(
 export type QuestionType =
 	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]
 
-export type SurveyStatus = "draft" | "published" | "archived" | "censored"
+export const SurveyStatus = {
+	Draft: "draft",
+	Published: "published",
+	Archived: "archived",
+	Censored: "censored",
+} as const
+
+export type SurveyStatusType = (typeof SurveyStatus)[keyof typeof SurveyStatus]

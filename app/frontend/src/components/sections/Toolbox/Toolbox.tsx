@@ -1,6 +1,5 @@
 import { AdaptiveToolbox } from "@/components/sections/Toolbox/AdaptativeToolbox"
 import { toolboxCategories } from "@/components/sections/Toolbox/toolboxData"
-import { cn } from "@/lib/utils"
 import { QuestionType, ToolboxCategory, ToolboxItem } from "@/types/types"
 import { useState } from "react"
 
@@ -33,23 +32,17 @@ export function Toolbox({
 		category => category.items
 	)
 	return (
-		<div
-			className={cn(
-				"border-black-50 transition-width shadow-default h-f z-10 flex w-fit flex-shrink-0 flex-col overflow-hidden rounded-xl border-1 bg-white duration-300 ease-in-out"
-			)}
-		>
-			<AdaptiveToolbox
-				categories={categories}
-				items={allItems}
-				showSearch={true}
-				searchManager={{
-					value: searchValue,
-					onChange: setSearchValue,
-					placeholder: "Rechercher un élément...",
-				}}
-				noResultsText="Aucun résultat trouvé"
-			/>
-		</div>
+		<AdaptiveToolbox
+			categories={categories}
+			items={allItems}
+			showSearch={true}
+			searchManager={{
+				value: searchValue,
+				onChange: setSearchValue,
+				placeholder: "Rechercher un élément...",
+			}}
+			noResultsText="Aucun résultat trouvé"
+		/>
 	)
 }
 

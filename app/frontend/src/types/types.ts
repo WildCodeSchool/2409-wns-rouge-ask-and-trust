@@ -118,17 +118,6 @@ export type ToolboxItem = {
 	onClick?: () => void
 }
 
-export interface ToolboxProps {
-	className?: string
-	items?: ToolboxItem[]
-	categories?: ToolboxCategory[]
-	showSearch?: boolean
-	searchManager?: SearchManager
-	compactThreshold?: number
-	horizontalThreshold?: number
-	noResultsText?: string
-}
-
 export interface SearchManager {
 	value: string
 	onChange: (value: string) => void
@@ -141,10 +130,19 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	// questions: { id: number; title: string }[]
+	status: SurveyStatusType
 	questions: Question[]
 	user: User
 }
+
+export const SurveyStatus = {
+	Draft: "draft",
+	Published: "published",
+	Archived: "archived",
+	Censored: "censored",
+} as const
+
+export type SurveyStatusType = (typeof SurveyStatus)[keyof typeof SurveyStatus]
 
 export type CreateSurveyInput = Survey
 

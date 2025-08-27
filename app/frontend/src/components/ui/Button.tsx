@@ -92,6 +92,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 			isNavBtnSelected &&
 				"text-primary-700 hover:bg-primary-default bg-white hover:text-white",
 			fullWidth && "w-full",
+			"whitespace-nowrap",
 			className
 		)
 

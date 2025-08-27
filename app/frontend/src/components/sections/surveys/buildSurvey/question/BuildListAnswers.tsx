@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Legend } from "@/components/ui/Legend"
+import { cn } from "@/lib/utils"
 import { QuestionType, QuestionUpdate, TypesOfQuestion } from "@/types/types"
 import { PlusCircle, Trash2 } from "lucide-react"
 import {
@@ -78,7 +79,10 @@ export function BuildListAnswers({
 				return (
 					<div
 						key={field.id || `answer-${index}`}
-						className="flex items-center gap-2"
+						className={cn(
+							"flex items-center gap-2",
+							errors?.answers?.[index] && "items-start"
+						)}
 					>
 						<Input
 							id={`answer-${index}`}

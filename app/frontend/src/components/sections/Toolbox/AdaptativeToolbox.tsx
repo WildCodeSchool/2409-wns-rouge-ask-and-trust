@@ -1,8 +1,16 @@
 import { Button } from "@/components/ui/Button"
-import { useResponsivity } from "@/hooks/useResponsivity"
+import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { cn } from "@/lib/utils"
-import { ToolboxItem, ToolboxProps } from "@/types/types"
+import { SearchManager, ToolboxCategory, ToolboxItem } from "@/types/types"
 
+export interface ToolboxProps {
+	className?: string
+	items?: ToolboxItem[]
+	categories?: ToolboxCategory[]
+	showSearch?: boolean
+	searchManager?: SearchManager
+	noResultsText?: string
+}
 /**
  * AdaptiveToolbox component
  *
@@ -16,15 +24,9 @@ export function AdaptiveToolbox({
 	items = [],
 	showSearch = false,
 	searchManager,
-	compactThreshold = 200,
-	horizontalThreshold = 768,
 	noResultsText = "Aucun résultat trouvé",
 }: ToolboxProps) {
-	const { rootRef, isVerticalCompact, isHorizontalCompact } = useResponsivity(
-		compactThreshold,
-		horizontalThreshold
-	)
-	const isCompact = isVerticalCompact || isHorizontalCompact
+	const { isMobile, isTablet, isDesktop } = useScreenDetector()
 
 	/**
 	 * Render the items of the toolbox
@@ -51,7 +53,7 @@ export function AdaptiveToolbox({
 			key={item.id}
 			className={cn(
 				"align-center hover:bg-primary-100 text-black-700 flex w-full cursor-pointer justify-start rounded-md border-none bg-transparent px-2 py-1.5 text-start text-sm font-medium",
-				isCompact && "justify-center"
+				isTablet && "justify-center"
 			)}
 			onClick={item.onClick}
 			ariaLabel={`Ajouter une question de type ${item.label}`}
@@ -61,7 +63,7 @@ export function AdaptiveToolbox({
 					{item.icon}
 				</span>
 			)}
-			{!isCompact && <span>{item.label}</span>}
+			{isDesktop && <span>{item.label}</span>}
 		</Button>
 	)
 
@@ -73,12 +75,12 @@ export function AdaptiveToolbox({
 	const renderCategories = () =>
 		categories.map(category => (
 			<div key={category.id} className="flex w-full flex-col gap-1.5">
-				{!isCompact && (
+				{isDesktop && (
 					<h3 className="text-primary-700 bg-primary-100 w-full px-4 py-1.5 text-sm font-semibold">
 						{category.title}
 					</h3>
 				)}
-				<div className={cn("px-2", isCompact && "px-0")}>
+				<div className={cn("px-2", isMobile && "px-0")}>
 					{renderedItems
 						.filter((item: ToolboxItem) =>
 							category.items.some(
@@ -90,15 +92,17 @@ export function AdaptiveToolbox({
 			</div>
 		))
 
+	const showSearchBar = isDesktop && showSearch && searchManager
+
 	return (
 		<div
-			ref={rootRef}
 			className={cn(
-				"flex h-full flex-col overflow-hidden",
-				isCompact ? "w-14" : "w-fit"
+				"border-black-50 transition-width shadow-default z-10 flex h-full w-fit flex-shrink-0 flex-col overflow-hidden rounded-xl border-1 bg-white duration-300 ease-in-out",
+				"w-fit overflow-hidden",
+				isTablet && "w-14 p-2"
 			)}
 		>
-			{!isCompact && showSearch && searchManager && (
+			{showSearchBar && (
 				<div className="p-3">
 					<input
 						type="text"
@@ -118,7 +122,7 @@ export function AdaptiveToolbox({
 			<div
 				className={cn(
 					"flex flex-1 flex-col gap-1.5 overflow-y-auto bg-white",
-					isCompact && "p-1.5"
+					isMobile && "p-1.5"
 				)}
 			>
 				{categories.length > 0

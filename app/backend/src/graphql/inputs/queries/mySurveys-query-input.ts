@@ -1,6 +1,6 @@
 import { IsOptional } from "class-validator"
 import { Field, InputType } from "type-graphql"
-import { SurveyStatus } from "../../../types/types"
+import { SurveyStatusType } from "../../../types/types"
 
 /**
  * Represents the input parameters for the user's survey query.
@@ -34,7 +34,7 @@ export class MySurveysQueryInput {
 
 	@Field(() => [String], { nullable: true })
 	@IsOptional()
-	status?: SurveyStatus[]
+	status?: SurveyStatusType
 
 	@Field({ nullable: true })
 	@IsOptional()
