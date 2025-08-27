@@ -1,14 +1,15 @@
-import SurveyCard from "@/components/sections/surveys/SurveyCard"
-import img from "/img/dev.webp"
-import { Button } from "@/components/ui/Button"
-import { useEffect } from "react"
 import { withSEO } from "@/components/hoc/withSEO"
-import { cn } from "@/lib/utils"
-import Pagination from "@/components/ui/Pagination"
-import Loader from "@/components/ui/Loader"
+import SurveyCard from "@/components/sections/surveys/SurveyCard"
 import SurveyDurationFilter from "@/components/sections/surveys/ui/SurveyDurationFilter"
+import { Button } from "@/components/ui/Button"
+import Loader from "@/components/ui/Loader"
+import Pagination from "@/components/ui/Pagination"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { useSurvey } from "@/hooks/useSurvey"
+import { cn } from "@/lib/utils"
+import { SurveyStatus } from "@/types/types"
+import { useEffect } from "react"
+import img from "/img/dev.webp"
 
 function Surveys() {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
@@ -36,23 +37,20 @@ function Surveys() {
 	}, [isHorizontalCompact])
 
 	const publishedSurveys = allSurveys.filter(
-		survey => survey.status === "publiée"
+		survey => survey.status === SurveyStatus.Published
 	)
 
 	return (
 		<section
 			className={cn(
-				"px-20 py-20 max-sm:px-5",
-				totalCount === 0 &&
-					"h-[calc(100vh_-_var(--header-height))] pb-0",
-				isHorizontalCompact && "pb-[calc(var(--footer-height)+80px)]"
+				"h-auto px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:h-[calc(100vh_-_var(--header-height))] md:px-10 md:pb-10"
 			)}
 			ref={rootRef}
 		>
 			<h1
 				className={cn(
 					"text-fg text-center text-3xl font-bold max-lg:text-xl",
-					isHorizontalCompact ? "mb-14" : "mb-20"
+					isHorizontalCompact ? "mb-8" : "mb-10"
 				)}
 			>
 				Liste des enquêtes disponibles
@@ -70,7 +68,7 @@ function Surveys() {
 				<div
 					className={cn(
 						"grid grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] justify-items-center",
-						isHorizontalCompact ? "gap-14" : "gap-20"
+						isHorizontalCompact ? "flex flex-col gap-14" : "gap-20"
 					)}
 				>
 					{publishedSurveys.map(survey => (
