@@ -90,21 +90,29 @@ function SurveyCreator() {
 	return (
 		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50 max-md:h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))]">
 			{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
-			<section className="w-full p-4 pb-0 lg:p-4 lg:pb-0">
-				<SurveyHeader
-					surveyStatus={data?.survey.status}
-					surveyTitle={data?.survey.title}
-				/>
-			</section>
-			<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
-				{!isMobile && <Toolbox onAddQuestion={handleAddQuestion} />}
-				<Canvas
-					onAddQuestion={handleAddQuestion}
-					questions={questions}
-					focusedQuestionId={focusedQuestionId}
-					setFocusedQuestionId={setFocusedQuestionId}
-				/>
-			</section>
+			{!data ? (
+				<NoSurvey />
+			) : (
+				<>
+					<section className="w-full p-4 pb-0 lg:p-4 lg:pb-0">
+						<SurveyHeader
+							surveyStatus={data?.survey.status}
+							surveyTitle={data?.survey.title}
+						/>
+					</section>
+					<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
+						{!isMobile && (
+							<Toolbox onAddQuestion={handleAddQuestion} />
+						)}
+						<Canvas
+							onAddQuestion={handleAddQuestion}
+							questions={questions}
+							focusedQuestionId={focusedQuestionId}
+							setFocusedQuestionId={setFocusedQuestionId}
+						/>
+					</section>
+				</>
+			)}
 		</div>
 	)
 }
@@ -293,6 +301,29 @@ function SurveyButtons({ status }: { status: SurveyStatusType | undefined }) {
 					Partager
 				</Button>
 			)}
+		</div>
+	)
+}
+
+function NoSurvey() {
+	return (
+		<div className="m-auto flex flex-col items-center justify-center gap-8">
+			<div className="flex flex-col items-center justify-center text-center">
+				<img
+					src="/img/errors/undraw_access-denied_krem.svg"
+					alt="Aucune enquête disponible"
+					className="mb-6 h-48 w-48"
+				/>
+				<h2 className="text-xl font-semibold">
+					Aucune enquête trouvée
+				</h2>
+				<p className="text-gray-600">
+					L'enquête que vous cherchez n'existe pas.
+				</p>
+			</div>
+			<Button ariaLabel="Aller à la liste des enquêtes" to="/surveys">
+				Aller à la liste des enquêtes
+			</Button>
 		</div>
 	)
 }
