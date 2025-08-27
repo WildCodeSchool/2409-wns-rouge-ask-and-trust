@@ -35,6 +35,10 @@ function Surveys() {
 		}
 	}, [isHorizontalCompact])
 
+	const publishedSurveys = allSurveys.filter(
+		survey => survey.status === "publiée"
+	)
+
 	return (
 		<section
 			className={cn(
@@ -62,14 +66,14 @@ function Surveys() {
 				<div className="flex items-center justify-center">
 					<Loader />
 				</div>
-			) : (
+			) : publishedSurveys.length > 0 ? (
 				<div
 					className={cn(
 						"grid grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] justify-items-center",
 						isHorizontalCompact ? "gap-14" : "gap-20"
 					)}
 				>
-					{allSurveys.map(survey => (
+					{publishedSurveys.map(survey => (
 						<SurveyCard
 							key={survey.id}
 							id={survey.id}
@@ -81,6 +85,12 @@ function Surveys() {
 							availableDuration={survey.availableDuration}
 						/>
 					))}
+				</div>
+			) : (
+				<div className="flex w-full items-center justify-center text-center">
+					<p className="text-black-default text-xl font-medium">
+						Aucune enquête n'a encore été publiée...
+					</p>
 				</div>
 			)}
 			{totalCount === 0 && (

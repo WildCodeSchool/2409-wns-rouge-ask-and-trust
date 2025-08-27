@@ -82,6 +82,7 @@ export interface SurveyCardType {
 	category: SurveyCategoryType
 	estimatedDuration: number
 	availableDuration: number
+	status?: string
 }
 
 export type AllSurveysResult = {
