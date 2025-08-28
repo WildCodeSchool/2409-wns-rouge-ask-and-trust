@@ -11,6 +11,7 @@ import { useQuestions } from "@/hooks/useQuestions"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useSurvey } from "@/hooks/useSurvey"
 import { useToast } from "@/hooks/useToast"
+import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { cn } from "@/lib/utils"
 import {
 	QuestionType,
@@ -53,18 +54,15 @@ function SurveyCreator() {
 	const { showToast } = useToast()
 	const { isMobile } = useScreenDetector()
 	const { user } = useAuthContext()
-	// Show a toast notification if there is an error after creating a question
-	// @TODO add this in useQuestions
-	useEffect(() => {
-		if (createQuestionError) {
-			showToast({
-				type: "error",
-				title: "Oops, nous avons rencontré une erreur.",
-				description: "La question n'a pas pu être ajoutée.",
-			})
-			resetCreateQuestionError() // Reset the error to avoid permanent toast error
-		}
-	}, [createQuestionError, resetCreateQuestionError, showToast])
+	useToastOnChange({
+		trigger: createQuestionError,
+		resetTrigger: resetCreateQuestionError,
+		type: "error",
+		title: "Oops, nous avons rencontré une erreur",
+		description:
+			createQuestionError?.message ??
+			"La question n'a pas pu être ajoutée",
+	})
 
 	// Memoize questions to avoid unnecessary re-renders
 	const questions = useMemo(() => {
