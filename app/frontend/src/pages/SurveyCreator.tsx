@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button"
 import { Chipset } from "@/components/ui/Chipset"
 import { Skeleton } from "@/components/ui/Skeleton"
 import { GET_SURVEY } from "@/graphql/survey/survey"
+import { useAuthContext } from "@/hooks/useAuthContext"
 import { useCopyClipboard } from "@/hooks/useCopyClipboard"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
@@ -51,6 +52,7 @@ function SurveyCreator() {
 	})
 	const { showToast } = useToast()
 	const { isMobile } = useScreenDetector()
+	const { user } = useAuthContext()
 	// Show a toast notification if there is an error after creating a question
 	// @TODO add this in useQuestions
 	useEffect(() => {
@@ -95,11 +97,15 @@ function SurveyCreator() {
 		return <SurveyCreatorSkeleton />
 	}
 
+	const surveyUser = data?.survey?.user.id
+	const connectedUser = user?.id
+	const isOwner = surveyUser === connectedUser
+
 	return (
 		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50 max-md:h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))]">
 			{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
-			{!data ? (
-				<ErrorData type="nosurvey" />
+			{!data || !isOwner ? (
+				<ErrorData type={!isOwner ? "notowner" : "nosurvey"} />
 			) : (
 				<>
 					<section className="w-full p-4 pb-0 lg:p-4 lg:pb-0">
@@ -352,19 +358,35 @@ function ErrorData({
 	refetch,
 	loading,
 }: {
-	type: "nosurvey" | "noquestions"
+	type: "nosurvey" | "noquestions" | "notowner"
 	refetch?: () => void
 	loading?: boolean
 }) {
-	const title =
-		type === "nosurvey"
-			? "Aucune enquête trouvée"
-			: "Impossible de charger les questions"
+	let title: string
+	let description: string
 
-	const description =
-		type === "nosurvey"
-			? "Nous n'avons pas trouvé l'enquête demandée."
-			: "Une erreur est survenue lors de la récupération des questions de l'enquête."
+	switch (type) {
+		case "nosurvey":
+			title = "Aucune enquête trouvée"
+			description = "Nous n'avons pas trouvé l'enquête demandée."
+			break
+
+		case "noquestions":
+			title = "Impossible de charger les questions"
+			description =
+				"Une erreur est survenue lors de la récupération des questions de l'enquête"
+			break
+
+		case "notowner":
+			title = "Accès refusé"
+			description = "Vous n'êtes pas autorisé à accéder à cette enquête"
+			break
+
+		default:
+			throw new Error(
+				`error's type >> ${type} << in survey creator ErrorData is not handled`
+			)
+	}
 
 	return (
 		<div className="m-auto flex flex-col items-center justify-center gap-8">
