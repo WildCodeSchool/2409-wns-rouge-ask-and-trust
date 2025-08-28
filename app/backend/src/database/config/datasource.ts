@@ -13,7 +13,7 @@ const dataSource = new DataSource({
 	migrations: [path.join(__dirname, "../migrations/*.{ts,js}")],
 	migrationsTableName: "migrations",
 	logging: true,
-	migrationsRun: true, // Active the migrations
+	migrationsRun: process.env.IS_DEV !== "true", // Run migrations only in production (IS_DEV=false)
 })
 
 export default dataSource
