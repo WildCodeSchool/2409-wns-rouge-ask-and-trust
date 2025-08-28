@@ -63,7 +63,7 @@ export default function SurveyTableContainer() {
 
 			if (updated.length === paginatedSurveys.length) {
 				setIsHeaderChecked(true)
-			} else if (updated.length === 0) {
+			} else {
 				setIsHeaderChecked(false)
 			}
 
