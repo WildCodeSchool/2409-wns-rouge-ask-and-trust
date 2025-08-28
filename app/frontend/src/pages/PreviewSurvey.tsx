@@ -5,6 +5,8 @@ import { Callout } from "@/components/ui/Callout"
 import { useSurvey } from "@/hooks/useSurvey"
 import { Question } from "@/types/types"
 import { useParams } from "react-router-dom"
+import { ArrowLeft } from "lucide-react"
+import { Button } from "@/components/ui/Button"
 
 function PreviewSurveyPage() {
 	const { id } = useParams<{ id: string }>()
@@ -18,6 +20,17 @@ function PreviewSurveyPage() {
 	return (
 		survey && (
 			<div className="mx-auto max-w-2xl rounded bg-white p-8 shadow">
+				<div className="mb-4 flex items-center justify-between gap-5">
+					<Button
+						variant="ghost"
+						size="sm"
+						to={`/surveys/build/${id}`}
+						icon={ArrowLeft}
+						ariaLabel="Retour sur la page de modification de l'enquête"
+					>
+						Retour
+					</Button>
+				</div>
 				<h1 className="mb-4 flex items-center gap-2 text-2xl font-bold">
 					{survey.title}
 					<Badge variant="secondary">

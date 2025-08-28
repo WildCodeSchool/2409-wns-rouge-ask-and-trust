@@ -43,34 +43,23 @@ function Surveys() {
 	return (
 		<section
 			className={cn(
-				"h-auto px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:h-[calc(100vh_-_var(--header-height))] md:px-10 md:pb-10"
+				"px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:px-10 md:pb-10"
 			)}
 			ref={rootRef}
 		>
-			<h1
-				className={cn(
-					"text-fg text-center text-3xl font-bold max-lg:text-xl",
-					isHorizontalCompact ? "mb-8" : "mb-10"
-				)}
-			>
+			<h1 className="text-fg mb-10 text-center text-3xl font-bold max-lg:text-xl">
 				Liste des enquêtes disponibles
 			</h1>
 			<SurveyDurationFilter
 				sortTimeOption={sortTimeOption}
 				setSortTimeOption={setSortTimeOption}
-				isHorizontalCompact={isHorizontalCompact}
 			/>
 			{isFetching ? (
 				<div className="flex items-center justify-center">
 					<Loader />
 				</div>
 			) : publishedSurveys.length > 0 ? (
-				<div
-					className={cn(
-						"grid grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] justify-items-center",
-						isHorizontalCompact ? "flex flex-col gap-14" : "gap-20"
-					)}
-				>
+				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
 					{publishedSurveys.map(survey => (
 						<SurveyCard
 							key={survey.id}
@@ -99,7 +88,7 @@ function Surveys() {
 				onPageChange={setCurrentPage}
 			/>
 			{!isHorizontalCompact && (
-				<div className="mt-20 flex items-center justify-center">
+				<div className="mt-10 flex items-center justify-center">
 					<Button
 						variant="primary"
 						ariaLabel="Création d'une enquête"

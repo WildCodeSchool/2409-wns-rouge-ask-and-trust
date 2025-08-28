@@ -312,7 +312,6 @@ export type SurveyTableFilterProps = {
 export type SurveyDurationFilterProps = {
 	sortTimeOption: string
 	setSortTimeOption: (filters: string) => void
-	isHorizontalCompact: boolean
 }
 
 export type DateSortFilter = "Plus récente" | "Plus ancienne"
@@ -344,6 +343,7 @@ export type SurveyWithCategory = {
 	}
 	questions: Question[]
 	status: string
+	user: User
 	createdAt: string
 	updatedAt: string
 }
