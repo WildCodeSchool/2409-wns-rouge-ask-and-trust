@@ -106,6 +106,7 @@ function SurveyCreator() {
 						<SurveyHeader
 							surveyStatus={data?.survey.status}
 							surveyTitle={data?.survey.title}
+							isQuestions={!!questions.length}
 						/>
 					</section>
 					<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
@@ -139,9 +140,11 @@ function SurveyCreator() {
 function SurveyHeader({
 	surveyStatus,
 	surveyTitle,
+	isQuestions,
 }: {
 	surveyStatus: SurveyStatusType | undefined
 	surveyTitle: string | undefined
+	isQuestions: boolean
 }) {
 	const { isMobile } = useScreenDetector()
 	const [open, setOpen] = useState(false)
@@ -168,7 +171,12 @@ function SurveyHeader({
 	const translatedStatus = translateStatus(surveyStatus)
 	return (
 		<div className="flex flex-col gap-4">
-			{isMobile && <SurveyButtons status={surveyStatus} />}
+			{isMobile && (
+				<SurveyButtons
+					status={surveyStatus}
+					isQuestions={isQuestions}
+				/>
+			)}
 			<div className="shadow-default border-black-50 rounded-xl border bg-white">
 				<div className="flex w-full flex-col justify-between gap-2 p-4">
 					<div className="flex w-full items-center gap-2">
@@ -216,7 +224,10 @@ function SurveyHeader({
 						</button>
 						<div className="flex items-center gap-12">
 							{!isMobile && (
-								<SurveyButtons status={surveyStatus} />
+								<SurveyButtons
+									status={surveyStatus}
+									isQuestions={isQuestions}
+								/>
 							)}
 							{isMobile && (
 								<ChevronDown
@@ -242,31 +253,43 @@ function SurveyHeader({
 	)
 }
 
-function SurveyButtons({ status }: { status: SurveyStatusType | undefined }) {
+function SurveyButtons({
+	status,
+	isQuestions,
+}: {
+	status: SurveyStatusType | undefined
+	isQuestions: boolean
+}) {
 	const { id: surveyId } = useParams()
 	const { updateSurveyStatus, isStatusUpdateError, resetStatusUpdateError } =
 		useSurvey()
 	const { showToast } = useToast()
 	const { copyToClipboard } = useCopyClipboard()
 
-	const onPublishSurvey = useCallback(
-		async (surveyId: string | undefined, status: SurveyStatusType) => {
-			if (!surveyId) return
-			try {
-				const result = await updateSurveyStatus(surveyId, status)
-				if (result) {
-					showToast({
-						type: "success",
-						title: "Enquête publiée !",
-						description: "Vous pouvez partager votre enquête",
-					})
-				}
-			} catch (err) {
-				console.error("Erreur lors de la mise à jour du statut :", err)
+	const onPublishSurvey = useCallback(async () => {
+		if (!surveyId || !status) return
+
+		if (!isQuestions) {
+			showToast({
+				type: "warning",
+				title: "Votre enquête est vide",
+				description: "Ajouter une question pour publier l'enquête",
+			})
+			return
+		}
+		try {
+			const result = await updateSurveyStatus(surveyId, "published")
+			if (result) {
+				showToast({
+					type: "success",
+					title: "Enquête publiée !",
+					description: "Vous pouvez partager votre enquête",
+				})
 			}
-		},
-		[updateSurveyStatus, showToast]
-	)
+		} catch (err) {
+			console.error("Erreur lors de la mise à jour du statut :", err)
+		}
+	}, [isQuestions, showToast, status, surveyId, updateSurveyStatus])
 
 	const onClickCopy = () => {
 		if (!surveyId) return
@@ -306,7 +329,7 @@ function SurveyButtons({ status }: { status: SurveyStatusType | undefined }) {
 					variant="primary"
 					ariaLabel="Publier l'enquête"
 					size="sm"
-					onClick={() => onPublishSurvey(surveyId, "published")}
+					onClick={onPublishSurvey}
 				>
 					Publier
 				</Button>
