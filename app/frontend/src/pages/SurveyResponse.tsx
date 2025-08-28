@@ -1,7 +1,7 @@
 import { GET_SURVEY } from "@/graphql/survey/survey"
 import { useQuery } from "@apollo/client"
 import { withSEO, useDynamicSEO } from "@/components/hoc/withSEO"
-import { useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { Badge } from "@/components/ui/Badge"
 import { Callout } from "@/components/ui/Callout"
 import { Button } from "@/components/ui/Button"
@@ -9,10 +9,13 @@ import { ArrowLeft } from "lucide-react"
 import SurveyResponseForm from "@/components/sections/response/SurveyResponseForm"
 import { SurveyWithCategory } from "@/types/types"
 import { cn } from "@/lib/utils"
+import { useAuthContext } from "@/hooks/useAuthContext"
+import { useCopyClipboard } from "@/hooks/useCopyClipboard"
 
 function SurveyResponse() {
 	const { id: surveyId } = useParams<{ id: string }>()
-	const navigate = useNavigate()
+	const { user } = useAuthContext()
+	const { copyToClipboard } = useCopyClipboard()
 
 	const {
 		data: surveyData,
@@ -24,6 +27,7 @@ function SurveyResponse() {
 	})
 
 	const survey = surveyData?.survey
+	const isOwner = user && survey && user.id === survey.user.id
 
 	// Update SEO dynamically when survey data is loaded
 	useDynamicSEO(
@@ -53,6 +57,13 @@ function SurveyResponse() {
 
 	const questions = survey.questions?.length > 0
 
+	const onClickCopy = () => {
+		if (!surveyId) return
+
+		const surveyUrl = `${window.location.origin}/surveys/respond/${surveyId}`
+		copyToClipboard(surveyUrl)
+	}
+
 	return (
 		<div
 			className={cn(
@@ -63,16 +74,35 @@ function SurveyResponse() {
 			{/* Header Section */}
 			<section className="bg-white shadow-sm">
 				<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
-					<div className="mb-4 flex items-center gap-4">
+					<div className="mb-4 flex items-center justify-between gap-4">
 						<Button
 							variant="ghost"
 							size="sm"
-							onClick={() => navigate(-1)}
+							to="/surveys"
 							icon={ArrowLeft}
-							ariaLabel="Retour"
+							ariaLabel="Retour sur la page d'accueil"
 						>
 							Retour
 						</Button>
+						<div className="flex items-center justify-center gap-4">
+							<Button
+								variant="secondary"
+								ariaLabel="Partager l'enquête"
+								size="sm"
+								onClick={onClickCopy}
+							>
+								Partager
+							</Button>
+							{isOwner && (
+								<Button
+									to={`/surveys/build/${surveyId}`}
+									ariaLabel="Aller sur la page de modification de l'enquête"
+									size="sm"
+								>
+									Modifier l'enquête
+								</Button>
+							)}
+						</div>
 					</div>
 
 					<div className="mb-4 flex items-center gap-3">
