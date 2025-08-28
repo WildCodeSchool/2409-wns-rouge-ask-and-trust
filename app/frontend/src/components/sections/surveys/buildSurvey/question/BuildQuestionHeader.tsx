@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useToast } from "@/hooks/useToast"
+import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { Question } from "@/types/types"
 import { Trash2 } from "lucide-react"
 import { useState } from "react"
@@ -35,7 +36,20 @@ export const BuildQuestionHeader = ({ question }: BuildQuestionHeaderProps) => {
 	// Show / hide delete question button
 	const [openButtonDeleteQuestion, setOpenButtonDeleteQuestion] =
 		useState(false)
-	const { deleteQuestion } = useQuestions()
+	const {
+		deleteQuestion,
+		isDeleteQuestionLoading,
+		deleteQuestionError,
+		resetDeleteQuestionError,
+	} = useQuestions()
+
+	useToastOnChange({
+		trigger: deleteQuestionError,
+		resetTrigger: resetDeleteQuestionError,
+		type: "error",
+		title: "Failed to delete question",
+		description: "La question n'a pas pu être supprimée",
+	})
 
 	const handleClickDelete = async (
 		questionId: number | undefined,
@@ -47,12 +61,13 @@ export const BuildQuestionHeader = ({ question }: BuildQuestionHeaderProps) => {
 			await deleteQuestion(questionId, surveyId)
 			showToast({
 				type: "success",
-				title: "La question a été supprimée.",
+				title: "La question a été supprimée",
 			})
 		} catch {
 			showToast({
 				type: "error",
-				title: "La question a été supprimée.",
+				title: "Oops, nous avons rencontré une erreur",
+				description: "La question n'a pas pu être supprimée",
 			})
 		} finally {
 			setOpenButtonDeleteQuestion(false)
@@ -93,6 +108,8 @@ export const BuildQuestionHeader = ({ question }: BuildQuestionHeaderProps) => {
 						fullWidth
 						ariaLabel="Supprimer la question"
 						autoFocus={openButtonDeleteQuestion}
+						disabled={isDeleteQuestionLoading}
+						loadingSpinner={isDeleteQuestionLoading}
 						onClick={() => {
 							handleClickDelete(question.id, question.surveyId)
 						}}

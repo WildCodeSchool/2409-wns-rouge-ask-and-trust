@@ -30,10 +30,18 @@ function SurveyCreator() {
 		null
 	)
 	// Load addQuestion function from the API
-	const { addQuestion, createQuestionError, resetCreateQuestionError } =
-		useQuestions()
+	const {
+		addQuestion,
+		isCreateQuestionLoading,
+		createQuestionError,
+		resetCreateQuestionError,
+	} = useQuestions()
 	// @TODO mayse getQuestions here and getSurvey infos in Survey details
-	const { data, loading: loadingSurvey } = useQuery<{
+	const {
+		data,
+		loading: loadingSurvey,
+		refetch,
+	} = useQuery<{
 		survey: Survey
 	}>(GET_SURVEY, {
 		variables: {
@@ -90,21 +98,40 @@ function SurveyCreator() {
 	return (
 		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50 max-md:h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))]">
 			{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
-			<section className="w-full p-4 pb-0 lg:p-4 lg:pb-0">
-				<SurveyHeader
-					surveyStatus={data?.survey.status}
-					surveyTitle={data?.survey.title}
-				/>
-			</section>
-			<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
-				{!isMobile && <Toolbox onAddQuestion={handleAddQuestion} />}
-				<Canvas
-					onAddQuestion={handleAddQuestion}
-					questions={questions}
-					focusedQuestionId={focusedQuestionId}
-					setFocusedQuestionId={setFocusedQuestionId}
-				/>
-			</section>
+			{!data ? (
+				<ErrorData type="nosurvey" />
+			) : (
+				<>
+					<section className="w-full p-4 pb-0 lg:p-4 lg:pb-0">
+						<SurveyHeader
+							surveyStatus={data?.survey.status}
+							surveyTitle={data?.survey.title}
+						/>
+					</section>
+					<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
+						{!isMobile && (
+							<Toolbox onAddQuestion={handleAddQuestion} />
+						)}
+						{!data?.survey?.questions ? (
+							<ErrorData
+								type="noquestions"
+								refetch={refetch}
+								loading={loadingSurvey}
+							/>
+						) : (
+							<Canvas
+								onAddQuestion={handleAddQuestion}
+								isCreateQuestionLoading={
+									isCreateQuestionLoading
+								}
+								questions={questions}
+								focusedQuestionId={focusedQuestionId}
+								setFocusedQuestionId={setFocusedQuestionId}
+							/>
+						)}
+					</section>
+				</>
+			)}
 		</div>
 	)
 }
@@ -293,6 +320,55 @@ function SurveyButtons({ status }: { status: SurveyStatusType | undefined }) {
 					Partager
 				</Button>
 			)}
+		</div>
+	)
+}
+
+function ErrorData({
+	type,
+	refetch,
+	loading,
+}: {
+	type: "nosurvey" | "noquestions"
+	refetch?: () => void
+	loading?: boolean
+}) {
+	const title =
+		type === "nosurvey"
+			? "Aucune enquête trouvée"
+			: "Impossible de charger les questions"
+
+	const description =
+		type === "nosurvey"
+			? "Nous n'avons pas trouvé l'enquête demandée."
+			: "Une erreur est survenue lors de la récupération des questions de l'enquête."
+
+	return (
+		<div className="m-auto flex flex-col items-center justify-center gap-8">
+			<div className="flex flex-col items-center justify-center text-center">
+				<img
+					src="/img/errors/undraw_access-denied_krem.svg"
+					alt="Aucune enquête disponible"
+					className="mb-6 h-48 w-48"
+				/>
+				<h2 className="text-xl font-semibold">{title}</h2>
+				<p className="text-gray-600">{description}</p>
+			</div>
+			<div className="flex gap-4">
+				<Button ariaLabel="Aller à la liste des enquêtes" to="/surveys">
+					Aller à la liste des enquêtes
+				</Button>
+				{type === "noquestions" && refetch && (
+					<Button
+						ariaLabel="Réessayer"
+						onClick={refetch}
+						disabled={loading}
+						loadingSpinner={loading}
+					>
+						"Réessayer"
+					</Button>
+				)}
+			</div>
 		</div>
 	)
 }

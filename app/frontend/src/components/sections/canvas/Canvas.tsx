@@ -1,6 +1,5 @@
 import { EmptyState } from "@/components/sections/canvas/empty-state"
 import { Button } from "@/components/ui/Button"
-import { useQuestions } from "@/hooks/useQuestions"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useScrollToElement } from "@/hooks/useScroll"
 import { cn } from "@/lib/utils"
@@ -16,6 +15,7 @@ interface CanvasProps {
 	questions: Question[]
 	focusedQuestionId: number | null
 	setFocusedQuestionId: (id: number | null) => void
+	isCreateQuestionLoading: boolean
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
@@ -23,8 +23,8 @@ export const Canvas: React.FC<CanvasProps> = ({
 	questions,
 	focusedQuestionId,
 	setFocusedQuestionId,
+	isCreateQuestionLoading,
 }) => {
-	const { isCreateQuestionLoading } = useQuestions()
 	const { id: surveyId } = useParams()
 	const canvasRef = useRef<HTMLDivElement>(null)
 	const questionRefs = useRef<{ [key: number]: HTMLLIElement | null }>({})
@@ -55,6 +55,7 @@ export const Canvas: React.FC<CanvasProps> = ({
 	}
 
 	const showAsideComponents = !isMobile && questions && questions.length > 0
+	const isNotQuestions = !questions || questions?.length === 0
 
 	return (
 		<>
@@ -62,8 +63,15 @@ export const Canvas: React.FC<CanvasProps> = ({
 				ref={canvasRef}
 				className="relative flex h-full w-full flex-col gap-4 overflow-y-auto md:mx-[-0.75rem] md:px-[0.75rem]"
 			>
-				{!questions || questions?.length === 0 ? (
-					<EmptyState />
+				{isNotQuestions ? (
+					<>
+						<EmptyState />
+						<ButtonAddQuestion
+							onAddQuestion={onAddQuestion}
+							loadingSpinner={isCreateQuestionLoading}
+							isMobile={isMobile}
+						/>
+					</>
 				) : (
 					<>
 						{questions.map((question, index) => {
@@ -90,19 +98,11 @@ export const Canvas: React.FC<CanvasProps> = ({
 								</li>
 							)
 						})}
-						<Button
-							onClick={() => onAddQuestion("text")}
-							disabled={isCreateQuestionLoading}
-							ariaLabel="Add Question"
-							icon={PlusCircle}
-							className={cn(
-								"self-center",
-								isMobile &&
-									`sticky right-2 bottom-2 left-2 z-10 shadow-lg`
-							)}
-						>
-							Ajouter une question
-						</Button>
+						<ButtonAddQuestion
+							onAddQuestion={onAddQuestion}
+							loadingSpinner={isCreateQuestionLoading}
+							isMobile={isMobile}
+						/>
 					</>
 				)}
 			</div>
@@ -115,5 +115,31 @@ export const Canvas: React.FC<CanvasProps> = ({
 				/>
 			)}
 		</>
+	)
+}
+
+const ButtonAddQuestion = ({
+	onAddQuestion,
+	loadingSpinner,
+	isMobile,
+}: {
+	onAddQuestion: (type: QuestionType | undefined) => Promise<void>
+	loadingSpinner: boolean
+	isMobile: boolean
+}) => {
+	return (
+		<Button
+			onClick={() => onAddQuestion("text")}
+			disabled={loadingSpinner}
+			ariaLabel="Add Question"
+			icon={PlusCircle}
+			loadingSpinner={loadingSpinner}
+			className={cn(
+				"self-center",
+				isMobile && `sticky right-2 bottom-2 left-2 z-10 shadow-lg`
+			)}
+		>
+			Ajouter une question
+		</Button>
 	)
 }

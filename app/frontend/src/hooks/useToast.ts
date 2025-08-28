@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 
-type ToastType = "success" | "error" | "warning" | "info"
+export type ToastType = "success" | "error" | "warning" | "info"
 
 type ShowToastOptions = {
 	type?: ToastType
