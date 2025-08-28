@@ -75,8 +75,6 @@ function SurveyCreator() {
 		async (type: QuestionType | undefined) => {
 			if (!surveyId) return
 
-			setFocusedQuestionId(null)
-
 			const result = await addQuestion({
 				surveyId: Number(surveyId),
 				type,
@@ -249,7 +247,9 @@ function SurveyHeader({
 				{open && (
 					<div className="flex p-4">
 						@TODO : add form to update survey data and shadcn
-						collapse
+						collapse mettre SurveyForm ici - comment gérer quand il
+						n'y a pas encore de data survey mais qu'on vient de
+						"ajouter une enquete"
 					</div>
 				)}
 			</div>
