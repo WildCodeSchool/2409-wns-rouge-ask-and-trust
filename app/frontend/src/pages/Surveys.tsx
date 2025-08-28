@@ -9,9 +9,11 @@ import { useSurvey } from "@/hooks/useSurvey"
 import { cn } from "@/lib/utils"
 import { SurveyStatus } from "@/types/types"
 import { useEffect } from "react"
+import { useAuthContext } from "@/hooks/useAuthContext"
 import img from "/img/dev.webp"
 
 function Surveys() {
+	const { user: owner } = useAuthContext()
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const {
 		isFetching,
@@ -36,7 +38,12 @@ function Surveys() {
 		}
 	}, [isHorizontalCompact])
 
-	const publishedSurveys = allSurveys.filter(
+	const surveys = allSurveys.map(survey => ({
+		...survey,
+		isOwner: !!(owner && survey.user && owner.id === survey.user.id),
+	}))
+
+	const publishedSurveys = surveys.filter(
 		survey => survey.status === SurveyStatus.Published
 	)
 
@@ -70,6 +77,7 @@ function Surveys() {
 							category={survey.category}
 							estimatedDuration={survey.estimatedDuration}
 							availableDuration={survey.availableDuration}
+							isOwner={survey.isOwner}
 						/>
 					))}
 				</div>
