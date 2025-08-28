@@ -91,13 +91,6 @@ function Surveys() {
 					</p>
 				</div>
 			)}
-			{totalCount === 0 && (
-				<div className="flex w-full items-center justify-center text-center">
-					<p className="text-black-default text-xl font-medium">
-						Aucune enquête ne correspond à votre recherche...
-					</p>
-				</div>
-			)}
 			<Pagination
 				className="mx-auto mt-20 mb-0 w-max"
 				currentPage={currentPage}
