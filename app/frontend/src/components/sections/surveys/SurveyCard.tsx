@@ -19,6 +19,7 @@ export default function SurveyCard({
 	category,
 	estimatedDuration,
 	availableDuration,
+	isOwner,
 }: SurveyCardType) {
 	const href = `/surveys/respond/${id}`
 	const isExternal = href.startsWith("http")
@@ -56,11 +57,23 @@ export default function SurveyCard({
 			<div className="flex flex-col gap-3 px-5">
 				<h2 className="text-card-fg font-bold">{title}</h2>
 				<p className="text-card-fg text-xs">{description}</p>
-				<Chipset
-					ariaLabel={`Cette annonce concerne la catégorie ${category.name}`}
-					children={category.name}
-					rounded
-				/>
+				<div className="flex items-center justify-between gap-5">
+					<Chipset
+						ariaLabel={`Cette annonce concerne la catégorie ${category.name}`}
+						children={category.name}
+						rounded
+						size="sm"
+					/>
+					{isOwner && (
+						<Chipset
+							ariaLabel="Cette enquête m'appartient"
+							variant="secondary"
+							children="Propriétaire"
+							rounded
+							size="sm"
+						/>
+					)}
+				</div>
 			</div>
 			<div className="bg-primary-default flex items-center justify-between px-5 py-3">
 				<div className="flex items-center gap-1">

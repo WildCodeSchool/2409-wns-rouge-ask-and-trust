@@ -83,6 +83,8 @@ export interface SurveyCardType {
 	estimatedDuration: number
 	availableDuration: number
 	status?: string
+	user?: User
+	isOwner?: boolean
 }
 
 export type AllSurveysResult = {

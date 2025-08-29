@@ -29,7 +29,7 @@ const chipsetVariants = cva(
 					"bg-destructive-light text-destructive-dark px-2 py-1 font-bold text-base border-none",
 			},
 			size: {
-				sm: "text-sm px-2 py-1",
+				sm: "text-sm",
 				md: "text-base px-4 py-1 ",
 			},
 		},
