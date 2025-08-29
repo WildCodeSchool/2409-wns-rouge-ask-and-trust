@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v2.2.1...v2.3.0) (2025-08-29)
+
+
+### Features
+
+* add a chipset to visualise a survey belongs to me ([de2f31e](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/de2f31ecd7a3d4a19be9039b1f7128735cf2aff3))
+* add actions buttons in preview and respond page ([f28ab56](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f28ab56ab9a5e39f09477bd217ef4c5fba0006a9))
+* add AdminRoute and AdminRequired components for admin access control ([d1650d2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/d1650d22311ff8a22a3d3938eaf0758f122d801c))
+* add copy survey link button if survey is published ([add5638](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/add563837b2e84b519275d0c8e2facbb1dd9a9b2))
+* add hook useTpastOnChange ([00fe61d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/00fe61df2b6586b28b21381e797b1093d4ef6931))
+* add hopok useCopyClipboard to copy url ([33aaa7a](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/33aaa7a9ab46be14add89bd0c73864f2382edf3b))
+* add initial database schema migration and update datasource configuration ([df9e0a5](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/df9e0a57d56cde23dfada3fa68a782bb0683898a))
+* add loading spinners in buttons and error component in SurveyCreator ([cd8a131](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/cd8a131bf908a081d8cfe4c40451b879c0e9ff17))
+* add size in Chipset ([a4d726b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/a4d726b86bd8ae7ed2bdb88679fdebe699239420))
+* add spinner in Button and refacto button content ([7bcc941](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/7bcc94194dc735a50f1de2248bc9f920f45bad93))
+* add SurveyStatus type in front and back ([87de1fe](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/87de1fe20ac04352c6e086deb381c71e9a6c8438))
+* add useScreenDetector to handle isMobile, isTablet, isDesktop ([c46632f](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/c46632f746440f9c932c1ddcf941334abbb0ec41))
+* allow to visualise only published surveys ([57fcf0b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/57fcf0b92612e1ed2615861f52cc994baf534ea8))
+* clean SurveyCreatorSkeleton ([6a14c0f](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/6a14c0f31d99c5d305413d9bf1505c358366bcde))
+* copy survey real after publishing ([8c52323](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/8c52323f9244c1a931eb89687753650c8a54a446))
+* display NoSurvey component ([44f1e70](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/44f1e70bc33bbd6c3caafd6a151f0267b11b614a))
+* implement update survey's status logic and fix responsive ([600d835](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/600d835ad06a10f1a6495a916915aae3f29b59cb))
+* implement user management dashboard with search functionality ([99d3285](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/99d328503433a0a7de173c096b8b14814cf9cf31))
+* implement useScreenDetector in Canvas and add variable for conditionnal rendering ([ddcfceb](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/ddcfceb767bfb36a9dc2381364290844e213f02c))
+* implement useScreenDetector in SurveyCreator and  its components and clean css ([12521c9](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/12521c98be51efa8f0373f065cbd6e044c08dccf))
+* implement useToastOnChange in BuildQuestion and BuildQuestionHeader ([87b285a](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/87b285a86db512f04a833ef99b25b8a88d42f489))
+* improve spacing on last pages with the hook ([9f5efd2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/9f5efd2a47a49f4a79be6602bd51e3db8f388dff))
+* in survey creator, header, manage action buttons depending on survey's status ([2fff1b2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/2fff1b2f1fc870553b24ae19b73ade0d8a459fe6))
+* update survey entity and resolver to enable status updating ([047049b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/047049b8947256530e4090670d8c7ee75d6cc6f2))
+* update ui for survey buttons ([8835d0b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/8835d0b89dcd6736871551f582ba22e1d40cc17d))
+* use hook to calculate height for spacing with new footer mobile ([bbdfd8c](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/bbdfd8cbc8bde1b34cb204624b4632ccae4b92c8))
+
+
+### Bug Fixes
+
+* add variable for synchronize's key in dataSource ([f7befa5](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f7befa5afe7361557abc439efe37a85bddb60369))
+* centering of question answer if error message ([2647309](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/26473094538a7c1b8ce630d10bfe8830c8e1b632))
+* clean doc for migrations ([c390751](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/c3907511dc0d8d1da5daeb18372e387d551f32c4))
+* clean exports in SurveyCreator ([fbf86ab](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/fbf86ab2640343731f113932e6b87961b37e4950))
+* clean memo of BuildQuestion and delete useless forwardRef ([0bb1150](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0bb1150a1da6311b9a1a409ed9e5fc2290351af4))
+* clean onPublishSurvey function ([0fc747b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0fc747b06a82e00485d3459984fbbab35d9db927))
+* clean useless sanitize data ([4cb2b8f](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/4cb2b8f6636ea4e13285e32320a86f562dadc91c))
+* export ToastType ([c54bbd2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/c54bbd2937dc66bf35a7bbf1f2ec7a420b55344a))
+* fix logo in Figma to have transparency ([69fc6ca](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/69fc6ca409246ae28b248144d571fec22b1d8a25))
+* if survey has no questions, user cannot publish and show warning toast ([e56edab](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/e56edab0a64054f0b1253977b4dddde9dc631a08))
+* implement useSurvey on PreviewSurveyPage ([0dd172f](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/0dd172f873be68d474c676516b7685b9acd7c29f))
+* in survey creator, check if user owns the survey ([636853b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/636853bee84d6a469bdf59120b9612a5085f0ebc))
+* no wrap on button label ([f5d04bb](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f5d04bbac74a8624123d899a39aa4f35de7b7694))
+* refetch surveys after updating survey status ([985b02b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/985b02bafcfc06eabbea3a6af6fff5f108460c09))
+* remove useless condition ([8ee7e1b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/8ee7e1be6e8c163db43c5d7b241ae14c0666021d))
+* style and text ellipsis in SurveyHeader ([f056b2a](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f056b2a28ab02f8830d24008b828673548c1e495))
+* style in Surveyx ([f280120](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f280120117c8b661e9be35ca2e3a8a90cbb5c200))
+* **test:** fix tests after add hook to calculate height on footer ([e1f9c80](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/e1f9c801d3e2d63c3233602236a2fdd3fe2fe70a))
+* unchecked table head checkbox if not all checkboxes are checked ([2dc69d1](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/2dc69d1e73d97cdeab573ccd0491980ab1556078))
+* update datasource configuration to run migrations only in production ([7079bfa](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/7079bfa3d2c1e05b8b116d3b8a1e012449c74cf9))
+
 ### [2.2.1](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v2.2.0...v2.2.1) (2025-08-26)
 
 ## [2.2.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v2.1.0...v2.2.0) (2025-08-26)
