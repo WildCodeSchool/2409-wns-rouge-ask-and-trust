@@ -9,7 +9,7 @@ import { Link, useSearchParams } from "react-router-dom"
 import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
 import logoFooter from "/logos/logo-footer.svg"
 import { useSurvey } from "@/hooks/useSurvey"
-import { HEADER_LINKS } from "../header/Header"
+import { HEADER_LINKS } from "@/components/sections/header/Header"
 
 export default function Header({ isInSurveys = false }) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
