@@ -16,7 +16,7 @@ export default function UserTableNav({
 
 	return (
 		<div
-			className="flex items-center justify-between max-lg:flex-wrap max-lg:justify-center max-lg:gap-x-10 max-lg:gap-y-5"
+			className="flex items-center justify-center max-lg:flex-wrap max-lg:justify-center max-lg:gap-x-10 max-lg:gap-y-5"
 			ref={rootRef}
 		>
 			<Pagination

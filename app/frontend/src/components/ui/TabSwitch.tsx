@@ -20,7 +20,7 @@ export default function TabSwitch({
 		<div
 			role="tablist"
 			aria-label={ariaLabel}
-			className="bg-primary-100 w-full rounded-xl p-2"
+			className="bg-primary-100 w-full cursor-pointer rounded-xl p-2"
 		>
 			<div className="flex gap-2">
 				{options.map(option => (
@@ -28,7 +28,7 @@ export default function TabSwitch({
 						key={option.value}
 						role="tab"
 						aria-selected={value === option.value}
-						className={`text-primary-700 flex-1 rounded-lg px-4 py-2 text-center text-sm font-semibold transition-colors ${
+						className={`text-primary-700 flex-1 cursor-pointer rounded-lg px-4 py-2 text-center text-sm font-semibold transition-colors ${
 							value === option.value
 								? "bg-primary-400"
 								: "bg-transparent"

@@ -50,7 +50,7 @@ function Surveys() {
 	return (
 		<section
 			className={cn(
-				"px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:px-10 md:pb-10"
+				"px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:min-h-[calc(100vh_-_var(--header-height))] md:px-10 md:pb-10"
 			)}
 			ref={rootRef}
 		>
