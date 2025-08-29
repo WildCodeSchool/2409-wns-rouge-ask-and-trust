@@ -19,7 +19,7 @@ function PreviewSurveyPage() {
 
 	return (
 		survey && (
-			<div className="mx-auto max-w-2xl rounded bg-white p-8 shadow">
+			<div className="mx-auto h-[calc(100vh_-_var(--header-height))] max-w-2xl rounded bg-white p-8 shadow">
 				<div className="mb-4 flex items-center justify-between gap-5">
 					<Button
 						variant="ghost"

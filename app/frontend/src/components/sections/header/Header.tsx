@@ -9,7 +9,7 @@ import HeaderMobileMenu from "./HeaderMobileMenu"
 import logo from "/logos/logo-landing.svg"
 import { useHeightVariable } from "@/hooks/useHeightVariable"
 
-const HEADER_LINKS: readonly LinksType[] = [
+export const HEADER_LINKS: readonly LinksType[] = [
 	{
 		href: "/surveys",
 		label: "Les enquêtes",

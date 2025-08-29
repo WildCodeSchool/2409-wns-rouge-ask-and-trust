@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/Button"
 import { ArrowLeft } from "lucide-react"
 import SurveyResponseForm from "@/components/sections/response/SurveyResponseForm"
 import { SurveyWithCategory } from "@/types/types"
-import { cn } from "@/lib/utils"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useCopyClipboard } from "@/hooks/useCopyClipboard"
 
@@ -65,12 +64,7 @@ function SurveyResponse() {
 	}
 
 	return (
-		<div
-			className={cn(
-				"bg-black-50",
-				!questions && "h-[calc(100vh_-_var(--header-height))]"
-			)}
-		>
+		<div className="bg-black-50 h-[calc(100vh_-_var(--header-height))]">
 			{/* Header Section */}
 			<section className="bg-white shadow-sm">
 				<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
@@ -86,7 +80,6 @@ function SurveyResponse() {
 						</Button>
 						<div className="flex items-center justify-center gap-4">
 							<Button
-								variant="secondary"
 								ariaLabel="Partager l'enquête"
 								size="sm"
 								onClick={onClickCopy}

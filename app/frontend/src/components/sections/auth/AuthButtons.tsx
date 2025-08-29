@@ -122,9 +122,9 @@ export default function AuthButtons({
 
 	// === CASE: LOGGED IN ===
 
-	// Pages "profile" or "admin" → logout button
-	if (isOnProfile || isOnAdmin) {
-		return (
+	// "Secondary" button depends on the page and role
+	const secondaryButton =
+		isOnProfile || isOnAdmin ? (
 			<Button
 				variant="destructive"
 				ariaLabel="Se déconnecter d'Ask&Trust"
@@ -132,12 +132,7 @@ export default function AuthButtons({
 			>
 				Se déconnecter
 			</Button>
-		)
-	}
-
-	// "Secondary" button depends on the role
-	const secondaryButton =
-		user?.role === "admin" ? (
+		) : user?.role === "admin" ? (
 			<Button
 				to="/admin"
 				variant="transparent"
@@ -174,7 +169,7 @@ export default function AuthButtons({
 				variant="tertiary"
 				role="link"
 				ariaLabel="Créer une enquête"
-				className="max-sm:hidden"
+				className="max-lg:hidden"
 			>
 				Créer une enquête
 			</Button>
