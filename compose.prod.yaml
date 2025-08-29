@@ -6,7 +6,7 @@ services:
         #     - "5173:5173" # Exposes port 5173 to access Vite from the host
         environment:
             - VITE_NODE_ENV=production
-        command: ["npm", "run", "preview", "--", "--host", "--strictPort"] # Serve built assets (no HMR)
+        command: ["npm", "run", "dev"] # Serve built assets (no HMR)
         # Unused options, but useful in other cases
         # restart: always # Recreate the container in case of failure
         depends_on:
@@ -20,7 +20,6 @@ services:
         # ports:
         #     - "3310:3310" # Exposes port 3310 to access the backend from the host
         environment:
-            - CHOKIDAR_USEPOLLING=true # Enables hot-reload on Docker Desktop (Windows/macOS)
             - DB_HOST=db
         env_file:
             - .env # Loads environment variables from a file
@@ -42,6 +41,8 @@ services:
             - "5432:5432" # Production uses default PostgreSQL port
         env_file:
             - .database.env
+        volumes:
+            - db_data_prod:/var/lib/postgresql/data
         networks:
             - backend_network_prod
         healthcheck: # To ensure that PostgreSQL is ready before starting the backend.
