@@ -22,6 +22,12 @@ docker compose down -v
 docker compose up -d db backend
 ```
 
+ou 
+
+```bash
+docker compose exec backend npx typeorm schema:drop -- -d ./src/database/config/datasource.ts
+```
+
 ### Migrations
 ```bash
 # Exécuter
