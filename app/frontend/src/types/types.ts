@@ -82,6 +82,9 @@ export interface SurveyCardType {
 	category: SurveyCategoryType
 	estimatedDuration: number
 	availableDuration: number
+	status?: string
+	user?: User
+	isOwner?: boolean
 }
 
 export type AllSurveysResult = {
@@ -118,17 +121,6 @@ export type ToolboxItem = {
 	onClick?: () => void
 }
 
-export interface ToolboxProps {
-	className?: string
-	items?: ToolboxItem[]
-	categories?: ToolboxCategory[]
-	showSearch?: boolean
-	searchManager?: SearchManager
-	compactThreshold?: number
-	horizontalThreshold?: number
-	noResultsText?: string
-}
-
 export interface SearchManager {
 	value: string
 	onChange: (value: string) => void
@@ -141,10 +133,19 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	// questions: { id: number; title: string }[]
+	status: SurveyStatusType
 	questions: Question[]
 	user: User
 }
+
+export const SurveyStatus = {
+	Draft: "draft",
+	Published: "published",
+	Archived: "archived",
+	Censored: "censored",
+} as const
+
+export type SurveyStatusType = (typeof SurveyStatus)[keyof typeof SurveyStatus]
 
 export type CreateSurveyInput = Survey
 
@@ -313,7 +314,6 @@ export type SurveyTableFilterProps = {
 export type SurveyDurationFilterProps = {
 	sortTimeOption: string
 	setSortTimeOption: (filters: string) => void
-	isHorizontalCompact: boolean
 }
 
 export type DateSortFilter = "Plus récente" | "Plus ancienne"
@@ -345,6 +345,18 @@ export type SurveyWithCategory = {
 	}
 	questions: Question[]
 	status: string
+	user: User
 	createdAt: string
 	updatedAt: string
+}
+
+export type RawUser = {
+	id: number | string
+	email: string
+	firstname: string
+	lastname: string
+	role: string
+	createdAt?: string
+	updatedAt?: string
+	surveys?: { id: number | string }[]
 }

@@ -1,16 +1,19 @@
-import SurveyCard from "@/components/sections/surveys/SurveyCard"
-import img from "/img/dev.webp"
-import { Button } from "@/components/ui/Button"
-import { useEffect } from "react"
 import { withSEO } from "@/components/hoc/withSEO"
-import { cn } from "@/lib/utils"
-import Pagination from "@/components/ui/Pagination"
-import Loader from "@/components/ui/Loader"
+import SurveyCard from "@/components/sections/surveys/SurveyCard"
 import SurveyDurationFilter from "@/components/sections/surveys/ui/SurveyDurationFilter"
+import { Button } from "@/components/ui/Button"
+import Loader from "@/components/ui/Loader"
+import Pagination from "@/components/ui/Pagination"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { useSurvey } from "@/hooks/useSurvey"
+import { cn } from "@/lib/utils"
+import { SurveyStatus } from "@/types/types"
+import { useEffect } from "react"
+import { useAuthContext } from "@/hooks/useAuthContext"
+import img from "/img/dev.webp"
 
 function Surveys() {
+	const { user: owner } = useAuthContext()
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const {
 		isFetching,
@@ -35,70 +38,65 @@ function Surveys() {
 		}
 	}, [isHorizontalCompact])
 
+	const surveys = allSurveys.map(survey => ({
+		...survey,
+		isOwner: !!(owner && survey.user && owner.id === survey.user.id),
+	}))
+
+	const publishedSurveys = surveys.filter(
+		survey => survey.status === SurveyStatus.Published
+	)
+
 	return (
-		<>
-			<section
-				className={cn(
-					"px-20 pt-20 max-sm:px-5",
-					isHorizontalCompact ? "pb-10" : "mb-20"
-				)}
-				ref={rootRef}
-			>
-				<h1
-					className={cn(
-						"text-fg text-center text-3xl font-bold max-lg:text-xl",
-						isHorizontalCompact ? "mb-14" : "mb-20"
-					)}
-				>
-					Liste des enquêtes disponibles
-				</h1>
-				<SurveyDurationFilter
-					sortTimeOption={sortTimeOption}
-					setSortTimeOption={setSortTimeOption}
-					isHorizontalCompact={isHorizontalCompact}
-				/>
-				{isFetching ? (
-					<div className="flex items-center justify-center">
-						<Loader />
-					</div>
-				) : (
-					<div
-						className={cn(
-							"grid grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] justify-items-center",
-							isHorizontalCompact ? "gap-14" : "gap-20"
-						)}
-					>
-						{allSurveys.map(survey => (
-							<SurveyCard
-								key={survey.id}
-								id={survey.id}
-								picture={img}
-								title={survey.title}
-								description={survey.description}
-								category={survey.category}
-								estimatedDuration={survey.estimatedDuration}
-								availableDuration={survey.availableDuration}
-							/>
-						))}
-					</div>
-				)}
-				{totalCount === 0 && (
-					<div className="flex w-full items-center justify-center">
-						<p className="text-black-default text-xl font-medium">
-							Aucune enquête ne correspond à votre recherche...
-						</p>
-					</div>
-				)}
-				<Pagination
-					className="mx-auto mt-20 mb-0 w-max"
-					currentPage={currentPage}
-					totalCount={totalCount}
-					perPage={PER_PAGE.all}
-					onPageChange={setCurrentPage}
-				/>
-			</section>
-			{!isHorizontalCompact && (
+		<section
+			className={cn(
+				"px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:px-10 md:pb-10"
+			)}
+			ref={rootRef}
+		>
+			<h1 className="text-fg mb-10 text-center text-3xl font-bold max-lg:text-xl">
+				Liste des enquêtes disponibles
+			</h1>
+			<SurveyDurationFilter
+				sortTimeOption={sortTimeOption}
+				setSortTimeOption={setSortTimeOption}
+			/>
+			{isFetching ? (
 				<div className="flex items-center justify-center">
+					<Loader />
+				</div>
+			) : publishedSurveys.length > 0 ? (
+				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
+					{publishedSurveys.map(survey => (
+						<SurveyCard
+							key={survey.id}
+							id={survey.id}
+							picture={img}
+							title={survey.title}
+							description={survey.description}
+							category={survey.category}
+							estimatedDuration={survey.estimatedDuration}
+							availableDuration={survey.availableDuration}
+							isOwner={survey.isOwner}
+						/>
+					))}
+				</div>
+			) : (
+				<div className="flex w-full items-center justify-center text-center">
+					<p className="text-black-default text-xl font-medium">
+						Aucune enquête n'a encore été publiée...
+					</p>
+				</div>
+			)}
+			<Pagination
+				className="mx-auto mt-20 mb-0 w-max"
+				currentPage={currentPage}
+				totalCount={totalCount}
+				perPage={PER_PAGE.all}
+				onPageChange={setCurrentPage}
+			/>
+			{!isHorizontalCompact && (
+				<div className="mt-10 flex items-center justify-center">
 					<Button
 						variant="primary"
 						ariaLabel="Création d'une enquête"
@@ -107,7 +105,7 @@ function Surveys() {
 					/>
 				</div>
 			)}
-		</>
+		</section>
 	)
 }
 

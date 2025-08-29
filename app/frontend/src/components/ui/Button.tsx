@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority"
-import { LucideIcon } from "lucide-react"
+import { Loader2, LucideIcon } from "lucide-react"
 import { ButtonHTMLAttributes, forwardRef, Ref } from "react"
 import { Link } from "react-router-dom"
 
@@ -63,6 +63,7 @@ export interface ButtonProps
 	onClick?: React.MouseEventHandler
 	role?: "button" | "submit" | "link"
 	to?: string
+	loadingSpinner?: boolean
 }
 
 const Button = forwardRef<HTMLElement, ButtonProps>(
@@ -79,6 +80,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 			role = "button",
 			children,
 			to,
+			loadingSpinner = false,
 			onClick,
 			...props
 		},
@@ -92,19 +94,17 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 			isNavBtnSelected &&
 				"text-primary-700 hover:bg-primary-default bg-white hover:text-white",
 			fullWidth && "w-full",
+			"whitespace-nowrap",
 			className
 		)
 
 		const childrenContent = (
-			<>
-				{Icon && iconPosition === "left" && (
-					<Icon className="h-5 w-5 shrink-0" aria-hidden />
-				)}
-				{children}
-				{Icon && iconPosition === "right" && (
-					<Icon className="h-5 w-5 shrink-0" aria-hidden />
-				)}
-			</>
+			<ButtonContent
+				Icon={Icon}
+				iconPosition={iconPosition}
+				children={children}
+				loadingSpinner={loadingSpinner}
+			/>
 		)
 
 		if (to) {
@@ -140,3 +140,45 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 Button.displayName = "Button"
 
 export { Button, buttonVariants }
+
+const ButtonContent = ({
+	Icon,
+	iconPosition,
+	children,
+	loadingSpinner,
+}: {
+	Icon?: LucideIcon
+	iconPosition: "left" | "right"
+	children: React.ReactNode
+	loadingSpinner?: boolean
+}) => {
+	const Spinner = <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+
+	return (
+		<>
+			{/* Icon left */}
+			{Icon &&
+				iconPosition === "left" &&
+				(loadingSpinner ? (
+					Spinner
+				) : (
+					<Icon className="h-5 w-5 shrink-0" aria-hidden />
+				))}
+
+			{/* Label or spinner if no icon */}
+			{!Icon && (loadingSpinner ? Spinner : children)}
+
+			{/* Icon right */}
+			{Icon &&
+				iconPosition === "right" &&
+				(loadingSpinner ? (
+					Spinner
+				) : (
+					<Icon className="h-5 w-5 shrink-0" aria-hidden />
+				))}
+
+			{/* Always show label if icon exists */}
+			{Icon && children}
+		</>
+	)
+}

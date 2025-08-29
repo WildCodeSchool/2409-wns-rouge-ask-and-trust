@@ -1,7 +1,7 @@
-import { SurveyCardType } from "@/types/types"
-import { Link } from "react-router-dom"
-import { Timer, Hourglass } from "lucide-react"
 import { Chipset } from "@/components/ui/Chipset"
+import { SurveyCardType } from "@/types/types"
+import { Hourglass, Timer } from "lucide-react"
+import { Link } from "react-router-dom"
 
 /**
  * SurveyCard component with external link management and accessibility
@@ -19,6 +19,7 @@ export default function SurveyCard({
 	category,
 	estimatedDuration,
 	availableDuration,
+	isOwner,
 }: SurveyCardType) {
 	const href = `/surveys/respond/${id}`
 	const isExternal = href.startsWith("http")
@@ -31,7 +32,7 @@ export default function SurveyCard({
 	return (
 		<Link
 			to={href}
-			className="shadow-default hover:shadow-primary-default/50 flex w-80 flex-col justify-between gap-5 overflow-hidden rounded-xl bg-white transition-shadow duration-200 ease-in-out hover:shadow-lg"
+			className="shadow-default hover:shadow-primary-default/50 flex w-full flex-col justify-between gap-5 overflow-hidden rounded-xl bg-white transition-shadow duration-200 ease-in-out hover:shadow-lg md:w-80"
 			// Indicates to assistive technologies the current page
 			aria-current={
 				href === window.location.pathname ? "page" : undefined
@@ -56,11 +57,23 @@ export default function SurveyCard({
 			<div className="flex flex-col gap-3 px-5">
 				<h2 className="text-card-fg font-bold">{title}</h2>
 				<p className="text-card-fg text-xs">{description}</p>
-				<Chipset
-					ariaLabel={`Cette annonce concerne la catégorie ${category.name}`}
-					children={category.name}
-					rounded
-				/>
+				<div className="flex items-center justify-between gap-5">
+					<Chipset
+						ariaLabel={`Cette annonce concerne la catégorie ${category.name}`}
+						children={category.name}
+						rounded
+						size="sm"
+					/>
+					{isOwner && (
+						<Chipset
+							ariaLabel="Cette enquête m'appartient"
+							variant="secondary"
+							children="Propriétaire"
+							rounded
+							size="sm"
+						/>
+					)}
+				</div>
 			</div>
 			<div className="bg-primary-default flex items-center justify-between px-5 py-3">
 				<div className="flex items-center gap-1">

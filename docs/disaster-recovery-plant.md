@@ -1114,6 +1114,60 @@ advanced-diagnostics.sh     → Detailed diagnostics
 backup-emergency.sh         → Emergency backup
 failover-to-hot-site.sh    → Backup site failover
 damage-assessment.sh        → Damage assessment
+validate-migrations.sh      → Post-restoration migration validation
+```
+
+#### Script de Validation des Migrations
+
+```bash
+#!/bin/bash
+# validate-migrations.sh - Post-restoration migration validation
+
+echo "🔍 MIGRATION VALIDATION - $(date)"
+
+# 1. Check if backend is running
+if ! docker ps --format '{{.Names}}' | grep -q "askandtrust-prod-backend-1"; then
+    echo "❌ Backend container not running"
+    exit 1
+fi
+
+# 2. Check migration status
+echo "=== MIGRATION STATUS ==="
+docker exec askandtrust-prod-backend-1 npm run migration:show
+
+# 3. Verify migrations table exists and has data
+MIGRATIONS_COUNT=$(docker exec askandtrust-prod-prod-db-1 psql -U ask_and_trust -d ask_and_trust -t -c \
+    "SELECT count(*) FROM migrations;" 2>/dev/null | tr -d '[:space:]' || echo "0")
+
+if [[ "$MIGRATIONS_COUNT" =~ ^[0-9]+$ ]] && [ "$MIGRATIONS_COUNT" -gt 0 ]; then
+    echo "✅ Migrations table: $MIGRATIONS_COUNT migrations recorded"
+else
+    echo "❌ Migrations table missing or empty"
+    exit 1
+fi
+
+# 4. Check for pending migrations
+PENDING_MIGRATIONS=$(docker exec askandtrust-prod-backend-1 npm run migration:show | grep -c "pending" || echo "0")
+
+if [ "$PENDING_MIGRATIONS" -gt 0 ]; then
+    echo "⚠️ WARNING: $PENDING_MIGRATIONS pending migrations detected"
+    echo "Consider running: docker exec askandtrust-prod-backend-1 npm run migration:run"
+else
+    echo "✅ No pending migrations"
+fi
+
+# 5. Verify critical tables exist
+CRITICAL_TABLES=("users" "surveys" "category" "migrations")
+for table in "${CRITICAL_TABLES[@]}"; do
+    if docker exec askandtrust-prod-db-1 psql -U ask_and_trust -d ask_and_trust -c "SELECT 1 FROM $table LIMIT 1;" >/dev/null 2>&1; then
+        echo "✅ Table $table exists"
+    else
+        echo "❌ Table $table missing"
+        exit 1
+    fi
+done
+
+echo "🏁 Migration validation completed - $(date)"
 ```
 
 ---

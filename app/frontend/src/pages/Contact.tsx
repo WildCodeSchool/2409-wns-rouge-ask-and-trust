@@ -15,7 +15,7 @@ import { withSEO } from "@/components/hoc/withSEO"
 
 function ContactPage() {
 	return (
-		<div className="container mx-auto px-4 py-12">
+		<div className="container mx-auto px-4 py-20 max-md:pb-[calc(var(--footer-height)+80px)]">
 			<ContactHero />
 			<div className="grid gap-12 lg:grid-cols-3">
 				<div className="lg:col-span-2">

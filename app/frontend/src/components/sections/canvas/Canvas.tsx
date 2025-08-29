@@ -1,8 +1,8 @@
 import { EmptyState } from "@/components/sections/canvas/empty-state"
 import { Button } from "@/components/ui/Button"
-import { useQuestions } from "@/hooks/useQuestions"
-import { useResponsivity } from "@/hooks/useResponsivity"
+import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useScrollToElement } from "@/hooks/useScroll"
+import { cn } from "@/lib/utils"
 import { Question, QuestionType } from "@/types/types"
 import { PlusCircle } from "lucide-react"
 import { useRef, useState } from "react"
@@ -15,6 +15,7 @@ interface CanvasProps {
 	questions: Question[]
 	focusedQuestionId: number | null
 	setFocusedQuestionId: (id: number | null) => void
+	isCreateQuestionLoading: boolean
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
@@ -22,24 +23,21 @@ export const Canvas: React.FC<CanvasProps> = ({
 	questions,
 	focusedQuestionId,
 	setFocusedQuestionId,
+	isCreateQuestionLoading,
 }) => {
-	const { isCreateQuestionLoading } = useQuestions()
 	const { id: surveyId } = useParams()
+	const canvasRef = useRef<HTMLDivElement>(null)
 	const questionRefs = useRef<{ [key: number]: HTMLLIElement | null }>({})
-	const { rootRef, isVerticalCompact, isHorizontalCompact } = useResponsivity(
-		200,
-		768
-	)
+	const { isMobile } = useScreenDetector()
 	const [highlightedQuestionId, setHighlightedQuestionId] = useState<
 		number | null
 	>(questions[0]?.id ?? null)
-	const isCompact = isVerticalCompact || isHorizontalCompact
 
 	const resetScrollId = undefined
 
 	useScrollToElement(
 		focusedQuestionId,
-		rootRef,
+		canvasRef,
 		questionRefs,
 		resetScrollId,
 		focusedQuestionId !== null
@@ -56,20 +54,30 @@ export const Canvas: React.FC<CanvasProps> = ({
 		}
 	}
 
+	const showAsideComponents = !isMobile && questions && questions.length > 0
+	const isNotQuestions = !questions || questions?.length === 0
+
 	return (
 		<>
 			<div
-				ref={rootRef}
-				className="relative mx-[-0.75rem] flex h-full w-full flex-col gap-4 overflow-y-auto px-[0.75rem]"
+				ref={canvasRef}
+				className="relative flex h-full w-full flex-col gap-4 overflow-y-auto md:mx-[-0.75rem] md:px-[0.75rem]"
 			>
-				{!questions || questions?.length === 0 ? (
-					<EmptyState />
+				{isNotQuestions ? (
+					<>
+						<EmptyState />
+						<ButtonAddQuestion
+							onAddQuestion={onAddQuestion}
+							loadingSpinner={isCreateQuestionLoading}
+							isMobile={isMobile}
+						/>
+					</>
 				) : (
 					<>
 						{questions.map((question, index) => {
 							return (
 								<li
-									className="focus-visible:border-primary-600 list-none rounded-xl focus-visible:ring-2 focus-visible:outline-none"
+									className="focus-visible:border-primary-600 w-full list-none rounded-xl focus-visible:ring-2 focus-visible:outline-none"
 									tabIndex={0}
 									key={question.id}
 									ref={el => {
@@ -90,46 +98,48 @@ export const Canvas: React.FC<CanvasProps> = ({
 								</li>
 							)
 						})}
-						<Button
-							onClick={() => onAddQuestion("text")}
-							disabled={isCreateQuestionLoading}
-							ariaLabel="Add Question"
-							icon={PlusCircle}
-							className="self-center"
-						>
-							Ajouter une question
-						</Button>
+						<ButtonAddQuestion
+							onAddQuestion={onAddQuestion}
+							loadingSpinner={isCreateQuestionLoading}
+							isMobile={isMobile}
+						/>
 					</>
 				)}
 			</div>
-			{!isCompact && questions && questions.length > 0 && (
-				<div className="flex max-w-52 flex-col gap-2">
-					<div className="flex w-full flex-col items-center gap-2">
-						{/* @TODO add real logic to publish survey */}
-						<Button
-							ariaLabel="Publier l'enquête"
-							variant="primary"
-							fullWidth
-						>
-							Publier l'enquête
-						</Button>
-						{/* @TODO add real logic */}
-						<Button
-							ariaLabel="Enregistrer en brouillon"
-							variant="outline"
-							fullWidth
-						>
-							Garder en brouillon
-						</Button>
-					</div>
-					<TableContentQuestions
-						questions={questions}
-						onQuestionClick={scrollToQuestion}
-						currentQuestionId={focusedQuestionId}
-						highlightedQuestionId={highlightedQuestionId}
-					/>
-				</div>
+			{showAsideComponents && (
+				<TableContentQuestions
+					questions={questions}
+					onQuestionClick={scrollToQuestion}
+					currentQuestionId={focusedQuestionId}
+					highlightedQuestionId={highlightedQuestionId}
+				/>
 			)}
 		</>
+	)
+}
+
+const ButtonAddQuestion = ({
+	onAddQuestion,
+	loadingSpinner,
+	isMobile,
+}: {
+	onAddQuestion: (type: QuestionType | undefined) => Promise<void>
+	loadingSpinner: boolean
+	isMobile: boolean
+}) => {
+	return (
+		<Button
+			onClick={() => onAddQuestion("text")}
+			disabled={loadingSpinner}
+			ariaLabel="Add Question"
+			icon={PlusCircle}
+			loadingSpinner={loadingSpinner}
+			className={cn(
+				"self-center",
+				isMobile && `sticky right-2 bottom-2 left-2 z-10 shadow-lg`
+			)}
+		>
+			Ajouter une question
+		</Button>
 	)
 }

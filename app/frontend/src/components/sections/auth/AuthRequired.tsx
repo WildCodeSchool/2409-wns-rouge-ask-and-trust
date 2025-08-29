@@ -18,7 +18,7 @@ import { Lock } from "lucide-react"
  */
 export default function AuthRequired() {
 	return (
-		<div className="flex min-h-[80vh] flex-col items-center justify-center px-4 pt-20">
+		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col items-center justify-center px-4 max-md:pb-[calc(var(--footer-height))]">
 			<div className="shadow-component w-full max-w-md rounded-xl bg-white p-8 text-center">
 				<div className="mb-6 flex justify-center">
 					<div className="bg-primary-50 rounded-full p-4">

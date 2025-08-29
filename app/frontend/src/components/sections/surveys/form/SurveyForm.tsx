@@ -3,22 +3,28 @@ import InputTitle from "@/components/sections/surveys/form/InputTitle"
 import InputDescription from "@/components/sections/surveys/form/InputDescription"
 import { useForm } from "react-hook-form"
 import { useToast } from "@/hooks/useToast"
-import { useQuery } from "@apollo/client"
 import { useNavigate, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/Button"
 import { Label } from "@/components/ui/Label"
 import { CategoryOption, CreateSurveyInput, Question } from "@/types/types"
-import { GET_CATEGORIES } from "@/graphql/survey/category"
 import { useSurvey } from "@/hooks/useSurvey"
 import TypeSelect from "@/components/ui/TypeSelect"
 import SwitchPublic from "@/components/sections/surveys/form/SwitchPublic"
-import { GET_SURVEY } from "@/graphql/survey/survey"
 import { useEffect } from "react"
 
 export default function SurveyForm() {
-	const { addSurvey, updateSurvey } = useSurvey()
-	const navigate = useNavigate()
 	const { id: surveyId } = useParams()
+	const {
+		addSurvey,
+		updateSurvey,
+		categoriesData,
+		loadingCategories,
+		errorCategories,
+		survey,
+		surveyLoading,
+		surveyError,
+	} = useSurvey(surveyId)
+	const navigate = useNavigate()
 	const { showToast } = useToast()
 
 	const form = useForm<CreateSurveyInput>({
@@ -40,19 +46,6 @@ export default function SurveyForm() {
 		control,
 		reset,
 	} = form
-
-	const { data: categoriesData, loading: loadingCategories } =
-		useQuery(GET_CATEGORIES)
-
-	const {
-		data: surveyData,
-		loading: surveyLoading,
-		error: surveyError,
-	} = useQuery(GET_SURVEY, {
-		variables: { surveyId: surveyId },
-		skip: !surveyId,
-	})
-	const survey = surveyData?.survey
 
 	useEffect(() => {
 		if (survey) {
@@ -91,6 +84,23 @@ export default function SurveyForm() {
 		if (!surveyLoading && !survey) {
 			throw new Response("Survey not found", { status: 404 })
 		}
+	}
+
+	if (errorCategories) {
+		const isNotFoundError = errorCategories.graphQLErrors.some(error =>
+			error.message.includes("Categories not found")
+		)
+
+		if (isNotFoundError) {
+			throw new Response("Categories not found", { status: 404 })
+		}
+
+		// Pour les autres erreurs GraphQL
+		throw new Response("Error loading categories", { status: 500 })
+	}
+
+	if (!loadingCategories && !categoriesData) {
+		throw new Response("Categories not found", { status: 404 })
 	}
 
 	const onFormSubmit = async (form: CreateSurveyInput) => {

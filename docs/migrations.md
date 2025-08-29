@@ -1,173 +1,205 @@
 # Documentation Migrations TypeORM
 
-## ⚠️ IMPORTANT - Prérequis Docker
+## Configuration
 
-Ce projet utilise **Docker Compose** pour PostgreSQL. Les migrations doivent être lancées depuis l'environnement Docker.
-
-### Configuration
-
-Le fichier `.env` contient :
+`app/backend/.env` :
 ```env
-DB_HOST=db
-DB_PORT=5432
-POSTGRES_DB=YOUR_DB
-POSTGRES_USER=YOUR_USER
-POSTGRES_PASSWORD=YOUR_PASSWORD
+POSTGRES_DB=DATABASE_NAME
+POSTGRES_USER=DATABASE_USERNAME
+POSTGRES_PASSWORD=DATABASE_PASSWORD
 ```
 
-## 🐳 Commandes Docker Migrations
+## Commandes
 
-### 1. Démarrer PostgreSQL
-Avant toute migration, démarrer la base de données :
+### Démarrer
 ```bash
-docker-compose up -d db
+docker compose up -d db backend
 ```
 
-Ou lancer le server :
+### Réinitialiser DB
 ```bash
-npm start
+docker compose down -v
+docker compose up -d db backend
 ```
 
-### 2. Exécuter les migrations
+ou 
+
 ```bash
-# Si vous avez un service backend dans docker-compose.yml
-docker-compose exec backend npm run migration:run
-
-# OU depuis l'host si Docker expose le port 5432
-docker-compose up -d db
-npm run migration:run
+docker compose exec backend npx typeorm schema:drop -- -d ./src/database/config/datasource.ts
 ```
 
-### 3. Autres commandes de migration
+### Migrations
 ```bash
-# Voir l'état des migrations
-docker-compose exec backend npm run migration:show
+# Exécuter
+docker compose exec backend npm run migration:run
 
-# Créer une nouvelle migration
-docker-compose exec backend npm run migration:create src/database/migrations/NomDeLaMigration
+# Voir l'état
+docker compose exec backend npm run migration:show
 
-# Annuler la dernière migration
-docker-compose exec backend npm run migration:revert
+# Créer nouvelle migration
+docker compose exec backend npx typeorm-ts-node-commonjs migration:generate src/database/migrations/NomMigration -d ./src/database/config/datasource.ts
+
+# Annuler dernière
+docker compose exec backend npm run migration:revert
 ```
 
-## 📝 Scripts npm disponibles
+### Vérification
+```bash
+# Tables créées
+docker compose exec db psql -U DATABASE_USERNAME -d DATABASE_NAME -c "\dt"
 
-Dans `package.json` :
+# Données seed
+docker compose exec db psql -U DATABASE_USERNAME -d DATABASE_NAME -c "SELECT * FROM category;"
+
+# Migrations exécutées
+docker compose exec db psql -U DATABASE_USERNAME -d DATABASE_NAME -c "SELECT * FROM migrations ORDER BY timestamp;"
+```
+
+## Ordre des migrations
+
+- `1753601000000-InitSchema.ts` → **AVANT**
+- `1753603523829-SeedDefaultCategories.ts`
+
+Si nécessaire, renommer le fichier initial pour timestamp inférieur.
+
+## Erreurs communes
+
+### `password authentication failed`
+```bash
+docker compose down -v
+docker compose up -d db backend
+```
+
+## Scripts npm
+
 ```json
 {
-  "scripts": {
-    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/database/config/datasource.ts",
-    "migration:create": "typeorm-ts-node-commonjs migration:create",
-    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/database/config/datasource.ts",
-    "migration:show": "typeorm-ts-node-commonjs migration:show -d src/database/config/datasource.ts",
-  }
+  "migration:run": "typeorm-ts-node-commonjs migration:run -d ./src/database/config/datasource.ts",
+  "migration:show": "typeorm-ts-node-commonjs migration:show -d ./src/database/config/datasource.ts",
+  "migration:revert": "typeorm-ts-node-commonjs migration:revert -d ./src/database/config/datasource.ts"
 }
 ```
 
-## 🗂️ Structure des fichiers
+## Test Production Local
 
-```
-src/
-├── database/
-│   ├── config/
-│   │   └── datasource.ts     # Configuration TypeORM
-│   ├── entities/             # Entités TypeORM
-│   │   └── *.ts
-│   ├── migrations/           # Fichiers de migration
-│   │   └── *.ts
-│   └── results/              # Fichiers pour les filtres
-│       └── *.ts
-```
-
-## 🔧 Configuration TypeORM (datasource.ts)
-
-```typescript
-import { DataSource } from "typeorm"
-
-const dataSource = new DataSource({
-    type: "postgres",
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || "5432"),
-    username: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB,
-    entities: [__dirname + "/../entities/**/*.{ts,js}"],
-    synchronize: false,
-    migrations: [__dirname + "/../migrations/*.{ts,js}"],
-    migrationsTableName: "migrations",
-    logging: true,
-})
-
-export default dataSource
-```
-
-## 📋 Workflow type
-
-### Pour ajouter une nouvelle fonctionnalité :
-
-1. **Créer/Modifier les entités**
-   ```typescript
-   // src/database/entities/User.ts
-   @Entity()
-   export class User {
-     @PrimaryGeneratedColumn()
-     id: number
-     
-     @Column()
-     email: string
-   }
-   ```
-
-2. **Générer la migration automatiquement**
-   ```bash
-   docker-compose exec backend npm run migration:generate src/database/migrations/AddUserEntity
-   ```
-
-3. **Vérifier le fichier généré**
-   - Contrôler que la migration est correcte
-   - Ajouter des données de seed si nécessaire
-
-4. **Exécuter la migration**
-   ```bash
-   docker-compose exec backend npm run migration:run
-   ```
-
-5. **Vérifier l'état**
-   ```bash
-   docker-compose exec backend npm run migration:show
-   ```
-
-## ❌ Erreurs communes
-
-### `Error: ENOTFOUND db`
-- **Cause** : PostgreSQL Docker non démarré
-- **Solution** : `docker-compose up -d db`
-
-### `SASL: client password must be a string`
-- **Cause** : Variables d'environnement non chargées
-- **Solution** : Vérifier que `config()` est appelé dans `datasource.ts`
-
-### `MODULE_NOT_FOUND './cli.js'`
-- **Cause** : Ancienne syntaxe TypeORM
-- **Solution** : Utiliser `typeorm-ts-node-commonjs` au lieu de `ts-node ./node_modules/typeorm/cli.js`
-
-## 🔒 Sécurité
-
-- **Toujours** ajouter `.env` au `.gitignore`
-- **Jamais** committer les mots de passe
-- Utiliser `synchronize: false` en production
-- Tester les migrations sur une copie avant la production
-
-## 🚀 Déploiement
-
-En production, les migrations se lancent généralement :
 ```bash
-# Dans le container de production
-npm run migration:run
+# 1. Reset
+docker compose down -v
+
+# 2. Start
+docker compose up -d db backend
+
+# 3. Migrations
+docker compose exec backend npm run migration:run
+
+# 4. Verify
+docker compose exec backend npm run migration:show
 ```
 
-Ou via un job de déploiement automatisé (CI/CD).
+**Note :** `IS_DEV=false` → migrations manuelles, `IS_DEV=true` → synchronisation auto.
 
----
+## Plan de Mise en Application des Migrations
 
-**📌 Rappel important :** Ce projet utilise Docker, donc toujours démarrer `docker-compose up -d db` o `npm start` avant les migrations !
+### 1. Développement
+
+#### Création d'une migration
+```bash
+# 1. Créer la migration
+docker compose exec backend npx typeorm-ts-node-commonjs migration:generate src/database/migrations/NomDescriptif -d ./src/database/config/datasource.ts
+
+# 2. Vérifier le contenu généré
+# 3. Tester localement
+docker compose exec backend npm run migration:run
+```
+
+#### Règles de nommage
+- Format : `YYYYMMDDHHMMSS-NomDescriptif.ts`
+- Exemple : `20241201143000-AddUserProfileFields.ts`
+- Toujours descriptif et en anglais
+
+### 2. Tests Obligatoires
+
+#### Avant commit
+```bash
+# Test sur DB locale
+docker compose down -v
+docker compose up -d db backend
+docker compose exec backend npm run migration:run
+docker compose exec backend npm run migration:show
+```
+
+#### Tests fonctionnels
+- Vérifier que les nouvelles tables/colonnes fonctionnent
+- Tester les requêtes GraphQL impactées
+- Valider les contraintes et index
+
+### 3. Déploiement Staging
+
+#### Procédure
+```bash
+# 1. Déployer sur staging
+# 2. Exécuter migrations
+docker compose -f compose.staging.yaml exec backend npm run migration:run
+
+# 3. Vérifier
+docker compose -f compose.staging.yaml exec backend npm run migration:show
+```
+
+#### Validation
+- Tests automatisés passent
+- Tests manuels sur les fonctionnalités impactées
+- Performance acceptable
+
+### 4. Déploiement Production
+
+#### Préparation
+```bash
+# 1. Sauvegarde obligatoire
+docker compose -f compose.prod.yaml exec db pg_dump -U DATABASE_USERNAME DATABASE_NAME > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# 2. Vérifier l'état actuel
+docker compose -f compose.prod.yaml exec backend npm run migration:show
+```
+
+#### Exécution
+```bash
+# 1. Déployer le code
+# 2. Exécuter migrations
+docker compose -f compose.prod.yaml exec backend npm run migration:run
+
+# 3. Vérifier
+docker compose -f compose.prod.yaml exec backend npm run migration:show
+```
+
+#### Rollback
+```bash
+# Si problème détecté
+docker compose -f compose.prod.yaml exec backend npm run migration:revert
+# Restaurer la sauvegarde si nécessaire
+```
+
+### 6. Documentation
+
+#### Changelog
+- Date et heure de déploiement
+- Migrations exécutées
+- Impact sur les fonctionnalités
+- Problèmes rencontrés et solutions
+
+#### Communication
+- Notifier l'équipe avant déploiement
+- Rapport post-déploiement
+- Formation des nouveaux développeurs
+
+### 7. Sécurité
+
+#### Bonnes pratiques
+- Jamais de migrations en direct sur prod
+- Toujours une sauvegarde avant migration
+- Tests sur staging obligatoires
+- Rollback planifié
+
+#### Accès
+- Seuls les DevOps/DBAs peuvent exécuter les migrations
+- Logs de toutes les opérations
+- Audit trail des changements

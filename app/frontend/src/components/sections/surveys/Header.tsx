@@ -1,25 +1,23 @@
 import { Button } from "@/components/ui/Button"
-import { GET_CATEGORIES } from "@/graphql/survey/category"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useHeightVariable } from "@/hooks/useHeightVariable"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { cn, slugify } from "@/lib/utils"
 import { SurveyCategoryType } from "@/types/types"
-import { useQuery } from "@apollo/client"
 import { useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
 import logoFooter from "/logos/logo-footer.svg"
+import { useSurvey } from "@/hooks/useSurvey"
 
 export default function Header({ isInSurveys = false }) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const [searchParams, setSearchParams] = useSearchParams()
+	const { categoriesData, loadingCategories, errorCategories } = useSurvey()
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(
 		null
 	)
 	const { user } = useAuthContext()
-	const { data: categoriesData, loading: loadingCategories } =
-		useQuery(GET_CATEGORIES)
 
 	// Update header's height variable if change
 	// header's height is different depending on pages
@@ -72,6 +70,12 @@ export default function Header({ isInSurveys = false }) {
 					{loadingCategories && (
 						<p className="text-white">
 							Chargement des catégories...
+						</p>
+					)}
+					{errorCategories && (
+						<p className="text-white">
+							Un problème est survenu lors du chargement des
+							catégories...
 						</p>
 					)}
 					{categories.map((category: SurveyCategoryType) => {
