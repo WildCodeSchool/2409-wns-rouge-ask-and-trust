@@ -1,14 +1,15 @@
 import { User } from "../database/entities/user"
+import dataSource from "../database/config/datasource"
 import { register } from "../services/auth-service"
-import { Roles, UserRole } from "../types/types"
+import { Roles } from "../types/types"
 
 async function createAdmin() {
 	const email = process.env.ADMIN_EMAIL
 	const password = process.env.ADMIN_PASSWORD
 	const firstname = process.env.ADMIN_FIRSTNAME
 	const lastname = process.env.ADMIN_LASTNAME
-		? (process.env.ADMIN_ROLE as UserRole)
-		: Roles.User
+
+	const userRepository = dataSource.getRepository(User)
 
 	// Verify environment variables
 	if (!email) {
@@ -30,12 +31,10 @@ async function createAdmin() {
 
 	try {
 		// Verify if an admin exists in database
-		const result = await User.find({
+		const existingAdmin = await userRepository.findOne({
 			where: { email },
-			select: ["id", "email"], // Don't want to get hashedPassword
+			select: { id: true, email: true },
 		})
-
-		const existingAdmin = result[0]
 
 		if (existingAdmin) {
 			return

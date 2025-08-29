@@ -6,7 +6,7 @@ export function ContactCTA() {
 	return (
 		<section className="mt-16 text-center">
 			<Card className="bg-primary text-primary-foreground">
-				<CardContent className="pt-8">
+				<CardContent>
 					<h2 className="mb-4 text-3xl font-bold">
 						Prêt à découvrir Ask-and-Trust ?
 					</h2>

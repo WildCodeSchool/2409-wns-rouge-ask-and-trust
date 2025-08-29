@@ -1,23 +1,25 @@
-import { useQuery, useMutation, NetworkStatus } from "@apollo/client"
+import { GET_CATEGORIES } from "@/graphql/survey/category"
 import {
-	GET_SURVEYS,
 	CREATE_SURVEY,
-	UPDATE_SURVEY,
-	GET_MY_SURVEYS,
 	DELETE_SURVEY,
+	GET_MY_SURVEYS,
+	GET_SURVEY,
+	GET_SURVEYS,
+	UPDATE_SURVEY,
+	UPDATE_SURVEY_STATUS,
 } from "@/graphql/survey/survey"
-import { useState, useEffect } from "react"
 import {
 	AllSurveysHome,
 	CreateSurveyInput,
 	DateSortFilter,
-	MySurveysResult,
-	SurveyCardType,
 	SurveysDashboardQuery,
 	SurveyStatus,
+	SurveyStatusType,
 	SurveyTableType,
 	UpdateSurveyInput,
 } from "@/types/types"
+import { NetworkStatus, useMutation, useQuery } from "@apollo/client"
+import { useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { useToast } from "./useToast"
 
@@ -33,9 +35,7 @@ const DATE_SORT_FILTERS = ["Plus récente", "Plus ancienne"] as const
 /**
  * Hook for the survey management.
  */
-export function useSurvey() {
-	const [allSurveys, setAllSurveys] = useState<SurveyCardType[]>([])
-	const [mySurveys, setMySurveys] = useState<MySurveysResult | null>(null)
+export function useSurvey(surveyId?: string) {
 	const [searchParams] = useSearchParams()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [sortTimeOption, setSortTimeOption] = useState<string>("")
@@ -79,6 +79,17 @@ export function useSurvey() {
 			},
 		},
 	})
+	const allSurveys = allSurveysData?.surveys.allSurveys || []
+
+	const {
+		data: surveyData,
+		loading: surveyLoading,
+		error: surveyError,
+	} = useQuery(GET_SURVEY, {
+		variables: { surveyId: surveyId },
+		skip: !surveyId,
+	})
+	const survey = surveyData?.survey
 
 	const selectedStatuses = filters.filter(f =>
 		Object.values(statusLabelMap).includes(f)
@@ -110,11 +121,18 @@ export function useSurvey() {
 			notifyOnNetworkStatusChange: true,
 		},
 	})
+	const mySurveys = mySurveysData?.mySurveys || null
 
 	const isRefetching = networkStatus === NetworkStatus.refetch
 	const isInitialLoading = loading && !mySurveysData
 
 	const totalCount = allSurveysData?.surveys.totalCount ?? 0
+
+	const {
+		data: categoriesData,
+		loading: loadingCategories,
+		error: errorCategories,
+	} = useQuery(GET_CATEGORIES)
 
 	const [createSurvey, { loading: isCreating, error: createError }] =
 		useMutation(CREATE_SURVEY, {
@@ -126,21 +144,18 @@ export function useSurvey() {
 			refetchQueries: [{ query: GET_SURVEYS }],
 		})
 
+	const [
+		updateSurveyStatusMutation,
+		{
+			loading: isStatusUpdating,
+			error: isStatusUpdateError,
+			reset: resetStatusUpdateError,
+		},
+	] = useMutation(UPDATE_SURVEY_STATUS)
+
 	const [doDeleteSurvey] = useMutation(DELETE_SURVEY, {
 		refetchQueries: [GET_MY_SURVEYS],
 	})
-
-	useEffect(() => {
-		if (allSurveysData && allSurveysData.surveys.allSurveys) {
-			setAllSurveys(allSurveysData.surveys.allSurveys)
-		}
-	}, [allSurveysData])
-
-	useEffect(() => {
-		if (mySurveysData && mySurveysData.mySurveys.surveys) {
-			setMySurveys(mySurveysData.mySurveys)
-		}
-	}, [mySurveysData])
 
 	const fetchSurveys = async () => {
 		await refetch()
@@ -166,6 +181,18 @@ export function useSurvey() {
 					id,
 				},
 			},
+		})
+		return result.data?.updateSurvey
+	}
+
+	const updateSurveyStatus = async (id: string, status: SurveyStatusType) => {
+		const result = await updateSurveyStatusMutation({
+			variables: { data: { id, status } },
+			refetchQueries: [
+				{ query: GET_SURVEY, variables: { surveyId: id } },
+				{ query: GET_SURVEYS },
+			],
+			awaitRefetchQueries: true,
 		})
 		return result.data?.updateSurvey
 	}
@@ -244,6 +271,9 @@ export function useSurvey() {
 	return {
 		allSurveys,
 		isFetching,
+		survey,
+		surveyLoading,
+		surveyError,
 		isCreating,
 		isUpdating,
 		createError,
@@ -261,10 +291,18 @@ export function useSurvey() {
 		filters,
 		setFilters,
 		statusLabelMap,
+		categoriesData,
+		loadingCategories,
+		errorCategories,
 		fetchSurveys,
 		addSurvey,
 		updateSurvey,
 		deleteSurvey,
 		deleteSurveys,
+
+		updateSurveyStatus,
+		isStatusUpdating,
+		isStatusUpdateError,
+		resetStatusUpdateError,
 	}
 }

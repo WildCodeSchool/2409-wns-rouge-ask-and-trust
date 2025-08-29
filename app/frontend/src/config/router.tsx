@@ -5,9 +5,11 @@
 
 import App from "@/App"
 import ProtectedRoute from "@/components/hoc/ProtectedRoute"
+import AdminRoute from "@/components/hoc/AdminRoute"
 import PublicRoute from "@/components/hoc/PublicRoute"
 import ErrorElement from "@/components/ui/ErrorElement"
 import Loader from "@/components/ui/Loader"
+import { SurveyCreatorSkeleton } from "@/pages/SurveyCreator"
 import { lazy, Suspense } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
@@ -30,6 +32,7 @@ const Contact = lazy(() => import("@/pages/Contact"))
 const SurveyUpdate = lazy(() => import("@/pages/SurveyUpdate"))
 const UserProfile = lazy(() => import("@/pages/UserProfile"))
 const SurveyResponse = lazy(() => import("@/pages/SurveyResponse"))
+const Admin = lazy(() => import("@/pages/Admin"))
 
 /**
  * Router confirmation
@@ -109,6 +112,18 @@ const router = createBrowserRouter([
 				),
 			},
 			{
+				path: "admin",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<ProtectedRoute>
+							<AdminRoute>
+								<Admin />
+							</AdminRoute>
+						</ProtectedRoute>
+					</Suspense>
+				),
+			},
+			{
 				path: "payment",
 				element: (
 					<Suspense fallback={<Loader />}>
@@ -131,7 +146,7 @@ const router = createBrowserRouter([
 			{
 				path: "survey-creator",
 				element: (
-					<Suspense fallback={<Loader />}>
+					<Suspense fallback={<SurveyCreatorSkeleton />}>
 						<ProtectedRoute>
 							<SurveyCreator />
 						</ProtectedRoute>
@@ -161,7 +176,7 @@ const router = createBrowserRouter([
 			{
 				path: "surveys/build/:id",
 				element: (
-					<Suspense fallback={<Loader />}>
+					<Suspense fallback={<SurveyCreatorSkeleton />}>
 						<ProtectedRoute>
 							<SurveyCreator />
 						</ProtectedRoute>

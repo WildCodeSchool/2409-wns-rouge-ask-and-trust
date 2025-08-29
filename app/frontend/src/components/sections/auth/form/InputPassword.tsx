@@ -38,6 +38,11 @@ export default function InputPassword<T extends UserSignForm>({
 						value: 8,
 						message: "Doit contenir au moins 8 caractères",
 					},
+					pattern: {
+						value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,255}$/,
+						message:
+							"Doit contenir 1 minuscule, 1 majuscule, 1 chiffre et 1 symbole",
+					},
 				})}
 				aria-invalid={errors.password ? "true" : "false"}
 				errorMessage={errorMessage}

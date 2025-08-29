@@ -1,117 +1,145 @@
 import { EmptyState } from "@/components/sections/canvas/empty-state"
 import { Button } from "@/components/ui/Button"
-import { ButtonsScrollControl } from "@/components/ui/ButtonsScrollControl"
-import { useQuestions } from "@/hooks/useQuestions"
-import { useToast } from "@/hooks/useToast"
+import { useScreenDetector } from "@/hooks/useScreenDetector"
+import { useScrollToElement } from "@/hooks/useScroll"
+import { cn } from "@/lib/utils"
+import { Question, QuestionType } from "@/types/types"
 import { PlusCircle } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { useParams } from "react-router-dom"
-import BuildQuestion from "../surveys/buildSurvey/question/BuildQuestion"
+import MemoizedBuildQuestion from "../surveys/buildSurvey/question/BuildQuestion"
+import { TableContentQuestions } from "./TableContentQuestions"
 
 interface CanvasProps {
-	className?: string
-	questions: { id: number }[]
-	newQuestionId: number | null
-	setNewQuestionId: (id: number | null) => void
+	onAddQuestion: (type: QuestionType | undefined) => Promise<void>
+	questions: Question[]
+	focusedQuestionId: number | null
+	setFocusedQuestionId: (id: number | null) => void
+	isCreateQuestionLoading: boolean
 }
 
 export const Canvas: React.FC<CanvasProps> = ({
-	className = "",
-	questions = [],
-	newQuestionId,
-	setNewQuestionId,
+	onAddQuestion,
+	questions,
+	focusedQuestionId,
+	setFocusedQuestionId,
+	isCreateQuestionLoading,
 }) => {
-	const {
-		addQuestion,
-		isCreateQuestionLoading,
-		createQuestionError,
-		resetCreateQuestionError,
-	} = useQuestions()
 	const { id: surveyId } = useParams()
-	const scrollContainerRef = useRef<HTMLDivElement | null>(null)
-	const [newQuestionElement, setNewQuestionElement] =
-		useState<HTMLDivElement | null>(null)
-	const { showToast } = useToast()
+	const canvasRef = useRef<HTMLDivElement>(null)
+	const questionRefs = useRef<{ [key: number]: HTMLLIElement | null }>({})
+	const { isMobile } = useScreenDetector()
+	const [highlightedQuestionId, setHighlightedQuestionId] = useState<
+		number | null
+	>(questions[0]?.id ?? null)
 
-	// @TODO fix this : should scroll in canvas and not in window
-	useEffect(() => {
-		if (newQuestionElement) {
-			newQuestionElement.scrollIntoView({
-				behavior: "smooth",
-				block: "center",
-			})
+	const resetScrollId = undefined
 
-			newQuestionElement.focus() // Focus only if new question exists
+	useScrollToElement(
+		focusedQuestionId,
+		canvasRef,
+		questionRefs,
+		resetScrollId,
+		focusedQuestionId !== null
+	)
 
-			setNewQuestionId(null)
-			setNewQuestionElement(null)
-		}
-	}, [newQuestionElement, newQuestionId, setNewQuestionId])
-
-	useEffect(() => {
-		if (createQuestionError) {
-			showToast({
-				type: "error",
-				title: "Oops, nous avons rencontré une erreur.",
-				description: "Veuillez réessayer plus tard.",
-			})
-			resetCreateQuestionError()
-		}
-	}, [createQuestionError, resetCreateQuestionError, showToast])
-
-	const handleAddQuestion = async () => {
-		if (!surveyId) return
-		const result = await addQuestion({ surveyId: Number(surveyId) })
-		if (result?.id) {
-			showToast({ type: "success", title: "Question ajoutée !" })
-			setNewQuestionId(result.id)
+	// For questions table content
+	const scrollToQuestion = (id: number) => {
+		setFocusedQuestionId(id) // focus the clicked question
+		setHighlightedQuestionId(null)
+		// Focus the question in the canvas
+		const el = questionRefs.current[id]
+		if (el) {
+			el.focus()
 		}
 	}
+
+	const showAsideComponents = !isMobile && questions && questions.length > 0
+	const isNotQuestions = !questions || questions?.length === 0
 
 	return (
 		<>
 			<div
-				ref={scrollContainerRef}
-				className={`survey-canvas ${className} flex max-h-[calc(100vh-160px)] flex-col gap-10 overflow-y-scroll px-3`}
+				ref={canvasRef}
+				className="relative flex h-full w-full flex-col gap-4 overflow-y-auto md:mx-[-0.75rem] md:px-[0.75rem]"
 			>
-				{questions.length === 0 ? (
-					<EmptyState />
+				{isNotQuestions ? (
+					<>
+						<EmptyState />
+						<ButtonAddQuestion
+							onAddQuestion={onAddQuestion}
+							loadingSpinner={isCreateQuestionLoading}
+							isMobile={isMobile}
+						/>
+					</>
 				) : (
-					questions.map(question => {
-						const isNew = newQuestionId === question.id
-						return (
-							<div
-								key={question.id}
-								ref={
-									isNew
-										? el => setNewQuestionElement(el)
-										: null
-								}
-							>
-								<BuildQuestion questionId={question.id} />
-
-								{/* <Suspense fallback={<div>Chargement...</div>}>
-									<BuildQuestionLoader
-										questionId={question.id}
+					<>
+						{questions.map((question, index) => {
+							return (
+								<li
+									className="focus-visible:border-primary-600 w-full list-none rounded-xl focus-visible:ring-2 focus-visible:outline-none"
+									tabIndex={0}
+									key={question.id}
+									ref={el => {
+										questionRefs.current[question.id] = el
+									}}
+								>
+									<MemoizedBuildQuestion
+										question={question}
+										surveyId={Number(surveyId)}
+										index={index + 1}
+										onClick={() => {
+											setHighlightedQuestionId(
+												question.id
+											)
+											setFocusedQuestionId(null)
+										}}
 									/>
-								</Suspense> */}
-							</div>
-						)
-					})
+								</li>
+							)
+						})}
+						<ButtonAddQuestion
+							onAddQuestion={onAddQuestion}
+							loadingSpinner={isCreateQuestionLoading}
+							isMobile={isMobile}
+						/>
+					</>
 				)}
-
-				<Button
-					onClick={handleAddQuestion}
-					disabled={isCreateQuestionLoading}
-					ariaLabel="Add Question"
-					icon={PlusCircle}
-					className="self-center"
-				>
-					Ajouter une question
-				</Button>
 			</div>
-
-			<ButtonsScrollControl scrollContainerRef={scrollContainerRef} />
+			{showAsideComponents && (
+				<TableContentQuestions
+					questions={questions}
+					onQuestionClick={scrollToQuestion}
+					currentQuestionId={focusedQuestionId}
+					highlightedQuestionId={highlightedQuestionId}
+				/>
+			)}
 		</>
+	)
+}
+
+const ButtonAddQuestion = ({
+	onAddQuestion,
+	loadingSpinner,
+	isMobile,
+}: {
+	onAddQuestion: (type: QuestionType | undefined) => Promise<void>
+	loadingSpinner: boolean
+	isMobile: boolean
+}) => {
+	return (
+		<Button
+			onClick={() => onAddQuestion("text")}
+			disabled={loadingSpinner}
+			ariaLabel="Add Question"
+			icon={PlusCircle}
+			loadingSpinner={loadingSpinner}
+			className={cn(
+				"self-center",
+				isMobile && `sticky right-2 bottom-2 left-2 z-10 shadow-lg`
+			)}
+		>
+			Ajouter une question
+		</Button>
 	)
 }

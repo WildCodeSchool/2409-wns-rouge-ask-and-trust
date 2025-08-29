@@ -67,7 +67,7 @@ export const ButtonScroll: React.FC<ButtonScrollProps> = ({
 			variant="outline"
 			size="square_sm"
 			className={cn(
-				"transition-opacity duration-200 ease-in-out",
+				"bg-white transition-opacity duration-200 ease-in-out",
 				isVisible
 					? "pointer-events-auto opacity-100"
 					: "pointer-events-none opacity-0",

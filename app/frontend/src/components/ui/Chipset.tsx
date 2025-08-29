@@ -28,9 +28,14 @@ const chipsetVariants = cva(
 				censored:
 					"bg-destructive-light text-destructive-dark px-2 py-1 font-bold text-base border-none",
 			},
+			size: {
+				sm: "text-sm",
+				md: "text-base px-4 py-1 ",
+			},
 		},
 		defaultVariants: {
 			variant: "primary",
+			size: "md",
 		},
 	}
 )
@@ -48,12 +53,13 @@ function Chipset({
 	state,
 	ariaLabel,
 	rounded = false,
+	size,
 	...props
 }: ChipsetProps) {
 	return (
 		<div
 			className={cn(
-				chipsetVariants({ variant, state }),
+				chipsetVariants({ variant, state, size }),
 				rounded && "rounded-full",
 				ariaLabel,
 				className

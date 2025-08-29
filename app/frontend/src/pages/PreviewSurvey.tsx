@@ -1,84 +1,62 @@
-import { Helmet } from "react-helmet"
+import { withSEO } from "@/components/hoc/withSEO"
 import QuestionPreview from "@/components/sections/preview/QuestionPreview"
-import { useSurvey } from "@/hooks/useSurvey"
-import { Question } from "@/types/types"
-import {
-	mockSurvey,
-	SurveyPreview,
-} from "@/components/sections/preview/mockSurvey"
-import { useParams } from "react-router-dom"
 import { Badge } from "@/components/ui/Badge"
 import { Callout } from "@/components/ui/Callout"
+import { useSurvey } from "@/hooks/useSurvey"
+import { Question } from "@/types/types"
+import { useParams } from "react-router-dom"
+import { ArrowLeft } from "lucide-react"
+import { Button } from "@/components/ui/Button"
 
-export default function PreviewSurveyPage() {
+function PreviewSurveyPage() {
 	const { id } = useParams<{ id: string }>()
-	const { allSurveys, isFetching } = useSurvey()
+	// @TODO add a better error and loading components
+	const { survey, surveyLoading, surveyError } = useSurvey(id)
 
-	// Backend allSurveys only
-	const backendSurveys: SurveyPreview[] = allSurveys.map(s => ({
-		...s,
-		public: true,
-		questions: [],
-	}))
-
-	// Select survey by ID or use mock as default
-	const selectedSurvey =
-		id === "template"
-			? mockSurvey
-			: backendSurveys.find((_, index) => index.toString() === id) ||
-				mockSurvey
-
-	const questions = selectedSurvey.questions
+	if (surveyError) {
+		return <p>erreur pour fetch l'enquête</p>
+	}
 
 	return (
-		<>
-			<Helmet>
-				<title>Page de prévisualisation</title>
-				<meta
-					name="description"
-					content="Page de prévisualisation d'une nouvelle enquête."
-				/>
-				<meta name="robots" content="noindex, nofollow" />
-				<meta property="og:title" content="Prévisualiser une enquête" />
-				<meta
-					property="og:description"
-					content="Page de prévisualisation d'une nouvelle enquête."
-				/>
-				<meta property="og:type" content="website" />
-				<meta name="twitter:card" content="summary" />
-				<meta
-					name="twitter:title"
-					content="Prévisualiser une enquête"
-				/>
-				<meta
-					name="twitter:description"
-					content="Page de prévisualisation d'une nouvelle enquête."
-				/>
-			</Helmet>
+		survey && (
 			<div className="mx-auto max-w-2xl rounded bg-white p-8 shadow">
+				<div className="mb-4 flex items-center justify-between gap-5">
+					<Button
+						variant="ghost"
+						size="sm"
+						to={`/surveys/build/${id}`}
+						icon={ArrowLeft}
+						ariaLabel="Retour sur la page de modification de l'enquête"
+					>
+						Retour
+					</Button>
+				</div>
 				<h1 className="mb-4 flex items-center gap-2 text-2xl font-bold">
-					{selectedSurvey.title}
+					{survey.title}
 					<Badge variant="secondary">
-						{typeof selectedSurvey.category === "object"
-							? selectedSurvey.category.name
-							: selectedSurvey.category}
+						{typeof survey.category === "object"
+							? survey.category.name
+							: survey.category}
 					</Badge>
 				</h1>
 				<Callout type="info" title="Description">
-					{selectedSurvey.description}
+					{survey.description}
 				</Callout>
 				<h2 className="mb-4 text-lg font-bold">Questions :</h2>
 				{/* Render questions */}
-				{isFetching ? (
+				{surveyLoading ? (
 					<p>Chargement...</p>
-				) : Array.isArray(questions) && questions.length > 0 ? (
-					questions.map((q: Question) => (
+				) : survey.questions && survey.questions.length > 0 ? (
+					survey.questions.map((q: Question) => (
 						<QuestionPreview key={q.id} question={q} />
 					))
 				) : (
 					<p>Aucune question à afficher.</p>
 				)}
 			</div>
-		</>
+		)
 	)
 }
+
+const PreviewSurveyWithSEO = withSEO(PreviewSurveyPage, "previewSurvey")
+export default PreviewSurveyWithSEO

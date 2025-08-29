@@ -28,7 +28,7 @@ export const register = async (
 
 	// Create a new instance of user and save it in the database
 	try {
-		const user = User.create({
+		const user = userRepository.create({
 			email,
 			hashedPassword,
 			firstname,
@@ -36,7 +36,7 @@ export const register = async (
 			role,
 		})
 
-		await user.save()
+		await userRepository.save(user)
 
 		return user
 	} catch (error) {
@@ -136,7 +136,7 @@ export const whoami = async (cookies: Cookies): Promise<User | null> => {
 		}
 
 		return user
-	} catch (error) {
+	} catch {
 		throw new AppError("Invalid token", 401, "UnauthorizedError")
 	}
 }

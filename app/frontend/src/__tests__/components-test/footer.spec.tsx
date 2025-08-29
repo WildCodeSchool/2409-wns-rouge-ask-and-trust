@@ -1,9 +1,17 @@
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest"
 import { BrowserRouter } from "react-router-dom"
 import { render, screen } from "@testing-library/react"
-import Footer, { FooterLink } from "@/components/sections/footer/Footer"
+import Footer from "@/components/sections/footer/Footer"
+import Links from "@/components/ui/Links"
 import userEvent from "@testing-library/user-event"
 import { useAuthContext } from "@/hooks/useAuthContext"
+
+// Mock ResizeObserver
+class ResizeObserverMock {
+	observe() {}
+	unobserve() {}
+	disconnect() {}
+}
 
 // Wrapper require in react router
 const FooterWrapper = () => (
@@ -16,7 +24,13 @@ vi.mock("@/hooks/useAuthContext", () => ({
 	useAuthContext: vi.fn(),
 }))
 
+// Mock du hook useHeightVariable
+vi.mock("@/hooks/useHeightVariable", () => ({
+	useHeightVariable: vi.fn(),
+}))
+
 beforeEach(() => {
+	global.ResizeObserver = ResizeObserverMock
 	;(useAuthContext as Mock).mockReturnValue({ user: null })
 })
 
@@ -26,14 +40,10 @@ describe("footer Components", () => {
 
 		expect(screen.getByRole("contentinfo")).toBeInTheDocument()
 		expect(
-			screen.getByRole("navigation", { name: "Plan du site" })
-		).toBeInTheDocument()
-		expect(
 			screen.getByRole("navigation", {
-				name: "Navigation du pied de page",
+				name: "Navigation du site",
 			})
 		).toBeInTheDocument()
-		expect(screen.getByRole("separator")).toBeInTheDocument()
 	})
 
 	it("should render all navigation links correctly", () => {
@@ -53,9 +63,9 @@ describe("footer Components", () => {
 		)
 		expect(
 			screen.getByRole("navigation", {
-				name: "Navigation du pied de page",
+				name: "Navigation du site",
 			})
-		).toHaveAttribute("aria-label", "Navigation du pied de page")
+		).toHaveAttribute("aria-label", "Navigation du site")
 	})
 
 	it("should display current year in copyright", () => {
@@ -70,19 +80,19 @@ describe("footer Components", () => {
 
 		const user = userEvent.setup()
 		const contactLink = screen.getByRole("link", {
-			name: "Créer un compte",
+			name: "Se connecter",
 		})
 		await user.click(contactLink)
-		expect(window.location.pathname).toBe("/register")
+		expect(window.location.pathname).toBe("/connexion")
 	})
 
-	it("should not display 'Créer un compte' link when user is connected", () => {
+	it("should not display 'S'inscrire' link when user is connected", () => {
 		;(useAuthContext as Mock).mockReturnValue({ user: { role: "admin" } })
 
 		render(<FooterWrapper />)
 
 		expect(
-			screen.queryByRole("link", { name: "Créer un compte" })
+			screen.queryByRole("link", { name: "S'inscrire" })
 		).not.toBeInTheDocument()
 	})
 
@@ -96,7 +106,7 @@ describe("footer Components", () => {
 
 		render(
 			<BrowserRouter>
-				<FooterLink {...externalLink} />
+				<Links {...externalLink} />
 			</BrowserRouter>
 		)
 
@@ -116,7 +126,7 @@ describe("footer Components", () => {
 
 		render(
 			<BrowserRouter>
-				<FooterLink {...noHttpsLink} />
+				<Links {...noHttpsLink} />
 			</BrowserRouter>
 		)
 
@@ -137,7 +147,7 @@ describe("footer Components", () => {
 
 		render(
 			<BrowserRouter>
-				<FooterLink {...httpsLink} />
+				<Links {...httpsLink} />
 			</BrowserRouter>
 		)
 

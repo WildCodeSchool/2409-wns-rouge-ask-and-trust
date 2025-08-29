@@ -11,16 +11,18 @@ function App() {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 
 	const renderHeader = () => {
-		if (location.pathname.startsWith("/surveys")) {
-			return <HeaderSurveys showCategories />
-		} else if (location.pathname.startsWith("/profil")) {
-			return <HeaderSurveys />
+		switch (location.pathname) {
+			case "/":
+				return <Header />
+			case "/surveys":
+				return <HeaderSurveys isInSurveys />
+			default:
+				return <HeaderSurveys />
 		}
-		return <Header />
 	}
 
 	const renderFooter = () => {
-		if (location.pathname === "/surveys" && isHorizontalCompact) {
+		if (location.pathname !== "/" && isHorizontalCompact) {
 			return <FooterMobile />
 		}
 		return <Footer />
@@ -31,7 +33,7 @@ function App() {
 			<Toaster richColors position="bottom-center" closeButton />
 			{renderHeader()}
 			{/* @TODO calc height : fill screen minus Header height. On mobile : minus Header height and Navbar height. */}
-			<main className="bg-bg mb-20" ref={rootRef}>
+			<main className="bg-bg" ref={rootRef}>
 				<div className="h-full">
 					<Outlet />
 				</div>

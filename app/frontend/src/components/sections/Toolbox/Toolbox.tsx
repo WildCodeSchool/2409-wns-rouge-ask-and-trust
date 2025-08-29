@@ -15,19 +15,15 @@ import { useState } from "react"
  */
 export function Toolbox({
 	onAddQuestion,
-	className = "",
 }: {
 	onAddQuestion: (type: QuestionType | undefined) => void
-	className?: string
 }) {
 	const [searchValue, setSearchValue] = useState<string>("")
-
-	// Inject the search value into the search input
 	const categories: ToolboxCategory[] = toolboxCategories.map(category => ({
 		...category,
 		items: category.items.map(item => ({
 			...item,
-			onClick: () => onAddQuestion(item.onClickType), // @TODO update this question
+			onClick: () => onAddQuestion(item.onClickType),
 		})),
 	}))
 
@@ -35,21 +31,18 @@ export function Toolbox({
 	const allItems: ToolboxItem[] = categories.flatMap(
 		category => category.items
 	)
-
 	return (
-		<div className={`survey-toolbox ${className}`}>
-			<AdaptiveToolbox
-				categories={categories}
-				items={allItems}
-				showSearch={true}
-				searchManager={{
-					value: searchValue,
-					onChange: setSearchValue,
-					placeholder: "Rechercher un élément...",
-				}}
-				noResultsText="Aucun résultat trouvé"
-			/>
-		</div>
+		<AdaptiveToolbox
+			categories={categories}
+			items={allItems}
+			showSearch={true}
+			searchManager={{
+				value: searchValue,
+				onChange: setSearchValue,
+				placeholder: "Rechercher un élément...",
+			}}
+			noResultsText="Aucun résultat trouvé"
+		/>
 	)
 }
 

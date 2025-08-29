@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority"
-import { LucideIcon } from "lucide-react"
+import { Loader2, LucideIcon } from "lucide-react"
 import { ButtonHTMLAttributes, forwardRef, Ref } from "react"
 import { Link } from "react-router-dom"
 
@@ -26,7 +26,7 @@ const buttonVariants = cva(
 				destructive:
 					"bg-destructive-medium border-destructive-medium text-white hover:bg-white hover:text-destructive-medium focus:ring-destructive-medium",
 				disabled:
-					"bg-black-400 border-black-400 text-white focus:ring-black-400 pointer-events-none cursor-not-allowed",
+					"bg-black-50 border-black-50 text-black-500 focus:ring-black-400 pointer-events-none cursor-not-allowed",
 				ghost: "bg-transparent border-none text-primary-700 hover:underline focus:ring-primary-700",
 				ghost_destructive:
 					"bg-transparent border-none text-destructive-medium hover:underline focus:ring-primary-700 active:outline-none hover:bg-destructive-medium hover:text-white active:bg-transparent",
@@ -35,8 +35,8 @@ const buttonVariants = cva(
 				sm: "px-3 py-1 text-sm",
 				md: "px-5 py-2 text-base",
 				lg: "px-6 py-3 text-lg",
-				square: "w-12 h-12",
-				square_sm: "w-10 h-10",
+				square: "w-12 aspect-square",
+				square_sm: "w-10 aspect-square",
 			},
 			nav: {
 				selected: "bg-white text-primary-700",
@@ -63,6 +63,7 @@ export interface ButtonProps
 	onClick?: React.MouseEventHandler
 	role?: "button" | "submit" | "link"
 	to?: string
+	loadingSpinner?: boolean
 }
 
 const Button = forwardRef<HTMLElement, ButtonProps>(
@@ -79,6 +80,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 			role = "button",
 			children,
 			to,
+			loadingSpinner = false,
 			onClick,
 			...props
 		},
@@ -92,19 +94,17 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 			isNavBtnSelected &&
 				"text-primary-700 hover:bg-primary-default bg-white hover:text-white",
 			fullWidth && "w-full",
+			"whitespace-nowrap",
 			className
 		)
 
 		const childrenContent = (
-			<>
-				{Icon && iconPosition === "left" && (
-					<Icon className="h-5 w-5" aria-hidden />
-				)}
-				{children}
-				{Icon && iconPosition === "right" && (
-					<Icon className="h-5 w-5" aria-hidden />
-				)}
-			</>
+			<ButtonContent
+				Icon={Icon}
+				iconPosition={iconPosition}
+				children={children}
+				loadingSpinner={loadingSpinner}
+			/>
 		)
 
 		if (to) {
@@ -140,3 +140,45 @@ const Button = forwardRef<HTMLElement, ButtonProps>(
 Button.displayName = "Button"
 
 export { Button, buttonVariants }
+
+const ButtonContent = ({
+	Icon,
+	iconPosition,
+	children,
+	loadingSpinner,
+}: {
+	Icon?: LucideIcon
+	iconPosition: "left" | "right"
+	children: React.ReactNode
+	loadingSpinner?: boolean
+}) => {
+	const Spinner = <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+
+	return (
+		<>
+			{/* Icon left */}
+			{Icon &&
+				iconPosition === "left" &&
+				(loadingSpinner ? (
+					Spinner
+				) : (
+					<Icon className="h-5 w-5 shrink-0" aria-hidden />
+				))}
+
+			{/* Label or spinner if no icon */}
+			{!Icon && (loadingSpinner ? Spinner : children)}
+
+			{/* Icon right */}
+			{Icon &&
+				iconPosition === "right" &&
+				(loadingSpinner ? (
+					Spinner
+				) : (
+					<Icon className="h-5 w-5 shrink-0" aria-hidden />
+				))}
+
+			{/* Always show label if icon exists */}
+			{Icon && children}
+		</>
+	)
+}

@@ -1,4 +1,5 @@
 import { DataSource } from "typeorm"
+import path from "path"
 
 const dataSource = new DataSource({
 	type: "postgres",
@@ -7,11 +8,12 @@ const dataSource = new DataSource({
 	username: process.env.POSTGRES_USER,
 	password: process.env.POSTGRES_PASSWORD,
 	database: process.env.POSTGRES_DB,
-	entities: ["./src/database/entities/**/*.ts"],
-	synchronize: true,
-	migrations: ["./src/database/migrations/*.ts"],
+	entities: [path.join(__dirname, "../entities/**/*.{ts,js}")],
+	synchronize: process.env.IS_DEV === "true", // in prod environment, IS_DEV is false and Typeorm runs migrations scripts.
+	migrations: [path.join(__dirname, "../migrations/*.{ts,js}")],
 	migrationsTableName: "migrations",
 	logging: true,
+	migrationsRun: process.env.IS_DEV !== "true", // Run migrations only in production (IS_DEV=false)
 })
 
 export default dataSource

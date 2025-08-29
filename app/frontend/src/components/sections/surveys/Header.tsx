@@ -1,39 +1,39 @@
+import { Button } from "@/components/ui/Button"
+import { useAuthContext } from "@/hooks/useAuthContext"
+import { useHeightVariable } from "@/hooks/useHeightVariable"
+import { useResponsivity } from "@/hooks/useResponsivity"
+import { cn, slugify } from "@/lib/utils"
+import { SurveyCategoryType } from "@/types/types"
 import { useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
+import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
 import logoFooter from "/logos/logo-footer.svg"
-import { Button } from "@/components/ui/Button"
-import NavAndAuthButtons from "./NavAndAuthButtons"
-import { useAuthContext } from "@/hooks/useAuthContext"
-import { cn, slugify } from "@/lib/utils"
-import { useQuery } from "@apollo/client"
-import { GET_CATEGORIES } from "@/graphql/survey/category"
-import { SurveyCategoryType } from "@/types/types"
-import { useResponsivity } from "@/hooks/useResponsivity"
+import { useSurvey } from "@/hooks/useSurvey"
 
-export default function Header({ showCategories = false }) {
+export default function Header({ isInSurveys = false }) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const [searchParams, setSearchParams] = useSearchParams()
+	const { categoriesData, loadingCategories, errorCategories } = useSurvey()
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(
 		null
 	)
 	const { user } = useAuthContext()
 
-	const { data: categoriesData, loading: loadingCategories } =
-		useQuery(GET_CATEGORIES)
-	const categories = categoriesData?.categories || []
+	// Update header's height variable if change
+	// header's height is different depending on pages
+	useHeightVariable(rootRef, "--header-height")
 
+	const categories = categoriesData?.categories || []
 	const filterByCategory = (categorySlug: string, categoryId: string) => {
 		const newParams = new URLSearchParams(searchParams)
 
 		if (newParams.get("category") === categorySlug) {
 			newParams.delete("category")
 			newParams.delete("categoryId")
-			newParams.set("page", "1")
 			setSelectedCategory(null)
 		} else {
 			newParams.set("category", categorySlug)
 			newParams.set("categoryId", categoryId)
-			newParams.set("page", "1")
 			setSelectedCategory(categorySlug)
 		}
 
@@ -43,10 +43,7 @@ export default function Header({ showCategories = false }) {
 	return (
 		<header
 			lang="fr"
-			className={cn(
-				"bg-primary-600 flex flex-col gap-9 px-6 py-5",
-				isHorizontalCompact ? "mb-14" : "mb-20"
-			)}
+			className={"bg-primary-600 flex flex-col gap-9 px-6 py-5"}
 			role="contentinfo"
 			aria-label="En-tête de page"
 			ref={rootRef}
@@ -62,13 +59,23 @@ export default function Header({ showCategories = false }) {
 						className="w-full"
 					/>
 				</Link>
-				<NavAndAuthButtons isHorizontalCompact={isHorizontalCompact} />
+				<NavAndAuthButtons
+					isHorizontalCompact={isHorizontalCompact}
+					isInSurveys={isInSurveys}
+					isInHeader
+				/>
 			</div>
-			{showCategories && (
+			{isInSurveys && (
 				<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3 pl-1">
 					{loadingCategories && (
 						<p className="text-white">
 							Chargement des catégories...
+						</p>
+					)}
+					{errorCategories && (
+						<p className="text-white">
+							Un problème est survenu lors du chargement des
+							catégories...
 						</p>
 					)}
 					{categories.map((category: SurveyCategoryType) => {

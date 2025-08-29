@@ -9,7 +9,7 @@
 import { useState } from "react"
 import { useMutation } from "@apollo/client"
 import { CREATE_PAYMENT_INTENT } from "@/graphql/payment"
-import { Helmet } from "react-helmet"
+import { withSEO } from "@/components/hoc/withSEO"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/Button"
 import { Package } from "@/types/types"
@@ -38,7 +38,7 @@ const PACKS: Package[] = [
  *
  * @component
  */
-export default function Payment() {
+function Payment() {
 	// State for error display and loading status
 	const [error, setError] = useState<string>("")
 	const [loading, setLoading] = useState<boolean>(false)
@@ -96,79 +96,56 @@ export default function Payment() {
 	}
 
 	return (
-		<>
-			{/* SEO and meta tags for the payment page */}
-			<Helmet>
-				<title>Payment</title>
-				<meta
-					name="description"
-					content="Page de paiement de l'enquête."
-				/>
-				<meta name="robots" content="noindex, nofollow" />
-				{/* Open Graph */}
-				<meta property="og:title" content="Paiement de l'enquête" />
-				<meta
-					property="og:description"
-					content="Page de paiement de l'enquête."
-				/>
-				<meta property="og:type" content="website" />
-				{/* Twitter Card */}
-				<meta name="twitter:card" content="summary" />
-				<meta name="twitter:title" content="Paiement de l'enquête" />
-				<meta
-					name="twitter:description"
-					content="Page de paiement de l'enquête."
-				/>
-			</Helmet>
-
-			<div className="flex min-h-[80vh] items-center justify-center bg-gray-50 px-4 py-8">
-				<div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
-					<h1 className="text-black-default mb-4 text-center text-3xl font-bold">
-						Paiement de Pack d'enquêtes
-					</h1>
-					<div className="mb-6 flex flex-col gap-4">
-						{PACKS.map((pack, idx) => (
-							<button
-								key={pack.label}
-								type="button"
-								className={`w-full rounded-lg border-2 px-4 py-3 text-left transition-all duration-150 ${
-									selectedPack === idx
-										? "border-primary-700 bg-primary-50 text-primary-700 font-bold shadow"
-										: "text-black-default hover:border-primary-700 border-gray-200 bg-white"
-								}`}
-								onClick={() => setSelectedPack(idx)}
-							>
-								<div className="flex items-center justify-between">
-									<span>{pack.label}</span>
-									<span className="text-lg font-bold">
-										{pack.price}
-									</span>
-								</div>
-							</button>
-						))}
-					</div>
-					<div className="flex flex-col items-center gap-4">
-						<Button
-							className="bg-primary-700 mt-4 w-full py-3 text-lg"
-							onClick={handleCreatePayment}
-							disabled={loading}
-							ariaLabel={`Payer le ${PACKS[selectedPack].label}`}
+		<div className="flex h-[calc(100vh_-_var(--header-height))] items-center justify-center bg-gray-50 px-4 max-md:pb-[calc(var(--footer-height))]">
+			<div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
+				<h1 className="text-black-default mb-4 text-center text-3xl font-bold">
+					Paiement de Pack d'enquêtes
+				</h1>
+				<div className="mb-6 flex flex-col gap-4">
+					{PACKS.map((pack, idx) => (
+						<button
+							key={pack.label}
+							type="button"
+							className={`w-full rounded-lg border-2 px-4 py-3 text-left transition-all duration-150 ${
+								selectedPack === idx
+									? "border-primary-700 bg-primary-50 text-primary-700 font-bold shadow"
+									: "text-black-default hover:border-primary-700 border-gray-200 bg-white"
+							}`}
+							onClick={() => setSelectedPack(idx)}
 						>
-							{loading
-								? "Création en cours..."
-								: `Payer ${PACKS[selectedPack].price}`}
-						</Button>
-						{error && (
-							<div className="text-destructive-medium mt-4 text-center">
-								{error}
+							<div className="flex items-center justify-between">
+								<span>{pack.label}</span>
+								<span className="text-lg font-bold">
+									{pack.price}
+								</span>
 							</div>
-						)}
-					</div>
-					<div className="text-black-400 mt-6 text-center text-sm">
-						Paiement 100% sécurisé via Stripe
-					</div>
+						</button>
+					))}
+				</div>
+				<div className="flex flex-col items-center gap-4">
+					<Button
+						className="bg-primary-700 mt-4 w-full py-3 text-lg"
+						onClick={handleCreatePayment}
+						disabled={loading}
+						ariaLabel={`Payer le ${PACKS[selectedPack].label}`}
+					>
+						{loading
+							? "Création en cours..."
+							: `Payer ${PACKS[selectedPack].price}`}
+					</Button>
+					{error && (
+						<div className="text-destructive-medium mt-4 text-center">
+							{error}
+						</div>
+					)}
+				</div>
+				<div className="text-black-400 mt-6 text-center text-sm">
+					Paiement 100% sécurisé via Stripe
 				</div>
 			</div>
-		</>
+		</div>
 	)
 }
+
+const PaymentWithSEO = withSEO(Payment, "payment")
+export default PaymentWithSEO

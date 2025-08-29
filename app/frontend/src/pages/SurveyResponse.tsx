@@ -1,32 +1,21 @@
 import { GET_SURVEY } from "@/graphql/survey/survey"
 import { useQuery } from "@apollo/client"
-import { Helmet } from "react-helmet"
-import { useNavigate, useParams } from "react-router-dom"
+import { withSEO, useDynamicSEO } from "@/components/hoc/withSEO"
+import { useParams } from "react-router-dom"
 import { Badge } from "@/components/ui/Badge"
 import { Callout } from "@/components/ui/Callout"
 import { Button } from "@/components/ui/Button"
 import { ArrowLeft } from "lucide-react"
 import SurveyResponseForm from "@/components/sections/response/SurveyResponseForm"
-import { Question } from "@/types/types"
+import { SurveyWithCategory } from "@/types/types"
+import { cn } from "@/lib/utils"
+import { useAuthContext } from "@/hooks/useAuthContext"
+import { useCopyClipboard } from "@/hooks/useCopyClipboard"
 
-type SurveyWithCategory = {
-	id: number
-	title: string
-	description: string
-	public: boolean
-	category: {
-		id: number
-		name: string
-	}
-	questions: Question[]
-	status: string
-	createdAt: string
-	updatedAt: string
-}
-
-export default function SurveyResponse() {
+function SurveyResponse() {
 	const { id: surveyId } = useParams<{ id: string }>()
-	const navigate = useNavigate()
+	const { user } = useAuthContext()
+	const { copyToClipboard } = useCopyClipboard()
 
 	const {
 		data: surveyData,
@@ -38,6 +27,15 @@ export default function SurveyResponse() {
 	})
 
 	const survey = surveyData?.survey
+	const isOwner = user && survey && user.id === survey.user.id
+
+	// Update SEO dynamically when survey data is loaded
+	useDynamicSEO(
+		"surveyResponse",
+		survey
+			? { title: survey.title, description: survey.description }
+			: undefined
+	)
 
 	if (surveyLoading) {
 		return (
@@ -57,81 +55,94 @@ export default function SurveyResponse() {
 		throw new Response("Survey not found", { status: 404 })
 	}
 
+	const questions = survey.questions?.length > 0
+
+	const onClickCopy = () => {
+		if (!surveyId) return
+
+		const surveyUrl = `${window.location.origin}/surveys/respond/${surveyId}`
+		copyToClipboard(surveyUrl)
+	}
+
 	return (
-		<>
-			<Helmet>
-				<title>{survey.title} - Répondre à l'enquête</title>
-				<meta
-					name="description"
-					content={`Répondez à l'enquête: ${survey.description}`}
-				/>
-				<meta name="robots" content="noindex, nofollow" />
-				<meta
-					property="og:title"
-					content={`${survey.title} - Enquête`}
-				/>
-				<meta property="og:description" content={survey.description} />
-				<meta property="og:type" content="website" />
-				<meta name="twitter:card" content="summary" />
-				<meta
-					name="twitter:title"
-					content={`${survey.title} - Enquête`}
-				/>
-				<meta name="twitter:description" content={survey.description} />
-			</Helmet>
-
-			<div className="bg-black-50 min-h-screen">
-				{/* Header Section */}
-				<section className="bg-white shadow-sm">
-					<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
-						<div className="mb-4 flex items-center gap-4">
+		<div
+			className={cn(
+				"bg-black-50",
+				!questions && "h-[calc(100vh_-_var(--header-height))]"
+			)}
+		>
+			{/* Header Section */}
+			<section className="bg-white shadow-sm">
+				<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
+					<div className="mb-4 flex items-center justify-between gap-4">
+						<Button
+							variant="ghost"
+							size="sm"
+							to="/surveys"
+							icon={ArrowLeft}
+							ariaLabel="Retour sur la page d'accueil"
+						>
+							Retour
+						</Button>
+						<div className="flex items-center justify-center gap-4">
 							<Button
-								variant="ghost"
+								variant="secondary"
+								ariaLabel="Partager l'enquête"
 								size="sm"
-								onClick={() => navigate(-1)}
-								icon={ArrowLeft}
-								ariaLabel="Retour"
+								onClick={onClickCopy}
 							>
-								Retour
+								Partager
 							</Button>
+							{isOwner && (
+								<Button
+									to={`/surveys/build/${surveyId}`}
+									ariaLabel="Aller sur la page de modification de l'enquête"
+									size="sm"
+								>
+									Modifier l'enquête
+								</Button>
+							)}
 						</div>
+					</div>
 
-						<div className="mb-4 flex items-center gap-3">
-							<h1 className="text-fg text-3xl font-bold">
-								{survey.title}
-							</h1>
-							<Badge variant="secondary">
-								{survey.category.name}
-							</Badge>
+					<div className="mb-4 flex items-center gap-3">
+						<h1 className="text-fg text-3xl font-bold">
+							{survey.title}
+						</h1>
+						<Badge variant="secondary">
+							{survey.category.name}
+						</Badge>
+					</div>
+
+					{survey.description && (
+						<Callout type="info" title="Description">
+							{survey.description}
+						</Callout>
+					)}
+				</div>
+			</section>
+
+			{/* Survey Content */}
+			<section className="mx-auto max-w-4xl px-4 py-8 max-md:pb-[calc(var(--footer-height)+32px)] sm:px-6 lg:px-8">
+				<div className="rounded-lg bg-white p-6 shadow">
+					{questions ? (
+						<SurveyResponseForm
+							surveyId={survey.id}
+							questions={survey.questions}
+						/>
+					) : (
+						<div className="py-12 text-center">
+							<p className="text-destructive-medium">
+								Cette enquête ne contient pas encore de
+								questions.
+							</p>
 						</div>
-
-						{survey.description && (
-							<Callout type="info" title="Description">
-								{survey.description}
-							</Callout>
-						)}
-					</div>
-				</section>
-
-				{/* Survey Content */}
-				<section className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-					<div className="rounded-lg bg-white p-6 shadow">
-						{survey.questions?.length > 0 ? (
-							<SurveyResponseForm
-								surveyId={survey.id}
-								questions={survey.questions}
-							/>
-						) : (
-							<div className="py-12 text-center">
-								<p className="text-destructive-medium">
-									Cette enquête ne contient pas encore de
-									questions.
-								</p>
-							</div>
-						)}
-					</div>
-				</section>
-			</div>
-		</>
+					)}
+				</div>
+			</section>
+		</div>
 	)
 }
+
+const SurveyResponseWithSEO = withSEO(SurveyResponse, "surveyResponse")
+export default SurveyResponseWithSEO

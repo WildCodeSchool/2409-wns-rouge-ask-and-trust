@@ -86,9 +86,9 @@ export class Category extends BaseEntity {
 	 * @description
 	 * Many relation to the `User` entity.
 	 */
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, { nullable: true })
 	@Field(() => User, { nullable: true })
-	createdBy!: User
+	createdBy?: User
 
 	/**
 	 * Timestamp when the category was created

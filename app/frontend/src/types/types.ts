@@ -1,7 +1,7 @@
-import { LucideIcon } from "lucide-react"
-import { UserRole } from "./../../../backend/src/types/types"
-import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
 import { CheckedState } from "@radix-ui/react-checkbox"
+import { LucideIcon } from "lucide-react"
+import { Control, FieldErrors, UseFormRegister } from "react-hook-form"
+import { UserRole } from "./../../../backend/src/types/types"
 
 export type AuthContextProps = {
 	user: User | null
@@ -27,6 +27,7 @@ export interface LinksType {
 	label: string
 	category: string
 	ariaLabel: string
+	mobileFooter?: boolean
 	Icon?: LucideIcon
 }
 
@@ -53,17 +54,20 @@ export interface ErrorLayoutProps {
 	children: React.ReactNode
 }
 
-export interface HeaderMobileMenuProps {
-	showMenu: boolean
-	handleShowMenu: () => void
-	headerLinks: readonly LinksType[]
+export interface NavAndAuthButtonsProps {
+	links?: readonly LinksType[]
+	isHorizontalCompact?: boolean
+	handleShowMenu?: () => void
+	isInSurveys?: boolean
+	showMenu?: boolean
+	isInHeader?: boolean
+	isInFooter?: boolean
 }
 
-export interface NavAndAuthButtonsProps {
-	headerLinks: readonly LinksType[]
-	isHorizontalCompact: boolean
-	handleShowMenu?: () => void
-}
+export type AuthButtonsProps = Pick<
+	NavAndAuthButtonsProps,
+	"isHorizontalCompact" | "isInHeader" | "isInFooter"
+>
 
 export type SurveyCategoryType = {
 	id: string
@@ -78,6 +82,9 @@ export interface SurveyCardType {
 	category: SurveyCategoryType
 	estimatedDuration: number
 	availableDuration: number
+	status?: string
+	user?: User
+	isOwner?: boolean
 }
 
 export type AllSurveysResult = {
@@ -114,17 +121,6 @@ export type ToolboxItem = {
 	onClick?: () => void
 }
 
-export interface ToolboxProps {
-	className?: string
-	items?: ToolboxItem[]
-	categories?: ToolboxCategory[]
-	showSearch?: boolean
-	searchManager?: SearchManager
-	compactThreshold?: number
-	horizontalThreshold?: number
-	noResultsText?: string
-}
-
 export interface SearchManager {
 	value: string
 	onChange: (value: string) => void
@@ -137,9 +133,19 @@ export interface Survey {
 	description: string
 	public: boolean
 	category: number | string
-	questions: { id: number }[]
+	status: SurveyStatusType
+	questions: Question[]
 	user: User
 }
+
+export const SurveyStatus = {
+	Draft: "draft",
+	Published: "published",
+	Archived: "archived",
+	Censored: "censored",
+} as const
+
+export type SurveyStatusType = (typeof SurveyStatus)[keyof typeof SurveyStatus]
 
 export type CreateSurveyInput = Survey
 
@@ -308,7 +314,6 @@ export type SurveyTableFilterProps = {
 export type SurveyDurationFilterProps = {
 	sortTimeOption: string
 	setSortTimeOption: (filters: string) => void
-	isHorizontalCompact: boolean
 }
 
 export type DateSortFilter = "Plus récente" | "Plus ancienne"
@@ -327,4 +332,31 @@ export interface SurveyResponseData {
 
 export interface SurveyResponseFormData {
 	[key: string]: string | string[] | boolean
+}
+
+export type SurveyWithCategory = {
+	id: number
+	title: string
+	description: string
+	public: boolean
+	category: {
+		id: number
+		name: string
+	}
+	questions: Question[]
+	status: string
+	user: User
+	createdAt: string
+	updatedAt: string
+}
+
+export type RawUser = {
+	id: number | string
+	email: string
+	firstname: string
+	lastname: string
+	role: string
+	createdAt?: string
+	updatedAt?: string
+	surveys?: { id: number | string }[]
 }
