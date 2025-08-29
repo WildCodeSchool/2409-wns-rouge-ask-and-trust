@@ -320,35 +320,66 @@ function SurveyButtons({
 		isStatusUpdateError,
 	])
 
+	const viewConfig: Partial<
+		Record<
+			SurveyStatusType,
+			{ label: string; ariaLabel: string; path: string }
+		>
+	> = {
+		[SurveyStatus.Draft]: {
+			label: "Aperçu de l'enquête",
+			ariaLabel: "Aperçu de l'enquête",
+			path: `/surveys/preview/${surveyId}`,
+		},
+		[SurveyStatus.Published]: {
+			label: "Voir l'enquête",
+			ariaLabel: "Voir l'enquête",
+			path: `/surveys/respond/${surveyId}`,
+		},
+	}
+
+	const actionConfig: Partial<
+		Record<
+			SurveyStatusType,
+			{ label: string; ariaLabel: string; onClick: () => void }
+		>
+	> = {
+		[SurveyStatus.Draft]: {
+			label: "Publier",
+			ariaLabel: "Publier l'enquête",
+			onClick: onPublishSurvey,
+		},
+		[SurveyStatus.Published]: {
+			label: "Partager",
+			ariaLabel: "Partager l'enquête",
+			onClick: onClickCopy,
+		},
+	}
+
+	const currentView = viewConfig[status ?? SurveyStatus.Draft]
+	const currentAction = actionConfig[status ?? SurveyStatus.Draft]
+
+	if (!currentView || !currentAction) return null
+
 	return (
 		<div className="flex justify-end gap-2">
 			<Button
 				variant="outline"
-				ariaLabel="Voir l'enquête"
+				ariaLabel={currentView.ariaLabel}
 				size="sm"
-				to={`/surveys/respond/${surveyId}`}
+				to={currentView.path}
 			>
-				Voir l'enquête
+				{currentView.label}
 			</Button>
-			{status === SurveyStatus.Draft ? (
-				<Button
-					variant="primary"
-					ariaLabel="Publier l'enquête"
-					size="sm"
-					onClick={onPublishSurvey}
-				>
-					Publier
-				</Button>
-			) : (
-				<Button
-					variant="primary"
-					ariaLabel="Partager l'enquête"
-					size="sm"
-					onClick={onClickCopy}
-				>
-					Partager
-				</Button>
-			)}
+
+			<Button
+				variant="primary"
+				ariaLabel={currentAction.ariaLabel}
+				size="sm"
+				onClick={currentAction.onClick}
+			>
+				{currentAction.label}
+			</Button>
 		</div>
 	)
 }
