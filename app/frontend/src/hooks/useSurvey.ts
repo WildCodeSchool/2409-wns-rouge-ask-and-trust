@@ -9,7 +9,7 @@ import {
 	UPDATE_SURVEY_STATUS,
 } from "@/graphql/survey/survey"
 import {
-	AllSurveysHome,
+	AllSurveysType,
 	CreateSurveyInput,
 	DateSortFilter,
 	SurveysDashboardQuery,
@@ -34,7 +34,7 @@ const DATE_SORT_FILTERS = ["Plus récente", "Plus ancienne"] as const
 /**
  * Hook for the survey management.
  */
-export function useSurvey(surveyId?: string) {
+export function useSurvey<T>(surveyId?: string) {
 	const [searchParams] = useSearchParams()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [sortTimeOption, setSortTimeOption] = useState<string>("")
@@ -65,8 +65,9 @@ export function useSurvey(surveyId?: string) {
 	const {
 		data: allSurveysData,
 		loading: isFetching,
+		error: allSurveysError,
 		refetch,
-	} = useQuery<AllSurveysHome>(GET_SURVEYS, {
+	} = useQuery<AllSurveysType<T>>(GET_SURVEYS, {
 		variables: {
 			filters: {
 				page: currentPage,
@@ -78,7 +79,7 @@ export function useSurvey(surveyId?: string) {
 			},
 		},
 	})
-	const allSurveys = allSurveysData?.surveys.allSurveys || []
+	const surveys = allSurveysData?.surveys || null
 
 	const {
 		data: surveyData,
@@ -120,11 +121,11 @@ export function useSurvey(surveyId?: string) {
 			notifyOnNetworkStatusChange: true,
 		},
 	})
+
 	const mySurveys = mySurveysData?.mySurveys || null
 
 	const isRefetching = networkStatus === NetworkStatus.refetch
 	const isInitialLoading = loading && !mySurveysData
-
 	const totalCount = allSurveysData?.surveys.totalCount ?? 0
 
 	const {
@@ -268,8 +269,9 @@ export function useSurvey(surveyId?: string) {
 	}
 
 	return {
-		allSurveys,
+		surveys,
 		isFetching,
+		allSurveysError,
 		survey,
 		surveyLoading,
 		surveyError,

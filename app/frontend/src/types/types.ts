@@ -87,16 +87,16 @@ export interface SurveyCardType {
 	isOwner?: boolean
 }
 
-export type AllSurveysResult = {
-	allSurveys: SurveyCardType[]
+export type AllSurveysResult<T> = {
+	allSurveys: T[]
 	totalCount: number
 	totalCountAll: number
 	page: number
 	limit: number
 }
 
-export type AllSurveysHome = {
-	surveys: AllSurveysResult
+export type AllSurveysType<T> = {
+	surveys: AllSurveysResult<T>
 }
 
 export type Package = {

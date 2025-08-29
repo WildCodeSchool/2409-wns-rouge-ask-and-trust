@@ -7,7 +7,7 @@ import Pagination from "@/components/ui/Pagination"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { useSurvey } from "@/hooks/useSurvey"
 import { cn } from "@/lib/utils"
-import { SurveyStatus } from "@/types/types"
+import { SurveyCardType, SurveyStatus } from "@/types/types"
 import { useEffect } from "react"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import img from "/img/dev.webp"
@@ -15,16 +15,6 @@ import img from "/img/dev.webp"
 function Surveys() {
 	const { user: owner } = useAuthContext()
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
-	const {
-		isFetching,
-		allSurveys,
-		currentPage,
-		PER_PAGE,
-		setCurrentPage,
-		sortTimeOption,
-		setSortTimeOption,
-		totalCount,
-	} = useSurvey()
 
 	useEffect(() => {
 		if (isHorizontalCompact) {
@@ -38,14 +28,45 @@ function Surveys() {
 		}
 	}, [isHorizontalCompact])
 
-	const surveys = allSurveys.map(survey => ({
-		...survey,
-		isOwner: !!(owner && survey.user && owner.id === survey.user.id),
-	}))
+	const {
+		surveys,
+		isFetching,
+		allSurveysError,
+		currentPage,
+		PER_PAGE,
+		setCurrentPage,
+		sortTimeOption,
+		setSortTimeOption,
+		totalCount,
+	} = useSurvey<SurveyCardType>()
 
-	const publishedSurveys = surveys.filter(
-		survey => survey.status === SurveyStatus.Published
-	)
+	if (!surveys && allSurveysError) {
+		const isNotFoundError = allSurveysError.graphQLErrors.some(error =>
+			error.message.includes("Failed to fetch surveys")
+		)
+
+		if (isNotFoundError) {
+			throw new Response("Surveys not found", { status: 404 })
+		}
+
+		// Pour les autres erreurs GraphQL
+		throw new Response("Error loading surveys", { status: 500 })
+	}
+
+	if (!isFetching && !surveys) {
+		throw new Response("Survey nots found", { status: 404 })
+	}
+
+	const allSurveys =
+		surveys?.allSurveys?.map(survey => ({
+			...survey,
+			isOwner: !!(owner && survey.user && owner.id === survey.user.id),
+		})) ?? []
+
+	const publishedSurveys =
+		allSurveys?.filter(
+			survey => survey.status === SurveyStatus.Published
+		) ?? []
 
 	return (
 		<section
