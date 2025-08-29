@@ -2,6 +2,80 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v2.2.0...v2.2.1) (2025-08-26)
+
+## [2.2.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v2.1.0...v2.2.0) (2025-08-26)
+
+
+### Features
+
+* add Disaster Recovery Plan documentation for Ask&Trust ([087bc25](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/087bc25aa486e117acb91feae809d7f27a4c3f2d))
+* add doc ([6aecc47](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/6aecc47d067b65940058a12997e585121739b189))
+* add Legend ui and implement it in BuildListAnswers ([f613ce3](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f613ce3898acaf1c8c50f3063aa1cdda26a11d6e))
+* add missing doc for BuildListAnswers ([700bd39](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/700bd39bd63e459055f72a031a6cdee13b174b1f))
+* add onclick question to focus the right number in table of content ([80f8965](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/80f8965ce0c6e1403362e16c8ed2f81fc0f4c140))
+* add question number in BuildQuestion ([7b89418](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/7b8941800416b7e913a81fe729051a7bdb1d4088))
+* add scroll to element if click on a question in table of content ([f94ba36](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/f94ba361edaad42b0dd936236444c39fffc371f7))
+* add SurveyCreatorSkeleton for SurveyCreator loading ([421c2f5](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/421c2f59a40fa89fc41b5bc90223aad97cbe4ea7))
+* add todo comment ([3f4ba5c](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/3f4ba5cd1aaacb9e474e8999b3974d4a29cffdb2))
+* add useHeightVariable hook to handle header's height changes and update variable ([9fa6904](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/9fa690433ffe4ea449fab5a2f075f687efc2f659))
+* BuildQuestion - refacto input title and label in QuestionTitleInput component ([7ae63c1](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/7ae63c16bf3998eeca2c087251a180d2c4a878cd))
+* **data:** add categories migration ([fbd6fcb](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/fbd6fcb8dcd797dd05af6c9bd1f38710c5b62e3c))
+* **design:** better design for mobile footer ([d55829e](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/d55829ec4e3aa13837647458101b2c73319dd9d9))
+* highlight current question clicked in summary ([23652dc](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/23652dc2fa9f126054f518f014bc93c2dc0d9c2a))
+* implement useHeightVariable in Header ([5e942a2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/5e942a2fd501b42eaf7f6a3a32c5ae75a7cab59e))
+* put focused question state in SurveyCreator to use it in Canvas and Tooltip ([be586f6](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/be586f60afbf1788b8b784e44441dcf93879b294))
+* put RenderAnswersComponent in its own file ([61d1581](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/61d1581d11712472ecfd7e1f0f9628683cb00183))
+* refacto BuildQuestion by deleting useless useEffect and change default answers value to default placeholder ([30e61db](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/30e61db18e717454549b8d505ea9f12f9a178c9f))
+* refacto BuildQuestion's header in a separated component BuildQuestionHeader and handle question deleting ([1c1beb8](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/1c1beb8f044ed5845526bf1ac3c8a6a1d4282fdf))
+* refacto hook useScrollToElement to handle both scroll to an element and scroll to a new element ([c5566ef](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/c5566ef55809433c22aece6bfb05601fdb6763c6))
+* refacto scroll in Canvas è add table of content to scroll to a specific question ([568134b](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/568134b190287d6872c798d19b3182094a2c6a68))
+* refacto survey query calling and add skeleton for loading ([3a496c7](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/3a496c7c82d6522b1a28fa44e6e514d244ae5f70))
+* refacto TableContentQuestions by adding TableQuestionItem ([a611b74](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/a611b74a78135bf1dfdea1b4fbe86c6ad436ca83))
+* remove search bar and categories if we are not in surveys page and fix bug error page ([cdfa89d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/cdfa89d7ac43ad89560ede1342d6331d2da37509))
+* **seo:** add withSEO HOC and centralized SEO metadata configuration for dynamic and static pages ([d9e516d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/d9e516d00406803d5143bd9ab6cf977e76d480f0))
+* update useScroll to use requestAnimationFrame for smooth scrolling after DOM updates and autofocus element when not hovering ([aa5b698](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/aa5b69867a9fe967901a2e14236dc35cc334895f))
+* wip ([e2813a0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/e2813a0b9f7aec682a43f580afceb01131d09b58))
+* wip ([5971326](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/597132688e0de6a6560ab46e58975ff2673cf9d2))
+* work in progress ([6c50563](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/6c50563989ebe0e0ccae1d2eefd590a7e6a948f8))
+
+
+### Bug Fixes
+
+* accessibility and aria tags ([b3b1044](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/b3b10445eec5dd745179e0a060681303db691e5e))
+* add unique id for Input ui ([be8a1fb](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/be8a1fbd2b100ba7e50bb7413057406927deb92d))
+* add useHeightVariable in new Header ([31e5f26](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/31e5f26e170712fc6730fd94065a2f196c2d817d))
+* after creating a question, scroll bottom in the container and not in the window ([3e0a1d4](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/3e0a1d40d1b74782d7acf3c8ae6693b69d3737b5))
+* arialabel for toolbox add question ([1254dc4](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/1254dc4a16acb60d6f77fcd1186fd4e6b39d67f5))
+* autofocus delete question button ([b2b3414](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/b2b3414241ff48e0f911f9291f346c2aef2af128))
+* Boolean question should always have two answers ([5b7c923](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/5b7c923f2cd11d6f475ce699eb0dca1ccd172f8b))
+* change buldquestion wrapper in li instead of div and fix focus ([dc296f7](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/dc296f7364c690d065287888ea8c13b742877e79))
+* clean comment ([d68fb36](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/d68fb36f3595b4c0e235c5ad5f89cad00e2b4722))
+* clean focus ([951ff82](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/951ff8215abf5237afd4c20c053e1abc78be3192))
+* clean log ([4f120e7](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/4f120e7b7c14a4afd1aad7b7c6197c03d358c37d))
+* clicktype for paragraph question in toolboxData ([2c09459](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/2c094592861c4fec7c07165b27332f3eab702fff))
+* disable deleting answers if less than two answers for multiple question ([6848197](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/68481973ef359ba3b99f346c9fc59d02ed471e66))
+* don't provide default answers and block boolean with more than two answers ([7be6a6f](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/7be6a6f5b4d47e5602ecec4fd01baf167d28d38e))
+* focus question handling ([cd0c758](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/cd0c758f4cdee0689f90f5ced0e6970f433ef36d))
+* if question's type is updated, give answers with placeholders instead of default filled answers ([d0e0503](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/d0e05038045b4c3703bd974791ff4d65e01a99e7))
+* Input font size was changing with media query ([65f612e](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/65f612e5514a5d099b4bb416a21554663a76d297))
+* make useScroll more generic ([305eb73](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/305eb737d2b9cb25ce6aa117c5768c90bd42db5e))
+* max width BuildQuestion ([28573a7](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/28573a75971456b6597e09698e22728bf82bd25f))
+* **minor:** fix header according page ([c20b699](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/c20b69955e1e3c23909799e53fa408054fbcf64a))
+* **minor:** remove params for page to prevent redirection bugs ([dba7007](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/dba700764bf09323801d176f80dc91f47c2ce737))
+* **minor:** remove useless page and fix redirection ([c89a143](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/c89a1435056c966ae9ece7a3f943dec236bd040b))
+* npm audit fix ([4ee9dd1](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/4ee9dd1c2edf9b366e16d6a56e1097012e973350))
+* padding and use of useResponsivity ([fad7eb2](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/fad7eb2385472ad614f98a5c0d6532392a50f356))
+* scrolling and heights in SurveyCreator and its components ([49e1545](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/49e15457c0ac6ad565f6a7557683c11483347d6f))
+* **test:** edit test after fix redirection ([1485496](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/14854969958d236011fa919c9a29a9ac5fc69b9e))
+* **test:** fix footer test ([6d7fd40](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/6d7fd4050468d6b923e1ddd66dc2d1a7542b30f1))
+* **test:** fix footer test ([10788e6](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/10788e6ca3bef424f20f58f5756e78b0807bdb2a))
+* **test:** fix footer test AGAIN ([5f7e940](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/5f7e940ffb53176277d903c336de358c4175a941))
+* **test:** fix footer test to push ([322524e](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/322524e189c6933a2e81fe5f08414eca53fae5c1))
+* **test:** ton père les tests maintenant ([4c93792](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/4c93792718280b7e50fdc9a1cea83e199ae2e977))
+* update disaster recovery scripts for improved functionality and reporting ([a7a722d](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/a7a722dcdd4d0ec915624a4889ac33ec2a2a0706))
+* z-index of scroll buttons and color background ([a2676a1](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/commit/a2676a1538c9da1586477deccc252bf896737716))
+
 ## [2.1.0](https://github.com/WildCodeSchool/2409-wns-rouge-ask-and-trust/compare/v1.5.0...v2.1.0) (2025-07-17)
 
 ### Features
