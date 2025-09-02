@@ -10,10 +10,14 @@ export default defineConfig({
 		},
 	},
 	server: {
+		port: process.env.VITE_PORT ? parseInt(process.env.VITE_PORT) : 5173, // Explicit port for Docker
 		watch: {
 			usePolling: true, // Verify changes on the host machine
 		},
-		hmr: { path: "hmr" }, // Hot Module Replacement (HMR) updates in realtime on the host machine
+		hmr:
+			process.env.VITE_NODE_ENV === "development"
+				? { path: "hmr" }
+				: false, // Enable HMR only in development mode
 		host: true, // needed for the Docker Container port mapping to work
 		allowedHosts: ["frontend"], // expose frontend Docker service to external access
 		headers: {
