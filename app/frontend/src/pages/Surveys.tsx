@@ -38,7 +38,7 @@ function Surveys() {
 		sortTimeOption,
 		setSortTimeOption,
 		totalCount,
-	} = useSurvey<SurveyCardType>()
+	} = useSurvey<SurveyCardType>({ mode: "home" })
 
 	if (!surveys && allSurveysError) {
 		const isNotFoundError = allSurveysError.graphQLErrors.some(error =>
@@ -113,7 +113,7 @@ function Surveys() {
 				className="mx-auto mt-20 mb-0 w-max"
 				currentPage={currentPage}
 				totalCount={totalCount}
-				perPage={PER_PAGE.all}
+				perPage={PER_PAGE.home}
 				onPageChange={setCurrentPage}
 			/>
 			{!isHorizontalCompact && (

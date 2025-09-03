@@ -16,6 +16,7 @@ import {
 	SurveyStatusType,
 	SurveyTableType,
 	UpdateSurveyInput,
+	UseSurveyOptions,
 } from "@/types/types"
 import { NetworkStatus, useMutation, useQuery } from "@apollo/client"
 import { useState } from "react"
@@ -34,16 +35,28 @@ const DATE_SORT_FILTERS = ["Plus récente", "Plus ancienne"] as const
 /**
  * Hook for the survey management.
  */
-export function useSurvey<T>(surveyId?: string) {
+export function useSurvey<T>(options: UseSurveyOptions = {}) {
+	const { surveyId, mode } = options
+
 	const [searchParams] = useSearchParams()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [sortTimeOption, setSortTimeOption] = useState<string>("")
 	const [filters, setFilters] = useState<string[]>([])
 	const [debouncedSearch, setDebouncedSearch] = useState("")
+
 	const PER_PAGE = {
-		all: 12,
-		mine: 5,
+		home: 12,
+		admin: 5,
+		profile: 5,
 	}
+
+	const getLimit = () => {
+		if (!mode || mode === "home") return PER_PAGE.home
+		if (mode === "admin") return PER_PAGE.admin
+		if (mode === "profile") return PER_PAGE.profile
+		return PER_PAGE.home
+	}
+
 	const { showToast } = useToast()
 
 	const categoryId = searchParams.get("categoryId")
@@ -71,7 +84,7 @@ export function useSurvey<T>(surveyId?: string) {
 		variables: {
 			filters: {
 				page: currentPage,
-				limit: PER_PAGE.all,
+				limit: getLimit(),
 				search: searchParams.get("search") || "",
 				categoryIds: categoryId ? [parseInt(categoryId, 10)] : [],
 				sortBy,
@@ -107,7 +120,7 @@ export function useSurvey<T>(surveyId?: string) {
 		variables: {
 			filters: {
 				page: currentPage,
-				limit: PER_PAGE.mine,
+				limit: getLimit(),
 				search: debouncedSearch,
 				status: selectedStatuses.map(
 					label =>

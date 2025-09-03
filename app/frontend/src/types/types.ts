@@ -358,3 +358,8 @@ export type RawUser = {
 	updatedAt?: string
 	surveys?: { id: number | string }[]
 }
+
+export type UseSurveyOptions = {
+	surveyId?: string
+	mode?: "admin" | "profile" | "home"
+}
