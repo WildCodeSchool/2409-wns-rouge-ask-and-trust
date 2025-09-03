@@ -36,7 +36,7 @@ export default function SurveyTableContainer({
 		setFilters,
 		statusLabelMap,
 		PER_PAGE,
-	} = useSurvey<SurveyTableType>()
+	} = useSurvey<SurveyTableType>({ mode: "admin" })
 
 	const handleSearch = useCallback(
 		(query: string) => {
@@ -131,7 +131,8 @@ export default function SurveyTableContainer({
 		)
 	}
 
-	const surveysPerPage = mode === "profile" ? PER_PAGE.mine : PER_PAGE.all
+	const surveysPerPage =
+		mode === "profile" ? PER_PAGE.profile : PER_PAGE.admin
 
 	return (
 		<div className="flex w-full flex-col gap-10">
