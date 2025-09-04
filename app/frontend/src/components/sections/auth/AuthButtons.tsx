@@ -100,19 +100,19 @@ export default function AuthButtons({
 		return (
 			<div className="flex items-center justify-center gap-6">
 				<Button
-					to="/surveys/create"
+					to="/register"
 					variant="tertiary"
 					role="link"
-					ariaLabel="Créer une enquête"
-					className="max-sm:hidden"
+					ariaLabel="S'inscrire"
 				>
-					Créer une enquête
+					S'inscrire
 				</Button>
 				<Button
 					to="/connexion"
 					variant="transparent"
 					role="link"
 					ariaLabel="Se connecter"
+					className="max-lg:hidden"
 				>
 					Se connecter
 				</Button>

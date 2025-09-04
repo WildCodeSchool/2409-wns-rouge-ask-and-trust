@@ -30,7 +30,7 @@ export default function TabSwitch({
 						aria-selected={value === option.value}
 						className={`text-primary-700 flex-1 cursor-pointer rounded-lg px-4 py-2 text-center text-sm font-semibold transition-colors ${
 							value === option.value
-								? "bg-primary-400"
+								? "bg-primary-700 text-white"
 								: "bg-transparent"
 						}`}
 						onClick={() => onChange(option.value)}
