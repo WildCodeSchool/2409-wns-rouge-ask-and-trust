@@ -36,7 +36,7 @@ export default function SurveyTableContainer({
 		setFilters,
 		statusLabelMap,
 		PER_PAGE,
-	} = useSurvey<SurveyTableType>({ mode: "admin" })
+	} = useSurvey<SurveyTableType>({ mode })
 
 	const handleSearch = useCallback(
 		(query: string) => {
