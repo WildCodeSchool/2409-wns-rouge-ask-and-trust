@@ -102,7 +102,7 @@ function SurveyCreator() {
 	const isOwner = surveyUser === connectedUser
 
 	return (
-		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50 max-md:h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))]">
+		<div className="2xl:max-w-larger mx-auto flex h-[calc(100vh_-_var(--header-height))] max-w-7xl flex-col bg-gray-50">
 			{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
 			{!data || !isOwner ? (
 				<ErrorData type={!isOwner ? "notowner" : "nosurvey"} />
@@ -452,7 +452,7 @@ function ErrorData({
 export function SurveyCreatorSkeleton() {
 	const { isMobile } = useScreenDetector()
 	return (
-		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-white">
+		<div className="2xl:max-w-larger mx-auto flex h-[calc(100vh_-_var(--header-height))] max-w-7xl flex-col bg-white">
 			<section className="p-4 pb-0 lg:p-4 lg:pb-0">
 				<div className="border-black-50 shadow-default rounded-xl border bg-white p-4">
 					<Skeleton className="h-8 w-64" />

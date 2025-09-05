@@ -20,6 +20,7 @@ export default function Links({
 	ariaLabel,
 	mobileFooter,
 	Icon,
+	bgBlue,
 }: LinksType): JSX.Element {
 	const isExternal = href.startsWith("http")
 	const location = useLocation()
@@ -39,11 +40,14 @@ export default function Links({
 			to={href}
 			className={cn(
 				"font-semibold",
-				location.pathname === "/"
-					? "text-primary-700"
-					: "text-primary-50",
-				mobileFooter &&
-					"group text-primary-700 flex flex-col items-center gap-1 text-xs font-medium"
+				mobileFooter
+					? cn(
+							"group flex flex-col items-center gap-1 text-xs font-medium",
+							bgBlue ? "text-primary-50" : "text-primary-700"
+						)
+					: location.pathname === "/"
+						? "text-primary-700"
+						: "text-primary-50"
 			)}
 			// Indicates to assistive technologies the current page
 			aria-current={
@@ -61,7 +65,10 @@ export default function Links({
 		>
 			{mobileFooter && Icon && (
 				<Icon
-					className="text-primary-700 h-5 w-5 transition-transform duration-200 ease-in-out group-hover:scale-105"
+					className={cn(
+						"h-5 w-5 transition-transform duration-200 ease-in-out group-hover:scale-105",
+						bgBlue ? "text-primary-50" : "text-primary-700"
+					)}
 					aria-hidden
 				/>
 			)}

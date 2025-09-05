@@ -29,6 +29,7 @@ export interface LinksType {
 	ariaLabel: string
 	mobileFooter?: boolean
 	Icon?: LucideIcon
+	bgBlue?: boolean
 }
 
 export interface UserAuth {
