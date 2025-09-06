@@ -196,7 +196,9 @@ function SurveyHeader({
 								<div className="flex min-w-0 flex-col items-start">
 									<div className="flex min-w-0 items-center gap-2">
 										<h1 className="text-lg font-semibold text-gray-900">
-											Création de l'enquête
+											{isMobile
+												? surveyTitle
+												: "Création de l'enquête"}
 										</h1>
 										<Chipset
 											ariaLabel={`L'enquête possède le statut ${translatedStatus}`}
@@ -207,15 +209,11 @@ function SurveyHeader({
 											{translatedStatus}
 										</Chipset>
 									</div>
-									<h3
-										className={cn(
-											"text-start text-base text-gray-600",
-											isMobile && "line-clamp-2",
-											!isMobile && "line-clamp-1"
-										)}
-									>
-										{surveyTitle}
-									</h3>
+									{!isMobile && (
+										<h3 className="line-clamp-1 text-start text-base text-gray-600">
+											{surveyTitle}
+										</h3>
+									)}
 								</div>
 								{!isMobile && (
 									<ChevronDown
