@@ -95,11 +95,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "surveys",
-				element: (
-					<Suspense fallback={<Loader />}>
-						<Surveys />
-					</Suspense>
-				),
+				element: <Surveys />,
 			},
 			{
 				path: "profil",

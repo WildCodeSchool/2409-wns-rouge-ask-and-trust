@@ -2,7 +2,6 @@ import { withSEO } from "@/components/hoc/withSEO"
 import SurveyCard from "@/components/sections/surveys/SurveyCard"
 import SurveyDurationFilter from "@/components/sections/surveys/ui/SurveyDurationFilter"
 import { Button } from "@/components/ui/Button"
-import Loader from "@/components/ui/Loader"
 import Pagination from "@/components/ui/Pagination"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { useSurvey } from "@/hooks/useSurvey"
@@ -11,6 +10,7 @@ import { SurveyCardType, SurveyStatus } from "@/types/types"
 import { useEffect } from "react"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import img from "/img/dev.webp"
+import SurveyCardSkeleton from "@/components/sections/surveys/ui/SurveyCardSkeleton"
 
 function Surveys() {
 	const { user: owner } = useAuthContext()
@@ -83,8 +83,10 @@ function Surveys() {
 				setSortTimeOption={setSortTimeOption}
 			/>
 			{isFetching ? (
-				<div className="flex items-center justify-center">
-					<Loader />
+				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
+					{Array.from({ length: PER_PAGE.all }).map((_, index) => (
+						<SurveyCardSkeleton key={index} />
+					))}
 				</div>
 			) : publishedSurveys.length > 0 ? (
 				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
