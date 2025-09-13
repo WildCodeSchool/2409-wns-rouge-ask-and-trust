@@ -10,7 +10,7 @@ import { SurveyCardType, SurveyStatus } from "@/types/types"
 import { useEffect } from "react"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import img from "/img/dev.webp"
-import SurveyCardSkeleton from "@/components/sections/surveys/ui/SurveyCardSkeleton"
+import SurveyPageSkeleton from "@/components/sections/surveys/ui/SurveyPageSkeleton"
 
 function Surveys() {
 	const { user: owner } = useAuthContext()
@@ -68,7 +68,9 @@ function Surveys() {
 			survey => survey.status === SurveyStatus.Published
 		) ?? []
 
-	return (
+	return isFetching ? (
+		<SurveyPageSkeleton />
+	) : (
 		<section
 			className={cn(
 				"px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:min-h-[calc(100vh_-_var(--header-height))] md:px-10 md:pb-10"
@@ -82,13 +84,7 @@ function Surveys() {
 				sortTimeOption={sortTimeOption}
 				setSortTimeOption={setSortTimeOption}
 			/>
-			{isFetching ? (
-				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
-					{Array.from({ length: PER_PAGE.all }).map((_, index) => (
-						<SurveyCardSkeleton key={index} />
-					))}
-				</div>
-			) : publishedSurveys.length > 0 ? (
+			{publishedSurveys.length > 0 ? (
 				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
 					{publishedSurveys.map(survey => (
 						<SurveyCard

@@ -12,6 +12,7 @@ import Loader from "@/components/ui/Loader"
 import { SurveyCreatorSkeleton } from "@/pages/SurveyCreator"
 import { lazy, Suspense } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import SurveyPageSkeleton from "@/components/sections/surveys/ui/SurveyPageSkeleton"
 
 /**
  *  Using lazy loading for pages
@@ -95,7 +96,11 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "surveys",
-				element: <Surveys />,
+				element: (
+					<Suspense fallback={<SurveyPageSkeleton />}>
+						<Surveys />
+					</Suspense>
+				),
 			},
 			{
 				path: "profil",
