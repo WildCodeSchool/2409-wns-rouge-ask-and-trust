@@ -235,7 +235,7 @@ export type PaginationProps = {
 export type SurveyTableType = {
 	id: number
 	title: string
-	status: SurveyStatus
+	status: SurveyStatusType
 	createdAt: string
 	updatedAt: string
 }
@@ -251,8 +251,6 @@ export type MySurveysResult = {
 export type SurveysDashboardQuery = {
 	mySurveys: MySurveysResult
 }
-
-export type SurveyStatus = "draft" | "published" | "archived" | "censored"
 
 export type SurveyTableProps = {
 	isHeaderChecked: CheckedState
@@ -281,7 +279,7 @@ export type SurveyTableHeadProps = Pick<
 
 export type SurveyTableActionsProps = {
 	surveyId: number
-	status: string
+	status: SurveyStatusType
 }
 
 export type SurveyTableNavProps = {

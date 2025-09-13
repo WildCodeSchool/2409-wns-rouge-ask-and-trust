@@ -13,7 +13,7 @@ function AdminPage() {
 	]
 
 	return (
-		<section className="flex flex-col items-center gap-9 p-5 md:h-[calc(100vh_-_var(--header-height))] lg:px-20 lg:py-10">
+		<section className="flex flex-col items-center gap-10 p-5 max-md:pb-[calc(var(--footer-height)+20px)] md:min-h-[calc(100vh_-_var(--header-height))] lg:px-20 lg:py-10">
 			<h1 className="text-2xl font-semibold">Administration</h1>
 			<TabSwitch
 				options={tabOptions}
@@ -21,13 +21,11 @@ function AdminPage() {
 				onChange={value => setTab(value as "surveys" | "users")}
 				ariaLabel="Sections d'administration"
 			/>
-			<div className="flex w-full flex-col gap-12">
-				{tab === "surveys" ? (
-					<SurveyTableContainer />
-				) : (
-					<UserTableContainer />
-				)}
-			</div>
+			{tab === "surveys" ? (
+				<SurveyTableContainer />
+			) : (
+				<UserTableContainer />
+			)}
 		</section>
 	)
 }

@@ -8,19 +8,25 @@ export const SurveyTableActions = ({
 	status,
 }: SurveyTableActionsProps) => {
 	const { deleteSurvey } = useSurvey()
+	const isEditable = status === "draft" || status === "published"
+	const isPublished = status === "published"
 
 	return (
 		<div className="flex items-center gap-5">
 			<Button
 				ariaLabel="Visualiser cette enquête"
 				variant="ghost"
-				to={`/surveys/preview/${surveyId}`}
+				to={
+					isPublished
+						? `/surveys/respond/${surveyId}`
+						: `/surveys/preview/${surveyId}`
+				}
 				role="link"
 				className="text-black-default p-0"
 			>
 				<Eye className="h-5 w-5 cursor-pointer" />
 			</Button>
-			{["published", "draft"].includes(status) && (
+			{isEditable && (
 				<Button
 					ariaLabel="Modifier cette enquête"
 					variant="ghost"

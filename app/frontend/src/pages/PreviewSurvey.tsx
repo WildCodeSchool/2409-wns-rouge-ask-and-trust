@@ -4,29 +4,62 @@ import { Badge } from "@/components/ui/Badge"
 import { Callout } from "@/components/ui/Callout"
 import { useSurvey } from "@/hooks/useSurvey"
 import { Question } from "@/types/types"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 
 function PreviewSurveyPage() {
 	const { id } = useParams<{ id: string }>()
-	// @TODO add a better error and loading components
 	const { survey, surveyLoading, surveyError } = useSurvey(id)
+	const navigate = useNavigate()
 
-	if (surveyError) {
-		return <p>erreur pour fetch l'enquête</p>
+	if (id && surveyLoading) {
+		return (
+			<div className="flex items-center justify-center">
+				<div>Chargement de l'enquête...</div>
+			</div>
+		)
 	}
+
+	if (id) {
+		if (!survey && surveyError) {
+			const isNotFoundError = surveyError.graphQLErrors.some(error =>
+				error.message.includes("Failed to fetch survey")
+			)
+
+			if (isNotFoundError) {
+				throw new Response("Survey not found", { status: 404 })
+			}
+
+			// Pour les autres erreurs GraphQL
+			throw new Response("Error loading survey", { status: 500 })
+		}
+
+		if (!surveyLoading && !survey) {
+			throw new Response("Survey not found", { status: 404 })
+		}
+	}
+
+	const isDraft = survey.status === "draft"
+	const buttonProps = isDraft
+		? {
+				to: `/surveys/build/${id}`,
+				ariaLabel: "Retour sur la page de modification de l'enquête",
+			}
+		: {
+				onClick: () => navigate(-1),
+				ariaLabel: "Retour sur la page précédente",
+			}
 
 	return (
 		survey && (
-			<div className="mx-auto h-[calc(100vh_-_var(--header-height))] max-w-2xl rounded bg-white p-8 shadow">
-				<div className="mb-4 flex items-center justify-between gap-5">
+			<div className="mx-auto max-w-2xl rounded bg-white p-8 shadow">
+				<div className="mb-4">
 					<Button
 						variant="ghost"
 						size="sm"
-						to={`/surveys/build/${id}`}
+						{...buttonProps}
 						icon={ArrowLeft}
-						ariaLabel="Retour sur la page de modification de l'enquête"
 					>
 						Retour
 					</Button>
@@ -42,7 +75,7 @@ function PreviewSurveyPage() {
 				<Callout type="info" title="Description">
 					{survey.description}
 				</Callout>
-				<h2 className="mb-4 text-lg font-bold">Questions :</h2>
+				<h2 className="my-4 text-lg font-bold">Questions :</h2>
 				{/* Render questions */}
 				{surveyLoading ? (
 					<p>Chargement...</p>

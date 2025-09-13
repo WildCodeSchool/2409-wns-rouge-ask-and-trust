@@ -13,7 +13,6 @@ import {
 	CreateSurveyInput,
 	DateSortFilter,
 	SurveysDashboardQuery,
-	SurveyStatus,
 	SurveyStatusType,
 	SurveyTableType,
 	UpdateSurveyInput,
@@ -114,7 +113,7 @@ export function useSurvey(surveyId?: string) {
 						Object.entries(statusLabelMap).find(
 							([, v]) => v === label
 						)?.[0]
-				) as SurveyStatus[],
+				) as SurveyStatusType[],
 				sortBy: "createdAt",
 				order: selectedSort === "Plus ancienne" ? "ASC" : "DESC",
 			},
@@ -299,7 +298,6 @@ export function useSurvey(surveyId?: string) {
 		updateSurvey,
 		deleteSurvey,
 		deleteSurveys,
-
 		updateSurveyStatus,
 		isStatusUpdating,
 		isStatusUpdateError,
