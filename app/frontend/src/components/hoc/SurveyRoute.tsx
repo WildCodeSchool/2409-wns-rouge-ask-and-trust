@@ -6,7 +6,7 @@
 import Loader from "@/components/ui/Loader"
 import { useSurvey } from "@/hooks/useSurvey"
 import { useParams } from "react-router-dom"
-import PublishedRequired from "../sections/surveys/PublishedRequired"
+import PublishedRequired from "@/components/sections/surveys/PublishedRequired"
 
 /**
  * SurveyRoute Component
@@ -26,7 +26,6 @@ import PublishedRequired from "../sections/surveys/PublishedRequired"
 const SurveyRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const { id } = useParams<{ id: string }>()
 	const { survey, surveyLoading, surveyError } = useSurvey(id)
-	console.log("🚀 ~ SurveyRoute ~ survey:", survey)
 
 	// If the survey state is still loading, show the loader
 	if (id && surveyLoading) {
