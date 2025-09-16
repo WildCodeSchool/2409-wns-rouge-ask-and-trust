@@ -32,6 +32,7 @@ const Contact = lazy(() => import("@/pages/Contact"))
 const SurveyUpdate = lazy(() => import("@/pages/SurveyUpdate"))
 const UserProfile = lazy(() => import("@/pages/UserProfile"))
 const SurveyResponse = lazy(() => import("@/pages/SurveyResponse"))
+const SurveyResponses = lazy(() => import("@/pages/SurveyResponses"))
 const Admin = lazy(() => import("@/pages/Admin"))
 
 /**
@@ -199,6 +200,16 @@ const router = createBrowserRouter([
 					<Suspense fallback={<Loader />}>
 						<ProtectedRoute>
 							<SurveyResponse />
+						</ProtectedRoute>
+					</Suspense>
+				),
+			},
+			{
+				path: "surveys/responses/:surveyId",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<ProtectedRoute>
+							<SurveyResponses />
 						</ProtectedRoute>
 					</Suspense>
 				),

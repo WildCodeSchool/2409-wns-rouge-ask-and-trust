@@ -1,4 +1,4 @@
-import { Eye, Pencil, Trash2 } from "lucide-react"
+import { Eye, Pencil, Trash2, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { SurveyTableActionsProps } from "@/types/types"
 import { useSurvey } from "@/hooks/useSurvey"
@@ -26,6 +26,17 @@ export const SurveyTableActions = ({
 			>
 				<Eye className="h-5 w-5 cursor-pointer" />
 			</Button>
+			{isPublished && (
+				<Button
+					ariaLabel="Voir les réponses de cette enquête"
+					variant="ghost"
+					to={`/surveys/responses/${surveyId}`}
+					role="link"
+					className="text-black-default p-0"
+				>
+					<BarChart3 className="h-5 w-5 cursor-pointer" />
+				</Button>
+			)}
 			{isEditable && (
 				<Button
 					ariaLabel="Modifier cette enquête"
