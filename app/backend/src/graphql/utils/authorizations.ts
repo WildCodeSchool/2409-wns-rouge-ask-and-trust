@@ -21,11 +21,11 @@ import { Context, Roles } from "../../types/types"
  * ```
  */
 export function isOwnerOrAdmin(
-	surveyUserId: number,
+	entityUserId: number,
 	currentUser: Context["user"]
 ): boolean {
 	if (!currentUser) return false
-	return surveyUserId === currentUser.id || currentUser.role === Roles.Admin
+	return entityUserId === currentUser.id || currentUser.role === Roles.Admin
 }
 
 export async function getAuthorizedSurvey(
@@ -43,7 +43,7 @@ export async function getAuthorizedSurvey(
 
 	if (!isOwnerOrAdmin(survey.user.id, user)) {
 		throw new AppError(
-			"Not authorized to add a question to this survey",
+			"Not authorized to access or modify this survey",
 			403,
 			"ForbiddenError"
 		)
@@ -69,11 +69,18 @@ export async function getAuthorizedQuestion(
 
 	if (!isOwnerOrAdmin(question.survey.user.id, user)) {
 		throw new AppError(
-			"Not authorized to update this question",
+			"Not authorized to modify or delete this question",
 			403,
 			"ForbiddenError"
 		)
 	}
 
 	return question
+}
+
+export function getUserFromContext(user: Context["user"]): User {
+	if (!user) {
+		throw new AppError("User not found", 404, "NotFoundError")
+	}
+	return user
 }
