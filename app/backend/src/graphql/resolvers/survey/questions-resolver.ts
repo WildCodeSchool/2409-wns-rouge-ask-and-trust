@@ -20,8 +20,15 @@ import { AppError } from "../../../middlewares/error-handler"
 import { Context, Roles, TypesOfQuestion } from "../../../types/types"
 import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
 import { UpdateQuestionInput } from "../../inputs/update/survey/update-question-input"
-import { getAuthorizedSurvey, isOwnerOrAdmin } from "../../utils/authorizations"
-import { createQuestionInstance } from "../../utils/questions.services"
+import {
+	getAuthorizedQuestion,
+	getAuthorizedSurvey,
+	isOwnerOrAdmin,
+} from "../../utils/authorizations"
+import {
+	createQuestionInstance,
+	validateAndNormalizeAnswers,
+} from "../../utils/questions.services"
 
 /**
  * QuestionsResolver
@@ -182,42 +189,15 @@ export class QuestionsResolver {
 				throw new AppError("User not found", 404, "NotFoundError")
 			}
 
-			const questionToUpdate = await Questions.findOne({
-				where: { id: data.id },
-				relations: {
-					survey: { user: true }, // get survey and its user
-				},
-			})
+			const questionToUpdate = await getAuthorizedQuestion(data.id, user)
 
-			if (!questionToUpdate) {
-				throw new AppError("Question not found", 404, "NotFoundError")
-			}
-
-			if (!isOwnerOrAdmin(questionToUpdate.survey.user.id, user)) {
-				throw new AppError(
-					"Not authorized to update this question",
-					403,
-					"ForbiddenError"
-				)
-			}
-
-			// @TODO add answers validation and questionToUpdate in a function
 			const { id, ...dataWithoutId } = data
+			void id
 
-			const isTypeBoolean = data.type === TypesOfQuestion.Boolean
-
-			if (isTypeBoolean && data.answers && data.answers?.length > 2) {
-				throw new AppError(
-					"A Boolean question can only have up to 2 answers",
-					400,
-					"ValidationError"
-				)
-			}
-
-			// If type is changed to text, clean answers
-			if (data.type === TypesOfQuestion.Text) {
-				dataWithoutId.answers = []
-			}
+			dataWithoutId.answers = validateAndNormalizeAnswers(
+				data.type || questionToUpdate.type,
+				data.answers ?? questionToUpdate.answers
+			)
 
 			Object.assign(questionToUpdate, dataWithoutId)
 
