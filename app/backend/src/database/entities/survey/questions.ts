@@ -1,4 +1,4 @@
-import { QuestionType, TypesOfQuestion } from "./../../../types/types"
+import { QuestionTypeEnum, TypesOfQuestion } from "./../../../types/types"
 /**
  * @packageDocumentation
  * @category Entities
@@ -68,7 +68,7 @@ export class Questions extends BaseEntity {
 	 * The actual text/content of the question (must be unique).
 	 */
 	@Field()
-	@Column({ length: 1000 /*, unique: true*/ })
+	@Column({ length: 1000 /*, unique: true*/ }) // @todo check type
 	title!: string
 
 	/**
@@ -76,18 +76,27 @@ export class Questions extends BaseEntity {
 	 * @description
 	 * The type expected for the question (e.g. text, multiple choice, boolean)
 	 */
-	@Field(() => String)
+	@Field(() => QuestionTypeEnum)
 	@Column({
 		type: "enum",
 		enum: TypesOfQuestion,
 		default: TypesOfQuestion.Text,
 	})
-	type!: QuestionType
+	type!: QuestionTypeEnum
 
 	/**
 	 * Answers to the question
 	 * @description
-	 * Used to stock answers
+	 * Stored as a single JSON array in PostgreSQL (`jsonb`).
+	 * Why `jsonb`:
+	 *  - (+) Allows indexing and efficient queries
+	 *  - (+) Faster to process (binary format, no reparsing on each access)
+	 *  - (-) Slightly larger storage size compared to plain `json`
+	 *
+	 * Why `array: false`:
+	 *  - Ensures this is a single `jsonb` column containing one JSON array
+	 *    (e.g. `[{"value": "Yes"}, {"value": "No"}]`)
+	 *  - Not a Postgres `jsonb[]` (which would be an array of `jsonb` values)
 	 */
 	@Field(() => [AnswerObject])
 	@Column({
