@@ -29,14 +29,16 @@ export function validateAndNormalizeAnswers(
 	type: string,
 	answers: AnswerObject[] | undefined
 ): AnswerObject[] {
-	if (type === TypesOfQuestion.Boolean) {
-		if (answers && answers.length !== 2) {
-			throw new AppError(
-				"A Boolean question must have exactly 2 answers",
-				400,
-				"ValidationError"
-			)
-		}
+	if (!answers || answers.length === 0) {
+		return []
+	}
+
+	if (type === TypesOfQuestion.Boolean && answers.length !== 2) {
+		throw new AppError(
+			"A Boolean question must have exactly 2 answers",
+			400,
+			"ValidationError"
+		)
 	}
 
 	if (type === TypesOfQuestion.Text || type === TypesOfQuestion.TextArea) {
@@ -44,5 +46,5 @@ export function validateAndNormalizeAnswers(
 		return []
 	}
 
-	return answers ?? []
+	return answers
 }
