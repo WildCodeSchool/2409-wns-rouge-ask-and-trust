@@ -19,7 +19,7 @@ export default function SurveyResponses() {
 		survey,
 		surveyLoading: isLoadingSurvey,
 		surveyError,
-	} = useSurvey(parsedSurveyId?.toString() || "0")
+	} = useSurvey({ surveyId: parsedSurveyId?.toString() || "0" })
 
 	// Show loading state
 	if (isLoadingSurvey) {
