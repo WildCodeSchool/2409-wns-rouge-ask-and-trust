@@ -50,10 +50,7 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 	const { showToast } = useToast()
 
 	useEffect(() => {
-		const urlSearch = searchParams.get("search") || ""
-		if (urlSearch !== searchValue) {
-			setSearchValue(urlSearch)
-		}
+		setSearchValue(searchParams.get("search") || "")
 	}, [searchParams])
 
 	const PER_PAGE = {
