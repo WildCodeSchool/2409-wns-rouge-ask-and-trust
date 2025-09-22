@@ -22,7 +22,7 @@ docker compose up -d
 
 ### Staging
 ```bash
-# Déploiement automatique
+# Déploiement Staging
 cd server/
 ./fetch-and-deploy-staging.sh
 
@@ -31,14 +31,14 @@ cd server/
 
 ### Production
 ```bash
-# Déploiement automatique
+# Déploiement Production
 cd server/
 ./fetch-and-deploy-prod.sh
 
 # Accès : http://localhost:8000
 ```
 
-## �� Images Docker
+## Images Docker
 
 Les images sont hébergées sur Docker Hub :
 - `yohangh/askandtrust-frontend:${VERSION}`
@@ -49,9 +49,37 @@ Les images sont hébergées sur Docker Hub :
 ### Variables d'environnement requises
 ```bash
 # .env
-VERSION=1.0.0
-GATEWAY_PORT_STAGING=8001
-GATEWAY_PORT_PROD=8000
+# Application Configuration
+# Application Configuration
+APP_PORT=YOUR_PORT
+APP_PORT_FRONTEND=YOUR_PORT_FRONTEND
+VITE_PORT=5173
+VITE_NODE_ENV=development
+IS_DEV=DEV_MODE_TRUE_OR_FALSE
+
+# Database
+DB_HOST=db
+DB_PORT=5432
+POSTGRES_DB=YOUR_DB
+POSTGRES_USER=YOUR_USER
+POSTGRES_PASSWORD=YOUR_PASSWORD
+
+# JWT
+JWT_SECRET=YOUR_SECRET_KEY
+
+# Cookie
+COOKIE_SECRET=YOUR_SECRET_KEY
+
+# AdminUser
+ADMIN_EMAIL=ADMIN_EMAIL
+ADMIN_PASSWORD=ADMIN_PASSWORD
+ADMIN_FIRSTNAME=ADMIN_FIRSTNAME
+ADMIN_LASTNAME=ADMIN_LASTNAME
+ADMIN_ROLE=ADMIN_ROLE
+
+# Stripe test
+STRIPE_SECRET_KEY=MY_STRIPE_SECRET_KEY
+STRIPE_API_VERSION=MY_STRIPE_API_VERSION
 
 # .database.env
 POSTGRES_DB=your_POSTGRES_DB
@@ -71,22 +99,6 @@ POSTGRES_PASSWORD=your_password
 3. **Exécution du script de déploiement**
 4. **Pull des nouvelles images**
 5. **Redémarrage des services**
-
-## 🛠️ Commandes utiles
-
-```bash
-# Voir les logs
-docker compose logs -f [service]
-
-# Arrêter un environnement
-docker compose -f compose.[env].yaml down
-
-# Redémarrer un service
-docker compose restart [service]
-
-# Nettoyer les volumes
-docker volume prune
-```
 
 ## 📋 Prérequis
 
