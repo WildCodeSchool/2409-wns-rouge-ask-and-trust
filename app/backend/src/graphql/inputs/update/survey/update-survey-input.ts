@@ -1,7 +1,6 @@
 import { IsIn, IsOptional, Length } from "class-validator"
 import { Field, ID, InputType } from "type-graphql"
 import { SurveyStatus } from "../../../../types/types"
-import { CreateQuestionsInput } from "../../create/survey/create-questions-input"
 
 /**
  * Represents input data for updating an existing survey.
@@ -48,8 +47,4 @@ export class UpdateSurveyInput {
 	@Field(() => ID, { nullable: true })
 	@IsOptional()
 	category?: number
-
-	@Field(() => [CreateQuestionsInput], { nullable: true })
-	@IsOptional()
-	questions?: CreateQuestionsInput[]
 }
