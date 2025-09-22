@@ -1,4 +1,8 @@
-import { MySurveysResult } from "@/types/types"
+import {
+	AllSurveysResult,
+	MySurveysResult,
+	SurveyTableType,
+} from "@/types/types"
 import { CheckedState } from "@radix-ui/react-checkbox"
 import { useCallback, useEffect, useState } from "react"
 import SurveyTable from "@/components/sections/dashboard/SurveyTable"
@@ -7,22 +11,32 @@ import SurveyTableFilter from "@/components/sections/dashboard/SurveyTableFilter
 import SurveyTableSearch from "@/components/sections/dashboard/SurveyTableSearch"
 import { useSurvey } from "@/hooks/useSurvey"
 
-export default function SurveyTableContainer() {
+interface SurveyTableContainerProps {
+	mode: "admin" | "profile"
+}
+
+export default function SurveyTableContainer({
+	mode,
+}: SurveyTableContainerProps) {
 	const [selectedSurveyIds, setSelectedSurveyIds] = useState<number[]>([])
 	const [isHeaderChecked, setIsHeaderChecked] = useState<CheckedState>(false)
+	const [previousData, setPreviousData] = useState<
+		MySurveysResult | AllSurveysResult<SurveyTableType> | null
+	>(null)
 
 	const {
 		currentPage,
 		setCurrentPage,
+		isRefetching,
+		surveys,
 		setDebouncedSearch,
 		mySurveys,
-		isRefetching,
 		isInitialLoading,
 		filters,
 		setFilters,
 		statusLabelMap,
 		PER_PAGE,
-	} = useSurvey()
+	} = useSurvey<SurveyTableType>({ mode })
 
 	const handleSearch = useCallback(
 		(query: string) => {
@@ -32,18 +46,22 @@ export default function SurveyTableContainer() {
 		[setDebouncedSearch, setCurrentPage]
 	)
 
-	const [previousData, setPreviousData] = useState<MySurveysResult | null>(
-		null
-	)
+	// Use correct data based on mode
+	const currentModeData = mode === "profile" ? mySurveys : surveys
 
 	useEffect(() => {
-		if (mySurveys && !isRefetching) {
-			setPreviousData(mySurveys)
+		if (currentModeData && !isRefetching) {
+			setPreviousData(currentModeData)
 		}
-	}, [mySurveys, isRefetching])
+	}, [currentModeData, isRefetching])
 
-	const currentData = mySurveys || previousData
-	const surveysData = currentData?.surveys ?? []
+	const currentData = currentModeData || previousData
+
+	const surveysData = currentData
+		? "surveys" in currentData
+			? currentData.surveys
+			: currentData.allSurveys
+		: []
 	const totalCount = currentData?.totalCount ?? 0
 	const totalCountAll = currentData?.totalCountAll ?? 0
 	const paginatedSurveys = surveysData
@@ -99,14 +117,22 @@ export default function SurveyTableContainer() {
 	}
 
 	if (totalCountAll === 0 && !isRefetching && currentData) {
+		const noDataMessage =
+			mode === "profile"
+				? "Vous n'avez pas encore créé d'enquête..."
+				: "Aucune enquête n'a encore été créée..."
+
 		return (
 			<div className="flex h-full w-full items-center justify-center">
 				<p className="text-black-default text-xl font-medium">
-					Vous n'avez pas encore créé d'enquête...
+					{noDataMessage}
 				</p>
 			</div>
 		)
 	}
+
+	const surveysPerPage =
+		mode === "profile" ? PER_PAGE.profile : PER_PAGE.admin
 
 	return (
 		<div className="flex w-full flex-col gap-10">
@@ -144,7 +170,7 @@ export default function SurveyTableContainer() {
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
 				totalCount={totalCount}
-				surveysPerPage={PER_PAGE.mine}
+				surveysPerPage={surveysPerPage}
 				selectedSurveyIds={selectedSurveyIds}
 			/>
 		</div>
