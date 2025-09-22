@@ -136,10 +136,10 @@ const ButtonAddQuestion = ({
 			loadingSpinner={loadingSpinner}
 			className={cn(
 				"self-center",
-				isMobile && `sticky right-2 bottom-2 left-2 z-10 shadow-lg`
+				isMobile && `sticky right-2 bottom-2 left-2 z-10 px-2 shadow-lg`
 			)}
 		>
-			Ajouter une question
+			{!isMobile && "Ajouter une question"}
 		</Button>
 	)
 }

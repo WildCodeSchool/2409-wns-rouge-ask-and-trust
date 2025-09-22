@@ -2,29 +2,19 @@ import { withSEO } from "@/components/hoc/withSEO"
 import SurveyCard from "@/components/sections/surveys/SurveyCard"
 import SurveyDurationFilter from "@/components/sections/surveys/ui/SurveyDurationFilter"
 import { Button } from "@/components/ui/Button"
-import Loader from "@/components/ui/Loader"
 import Pagination from "@/components/ui/Pagination"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { useSurvey } from "@/hooks/useSurvey"
 import { cn } from "@/lib/utils"
-import { SurveyStatus } from "@/types/types"
+import { SurveyCardType, SurveyStatus } from "@/types/types"
 import { useEffect } from "react"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import img from "/img/dev.webp"
+import SurveyPageSkeleton from "@/components/sections/surveys/ui/SurveyPageSkeleton"
 
 function Surveys() {
 	const { user: owner } = useAuthContext()
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
-	const {
-		isFetching,
-		allSurveys,
-		currentPage,
-		PER_PAGE,
-		setCurrentPage,
-		sortTimeOption,
-		setSortTimeOption,
-		totalCount,
-	} = useSurvey()
 
 	useEffect(() => {
 		if (isHorizontalCompact) {
@@ -38,16 +28,49 @@ function Surveys() {
 		}
 	}, [isHorizontalCompact])
 
-	const surveys = allSurveys.map(survey => ({
-		...survey,
-		isOwner: !!(owner && survey.user && owner.id === survey.user.id),
-	}))
+	const {
+		surveys,
+		isFetching,
+		allSurveysError,
+		currentPage,
+		PER_PAGE,
+		setCurrentPage,
+		sortTimeOption,
+		setSortTimeOption,
+		totalCount,
+	} = useSurvey<SurveyCardType>({ mode: "home" })
 
-	const publishedSurveys = surveys.filter(
-		survey => survey.status === SurveyStatus.Published
-	)
+	if (!surveys && allSurveysError) {
+		const isNotFoundError = allSurveysError.graphQLErrors.some(error =>
+			error.message.includes("Failed to fetch surveys")
+		)
 
-	return (
+		if (isNotFoundError) {
+			throw new Response("Surveys not found", { status: 404 })
+		}
+
+		// Pour les autres erreurs GraphQL
+		throw new Response("Error loading surveys", { status: 500 })
+	}
+
+	if (!isFetching && !surveys) {
+		throw new Response("Survey nots found", { status: 404 })
+	}
+
+	const allSurveys =
+		surveys?.allSurveys?.map(survey => ({
+			...survey,
+			isOwner: !!(owner && survey.user && owner.id === survey.user.id),
+		})) ?? []
+
+	const publishedSurveys =
+		allSurveys?.filter(
+			survey => survey.status === SurveyStatus.Published
+		) ?? []
+
+	return isFetching ? (
+		<SurveyPageSkeleton />
+	) : (
 		<section
 			className={cn(
 				"px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:min-h-[calc(100vh_-_var(--header-height))] md:px-10 md:pb-10"
@@ -61,11 +84,7 @@ function Surveys() {
 				sortTimeOption={sortTimeOption}
 				setSortTimeOption={setSortTimeOption}
 			/>
-			{isFetching ? (
-				<div className="flex items-center justify-center">
-					<Loader />
-				</div>
-			) : publishedSurveys.length > 0 ? (
+			{publishedSurveys.length > 0 ? (
 				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
 					{publishedSurveys.map(survey => (
 						<SurveyCard
@@ -92,7 +111,7 @@ function Surveys() {
 				className="mx-auto mt-20 mb-0 w-max"
 				currentPage={currentPage}
 				totalCount={totalCount}
-				perPage={PER_PAGE.all}
+				perPage={PER_PAGE.home}
 				onPageChange={setCurrentPage}
 			/>
 			{!isHorizontalCompact && (

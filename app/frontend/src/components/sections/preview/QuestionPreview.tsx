@@ -11,8 +11,10 @@ type QuestionPreviewProps = {
 
 export default function QuestionPreview({ question }: QuestionPreviewProps) {
 	return (
-		<div className="mb-8 last-of-type:mb-0">
-			<Label className="mb-2 block">{question.title}</Label>
+		<div className="border-black-200 rounded-lg border bg-white p-6">
+			<Label className="mb-4 block text-lg font-medium">
+				{question.title}
+			</Label>
 			{question.type === TypesOfQuestion.Text && (
 				<ReadOnlyInput placeholder="Votre réponse..." />
 			)}

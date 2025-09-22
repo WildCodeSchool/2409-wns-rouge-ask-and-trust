@@ -175,7 +175,7 @@ export default function SurveyResponseForm({
 				</div>
 			)}
 
-			<div className="flex justify-center border-t pt-6">
+			<div className="flex justify-center border-t pt-8">
 				<Button
 					type="submit"
 					disabled={isSubmitting || isCreatingAnswer}

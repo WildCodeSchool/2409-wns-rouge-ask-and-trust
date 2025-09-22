@@ -41,6 +41,7 @@ export class SurveysResolver {
 	 * - search by title,
 	 * - filtering by category,
 	 * - sorting (by estimated duration or available duration, ASC/DESC),
+	 * - filtering by status,
 	 * - pagination,
 	 * - as well as counting total surveys before and after filters are applied.
 	 *
@@ -65,6 +66,7 @@ export class SurveysResolver {
 				categoryIds,
 				sortBy = "estimatedDuration",
 				order = "DESC",
+				status,
 				page = 1,
 				limit = 12,
 			} = filters || {}
@@ -96,6 +98,13 @@ export class SurveysResolver {
 						categoryIds,
 					}
 				)
+			}
+
+			// Filter by status
+			if (status && status.length > 0) {
+				filteredQuery.andWhere("survey.status IN (:...status)", {
+					status,
+				})
 			}
 
 			// Get the total number of surveys matching the filters (for pagination)

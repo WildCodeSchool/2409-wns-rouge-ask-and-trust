@@ -11,8 +11,9 @@ import {
 	Scale,
 	MessageCircleMore,
 } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-export default function FooterMobile() {
+export default function FooterMobile({ bgBlue }: { bgBlue?: boolean }) {
 	const { user } = useAuthContext()
 	const footerRef = useRef<HTMLElement>(null)
 
@@ -73,7 +74,10 @@ export default function FooterMobile() {
 
 	return (
 		<footer
-			className="bg-bg border-primary-700 fixed bottom-0 flex w-full justify-between border-t px-5 py-2.5 sm:justify-around"
+			className={cn(
+				"bg-bg border-primary-700 fixed bottom-0 flex w-full justify-between border-t px-5 py-2.5 sm:justify-around",
+				bgBlue && "bg-primary-700 border-none"
+			)}
 			ref={footerRef}
 		>
 			{FOOTER_LINKS.map(link => (
@@ -82,6 +86,7 @@ export default function FooterMobile() {
 					{...link}
 					Icon={link.Icon}
 					mobileFooter
+					bgBlue={bgBlue}
 				/>
 			))}
 		</footer>

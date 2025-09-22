@@ -9,6 +9,8 @@ import { useResponsivity } from "./hooks/useResponsivity"
 function App() {
 	const location = useLocation()
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
+	const removeHeaderFromSurveyCreator =
+		isHorizontalCompact && location.pathname.startsWith("/surveys/build")
 
 	const renderHeader = () => {
 		switch (location.pathname) {
@@ -23,7 +25,7 @@ function App() {
 
 	const renderFooter = () => {
 		if (location.pathname !== "/" && isHorizontalCompact) {
-			return <FooterMobile />
+			return <FooterMobile bgBlue={removeHeaderFromSurveyCreator} />
 		}
 		return <Footer />
 	}
@@ -31,7 +33,7 @@ function App() {
 	return (
 		<>
 			<Toaster richColors position="bottom-center" closeButton />
-			{renderHeader()}
+			{!removeHeaderFromSurveyCreator && renderHeader()}
 			{/* @TODO calc height : fill screen minus Header height. On mobile : minus Header height and Navbar height. */}
 			<main className="bg-bg" ref={rootRef}>
 				<div className="h-full">

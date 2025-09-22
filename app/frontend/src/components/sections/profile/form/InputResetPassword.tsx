@@ -18,7 +18,7 @@ export default function InputResetPassword({
 		<div className="flex flex-col gap-2">
 			<Label htmlFor={id}>{label}</Label>
 			<Input
-				id="confirmPassword"
+				id={id}
 				type="password"
 				placeholder={placeholder}
 				errorMessage={errorsMessage}
