@@ -21,11 +21,13 @@ function AdminPage() {
 				onChange={value => setTab(value as "surveys" | "users")}
 				ariaLabel="Sections d'administration"
 			/>
-			{tab === "surveys" ? (
-				<SurveyTableContainer />
-			) : (
-				<UserTableContainer />
-			)}
+			<div className="flex w-full flex-col gap-12">
+				{tab === "surveys" ? (
+					<SurveyTableContainer mode="admin" />
+				) : (
+					<UserTableContainer />
+				)}
+			</div>
 		</section>
 	)
 }

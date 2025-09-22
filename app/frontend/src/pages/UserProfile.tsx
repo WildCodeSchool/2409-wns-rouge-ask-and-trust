@@ -6,7 +6,7 @@ function UserProfilePage() {
 	return (
 		<section className="flex flex-col items-center gap-10 px-5 py-20 max-md:pb-[calc(var(--footer-height)+80px)] lg:px-20">
 			<UserInformations />
-			<SurveyTableContainer />
+			<SurveyTableContainer mode="profile" />
 		</section>
 	)
 }
