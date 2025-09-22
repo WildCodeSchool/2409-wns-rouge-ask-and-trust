@@ -59,25 +59,7 @@ export default function SurveyResponses() {
 		user && (user.role === "admin" || user.id === survey.user.id.toString())
 
 	if (!isAuthorized) {
-		return (
-			<div className="flex min-h-screen items-center justify-center bg-gray-50">
-				<div className="text-center">
-					<h1 className="mb-4 text-2xl font-bold text-gray-900">
-						Accès non autorisé
-					</h1>
-					<p className="mb-6 text-gray-600">
-						Vous n'avez pas les permissions nécessaires pour
-						consulter les réponses de ce sondage.
-					</p>
-					<button
-						onClick={() => window.history.back()}
-						className="rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
-					>
-						Retour
-					</button>
-				</div>
-			</div>
-		)
+		throw new Response("Forbidden", { status: 403 })
 	}
 
 	return (
