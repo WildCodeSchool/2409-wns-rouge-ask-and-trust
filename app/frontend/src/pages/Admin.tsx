@@ -13,7 +13,7 @@ function AdminPage() {
 	]
 
 	return (
-		<section className="flex flex-col items-center gap-10 p-5 max-md:pb-[calc(var(--footer-height)+20px)] md:min-h-[calc(100vh_-_var(--header-height))] lg:px-20 lg:py-10">
+		<section className="flex min-h-[calc(100vh_-_var(--header-height))] flex-col items-center gap-9 p-5 lg:px-20 lg:py-10">
 			<h1 className="text-2xl font-semibold">Administration</h1>
 			<TabSwitch
 				options={tabOptions}
