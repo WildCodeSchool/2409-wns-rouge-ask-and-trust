@@ -2,12 +2,13 @@ import { useParams, Navigate } from "react-router-dom"
 import { SurveyResponsesContainer } from "../components/sections/survey-responses/SurveyResponsesContainer"
 import { useAuthContext } from "../hooks/useAuthContext"
 import { useSurvey } from "../hooks/useSurvey"
+import { withSEO } from "@/components/hoc/withSEO"
 
 /**
  * Page for viewing survey responses
  * Only accessible to survey owners and admins
  */
-export default function SurveyResponses() {
+function SurveyResponses() {
 	const { surveyId } = useParams<{ surveyId: string }>()
 	const { user } = useAuthContext()
 
@@ -70,3 +71,6 @@ export default function SurveyResponses() {
 		</div>
 	)
 }
+
+const SurveyResponsesWithSEO = withSEO(SurveyResponses, "surveyResponses")
+export default SurveyResponsesWithSEO
