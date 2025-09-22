@@ -19,9 +19,10 @@ import {
 	UseSurveyOptions,
 } from "@/types/types"
 import { NetworkStatus, useMutation, useQuery } from "@apollo/client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { useToast } from "./useToast"
+import { useDebounce } from "./useDebounce"
 
 const statusLabelMap: Record<SurveyTableType["status"], string> = {
 	draft: "Brouillon",
@@ -42,7 +43,15 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [sortTimeOption, setSortTimeOption] = useState<string>("")
 	const [filters, setFilters] = useState<string[]>([])
-	const [debouncedSearch, setDebouncedSearch] = useState("")
+	const [searchValue, setSearchValue] = useState(
+		searchParams.get("search") || ""
+	)
+	const debouncedSearch = useDebounce(searchValue, 300)
+	const { showToast } = useToast()
+
+	useEffect(() => {
+		setSearchValue(searchParams.get("search") || "")
+	}, [searchParams])
 
 	const PER_PAGE = {
 		home: 12,
@@ -56,8 +65,6 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		if (mode === "profile") return PER_PAGE.profile
 		return PER_PAGE.home
 	}
-
-	const { showToast } = useToast()
 
 	const categoryId = searchParams.get("categoryId")
 
@@ -74,6 +81,10 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 
 	const { sortBy, order } = getSortParams(sortTimeOption)
 
+	const selectedStatuses = filters.filter(f =>
+		Object.values(statusLabelMap).includes(f)
+	)
+
 	// Apollo hooks
 	const {
 		data: allSurveysData,
@@ -87,6 +98,12 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 				limit: getLimit(),
 				search: searchParams.get("search") || "",
 				categoryIds: categoryId ? [parseInt(categoryId, 10)] : [],
+				status: selectedStatuses.map(
+					label =>
+						Object.entries(statusLabelMap).find(
+							([, v]) => v === label
+						)?.[0]
+				) as SurveyStatusType[],
 				sortBy,
 				order,
 			},
@@ -103,10 +120,6 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		skip: !surveyId,
 	})
 	const survey = surveyData?.survey
-
-	const selectedStatuses = filters.filter(f =>
-		Object.values(statusLabelMap).includes(f)
-	)
 
 	const selectedSort = filters.find((f): f is DateSortFilter =>
 		DATE_SORT_FILTERS.includes(f as DateSortFilter)
@@ -134,7 +147,6 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 			notifyOnNetworkStatusChange: true,
 		},
 	})
-
 	const mySurveys = mySurveysData?.mySurveys || null
 
 	const isRefetching = networkStatus === NetworkStatus.refetch
@@ -298,7 +310,8 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		sortTimeOption,
 		setSortTimeOption,
 		totalCount,
-		setDebouncedSearch,
+		setDebouncedSearch: setSearchValue,
+		debouncedSearch,
 		mySurveys,
 		isRefetching,
 		isInitialLoading,
