@@ -32,7 +32,6 @@ export function UserDetailsPart({
 					variant="primary"
 					role="link"
 					ariaLabel="Modifier l'utilisateur"
-					className="h-9 rounded-md px-4 text-base"
 				>
 					Modifier
 				</Button>
@@ -40,7 +39,6 @@ export function UserDetailsPart({
 					ariaLabel="Modifier le mot de passe"
 					variant="secondary"
 					onClick={onToggleResetForm}
-					className="h-9 rounded-md px-4 text-base"
 				>
 					{showResetForm ? "Fermer" : "Modifier le mot de passe"}
 				</Button>
