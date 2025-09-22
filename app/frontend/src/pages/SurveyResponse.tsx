@@ -1,10 +1,10 @@
-import { withSEO, useDynamicSEO } from "@/components/hoc/withSEO"
-import { useParams } from "react-router-dom"
+import { useDynamicSEO, withSEO } from "@/components/hoc/withSEO"
+import ContentResponse from "@/components/sections/surveys/response/ContentResponse"
+import HeaderResponse from "@/components/sections/surveys/response/HeaderResponse"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useCopyClipboard } from "@/hooks/useCopyClipboard"
 import { useSurvey } from "@/hooks/useSurvey"
-import HeaderResponse from "@/components/sections/surveys/response/HeaderResponse"
-import ContentResponse from "@/components/sections/surveys/response/ContentResponse"
+import { useParams } from "react-router-dom"
 
 function SurveyResponse() {
 	const { id: surveyId } = useParams<{ id: string }>()
