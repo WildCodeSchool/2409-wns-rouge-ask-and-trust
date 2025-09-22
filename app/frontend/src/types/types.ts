@@ -364,3 +364,7 @@ export type UseSurveyOptions = {
 	surveyId?: string
 	mode?: "admin" | "profile" | "home"
 }
+
+export type PublishedRequiredType = {
+	survey: Pick<Survey, "status">
+}
