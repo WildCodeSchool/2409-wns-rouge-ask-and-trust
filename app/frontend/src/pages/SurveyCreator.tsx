@@ -102,7 +102,7 @@ function SurveyCreator() {
 	const isOwner = surveyUser === connectedUser
 
 	return (
-		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50 max-md:h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))]">
+		<div className="2xl:max-w-larger mx-auto flex h-[calc(100vh_-_var(--header-height))] max-w-7xl flex-col bg-gray-50">
 			{/* @TODO create a SurveyDetails component to edit survey's title, description, settings... */}
 			{!data || !isOwner ? (
 				<ErrorData type={!isOwner ? "notowner" : "nosurvey"} />
@@ -196,7 +196,9 @@ function SurveyHeader({
 								<div className="flex min-w-0 flex-col items-start">
 									<div className="flex min-w-0 items-center gap-2">
 										<h1 className="text-lg font-semibold text-gray-900">
-											Création de l'enquête
+											{isMobile
+												? surveyTitle
+												: "Création de l'enquête"}
 										</h1>
 										<Chipset
 											ariaLabel={`L'enquête possède le statut ${translatedStatus}`}
@@ -207,15 +209,11 @@ function SurveyHeader({
 											{translatedStatus}
 										</Chipset>
 									</div>
-									<h3
-										className={cn(
-											"text-start text-base text-gray-600",
-											isMobile && "line-clamp-2",
-											!isMobile && "line-clamp-1"
-										)}
-									>
-										{surveyTitle}
-									</h3>
+									{!isMobile && (
+										<h3 className="line-clamp-1 text-start text-base text-gray-600">
+											{surveyTitle}
+										</h3>
+									)}
 								</div>
 								{!isMobile && (
 									<ChevronDown
@@ -452,7 +450,7 @@ function ErrorData({
 export function SurveyCreatorSkeleton() {
 	const { isMobile } = useScreenDetector()
 	return (
-		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-white">
+		<div className="2xl:max-w-larger mx-auto flex h-[calc(100vh_-_var(--header-height))] max-w-7xl flex-col bg-white">
 			<section className="p-4 pb-0 lg:p-4 lg:pb-0">
 				<div className="border-black-50 shadow-default rounded-xl border bg-white p-4">
 					<Skeleton className="h-8 w-64" />
