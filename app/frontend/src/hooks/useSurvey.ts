@@ -163,15 +163,27 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		fetchPolicy: "cache-first", // try to get cache before re-fetch
 	})
 
-	const [createSurvey, { loading: isCreating, error: createError }] =
-		useMutation(CREATE_SURVEY, {
-			refetchQueries: [{ query: GET_SURVEYS }],
-		})
+	const [
+		createSurvey,
+		{
+			loading: isCreating,
+			error: createError,
+			reset: resetCreateSurveyError,
+		},
+	] = useMutation(CREATE_SURVEY, {
+		refetchQueries: [{ query: GET_SURVEYS }],
+	})
 
-	const [updateSurveyMutation, { loading: isUpdating, error: updateError }] =
-		useMutation(UPDATE_SURVEY, {
-			refetchQueries: [{ query: GET_SURVEYS }],
-		})
+	const [
+		updateSurveyMutation,
+		{
+			loading: isUpdating,
+			error: updateError,
+			reset: resetUpdateSurveyError,
+		},
+	] = useMutation(UPDATE_SURVEY, {
+		refetchQueries: [{ query: GET_SURVEYS }],
+	})
 
 	const [
 		updateSurveyStatusMutation,
@@ -303,10 +315,17 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		surveyLoading,
 		surveyError,
 		refetchSurvey,
-		isCreating,
 		isUpdating,
+
+		addSurvey,
 		createError,
+		isCreating,
+		resetCreateSurveyError,
+
+		updateSurvey,
 		updateError,
+		resetUpdateSurveyError,
+
 		currentPage,
 		setCurrentPage,
 		PER_PAGE,
@@ -325,8 +344,6 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		loadingCategories,
 		errorCategories,
 		fetchSurveys,
-		addSurvey,
-		updateSurvey,
 		deleteSurvey,
 		deleteSurveys,
 		updateSurveyStatus,
