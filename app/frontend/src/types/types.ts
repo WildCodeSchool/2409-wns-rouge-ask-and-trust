@@ -381,3 +381,8 @@ export type SurveyPreviewType = {
 	id?: string | undefined
 	survey: SurveyPreviewWithCategory
 }
+
+export type SurveyResponseType = SurveyPreviewType & {
+	onClickCopy?: () => void
+	questions?: boolean
+}
