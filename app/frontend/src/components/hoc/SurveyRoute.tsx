@@ -25,7 +25,7 @@ import PublishedRequired from "@/components/sections/surveys/PublishedRequired"
  */
 const SurveyRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const { id } = useParams<{ id: string }>()
-	const { survey, surveyLoading, surveyError } = useSurvey(id)
+	const { survey, surveyLoading, surveyError } = useSurvey({ surveyId: id })
 
 	// If the survey state is still loading, show the loader
 	if (id && surveyLoading) {
