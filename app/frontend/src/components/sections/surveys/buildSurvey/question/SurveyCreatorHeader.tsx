@@ -4,6 +4,7 @@ import { useCopyClipboard } from "@/hooks/useCopyClipboard"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useSurvey } from "@/hooks/useSurvey"
 import { useToast } from "@/hooks/useToast"
+import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { cn } from "@/lib/utils"
 import {
 	SurveyStatus,
@@ -12,7 +13,7 @@ import {
 } from "@/types/types"
 import { ChevronDown } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import SurveyForm from "../../form/SurveyForm"
 
@@ -25,9 +26,6 @@ export function SurveyCreatorHeader({
 }) {
 	const { isMobile } = useScreenDetector()
 	const [open, setOpen] = useState(false)
-
-	// @TODO refacto in components
-	// @TODO add form in collapse to edit survey's data
 
 	const translateStatus = useCallback(
 		(status: SurveyStatusType | undefined) => {
@@ -48,94 +46,99 @@ export function SurveyCreatorHeader({
 
 	const translatedStatus = translateStatus(survey.status)
 	return (
-		<div className="flex flex-col gap-4">
-			{isMobile && (
-				<SurveyButtons
-					status={survey.status}
-					isQuestions={isQuestions}
-				/>
-			)}
-			<div className="shadow-default border-black-50 flex h-fit max-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height)_-_10vh)] flex-col gap-4 overflow-y-auto rounded-xl border bg-white p-4">
-				<div className="flex w-full flex-col gap-8">
-					<div className="flex w-full items-center gap-2">
-						<button
-							className="flex w-full min-w-0 cursor-pointer items-center justify-between"
-							onClick={() => {
-								setOpen(!open)
-							}}
-						>
-							<div className="flex min-w-0 items-center gap-4">
-								<div className="flex min-w-0 flex-col items-start">
-									<div className="flex min-w-0 items-center gap-2">
-										<h1 className="text-lg font-semibold text-gray-900">
-											Création de l'enquête
-										</h1>
-										<Chipset
-											ariaLabel={`L'enquête possède le statut ${translatedStatus}`}
-											state={survey.status || "draft"}
-											size="sm"
-											rounded
+		<section className="w-full p-4 pb-0 lg:p-4 lg:pb-0">
+			<div className="flex flex-col gap-4">
+				{isMobile && (
+					<SurveyButtons
+						status={survey.status}
+						isQuestions={isQuestions}
+					/>
+				)}
+				<div className="shadow-default border-black-50 flex h-fit max-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height)_-_10vh)] flex-col gap-4 overflow-y-auto rounded-xl border bg-white p-4">
+					<div className="flex w-full flex-col gap-8">
+						<div className="flex w-full items-center gap-2">
+							<button
+								className="flex w-full min-w-0 cursor-pointer items-center justify-between"
+								onClick={() => {
+									setOpen(!open)
+								}}
+							>
+								<div className="flex min-w-0 items-center gap-4">
+									<div className="flex min-w-0 flex-col items-start">
+										<div className="flex min-w-0 items-center gap-2">
+											<h1 className="text-lg font-semibold text-gray-900">
+												Création de l'enquête
+											</h1>
+											<Chipset
+												ariaLabel={`L'enquête possède le statut ${translatedStatus}`}
+												state={survey.status || "draft"}
+												size="sm"
+												rounded
+											>
+												{translatedStatus}
+											</Chipset>
+										</div>
+										<h3
+											className={cn(
+												"text-start text-base text-gray-600",
+												isMobile && "line-clamp-2",
+												!isMobile && "line-clamp-1"
+											)}
 										>
-											{translatedStatus}
-										</Chipset>
+											{survey.title}
+										</h3>
 									</div>
-									<h3
-										className={cn(
-											"text-start text-base text-gray-600",
-											isMobile && "line-clamp-2",
-											!isMobile && "line-clamp-1"
-										)}
-									>
-										{survey.title}
-									</h3>
+									{!isMobile && (
+										<ChevronDown
+											size={20}
+											className={cn(
+												"transform transition-transform duration-300",
+												open && "rotate-180"
+											)}
+										/>
+									)}
 								</div>
+							</button>
+							<div className="flex items-center gap-12">
 								{!isMobile && (
+									<SurveyButtons
+										status={survey.status}
+										isQuestions={isQuestions}
+									/>
+								)}
+								{isMobile && (
 									<ChevronDown
 										size={20}
 										className={cn(
-											"transform transition-transform duration-300",
+											"rotate-0 transform transition-transform duration-300",
 											open && "rotate-180"
 										)}
 									/>
 								)}
 							</div>
-						</button>
-						<div className="flex items-center gap-12">
-							{!isMobile && (
-								<SurveyButtons
-									status={survey.status}
-									isQuestions={isQuestions}
-								/>
-							)}
-							{isMobile && (
-								<ChevronDown
-									size={20}
-									className={cn(
-										"rotate-0 transform transition-transform duration-300",
-										open && "rotate-180"
-									)}
-								/>
-							)}
 						</div>
 					</div>
+					<AnimatePresence initial={false}>
+						{open && (
+							<motion.div
+								initial={{ height: 0, opacity: 0 }}
+								animate={{ height: "auto", opacity: 1 }}
+								exit={{ height: 0, opacity: 0 }}
+								transition={{
+									duration: 0.3,
+									ease: "easeInOut",
+								}}
+								// style={{ overflow: "hidden" }}
+							>
+								<div ref={ref}>
+									<SurveyForm survey={survey} />
+								</div>
+							</motion.div>
+						)}
+					</AnimatePresence>
 				</div>
-				<AnimatePresence initial={false}>
-					{open && (
-						<motion.div
-							initial={{ height: 0, opacity: 0 }}
-							animate={{ height: "auto", opacity: 1 }}
-							exit={{ height: 0, opacity: 0 }}
-							transition={{ duration: 0.3, ease: "easeInOut" }}
-							// style={{ overflow: "hidden" }}
-						>
-							<div ref={ref}>
-								<SurveyForm survey={survey} />
-							</div>
-						</motion.div>
-					)}
-				</AnimatePresence>
 			</div>
-		</div>
+		</section>
 	)
 }
 
@@ -151,6 +154,13 @@ function SurveyButtons({
 		useSurvey()
 	const { showToast } = useToast()
 	const { copyToClipboard } = useCopyClipboard()
+	useToastOnChange({
+		trigger: isStatusUpdateError,
+		resetTrigger: resetStatusUpdateError,
+		type: "error",
+		title: "Oops, nous avons rencontré une erreur",
+		description: "L'enquête n'a pas pu être publiée",
+	})
 
 	const onPublishSurvey = useCallback(async () => {
 		if (!surveyId || !status) return
@@ -183,22 +193,6 @@ function SurveyButtons({
 		const surveyUrl = `${window.location.origin}/surveys/respond/${surveyId}`
 		copyToClipboard(surveyUrl)
 	}
-
-	useEffect(() => {
-		if (isStatusUpdateError) {
-			showToast({
-				type: "error",
-				title: "Oops, nous avons rencontré une erreur",
-				description: "L'enquête n'a pas pu être publiée",
-			})
-			resetStatusUpdateError() // Reset the error to avoid permanent toast error
-		}
-	}, [
-		updateSurveyStatus,
-		resetStatusUpdateError,
-		showToast,
-		isStatusUpdateError,
-	])
 
 	const viewConfig: Partial<
 		Record<
@@ -251,7 +245,6 @@ function SurveyButtons({
 			>
 				{currentView.label}
 			</Button>
-
 			<Button
 				variant="primary"
 				ariaLabel={currentAction.ariaLabel}

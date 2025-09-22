@@ -133,11 +133,13 @@ export interface Survey {
 	title: string
 	description: string
 	public: boolean
-	category: number | string
+	category: { id: number; name: string }
 	status: SurveyStatusType
 	questions: Question[]
 	user: User
 }
+
+export type SurveyWithoutQuestions = Omit<Survey, "questions">
 
 export const SurveyStatus = {
 	Draft: "draft",
@@ -148,9 +150,16 @@ export const SurveyStatus = {
 
 export type SurveyStatusType = (typeof SurveyStatus)[keyof typeof SurveyStatus]
 
-export type CreateSurveyInput = Survey
+export type SurveyFormValues = {
+	title: string
+	description: string
+	public: boolean
+	category: string
+}
 
-export type UpdateSurveyInput = Survey
+export type CreateSurveyInput = SurveyFormValues
+
+export type UpdateSurveyInput = SurveyFormValues
 
 export type Question = {
 	id: number
