@@ -104,7 +104,7 @@ export class ApolloRateLimiter {
 // Instances de rate limiter pour différents types d'opérations
 export const graphqlRateLimiter = new ApolloRateLimiter(15 * 60 * 1000, 100) // 100 req/15min
 export const mutationRateLimiter = new ApolloRateLimiter(15 * 60 * 1000, 20) // 20 mutations/15min
-export const authRateLimiter = new ApolloRateLimiter(15 * 60 * 1000, 5) // 5 auth/15min
+export const authRateLimiter = new ApolloRateLimiter(15 * 60 * 1000, 20) // 20 auth/15min
 export const searchRateLimiter = new ApolloRateLimiter(1 * 60 * 1000, 30) // 30 searches/1min
 
 /**
