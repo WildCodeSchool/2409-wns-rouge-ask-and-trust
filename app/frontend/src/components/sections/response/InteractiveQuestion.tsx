@@ -5,10 +5,10 @@ import {
 } from "@/types/types"
 import { Label } from "@/components/ui/Label"
 import { UseFormRegister, Control } from "react-hook-form"
-import { TextInput } from "./ui/TextInput"
-import { SelectInput } from "./ui/SelectInput"
-import { BooleanInput } from "./ui/BooleanInput"
-import { MultipleChoiceInput } from "./ui/MultipleChoiceInput"
+import { TextInput } from "@/components/sections/response/ui/TextInput"
+import { SelectInput } from "@/components/sections/response/ui/SelectInput"
+import { BooleanInput } from "@/components/sections/response/ui/BooleanInput"
+import { MultipleChoiceInput } from "@/components/sections/response/ui/MultipleChoiceInput"
 
 type InteractiveQuestionProps = {
 	question: Question

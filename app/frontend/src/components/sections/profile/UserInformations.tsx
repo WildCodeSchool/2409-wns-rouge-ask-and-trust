@@ -1,10 +1,10 @@
-import { User } from "@/types/types.ts"
+import { User } from "@/types/types"
 import { useQuery } from "@apollo/client"
-import { WHOAMI } from "@/graphql/auth.ts"
-import { useSurvey } from "@/hooks/useSurvey.ts"
+import { WHOAMI } from "@/graphql/auth"
+import { useSurvey } from "@/hooks/useSurvey"
 import { useState } from "react"
-import { UserDetailsPart } from "@/components/sections/profile/parts/UserDetailsPart.tsx"
-import { ResetPasswordPart } from "@/components/sections/profile/parts/ResetPasswordPart.tsx"
+import { UserDetailsPart } from "@/components/sections/profile/parts/UserDetailsPart"
+import { ResetPasswordPart } from "@/components/sections/profile/parts/ResetPasswordPart"
 
 export default function UserInformations() {
 	const [showResetForm, setShowResetForm] = useState<boolean>(false)

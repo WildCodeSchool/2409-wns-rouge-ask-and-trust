@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button"
 import { useToast } from "@/hooks/useToast"
 import { useAnswers, type ExistingAnswer } from "@/hooks/useAnswers"
 import { useState, useEffect, useMemo } from "react"
-import InteractiveQuestion from "./InteractiveQuestion"
+import InteractiveQuestion from "@/components/sections/response/InteractiveQuestion"
 
 type SurveyResponseFormProps = {
 	surveyId: number

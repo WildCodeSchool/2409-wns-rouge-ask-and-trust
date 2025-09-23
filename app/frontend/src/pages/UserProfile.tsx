@@ -1,5 +1,5 @@
-import UserInformations from "@/components/sections/profile/UserInformations.tsx"
-import SurveyTableContainer from "@/components/sections/dashboard/SurveyTableContainer.tsx"
+import UserInformations from "@/components/sections/profile/UserInformations"
+import SurveyTableContainer from "@/components/sections/dashboard/SurveyTableContainer"
 import { withSEO } from "@/components/hoc/withSEO"
 
 function UserProfilePage() {
