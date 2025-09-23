@@ -26,7 +26,7 @@ export function SurveyCreatorHeader({
 	const [isTransitionEnded, setIsTransitionEnded] = useState<boolean>(false)
 
 	return (
-		<section className="w-full p-4 pb-0 lg:p-4 lg:pb-0">
+		<section className="w-full px-4 pt-4 pb-2">
 			<div className="flex flex-col gap-4">
 				{isMobile && (
 					<SurveyButtons

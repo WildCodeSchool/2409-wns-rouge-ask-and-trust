@@ -116,7 +116,7 @@ function SurveyCreator() {
 							hasQuestions={!!questions.length}
 						/>
 					)}
-					<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden bg-gray-50 pt-4 pr-4 pb-0 pl-4 md:p-4 lg:gap-4 lg:p-4">
+					<section className="md box-border flex h-full w-full flex-row gap-4 overflow-hidden bg-gray-50 px-0 pt-0 pb-0 md:px-4 md:pt-2 md:pb-4 lg:gap-4">
 						{!isMobile && (
 							<Toolbox onAddQuestion={handleAddQuestion} />
 						)}
