@@ -10,6 +10,7 @@ import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useSurvey } from "@/hooks/useSurvey"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
+import { cn } from "@/lib/utils"
 import { QuestionType, SurveyWithoutQuestions } from "@/types/types"
 import { useCallback, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
@@ -91,7 +92,14 @@ function SurveyCreator() {
 		// @TODO check this, keep it for after rebase
 		// <div className="2xl:max-w-larger mx-auto flex h-[calc(100vh_-_var(--header-height))] max-w-7xl flex-col bg-gray-50">
 		// 	{!data || !isOwner ? (
-		<div className="flex h-[calc(100vh_-_var(--header-height))] flex-col bg-gray-50 max-md:h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))]">
+		<div
+			className={cn(
+				"flex flex-col bg-gray-50",
+				isMobile
+					? "h-[calc(100vh_-_var(--footer-height))]"
+					: "h-[calc(100vh_-_var(--header-height))]"
+			)}
+		>
 			{surveyError && !survey ? (
 				<ErrorData
 					type="surveyfetcherror"
@@ -108,7 +116,7 @@ function SurveyCreator() {
 							hasQuestions={!!questions.length}
 						/>
 					)}
-					<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">
+					<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden bg-gray-50 pt-4 pr-4 pb-0 pl-4 md:p-4 lg:gap-4 lg:p-4">
 						{!isMobile && (
 							<Toolbox onAddQuestion={handleAddQuestion} />
 						)}
