@@ -5,6 +5,10 @@ import { AppError } from "../../middlewares/error-handler"
 import { login, register, whoami } from "../../services/auth-service"
 import { Context, Roles } from "../../types/types"
 import { LogUserInput } from "./../inputs/create/create-auth-input"
+import {
+	checkRateLimit,
+	authRateLimiter,
+} from "../../middlewares/apollo-rate-limiter"
 
 /**
  * AuthResolver handles all authentication-related GraphQL mutations and queries.
@@ -24,8 +28,14 @@ export class AuthResolver {
 	 */
 	@Mutation(() => User)
 	async register(
-		@Arg("data") data: CreateUserInput // Input object containing email and password
+		@Arg("data") data: CreateUserInput, // Input object containing email and password
+		@Ctx() context: Context
 	): Promise<User> {
+		// Rate limiting pour l'inscription
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(authRateLimiter, clientIP, "register")
+
 		try {
 			// NB : for now, data is checked automatically in buildSchema() in server.ts
 			// with the option "validate:true"
@@ -73,6 +83,11 @@ export class AuthResolver {
 		@Arg("data") data: LogUserInput, // Input object containing email and password
 		@Ctx() context: Context // Context object containing cookies
 	): Promise<LogInResponse> {
+		// Rate limiting pour la connexion (plus strict)
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(authRateLimiter, clientIP, "login")
+
 		try {
 			const { email, password } = data
 
@@ -94,7 +109,8 @@ export class AuthResolver {
 				message: loginResponse.message,
 				cookieSet: loginResponse.cookieSet,
 			}
-		} catch (error) {
+		} catch (err) {
+			console.error("Login error:", err)
 			throw new AppError("Login failed", 401, "UnauthorizedError") // Handle login errors
 		}
 	}
