@@ -436,3 +436,21 @@ export type UseSurveyOptions = {
 export type PublishedRequiredType = {
 	survey: Pick<Survey, "status">
 }
+
+type SurveyPreviewWithCategory = Omit<
+	Survey,
+	"public" | "status" | "user" | "category"
+> & {
+	category: SurveyCategoryType
+}
+
+export type SurveyPreviewType = {
+	isOwner?: boolean
+	id?: string | undefined
+	survey: SurveyPreviewWithCategory
+}
+
+export type SurveyResponseType = SurveyPreviewType & {
+	onClickCopy?: () => void
+	questions?: boolean
+}
