@@ -142,10 +142,12 @@ export default function AuthButtons({
 		return (
 			<div className="flex items-center justify-center gap-6">
 				<Button
-					to="/register"
+					onClick={onCreateSurveyAndNavigate}
+					loadingSpinner={isCreatingSurvey}
 					variant="tertiary"
-					role="link"
-					ariaLabel="S'inscrire"
+					role="button"
+					ariaLabel="Créer une enquête"
+					className="max-sm:hidden"
 				>
 					S'inscrire
 				</Button>
