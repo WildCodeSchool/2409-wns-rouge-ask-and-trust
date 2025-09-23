@@ -14,6 +14,7 @@ import { SurveysResolver } from "./graphql/resolvers/survey/survey-resolver"
 import { AnswersResolver } from "./graphql/resolvers/survey/answers-resolver"
 import { CategoryResolver } from "./graphql/resolvers/survey/category-resolver"
 import { QuestionsResolver } from "./graphql/resolvers/survey/questions-resolver"
+import { SurveyResponsesResolver } from "./graphql/resolvers/survey/survey-responses-resolver"
 
 dotenv.config() // Load environment variables from .env file
 
@@ -45,6 +46,7 @@ if (!process.env.APP_PORT) {
 				AnswersResolver,
 				CategoryResolver,
 				QuestionsResolver,
+				SurveyResponsesResolver,
 				/* your resolvers here */
 			],
 			validate: true, // Activate validation for input fields
