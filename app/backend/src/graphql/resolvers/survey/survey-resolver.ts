@@ -15,6 +15,7 @@ import {
 	Query,
 	Resolver,
 } from "type-graphql"
+import { Timeout } from "../../../middlewares/timeout-middleware"
 import { Category } from "../../../database/entities/survey/category"
 import { Survey } from "../../../database/entities/survey/survey"
 import { AllSurveysResult } from "../../../database/results/allSurveysResult"
@@ -56,6 +57,7 @@ export class SurveysResolver {
 	 * @throws AppError - If no surveys are found or in case of a server error.
 	 */
 	@Query(() => AllSurveysResult)
+	@Timeout(30000) // 30 seconds for complex searches
 	async surveys(
 		@Arg("filters", () => AllSurveysQueryInput, { nullable: true })
 		filters: AllSurveysQueryInput
@@ -148,6 +150,7 @@ export class SurveysResolver {
 	 * This query retrieves a specific survey by its ID, along with its associated user and category information.
 	 */
 	@Query(() => Survey, { nullable: true })
+	@Timeout(20000) // 20 seconds for a simple read
 	async survey(@Arg("id", () => ID) id: number): Promise<Survey | null> {
 		try {
 			const survey = await Survey.findOne({
@@ -202,6 +205,7 @@ export class SurveysResolver {
 	 */
 	@Authorized(Roles.User, Roles.Admin)
 	@Query(() => MySurveysResult)
+	@Timeout(30000) // 30 seconds for personal searches
 	async mySurveys(
 		@Arg("filters", () => MySurveysQueryInput, { nullable: true })
 		filters: MySurveysQueryInput,
@@ -293,6 +297,7 @@ export class SurveysResolver {
 	 */
 	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Survey)
+	@Timeout(15000) // 15 seconds for creation (can include complex validations)
 	async createSurvey(
 		@Arg("data", () => CreateSurveyInput) data: CreateSurveyInput,
 		@Ctx() context: Context
@@ -340,6 +345,7 @@ export class SurveysResolver {
 	 */
 	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Survey, { nullable: true })
+	@Timeout(12000) // 12 seconds for update
 	async updateSurvey(
 		@Arg("data", () => UpdateSurveyInput) data: UpdateSurveyInput,
 		@Ctx() context: Context
@@ -412,6 +418,7 @@ export class SurveysResolver {
 	 */
 	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Survey, { nullable: true })
+	@Timeout(10000) // 10 seconds for deletion
 	async deleteSurvey(
 		@Arg("id", () => ID) id: number,
 		@Ctx() context: Context
