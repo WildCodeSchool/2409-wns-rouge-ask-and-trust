@@ -1,11 +1,4 @@
-import {
-	Field,
-	ID,
-	MiddlewareFn,
-	NextFn,
-	ObjectType,
-	UseMiddleware,
-} from "type-graphql"
+import { Field, ID, ObjectType, UseMiddleware } from "type-graphql"
 import {
 	BaseEntity,
 	Column,
@@ -13,9 +6,10 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn,
 } from "typeorm"
-import { Context, Roles, UserRole } from "../../types/types"
+import { Roles, UserRole } from "../../types/types"
 import { Category } from "./survey/category"
 import { Survey } from "./survey/survey"
+import { HideEmail } from "../../middlewares/hide-email"
 
 /**
  * Represents a user entity in the database.
@@ -37,20 +31,6 @@ import { Survey } from "./survey/survey"
  *
  * For `createdAt` and `updatedAt`, the timestamps are automatically set by the database.
  */
-
-const HideEmail: MiddlewareFn<Context> = async (
-	{ context, root },
-	next: NextFn
-): Promise<string | null> => {
-	if (
-		context.user?.role === Roles.Admin ||
-		context.user?.id === (root as User).id
-	) {
-		return await next()
-	} else {
-		return null
-	}
-}
 
 @ObjectType()
 @Entity({ name: "user" })
