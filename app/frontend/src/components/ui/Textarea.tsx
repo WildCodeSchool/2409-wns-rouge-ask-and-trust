@@ -38,7 +38,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 			<div className="flex h-full flex-col">
 				<textarea
 					className={cn(
-						"border-black-100 file:text-black-default placeholder:border-black-400 focus-visible:border-primary-700 flex h-full w-full resize-none rounded-lg border bg-transparent px-3 py-1 text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+						"border-black-100 file:text-black-default placeholder:border-black-400 focus-visible:border-primary-700 flex h-full w-full resize-none rounded-lg border bg-transparent p-2 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
 						classError,
 						className
 					)}

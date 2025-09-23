@@ -15,9 +15,8 @@ export const Collapsible: FC<
 		if (!isExpanded) setIsTransitionEnded(false)
 	}, [isExpanded, setIsTransitionEnded])
 
-	// @TODO : fix : overflow hidden cut focus outline
 	// @TODO : fix : correct scrollbar position
-	// Warning : these fixes can have conflicts with each other
+	// Warning : can have conflicts with an older fix : focus were cut by overflow
 	return (
 		<div
 			onTransitionEnd={() => {
@@ -26,6 +25,7 @@ export const Collapsible: FC<
 			className={cn(
 				"transition-all duration-200 ease-in-out",
 				"overflow-hidden",
+				"-m-1",
 				isExpanded ? "opacity-100" : "opacity-0"
 			)}
 			style={{
@@ -33,7 +33,9 @@ export const Collapsible: FC<
 				overflowY: isTransitionEnded ? "auto" : "hidden",
 			}}
 		>
-			<div ref={ref}>{children}</div>
+			<div className="p-1" ref={ref}>
+				{children}
+			</div>
 		</div>
 	)
 }
