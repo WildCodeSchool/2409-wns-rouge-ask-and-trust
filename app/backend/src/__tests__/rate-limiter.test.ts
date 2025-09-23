@@ -146,7 +146,7 @@ describe("Apollo Rate Limiter", () => {
 
 			// Vérifier les informations restantes
 			const info = authRateLimiter.getRateLimitInfo(testIP)
-			expect(info.remaining).toBe(2) // 5 - 3 = 2
+			expect(info.remaining).toBe(17) // 20 - 3 = 17
 			expect(info.retryAfter).toBeGreaterThan(0) // Il y a toujours un délai jusqu'au reset
 			expect(info.resetTime).toBeGreaterThan(Date.now())
 		})
@@ -155,7 +155,7 @@ describe("Apollo Rate Limiter", () => {
 			const testIP = "192.168.1.100"
 
 			// Épuiser la limite
-			for (let i = 0; i < 5; i++) {
+			for (let i = 0; i < 20; i++) {
 				checkRateLimit(authRateLimiter, testIP, "login")
 			}
 
