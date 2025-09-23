@@ -1,19 +1,22 @@
+import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
+import { HEADER_LINKS } from "@/components/sections/header/Header"
 import { Button } from "@/components/ui/Button"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useHeightVariable } from "@/hooks/useHeightVariable"
 import { useResponsivity } from "@/hooks/useResponsivity"
+import { useScreenDetector } from "@/hooks/useScreenDetector"
+import { useSurvey } from "@/hooks/useSurvey"
 import { cn, slugify } from "@/lib/utils"
 import { SurveyCategoryType } from "@/types/types"
 import { useState } from "react"
-import { Link, useSearchParams } from "react-router-dom"
-import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
+import { Link, useLocation, useSearchParams } from "react-router-dom"
 import logoFooter from "/logos/logo-footer.svg"
-import { useSurvey } from "@/hooks/useSurvey"
-import { HEADER_LINKS } from "@/components/sections/header/Header"
 
 export default function Header({ isInSurveys = false }) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const [searchParams, setSearchParams] = useSearchParams()
+	const { isMobile } = useScreenDetector()
+	const location = useLocation()
 	const { categoriesData, loadingCategories, errorCategories } = useSurvey()
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(
 		null
@@ -40,6 +43,11 @@ export default function Header({ isInSurveys = false }) {
 
 		setSearchParams(newParams)
 	}
+
+	const hideOnBuildPage =
+		isMobile && location.pathname.startsWith("/surveys/build")
+
+	if (hideOnBuildPage) return null
 
 	return (
 		<header

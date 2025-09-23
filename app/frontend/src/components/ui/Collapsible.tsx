@@ -15,6 +15,9 @@ export const Collapsible: FC<
 		if (!isExpanded) setIsTransitionEnded(false)
 	}, [isExpanded, setIsTransitionEnded])
 
+	// @TODO : fix : overflow hidden cut focus outline
+	// @TODO : fix : correct scrollbar position
+	// Warning : these fixes can have conflicts with each other
 	return (
 		<div
 			onTransitionEnd={() => {
