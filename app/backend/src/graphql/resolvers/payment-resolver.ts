@@ -55,7 +55,7 @@ export class PaymentResolver {
 		@Arg("input") input: CreatePaymentInput,
 		@Ctx() context: Context
 	): Promise<string> {
-		// Rate limiting pour la création de paiement
+		// Rate limiting for the creation of a payment intent
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(mutationRateLimiter, clientIP, "createPaymentIntent")
@@ -105,7 +105,7 @@ export class PaymentResolver {
 		@Arg("input") input: UpdatePaymentInput,
 		@Ctx() context: Context
 	): Promise<Payment> {
-		// Rate limiting pour la mise à jour de paiement
+		// Rate limiting for the update of a payment
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(mutationRateLimiter, clientIP, "updatePayment")

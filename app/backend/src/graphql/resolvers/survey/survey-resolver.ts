@@ -66,7 +66,7 @@ export class SurveysResolver {
 		filters: AllSurveysQueryInput,
 		@Ctx() context: Context
 	): Promise<AllSurveysResult> {
-		// Rate limiting pour les recherches de surveys
+		// Rate limiting for the search of surveys
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(searchRateLimiter, clientIP, "surveys")
@@ -218,7 +218,7 @@ export class SurveysResolver {
 		filters: MySurveysQueryInput,
 		@Ctx() context: Context
 	): Promise<MySurveysResult> {
-		// Rate limiting pour les recherches de mes surveys
+		// Rate limiting for the search of my surveys
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(searchRateLimiter, clientIP, "mySurveys")
@@ -365,7 +365,7 @@ export class SurveysResolver {
 		@Arg("data", () => UpdateSurveyInput) data: UpdateSurveyInput,
 		@Ctx() context: Context
 	): Promise<Survey | null> {
-		// Rate limiting pour la mise à jour de survey
+		// Rate limiting for the update of a survey
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(mutationRateLimiter, clientIP, "updateSurvey")
@@ -442,7 +442,7 @@ export class SurveysResolver {
 		@Arg("id", () => ID) id: number,
 		@Ctx() context: Context
 	): Promise<Survey | null> {
-		// Rate limiting pour la suppression de survey
+		// Rate limiting for the deletion of a survey
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(mutationRateLimiter, clientIP, "deleteSurvey")

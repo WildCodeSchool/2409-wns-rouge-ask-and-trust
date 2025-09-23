@@ -31,7 +31,7 @@ export class AuthResolver {
 		@Arg("data") data: CreateUserInput, // Input object containing email and password
 		@Ctx() context: Context
 	): Promise<User> {
-		// Rate limiting pour l'inscription
+		// Rate limiting for the registration
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(authRateLimiter, clientIP, "register")
@@ -83,7 +83,7 @@ export class AuthResolver {
 		@Arg("data") data: LogUserInput, // Input object containing email and password
 		@Ctx() context: Context // Context object containing cookies
 	): Promise<LogInResponse> {
-		// Rate limiting pour la connexion (plus strict)
+		// Rate limiting for the login
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(authRateLimiter, clientIP, "login")
