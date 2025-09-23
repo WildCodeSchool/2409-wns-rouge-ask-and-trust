@@ -38,23 +38,15 @@ export default function HeaderResponse({
 									ariaLabel="Voir les réponses du sondage"
 									size="sm"
 									icon={BarChart3}
-									className="flex-1 sm:flex-none"
 								>
-									<span className="hidden sm:inline">
-										Voir les réponses
-									</span>
-									<span className="sm:hidden">Réponses</span>
+									Voir les réponses
 								</Button>
 								<Button
 									to={`/surveys/build/${id}`}
 									ariaLabel="Aller sur la page de modification de l'enquête"
 									size="sm"
-									className="flex-1 sm:flex-none"
 								>
-									<span className="hidden sm:inline">
-										Modifier l'enquête
-									</span>
-									<span className="sm:hidden">Modifier</span>
+									Modifier l'enquête
 								</Button>
 							</>
 						)}
