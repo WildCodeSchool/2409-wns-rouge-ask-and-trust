@@ -23,7 +23,7 @@ export class CreateSurveyInput {
 	title!: string
 
 	@Field()
-	@Length(1, 5000, {
+	@Length(0, 5000, {
 		message: "Description must be between 1 and 5000 characters",
 	})
 	description!: string
@@ -34,6 +34,6 @@ export class CreateSurveyInput {
 	@Field(() => ID)
 	category!: number
 
-	@Field(() => [CreateQuestionsInput])
+	@Field(() => [CreateQuestionsInput], { nullable: true })
 	questions?: CreateQuestionsInput[]
 }

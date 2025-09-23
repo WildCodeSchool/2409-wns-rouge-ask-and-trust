@@ -30,7 +30,15 @@ export function useSurveyMutations() {
 
 	const addSurvey = async (survey: CreateSurveyInput) => {
 		const result = await createSurveyMutation({
-			variables: { data: survey },
+			variables: {
+				data: {
+					...survey,
+					title: survey.title || "Nouvelle enquête",
+					description: survey.description || "",
+					public: survey.public ?? false,
+					category: survey.category || 1, // @TODO do better with a default category}
+				},
+			},
 		})
 		return result.data?.createSurvey
 	}

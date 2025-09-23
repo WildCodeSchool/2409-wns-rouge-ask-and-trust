@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/Button"
-import { useToast } from "@/hooks/useToast"
-import { useNavigate, useLocation } from "react-router-dom"
 import { useAuthContext } from "@/hooks/useAuthContext"
+import { useSurveyMutations } from "@/hooks/useSurveyMutations"
+import { useToast } from "@/hooks/useToast"
+import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { AuthButtonsProps } from "@/types/types"
+import { useLocation, useNavigate } from "react-router-dom"
 
 export default function AuthButtons({
 	isHorizontalCompact = false,
@@ -10,9 +12,23 @@ export default function AuthButtons({
 	isInFooter,
 }: AuthButtonsProps) {
 	const { user, logout } = useAuthContext()
+	const {
+		createSurvey,
+		createSurveyError,
+		isCreatingSurvey,
+		resetCreateSurveyError,
+	} = useSurveyMutations()
 	const navigate = useNavigate()
 	const location = useLocation()
 	const { showToast } = useToast()
+
+	useToastOnChange({
+		trigger: createSurveyError,
+		resetTrigger: resetCreateSurveyError,
+		type: "error",
+		title: "Erreur pour créer l'enquête",
+		description: "Nous n'avons pas réussi à créer l'enquête",
+	})
 
 	const pathname = location.pathname
 	const isOnLanding = pathname === "/"
@@ -30,6 +46,32 @@ export default function AuthButtons({
 			title: "Déconnexion réussie !",
 			description: "À bientôt sur Ask&Trust !",
 		})
+	}
+
+	const onCreateSurveyAndNavigate = async () => {
+		try {
+			const newSurvey = await createSurvey({
+				title: "Nouvelle enquête",
+				description: "",
+				public: false,
+				category: "",
+			})
+
+			if (!newSurvey?.id) {
+				throw new Error(
+					"Impossible de récupérer l'ID de la nouvelle enquête"
+				)
+			}
+
+			navigate(`/surveys/build/${newSurvey.id}`)
+		} catch (error) {
+			console.error(error)
+			showToast({
+				type: "error",
+				title: "Erreur",
+				description: "La création de l'enquête a échoué",
+			})
+		}
 	}
 
 	if (shouldHideButtonsInHeader) {
@@ -165,9 +207,10 @@ export default function AuthButtons({
 	return (
 		<div className="flex items-center justify-center gap-6">
 			<Button
-				to="/surveys/create"
+				onClick={onCreateSurveyAndNavigate}
 				variant="tertiary"
-				role="link"
+				role="button"
+				loadingSpinner={isCreatingSurvey}
 				ariaLabel="Créer une enquête"
 				className="max-lg:hidden"
 			>

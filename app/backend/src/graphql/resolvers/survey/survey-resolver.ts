@@ -16,16 +16,17 @@ import {
 	Resolver,
 } from "type-graphql"
 import { Category } from "../../../database/entities/survey/category"
+import { Questions } from "../../../database/entities/survey/questions"
 import { Survey } from "../../../database/entities/survey/survey"
 import { AllSurveysResult } from "../../../database/results/allSurveysResult"
 import { MySurveysResult } from "../../../database/results/mySurveyResult"
-import { AppError } from "../../../middlewares/error-handler"
-import { Context, Roles } from "../../../types/types"
 import {
 	checkRateLimit,
 	mutationRateLimiter,
 	searchRateLimiter,
 } from "../../../middlewares/apollo-rate-limiter"
+import { AppError } from "../../../middlewares/error-handler"
+import { Context, QuestionTypeEnum, Roles } from "../../../types/types"
 import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-input"
 import { MySurveysQueryInput } from "../../inputs/queries/mySurveys-query-input"
 import { AllSurveysQueryInput } from "../../inputs/queries/surveys-query-input"
@@ -337,6 +338,15 @@ export class SurveysResolver {
 			Object.assign(newSurvey, data, { user, category })
 
 			await newSurvey.save()
+
+			// Add a default text question
+			const defaultQuestion = new Questions()
+			defaultQuestion.type = QuestionTypeEnum.text
+			defaultQuestion.survey = newSurvey
+			defaultQuestion.title = "Nouvelle question"
+			const results = await defaultQuestion.save()
+			console.log("results", results)
+
 			return newSurvey
 		} catch (error) {
 			throw new AppError(
