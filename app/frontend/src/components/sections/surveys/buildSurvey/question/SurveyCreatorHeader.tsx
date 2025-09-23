@@ -17,6 +17,13 @@ import { ChevronDown } from "lucide-react"
 import { useCallback, useState } from "react"
 import { useParams } from "react-router-dom"
 
+/**
+ * @description Header component for editing a survey.
+ * Handles mobile/desktop layout, expandable/collapsible behavior, and buttons for survey actions.
+ *
+ * @param survey Survey data without questions
+ * @param hasQuestions Whether the survey has any questions (used for validation before publishing)
+ */
 export function SurveyCreatorHeader({
 	survey,
 	hasQuestions,
@@ -64,6 +71,15 @@ export function SurveyCreatorHeader({
 	)
 }
 
+/**
+ * @description Survey header component displaying title, status, and toggle button.
+ *
+ * @param isExpanded Whether the collapsible section is expanded
+ * @param setIsExpanded Setter function to toggle expanded state
+ * @param surveyTitle Title of the survey
+ * @param surveyStatus Current status of the survey
+ * @param hasQuestions Whether the survey has any questions
+ */
 function Header({
 	isExpanded,
 	setIsExpanded,
@@ -154,6 +170,13 @@ function Header({
 	)
 }
 
+/**
+ * @description Renders action buttons for the survey depending on its status.
+ * Handle "publish" or "share" actions and displays appropriate toast notifications.
+ *
+ * @param status Survey status
+ * @param hasQuestions Whether the survey has any questions
+ */
 function SurveyButtons({
 	status,
 	hasQuestions,

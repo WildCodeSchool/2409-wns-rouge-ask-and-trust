@@ -42,19 +42,6 @@ export function getDefaultQuestion(question: {
 }
 
 export function useQuestions() {
-	// const [
-	// 	createQuestionMutation,
-	// 	{
-	// loading: isCreateQuestionLoading,
-	// error: createQuestionError,
-	// reset: resetCreateQuestionError,
-	// 	},
-	// ] = useMutation(
-	// 	CREATE_QUESTION
-	// 	// 	{
-	// 	// 	refetchQueries: [GET_SURVEY],
-	// 	// }
-	// )
 	const [
 		createQuestionMutation,
 		{
