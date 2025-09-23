@@ -39,8 +39,7 @@ export const GET_SURVEY = gql`
 			public
 			user {
 				id
-				firstname
-				lastname
+				email
 			}
 			category {
 				id
