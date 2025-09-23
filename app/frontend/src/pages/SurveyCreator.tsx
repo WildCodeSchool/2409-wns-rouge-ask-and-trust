@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
-import { useSurvey } from "@/hooks/useSurvey"
+import { useSurveyData } from "@/hooks/useSurveyData"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { cn } from "@/lib/utils"
@@ -30,8 +30,8 @@ function SurveyCreator() {
 		resetCreateQuestionError,
 	} = useQuestions()
 
-	const { survey, surveyLoading, surveyError, refetchSurvey } =
-		useSurvey(surveyId)
+	const { survey, isLoadingSurvey, surveyError, refetchSurvey } =
+		useSurveyData(surveyId)
 
 	const { showToast } = useToast()
 	const { isMobile } = useScreenDetector()
@@ -80,7 +80,7 @@ function SurveyCreator() {
 			return rest
 		}, [survey])
 
-	if (surveyLoading) {
+	if (isLoadingSurvey) {
 		return <SurveyCreatorSkeleton />
 	}
 
@@ -88,10 +88,11 @@ function SurveyCreator() {
 	const connectedUser = user?.id
 	const isOwner = surveyUser === connectedUser
 
+	console.log("connectedUser", connectedUser)
+	console.log("isOwner", isOwner)
+	console.log("suervey", survey?.user)
+
 	return (
-		// @TODO check this, keep it for after rebase
-		// <div className="2xl:max-w-larger mx-auto flex h-[calc(100vh_-_var(--header-height))] max-w-7xl flex-col bg-gray-50">
-		// 	{!data || !isOwner ? (
 		<div
 			className={cn(
 				"flex flex-col bg-gray-50",
@@ -104,7 +105,7 @@ function SurveyCreator() {
 				<ErrorData
 					type="surveyfetcherror"
 					refetch={refetchSurvey}
-					loading={surveyLoading}
+					loading={isLoadingSurvey}
 				/>
 			) : !survey || !isOwner ? (
 				<ErrorData type={!isOwner ? "notowner" : "nosurvey"} />
@@ -124,7 +125,7 @@ function SurveyCreator() {
 							<ErrorData
 								type="noquestions"
 								refetch={refetchSurvey}
-								loading={surveyLoading}
+								loading={isLoadingSurvey}
 							/>
 						) : (
 							<Canvas
