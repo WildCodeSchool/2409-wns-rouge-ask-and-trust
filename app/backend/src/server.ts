@@ -9,6 +9,7 @@ import { AuthResolver } from "./graphql/resolvers/auth-resolver"
 import { PaymentResolver } from "./graphql/resolvers/payment-resolver"
 import { customAuthChecker } from "./middlewares/auth-checker"
 import { AppError } from "./middlewares/error-handler"
+import { TimeoutMiddleware } from "./middlewares/timeout-middleware"
 import { createAdmin } from "./scripts/create-admin"
 import { SurveysResolver } from "./graphql/resolvers/survey/survey-resolver"
 import { AnswersResolver } from "./graphql/resolvers/survey/answers-resolver"
@@ -28,6 +29,7 @@ if (!process.env.APP_PORT) {
 	throw new Error("APP_PORT is not defined in environment variables.")
 }
 
+// protection contre l'ASI (Automatic Semicolon Insertion) en JavaScript/TypeScript. <;(>
 ;(async () => {
 	try {
 		// Initialize the data source (e.g., connect to a database)
@@ -54,9 +56,29 @@ if (!process.env.APP_PORT) {
 			emitSchemaFile: true, // Optional , for debugging
 		})
 
+		// Create the instance of the timeout middleware with advanced features
+		const timeoutMiddleware = new TimeoutMiddleware({
+			timeoutMs: 30000, // 30 seconds default
+			message: "Request timeout - operation took too long to complete",
+			enableMetrics: true,
+			enableDebugLogging: process.env.NODE_ENV === "development",
+			operationTimeouts: {
+				// Specific timeouts per operation type
+				upload: 120000, // 2 minutes for uploads
+				search: 10000, // 10 seconds for searches
+				report: 60000, // 1 minute for reports
+				export: 90000, // 1.5 minutes for exports
+				import: 180000, // 3 minutes for imports
+				survey: 45000, // 45 seconds for survey operations
+				response: 20000, // 20 seconds for responses
+				payment: 60000, // 1 minute for payments
+			},
+		})
+
 		//Create instance of ApolloServer with the schema
 		const server = new ApolloServer({
 			schema,
+			plugins: [timeoutMiddleware.createApolloPlugin()],
 			formatError: (
 				formattedError: GraphQLFormattedError,
 				error: unknown
