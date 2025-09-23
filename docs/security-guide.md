@@ -125,36 +125,47 @@ email!: string
 - ✅ Validation des types, longueurs, formats
 - ✅ Gestion centralisée des erreurs de validation
 
+#### **4. Request Timeout Pattern**
+**✅ IMPLÉMENTÉ** : Limitation du temps d'exécution des requêtes.
+
+```typescript
+// Middleware de timeout pour Apollo Server
+import { TimeoutMiddleware, withTimeout, Timeout } from './middlewares/timeout-middleware'
+
+// Configuration dans server.ts
+const timeoutMiddleware = new TimeoutMiddleware({
+  timeoutMs: 30000, // 30 secondes
+  message: "Request timeout - operation took too long to complete"
+})
+
+const server = new ApolloServer({
+  schema,
+  plugins: [timeoutMiddleware.createApolloPlugin()],
+  // ...
+})
+
+// Utilisation dans les resolvers
+@Timeout(10000) // 10 secondes pour cette méthode
+async createSurvey(@Arg("data") data: CreateSurveyInput): Promise<Survey> {
+  // ... logique métier
+}
+```
+
+**Avantages** :
+- ✅ Protection contre les requêtes infinies
+- ✅ Limitation des ressources serveur
+- ✅ Timeout configurable par opération
+- ✅ Messages d'erreur explicites (HTTP 408)
+- ✅ Plugin Apollo Server intégré
+- ✅ Tests automatisés complets
+
 ---
 
 ## ❌ **4. Mesures de Sécurité Manquantes (À Implémenter)**
 
 ### **🔴 Priorité Haute - Critiques**
 
-#### **1. Rate Limiting (Limitation du Taux de Requêtes)**
-**Problème** : Protection contre les attaques par déni de service.
-
-**Solution** :
-```typescript
-// Backend - Rate limiting natif Apollo Server
-import { checkRateLimit, authRateLimiter, mutationRateLimiter } from './middlewares/apollo-rate-limiter'
-
-// Dans les resolvers
-@Mutation(() => LogInResponse)
-async login(@Arg("data") data: LogUserInput, @Ctx() context: Context) {
-  const clientIP = context.req?.ip || 'unknown'
-  checkRateLimit(authRateLimiter, clientIP, 'login')
-  // ... reste de la logique
-}
-```
-
-**Limites configurées** :
-- Authentification : 5 tentatives / 15 minutes
-- Mutations : 20 opérations / 15 minutes  
-- Recherches : 30 requêtes / 1 minute
-- Général : 100 requêtes / 15 minutes
-
-#### **2. Headers de Sécurité (Helmet.js)**
+#### **1. Headers de Sécurité (Helmet.js)**
 **Problème** : Protection contre les attaques courantes.
 
 **Solution** :
@@ -162,7 +173,7 @@ async login(@Arg("data") data: LogUserInput, @Ctx() context: Context) {
 add 
 ```
 
-#### **3. Configuration CORS**
+#### **2. Configuration CORS**
 **Problème** : Contrôle des origines autorisées.
 
 **Solution** :
@@ -172,25 +183,10 @@ add
 
 ### **🟡 Priorité Moyenne**
 
-#### **4. Logs de Sécurité**
+#### **3. Logs de Sécurité**
 ```typescript
 // Logger les tentatives d'accès non autorisées
 ```
-
-#### **5. Timeout des Requêtes**
-```typescript
-// Limiter le temps d'exécution des requêtes
-const timeout = setTimeout(() => {
-  throw new Error('Request timeout')
-}, 30000) // 30 secondes
-```
-
-### **🟢 Priorité Basse**
-
-#### **6. Authentification à Deux Facteurs (2FA)**
-#### **7. Audit Trail (Traçabilité)**
-#### **8. Chiffrement des Données Sensibles**
-
 ---
 
 ## 🔄 **5. Résilience Informatique**
@@ -205,10 +201,9 @@ La résilience informatique est la capacité d'un système à continuer de fonct
 ### **Mesures de Résilience**
 
 #### **1. Gestion des Erreurs**
-**✅ PARTIELLEMENT IMPLÉMENTÉ dans Ask&Trust** :
+**✅ IMPLÉMENTÉ dans Ask&Trust** :
 
 ```typescript
-// ✅ DÉJÀ IMPLÉMENTÉ - Classe AppError personnalisée
 export class AppError extends Error implements IAppError {
   statusCode: number
   errorType?: string
@@ -216,16 +211,12 @@ export class AppError extends Error implements IAppError {
   isOperational: boolean
 }
 
-// ✅ DÉJÀ IMPLÉMENTÉ - Utilisation dans les resolvers
 try {
   const surveys = await Survey.find()
   return surveys
 } catch (error) {
   throw new AppError("Failed to fetch surveys", 500, "DatabaseError")
 }
-
-// ❌ MANQUANT - Logging structuré
-// logger.error('Operation failed', { error: error.message })
 ```
 
 #### **2. Circuit Breaker Pattern**
@@ -243,7 +234,7 @@ class CircuitBreaker {
     if (this.isOpen()) {
       throw new Error('Circuit breaker is open')
     }
-    
+
     try {
       const result = await operation()
       this.onSuccess()
@@ -279,7 +270,6 @@ async function retryOperation<T>(
 ```
 
 **Recommandation** : Implémenter pour les appels vers des services externes (Stripe, email, etc.).
-
 ---
 
 ## 🔧 **6. Sécurité des Technologies Préexistantes**
