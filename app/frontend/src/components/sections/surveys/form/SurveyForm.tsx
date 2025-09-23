@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/Button"
 import { Label } from "@/components/ui/Label"
 import { Skeleton } from "@/components/ui/Skeleton"
 import TypeSelect from "@/components/ui/TypeSelect"
+import { useCategoriesData } from "@/hooks/useCategoriesData"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
-import { useSurvey } from "@/hooks/useSurvey"
+import { useSurveyMutations } from "@/hooks/useSurveyMutations"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
 import {
@@ -17,29 +18,28 @@ import {
 } from "@/types/types"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { useParams } from "react-router-dom"
 
 export default function SurveyForm({
 	survey,
 }: {
 	survey: SurveyWithoutQuestions
 }) {
-	const { id: surveyId } = useParams()
 	const {
 		updateSurvey,
-		updateError,
+		isUpdatingSurvey,
+		updateSurveyError,
 		resetUpdateSurveyError,
-		categoriesData,
-		loadingCategories,
-		errorCategories,
-	} = useSurvey(surveyId)
+	} = useSurveyMutations()
+	const { categoriesData, isLoadingCategories, errorCategories } =
+		useCategoriesData()
+
 	const { showToast } = useToast()
 	const { isMobile } = useScreenDetector()
 	const {
 		register,
 		handleSubmit,
 		control,
-		formState: { errors, isSubmitting, isDirty },
+		formState: { errors, isDirty },
 		setError,
 		clearErrors,
 		reset,
@@ -64,11 +64,11 @@ export default function SurveyForm({
 	}, [survey, categoriesData, reset])
 
 	useToastOnChange({
-		trigger: updateError,
+		trigger: updateSurveyError,
 		resetTrigger: resetUpdateSurveyError,
 		type: "error",
 		title: "Erreur lors de la modification de l’enquête",
-		description: updateError?.message ?? "Une erreur est survenue",
+		description: updateSurveyError?.message ?? "Une erreur est survenue",
 	})
 
 	const onFormSubmit = async (form: CreateSurveyInput) => {
@@ -92,7 +92,7 @@ export default function SurveyForm({
 		}
 	}
 
-	if (loadingCategories || !survey || !categoriesData) {
+	if (isLoadingCategories || !survey || !categoriesData) {
 		return (
 			<div className="p-4">
 				<Skeleton className="mb-4 h-8 w-1/3" />
@@ -114,7 +114,7 @@ export default function SurveyForm({
 	return (
 		<FormWrapper
 			onSubmit={handleSubmit(onFormSubmit)}
-			className="w-full flex-col border-none !p-0 shadow-none md:max-w-full"
+			className="w-full flex-col border-none !p-0 pt-4 shadow-none md:max-w-full"
 		>
 			<div className="flex flex-col gap-4 lg:flex-row">
 				<div className="flex flex-col gap-4 lg:w-[50%]">
@@ -130,7 +130,7 @@ export default function SurveyForm({
 							selectSomething="Sélectionner une catégorie"
 							options={categoryOptions}
 							disabled={
-								loadingCategories ||
+								isLoadingCategories ||
 								!!errorCategories ||
 								!categoryOptions.length
 							}
@@ -141,7 +141,7 @@ export default function SurveyForm({
 									? "Impossible de charger les catégories. Veuillez réessayer plus tard."
 									: errors.category?.message
 							}
-							isLoading={loadingCategories}
+							isLoading={isLoadingCategories}
 							hasData={!!categoryOptions.length}
 							emptyMessage={
 								!errorCategories && !categoryOptions.length
@@ -159,10 +159,10 @@ export default function SurveyForm({
 				<SwitchPublic control={control} errors={errors} />
 				<Button
 					type="submit"
-					disabled={isSubmitting || !isDirty}
+					disabled={isUpdatingSurvey || !isDirty}
 					ariaLabel="Modifier l'enquête"
 					fullWidth={isMobile}
-					loadingSpinner={isSubmitting}
+					loadingSpinner={isUpdatingSurvey}
 					variant={isDirty ? "primary" : "disabled"}
 				>
 					Modifier l'enquête

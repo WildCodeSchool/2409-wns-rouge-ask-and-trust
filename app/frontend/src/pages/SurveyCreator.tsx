@@ -2,7 +2,6 @@ import { withSEO } from "@/components/hoc/withSEO"
 import { Canvas } from "@/components/sections/canvas/Canvas"
 import { SurveyCreatorHeader } from "@/components/sections/surveys/buildSurvey/question/SurveyCreatorHeader"
 import { SurveyCreatorSkeleton } from "@/components/sections/surveys/buildSurvey/question/SurveyCreatorSkeleton"
-
 import { Toolbox } from "@/components/sections/Toolbox/Toolbox"
 import { Button } from "@/components/ui/Button"
 import { useAuthContext } from "@/hooks/useAuthContext"
@@ -106,7 +105,7 @@ function SurveyCreator() {
 					{surveyWithoutQuestions && (
 						<SurveyCreatorHeader
 							survey={surveyWithoutQuestions}
-							isQuestions={!!questions.length}
+							hasQuestions={!!questions.length}
 						/>
 					)}
 					<section className="box-border flex h-full w-full flex-row gap-4 overflow-hidden p-4 lg:gap-4 lg:p-4">

@@ -1,5 +1,7 @@
+import SurveyForm from "@/components/sections/surveys/form/SurveyForm"
 import { Button } from "@/components/ui/Button"
 import { Chipset } from "@/components/ui/Chipset"
+import { Collapsible } from "@/components/ui/Collapsible"
 import { useCopyClipboard } from "@/hooks/useCopyClipboard"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
 import { useSurvey } from "@/hooks/useSurvey"
@@ -12,148 +14,159 @@ import {
 	SurveyWithoutQuestions,
 } from "@/types/types"
 import { ChevronDown } from "lucide-react"
-import { AnimatePresence, motion } from "motion/react"
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useState } from "react"
 import { useParams } from "react-router-dom"
-import SurveyForm from "../../form/SurveyForm"
 
 export function SurveyCreatorHeader({
 	survey,
-	isQuestions,
+	hasQuestions,
 }: {
 	survey: SurveyWithoutQuestions
-	isQuestions: boolean
+	hasQuestions: boolean
 }) {
 	const { isMobile } = useScreenDetector()
-	const [open, setOpen] = useState(false)
+	const [isExpanded, setIsExpanded] = useState<boolean>(false)
+	const [isTransitionEnded, setIsTransitionEnded] = useState<boolean>(false)
 
-	const translateStatus = useCallback(
-		(status: SurveyStatusType | undefined) => {
-			switch (status) {
-				case "draft":
-					return "brouillon"
-				case "published":
-					return "publiée"
-				case "archived":
-					return "archivée"
-				case "censored":
-					return "censurée"
-			}
-		},
-		[]
-	)
-	const ref = useRef<HTMLDivElement>(null)
-
-	const translatedStatus = translateStatus(survey.status)
 	return (
 		<section className="w-full p-4 pb-0 lg:p-4 lg:pb-0">
 			<div className="flex flex-col gap-4">
 				{isMobile && (
 					<SurveyButtons
 						status={survey.status}
-						isQuestions={isQuestions}
+						hasQuestions={hasQuestions}
 					/>
 				)}
-				<div className="shadow-default border-black-50 flex h-fit max-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height)_-_10vh)] flex-col gap-4 overflow-y-auto rounded-xl border bg-white p-4">
-					<div className="flex w-full flex-col gap-8">
-						<div className="flex w-full items-center gap-2">
-							<button
-								className="flex w-full min-w-0 cursor-pointer items-center justify-between"
-								onClick={() => {
-									setOpen(!open)
-								}}
-							>
-								<div className="flex min-w-0 items-center gap-4">
-									<div className="flex min-w-0 flex-col items-start">
-										<div className="flex min-w-0 items-center gap-2">
-											<h1 className="text-lg font-semibold text-gray-900">
-												Création de l'enquête
-											</h1>
-											<Chipset
-												ariaLabel={`L'enquête possède le statut ${translatedStatus}`}
-												state={survey.status || "draft"}
-												size="sm"
-												rounded
-											>
-												{translatedStatus}
-											</Chipset>
-										</div>
-										<h3
-											className={cn(
-												"text-start text-base text-gray-600",
-												isMobile && "line-clamp-2",
-												!isMobile && "line-clamp-1"
-											)}
-										>
-											{survey.title}
-										</h3>
-									</div>
-									{!isMobile && (
-										<ChevronDown
-											size={20}
-											className={cn(
-												"transform transition-transform duration-300",
-												open && "rotate-180"
-											)}
-										/>
-									)}
-								</div>
-							</button>
-							<div className="flex items-center gap-12">
-								{!isMobile && (
-									<SurveyButtons
-										status={survey.status}
-										isQuestions={isQuestions}
-									/>
-								)}
-								{isMobile && (
-									<ChevronDown
-										size={20}
-										className={cn(
-											"rotate-0 transform transition-transform duration-300",
-											open && "rotate-180"
-										)}
-									/>
-								)}
-							</div>
-						</div>
-					</div>
-					<AnimatePresence initial={false}>
-						{open && (
-							<motion.div
-								initial={{ height: 0, opacity: 0 }}
-								animate={{ height: "auto", opacity: 1 }}
-								exit={{ height: 0, opacity: 0 }}
-								transition={{
-									duration: 0.3,
-									ease: "easeInOut",
-								}}
-								// style={{ overflow: "hidden" }}
-							>
-								<div ref={ref}>
-									<SurveyForm survey={survey} />
-								</div>
-							</motion.div>
-						)}
-					</AnimatePresence>
+				<div
+					className={cn(
+						"shadow-default border-black-50 flex h-fit max-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height)_-_10vh)] flex-col rounded-xl border bg-white p-4 transition-all duration-200 ease-in-out md:max-h-fit",
+						isExpanded && "gap-4",
+						!isExpanded && isTransitionEnded && "gap-0"
+					)}
+				>
+					<Header
+						isExpanded={isExpanded}
+						setIsExpanded={setIsExpanded}
+						surveyStatus={survey.status}
+						surveyTitle={survey.title}
+						hasQuestions={hasQuestions}
+					/>
+					<Collapsible
+						isExpanded={isExpanded}
+						isTransitionEnded={isTransitionEnded}
+						setIsTransitionEnded={setIsTransitionEnded}
+					>
+						<SurveyForm survey={survey} />
+					</Collapsible>
 				</div>
 			</div>
 		</section>
 	)
 }
 
+function Header({
+	isExpanded,
+	setIsExpanded,
+	surveyTitle,
+	surveyStatus,
+	hasQuestions,
+}: {
+	isExpanded: boolean
+	setIsExpanded: (value: boolean | ((prev: boolean) => boolean)) => void
+	surveyTitle: string
+	surveyStatus: SurveyStatusType | undefined
+	hasQuestions: boolean
+}) {
+	const { isMobile } = useScreenDetector()
+
+	const translateStatus = (status: SurveyStatusType | undefined) => {
+		switch (status) {
+			case "draft":
+				return "brouillon"
+			case "published":
+				return "publiée"
+			case "archived":
+				return "archivée"
+			case "censored":
+				return "censurée"
+		}
+	}
+
+	const translatedStatus = translateStatus(surveyStatus)
+
+	return (
+		<div className="flex w-full items-center justify-between gap-2">
+			<button
+				className="flex w-full min-w-0 cursor-pointer items-center justify-between"
+				onClick={() => {
+					setIsExpanded((prev: boolean) => !prev)
+				}}
+			>
+				<div
+					className={cn(
+						"flex min-w-0 items-center gap-4",
+						isMobile && "w-full justify-between"
+					)}
+				>
+					<div className="flex min-w-0 flex-col items-start">
+						<div className="flex min-w-0 items-center gap-2">
+							<h1 className="text-lg font-semibold text-gray-900">
+								Gestion de l'enquête
+							</h1>
+							<Chipset
+								ariaLabel={`L'enquête possède le statut ${translatedStatus}`}
+								state={surveyStatus || "draft"}
+								size="sm"
+								rounded
+							>
+								{translatedStatus}
+							</Chipset>
+						</div>
+						{surveyTitle && (
+							<h3
+								className={cn(
+									"text-start text-base text-gray-600",
+									isMobile ? "line-clamp-2" : "line-clamp-1"
+								)}
+							>
+								{surveyTitle}
+							</h3>
+						)}
+					</div>
+					<ChevronDown
+						size={20}
+						className={cn(
+							"transform transition-transform duration-300",
+							isExpanded && "rotate-180"
+						)}
+					/>
+				</div>
+			</button>
+			{!isMobile && (
+				<div className="ml-auto">
+					<SurveyButtons
+						status={surveyStatus}
+						hasQuestions={hasQuestions}
+					/>
+				</div>
+			)}
+		</div>
+	)
+}
+
 function SurveyButtons({
 	status,
-	isQuestions,
+	hasQuestions,
 }: {
 	status: SurveyStatusType | undefined
-	isQuestions: boolean
+	hasQuestions: boolean
 }) {
 	const { id: surveyId } = useParams()
 	const { updateSurveyStatus, isStatusUpdateError, resetStatusUpdateError } =
 		useSurvey()
 	const { showToast } = useToast()
 	const { copyToClipboard } = useCopyClipboard()
+
 	useToastOnChange({
 		trigger: isStatusUpdateError,
 		resetTrigger: resetStatusUpdateError,
@@ -165,7 +178,7 @@ function SurveyButtons({
 	const onPublishSurvey = useCallback(async () => {
 		if (!surveyId || !status) return
 
-		if (!isQuestions) {
+		if (!hasQuestions) {
 			showToast({
 				type: "warning",
 				title: "Votre enquête est vide",
@@ -173,6 +186,7 @@ function SurveyButtons({
 			})
 			return
 		}
+
 		try {
 			const result = await updateSurveyStatus(surveyId, "published")
 			if (result) {
@@ -183,13 +197,12 @@ function SurveyButtons({
 				})
 			}
 		} catch (err) {
-			console.error("Erreur lors de la mise à jour du statut :", err)
+			console.error(err)
 		}
-	}, [isQuestions, showToast, status, surveyId, updateSurveyStatus])
+	}, [hasQuestions, showToast, status, surveyId, updateSurveyStatus])
 
 	const onClickCopy = () => {
 		if (!surveyId) return
-
 		const surveyUrl = `${window.location.origin}/surveys/respond/${surveyId}`
 		copyToClipboard(surveyUrl)
 	}
