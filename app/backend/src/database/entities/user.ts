@@ -13,7 +13,7 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn,
 } from "typeorm"
-import { ContextUser, Roles, UserRole } from "../../types/types"
+import { Context, Roles, UserRole } from "../../types/types"
 import { Category } from "./survey/category"
 import { Survey } from "./survey/survey"
 
@@ -38,7 +38,7 @@ import { Survey } from "./survey/survey"
  * For `createdAt` and `updatedAt`, the timestamps are automatically set by the database.
  */
 
-const HideEmail: MiddlewareFn<ContextUser> = async (
+const HideEmail: MiddlewareFn<Context> = async (
 	{ context, root },
 	next: NextFn
 ): Promise<string | null> => {
