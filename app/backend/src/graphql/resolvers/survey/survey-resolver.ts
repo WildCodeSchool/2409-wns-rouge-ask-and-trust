@@ -157,13 +157,6 @@ export class SurveysResolver {
 					category: true,
 					questions: true,
 				},
-				select: {
-					user: {
-						id: true,
-						firstname: true,
-						lastname: true,
-					},
-				},
 				order: {
 					questions: {
 						id: "ASC",
