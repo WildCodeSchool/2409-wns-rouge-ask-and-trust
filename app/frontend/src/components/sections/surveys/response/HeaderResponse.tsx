@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/Badge"
 import { Button } from "@/components/ui/Button"
 import { Callout } from "@/components/ui/Callout"
 import { SurveyResponseType } from "@/types/types"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, BarChart3 } from "lucide-react"
 
 export default function HeaderResponse({
 	onClickCopy,
@@ -13,7 +13,7 @@ export default function HeaderResponse({
 	return (
 		<section className="bg-white shadow-sm">
 			<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
-				<div className="mb-4 flex items-center justify-between gap-4">
+				<div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
 					<Button
 						variant="ghost"
 						size="sm"
@@ -23,7 +23,7 @@ export default function HeaderResponse({
 					>
 						Retour
 					</Button>
-					<div className="flex items-center justify-center gap-4">
+					<div className="flex flex-wrap items-center gap-2 sm:gap-4">
 						<Button
 							ariaLabel="Partager l'enquête"
 							size="sm"
@@ -32,13 +32,23 @@ export default function HeaderResponse({
 							Partager
 						</Button>
 						{isOwner && (
-							<Button
-								to={`/surveys/build/${id}`}
-								ariaLabel="Aller sur la page de modification de l'enquête"
-								size="sm"
-							>
-								Modifier l'enquête
-							</Button>
+							<>
+								<Button
+									to={`/surveys/responses/${id}`}
+									ariaLabel="Voir les réponses du sondage"
+									size="sm"
+									icon={BarChart3}
+								>
+									Voir les réponses
+								</Button>
+								<Button
+									to={`/surveys/build/${id}`}
+									ariaLabel="Aller sur la page de modification de l'enquête"
+									size="sm"
+								>
+									Modifier l'enquête
+								</Button>
+							</>
 						)}
 					</div>
 				</div>

@@ -333,6 +333,74 @@ export interface SurveyResponseFormData {
 	[key: string]: string | string[] | boolean
 }
 
+// Survey Response Types
+export enum ResponseCompletionStatus {
+	Complete = "complete",
+	Partial = "partial",
+	Incomplete = "incomplete",
+}
+
+export enum ResponseSortField {
+	SubmittedAt = "submittedAt",
+	UserEmail = "userEmail",
+	CompletionStatus = "completionStatus",
+}
+
+export enum SortDirection {
+	Asc = "asc",
+	Desc = "desc",
+}
+
+export interface ResponseAnswer {
+	questionId: number
+	questionTitle: string
+	questionType: string
+	content: string
+	submittedAt: string
+}
+
+export interface SurveyResponse {
+	responseId: string
+	user: User
+	answers: ResponseAnswer[]
+	submittedAt: string
+	completionStatus: ResponseCompletionStatus
+	totalQuestions: number
+	answeredQuestions: number
+	completionPercentage: number
+}
+
+export interface SurveyResponsesResult {
+	responses: SurveyResponse[]
+	totalCount: number
+	page: number
+	limit: number
+	totalPages: number
+	hasNextPage: boolean
+	hasPreviousPage: boolean
+}
+
+export interface SurveyResponseStats {
+	totalResponses: number
+	completeResponses: number
+	partialResponses: number
+	incompleteResponses: number
+	completionRate: number
+	firstResponseAt?: string
+	lastResponseAt?: string
+}
+
+export interface SurveyResponsesQueryInput {
+	keyword?: string
+	dateFrom?: string
+	dateTo?: string
+	completionStatus?: ResponseCompletionStatus
+	sortBy?: ResponseSortField
+	sortDirection?: SortDirection
+	page?: number
+	limit?: number
+}
+
 export type SurveyWithCategory = {
 	id: number
 	title: string
