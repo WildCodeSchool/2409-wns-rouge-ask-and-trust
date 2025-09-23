@@ -9,7 +9,6 @@ export type Context = {
 }
 
 export type ContextUser = {
-	cookies: Cookies
 	user?: User | null
 }
 
