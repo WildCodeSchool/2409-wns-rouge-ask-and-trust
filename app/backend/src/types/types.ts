@@ -4,6 +4,8 @@ import { User } from "../database/entities/user"
 export type Context = {
 	cookies: Cookies
 	user: User | null | undefined
+	req?: any // Request object from Apollo Server standalone
+	res?: any // Response object from Apollo Server standalone
 }
 
 export const Roles = {

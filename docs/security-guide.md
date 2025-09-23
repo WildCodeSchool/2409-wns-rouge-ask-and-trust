@@ -135,8 +135,24 @@ email!: string
 **Problème** : Protection contre les attaques par déni de service.
 
 **Solution** :
-add rate limiting in the middleware
+```typescript
+// Backend - Rate limiting natif Apollo Server
+import { checkRateLimit, authRateLimiter, mutationRateLimiter } from './middlewares/apollo-rate-limiter'
+
+// Dans les resolvers
+@Mutation(() => LogInResponse)
+async login(@Arg("data") data: LogUserInput, @Ctx() context: Context) {
+  const clientIP = context.req?.ip || 'unknown'
+  checkRateLimit(authRateLimiter, clientIP, 'login')
+  // ... reste de la logique
+}
 ```
+
+**Limites configurées** :
+- Authentification : 5 tentatives / 15 minutes
+- Mutations : 20 opérations / 15 minutes  
+- Recherches : 30 requêtes / 1 minute
+- Général : 100 requêtes / 15 minutes
 
 #### **2. Headers de Sécurité (Helmet.js)**
 **Problème** : Protection contre les attaques courantes.
