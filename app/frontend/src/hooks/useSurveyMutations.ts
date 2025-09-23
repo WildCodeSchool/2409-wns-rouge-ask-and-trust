@@ -14,6 +14,41 @@ import {
 } from "@/types/types"
 import { useMutation } from "@apollo/client"
 import { useToast } from "./useToast"
+/**
+ * Hook providing all survey-related GraphQL mutations.
+ *
+ * @description
+ * This hook encapsulates the logic for creating, updating, updating status, and deleting a survey.
+ * It uses Apollo Client's `useMutation` and provides loading states, errors, and error reset functions.
+ *
+ * @returns {Object} An object containing mutation functions and their corresponding states.
+ *
+ * @example
+ * ```ts
+ * const {
+ *   createSurvey,
+ *   isCreatingSurvey,
+ *   createSurveyError,
+ *   updateSurvey,
+ *   deleteSurvey,
+ *   isDeletingSurvey,
+ * } = useSurveyMutations();
+ *
+ * // Create a survey
+ * await createSurvey({
+ *			title: "Cats and Dogs",
+ *			description: "Lets' talk about cats and dogs...",
+ *			public: true,
+ *			category: 1,
+ *		})
+ *
+ * // Update a survey
+ * await updateSurvey("surveyId", { title: "Updated Title" });
+ *
+ * // Delete a survey
+ * await deleteSurvey(surveyId);
+ * ```
+ */
 
 export function useSurveyMutations() {
 	const { showToast } = useToast()
