@@ -1,4 +1,11 @@
-import { Field, ID, ObjectType } from "type-graphql"
+import {
+	Field,
+	ID,
+	MiddlewareFn,
+	NextFn,
+	ObjectType,
+	UseMiddleware,
+} from "type-graphql"
 import {
 	BaseEntity,
 	Column,
@@ -6,7 +13,7 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn,
 } from "typeorm"
-import { Roles, UserRole } from "../../types/types"
+import { ContextUser, Roles, UserRole } from "../../types/types"
 import { Category } from "./survey/category"
 import { Survey } from "./survey/survey"
 
@@ -30,6 +37,21 @@ import { Survey } from "./survey/survey"
  *
  * For `createdAt` and `updatedAt`, the timestamps are automatically set by the database.
  */
+
+const HideEmail: MiddlewareFn<ContextUser> = async (
+	{ context, root },
+	next: NextFn
+): Promise<string | null> => {
+	if (
+		context.user?.role === Roles.Admin ||
+		context.user?.id === (root as User).id
+	) {
+		return await next()
+	} else {
+		return null
+	}
+}
+
 @ObjectType()
 @Entity({ name: "user" })
 export class User extends BaseEntity {
@@ -37,8 +59,9 @@ export class User extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id!: number
 
-	@Field()
+	@Field({ nullable: true })
 	@Column({ length: 254, unique: true })
+	@UseMiddleware(HideEmail)
 	email!: string // standard RFC 5321 for email's length
 
 	@Column({ length: 255 })

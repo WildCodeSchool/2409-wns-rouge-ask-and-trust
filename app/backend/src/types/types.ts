@@ -8,6 +8,11 @@ export type Context = {
 	res?: any // Response object from Apollo Server standalone
 }
 
+export type ContextUser = {
+	cookies: Cookies
+	user?: User | null
+}
+
 export const Roles = {
 	User: "user",
 	Moderator: "moderator",
