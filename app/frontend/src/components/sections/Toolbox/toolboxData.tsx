@@ -1,6 +1,7 @@
-import type { ToolboxCategory } from "@/types/types"
+import { TypesOfQuestion, type ToolboxCategory } from "@/types/types"
 import {
 	AlignJustify,
+	ArrowRightLeft,
 	CheckSquare,
 	Circle,
 	ListFilter,
@@ -22,13 +23,13 @@ export const toolboxCategories: ToolboxCategory[] = [
 				id: "select",
 				label: "liste déroulante",
 				icon: <ListFilter className="text-primary-700 h-5 w-5" />,
-				onClickType: "select",
+				onClickType: TypesOfQuestion.Select,
 			},
 			{
 				id: "checkboxes",
 				label: "cases à cocher",
 				icon: <CheckSquare className="text-primary-700 h-5 w-5" />,
-				onClickType: "checkbox",
+				onClickType: TypesOfQuestion.Checkbox,
 			},
 			{
 				id: "radio",
@@ -39,20 +40,8 @@ export const toolboxCategories: ToolboxCategory[] = [
 						<span className="bg-primary-700 absolute z-10 h-[0.65rem] w-[0.65rem] rounded-full" />
 					</div>
 				),
-				onClickType: "radio",
+				onClickType: TypesOfQuestion.Radio,
 			},
-			// {
-			// 	id: "multi-select",
-			// 	label: "Multi-Select Dropdown",
-			// 	icon: <List className="text-primary-700 h-5 w-5" />,
-			// 	onClickType: "multi-select",
-			// },
-			// {
-			// 	id: "image-picker",
-			// 	label: "Image Picker",
-			// 	icon: <ImageIcon className="text-primary-700 h-5 w-5" />,
-			// 	onClickType: "image-picker",
-			// },
 		],
 	},
 	{
@@ -63,62 +52,20 @@ export const toolboxCategories: ToolboxCategory[] = [
 				id: "single-line",
 				label: "réponse courte",
 				icon: <Type className="text-primary-700 h-5 w-5" />,
-				onClickType: "text",
+				onClickType: TypesOfQuestion.Text,
 			},
 			{
 				id: "paragraph",
 				label: "paragraphe",
 				icon: <AlignJustify className="text-primary-700 h-5 w-5" />,
-				onClickType: "textarea",
+				onClickType: TypesOfQuestion.TextArea,
 			},
-			// {
-			// 	id: "multi-line",
-			// 	label: "Multi-Line Input",
-			// 	icon: <AlignLeft className="text-primary-700 h-5 w-5" />,
-			// 	onClickType: "multi-line",
-			// },
-			// {
-			// 	id: "multiple-textboxes",
-			// 	label: "Multiple Textboxes",
-			// 	icon: <Layers className="text-primary-700 h-5 w-5" />,
-			// 	onClickType: "multiple-textboxes",
-			// },
+			{
+				id: "boolean",
+				label: "Oui / Non",
+				icon: <ArrowRightLeft className="text-primary-700 h-5 w-5" />,
+				onClickType: TypesOfQuestion.Boolean,
+			},
 		],
 	},
-	// {
-	// 	id: "read-only",
-	// 	title: "Read-Only Elements",
-	// 	items: [
-	// 		{
-	// 			id: "read-only",
-	// 			label: "Read-Only Elements",
-	// 			icon: <FileText className="text-primary-700 h-5 w-5" />,
-	// 			onClickType: "read-only",
-	// 		},
-	// 	],
-	// },
-	// {
-	// 	id: "matrices",
-	// 	title: "Matrices",
-	// 	items: [
-	// 		{
-	// 			id: "matrices",
-	// 			label: "Matrices",
-	// 			icon: <Grid className="text-primary-700 h-5 w-5" />,
-	// 			onClickType: "matrices",
-	// 		},
-	// 	],
-	// },
-	// {
-	// 	id: "panels",
-	// 	title: "Panels",
-	// 	items: [
-	// 		{
-	// 			id: "panels",
-	// 			label: "Panels",
-	// 			icon: <Layout className="text-primary-700 h-5 w-5" />,
-	// 			onClickType: "panels",
-	// 		},
-	// 	],
-	// },
 ]

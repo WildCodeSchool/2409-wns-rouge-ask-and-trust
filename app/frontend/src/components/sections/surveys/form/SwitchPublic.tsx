@@ -10,7 +10,7 @@ export default function SwitchPublic({ control, errors }: SwitchProps) {
 				control={control}
 				name="public"
 				render={({ field }) => (
-					<div className="flex flex-col gap-1">
+					<div className="flex items-center gap-4">
 						<Label htmlFor="public" required>
 							Enquête publique
 						</Label>

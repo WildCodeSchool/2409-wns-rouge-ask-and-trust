@@ -1,7 +1,7 @@
-import { Eye, Pencil, Trash2, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
-import { SurveyTableActionsProps } from "@/types/types"
 import { useSurvey } from "@/hooks/useSurvey"
+import { SurveyTableActionsProps } from "@/types/types"
+import { BarChart3, Eye, Pencil, Trash2 } from "lucide-react"
 
 export const SurveyTableActions = ({
 	surveyId,
@@ -41,7 +41,7 @@ export const SurveyTableActions = ({
 				<Button
 					ariaLabel="Modifier cette enquête"
 					variant="ghost"
-					to={`/surveys/update/${surveyId}`}
+					to={`/surveys/build/${surveyId}`}
 					role="link"
 					className="text-black-default p-0"
 				>
