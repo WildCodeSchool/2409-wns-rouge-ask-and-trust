@@ -13,7 +13,7 @@ class ResizeObserverMock {
 	disconnect() {}
 }
 
-vi.mock("@/hooks/useSurveyMutations", () => ({
+vi.mock("@/hooks/survey/useSurveyMutations", () => ({
 	useSurveyMutations: () => ({
 		createSurvey: vi.fn(),
 		reset: vi.fn(),
