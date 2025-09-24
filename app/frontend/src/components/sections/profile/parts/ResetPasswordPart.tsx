@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/Button.tsx"
-import InputResetPassword from "@/components/sections/profile/form/InputResetPassword.tsx"
+import { Button } from "@/components/ui/Button"
+import InputResetPassword from "@/components/sections/profile/form/InputResetPassword"
 
 const inputsAttributes = [
 	{

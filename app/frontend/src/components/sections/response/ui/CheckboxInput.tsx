@@ -4,7 +4,7 @@ import { SurveyResponseFormData } from "@/types/types"
 import { UseFormRegister } from "react-hook-form"
 import { Input } from "@/components/ui/Input"
 
-type MultipleChoiceInputProps = {
+type CheckboxInputProps = {
 	name: string
 	register: UseFormRegister<SurveyResponseFormData>
 	options: string[]
@@ -13,14 +13,14 @@ type MultipleChoiceInputProps = {
 	onChange?: (values: string[]) => void
 }
 
-export function MultipleChoiceInput({
+export function CheckboxInput({
 	name,
 	register,
 	options,
 	error,
 	value = [],
 	onChange,
-}: MultipleChoiceInputProps) {
+}: CheckboxInputProps) {
 	const currentValues = Array.isArray(value) ? value : []
 
 	const handleOptionChange = (option: string, checked: boolean) => {

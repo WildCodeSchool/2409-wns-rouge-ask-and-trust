@@ -1,7 +1,7 @@
 import { Type } from "class-transformer"
 import { Length, ValidateNested } from "class-validator"
 import { Field, InputType, ObjectType } from "type-graphql"
-import { QuestionType } from "../../../../types/types"
+import { QuestionTypeEnum } from "../../../../types/types"
 
 /**
  * Represents input data for creating a new survey question.
@@ -24,8 +24,8 @@ export class CreateQuestionsInput {
 	})
 	title!: string
 
-	@Field(() => String)
-	type!: QuestionType
+	@Field(() => QuestionTypeEnum)
+	type!: QuestionTypeEnum
 
 	@Field(() => [AnswerObject])
 	@ValidateNested({ each: true }) // Validate each answer object in the array

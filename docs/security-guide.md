@@ -64,7 +64,37 @@ const hashedPassword = await argon2.hash(password)
 
 ### **🛠️ Patrons de Sécurité Implémentés**
 
-#### **1. Authenticator Pattern**
+#### **1. Rate Limiting Pattern**
+**✅ IMPLÉMENTÉ** : Protection contre les attaques par déni de service.
+
+```typescript
+// Rate limiting natif Apollo Server avec isolation par IP
+import { checkRateLimit, authRateLimiter, mutationRateLimiter, searchRateLimiter } from './middlewares/apollo-rate-limiter'
+
+// Dans les resolvers
+@Mutation(() => LogInResponse)
+async login(@Arg("data") data: LogUserInput, @Ctx() context: Context) {
+  const clientIP = context.req?.ip || context.req?.socket?.remoteAddress || 'unknown'
+  checkRateLimit(authRateLimiter, clientIP, 'login')
+  // ... reste de la logique
+}
+```
+
+**Limites configurées** :
+- Authentification : 20 tentatives / 15 minutes
+- Mutations : 20 opérations / 15 minutes  
+- Recherches : 30 requêtes / 1 minute
+- Général : 100 requêtes / 15 minutes
+
+**Avantages** :
+- ✅ Isolation par adresse IP
+- ✅ Headers de rate limiting (X-RateLimit-*)
+- ✅ Messages d'erreur détaillés avec retryAfter
+- ✅ Tests automatisés complets
+- ✅ Nettoyage automatique des entrées expirées
+- ✅ Protection contre les attaques DDoS et brute force
+
+#### **2. Authenticator Pattern**
 **Objectif** : Centraliser l'authentification dans un service dédié.
 
 ```typescript
@@ -82,7 +112,7 @@ cookies.set("token", token, {
 - ✅ Vérification des rôles centralisée dans `auth-checker.ts`
 - ✅ Réutilisable dans tous les resolvers
 
-#### **2. Authorization Enforcer Pattern**
+#### **3. Authorization Enforcer Pattern**
 **Objectif** : Vérifier les permissions métier et techniques.
 
 ```typescript
@@ -99,7 +129,7 @@ async getUsers(): Promise<User[]> {
 - ✅ Vérification granulaire des accès
 - ✅ Réutilisabilité des règles d'autorisation
 
-#### **3. Input Validator Pattern**
+#### **4. Input Validator Pattern**
 **Objectif** : Valider toutes les entrées utilisateur.
 
 ```typescript

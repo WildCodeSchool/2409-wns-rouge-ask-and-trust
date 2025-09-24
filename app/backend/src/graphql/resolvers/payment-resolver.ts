@@ -19,6 +19,10 @@ import {
 import { AppError } from "../../middlewares/error-handler"
 import { CreatePaymentInput } from "../inputs/create/create-payment-input"
 import { UpdatePaymentInput } from "../inputs/update/update-payment-input"
+import {
+	checkRateLimit,
+	mutationRateLimiter,
+} from "../../middlewares/apollo-rate-limiter"
 
 /**
  * Payment Resolver
@@ -51,8 +55,14 @@ export class PaymentResolver {
 	@Timeout(30000) // 30 seconds for payment creation (Stripe API)
 	async createPaymentIntent(
 		@Arg("input") input: CreatePaymentInput,
-		@Ctx() { user }: Context
+		@Ctx() context: Context
 	): Promise<string> {
+		// Rate limiting for the creation of a payment intent
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(mutationRateLimiter, clientIP, "createPaymentIntent")
+
+		const { user } = context
 		if (!user) {
 			throw new AppError(
 				"Not authenticated",
@@ -96,8 +106,14 @@ export class PaymentResolver {
 	@Timeout(30000) // 30 seconds for payment update
 	async updatePayment(
 		@Arg("input") input: UpdatePaymentInput,
-		@Ctx() { user }: Context
+		@Ctx() context: Context
 	): Promise<Payment> {
+		// Rate limiting for the update of a payment
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(mutationRateLimiter, clientIP, "updatePayment")
+
+		const { user } = context
 		if (!user) {
 			throw new AppError(
 				"Not authenticated",

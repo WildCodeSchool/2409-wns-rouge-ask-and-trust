@@ -12,6 +12,7 @@ import {
 	AllSurveysType,
 	CreateSurveyInput,
 	DateSortFilter,
+	Survey,
 	SurveysDashboardQuery,
 	SurveyStatusType,
 	SurveyTableType,
@@ -115,7 +116,8 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		data: surveyData,
 		loading: surveyLoading,
 		error: surveyError,
-	} = useQuery(GET_SURVEY, {
+		refetch: refetchSurvey,
+	} = useQuery<{ survey: Survey }>(GET_SURVEY, {
 		variables: { surveyId: surveyId },
 		skip: !surveyId,
 	})
@@ -157,17 +159,31 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		data: categoriesData,
 		loading: loadingCategories,
 		error: errorCategories,
-	} = useQuery(GET_CATEGORIES)
+	} = useQuery(GET_CATEGORIES, {
+		fetchPolicy: "cache-first", // try to get cache before re-fetch
+	})
 
-	const [createSurvey, { loading: isCreating, error: createError }] =
-		useMutation(CREATE_SURVEY, {
-			refetchQueries: [{ query: GET_SURVEYS }],
-		})
+	const [
+		createSurvey,
+		{
+			loading: isCreating,
+			error: createError,
+			reset: resetCreateSurveyError,
+		},
+	] = useMutation(CREATE_SURVEY, {
+		refetchQueries: [{ query: GET_SURVEYS }],
+	})
 
-	const [updateSurveyMutation, { loading: isUpdating, error: updateError }] =
-		useMutation(UPDATE_SURVEY, {
-			refetchQueries: [{ query: GET_SURVEYS }],
-		})
+	const [
+		updateSurveyMutation,
+		{
+			loading: isUpdating,
+			error: updateError,
+			reset: resetUpdateSurveyError,
+		},
+	] = useMutation(UPDATE_SURVEY, {
+		refetchQueries: [{ query: GET_SURVEYS }],
+	})
 
 	const [
 		updateSurveyStatusMutation,
@@ -182,6 +198,7 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		refetchQueries: [GET_MY_SURVEYS],
 	})
 
+	// @TODO refetch() is already a refetch function. why fetchSurveys ?
 	const fetchSurveys = async () => {
 		await refetch()
 	}
@@ -195,10 +212,7 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		return result.data?.createSurvey
 	}
 
-	const updateSurvey = async (
-		id: string,
-		survey: Partial<UpdateSurveyInput>
-	) => {
+	const updateSurvey = async (id: string, survey: UpdateSurveyInput) => {
 		const result = await updateSurveyMutation({
 			variables: {
 				data: {
@@ -300,10 +314,18 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		survey,
 		surveyLoading,
 		surveyError,
-		isCreating,
+		refetchSurvey,
 		isUpdating,
+
+		addSurvey,
 		createError,
+		isCreating,
+		resetCreateSurveyError,
+
+		updateSurvey,
 		updateError,
+		resetUpdateSurveyError,
+
 		currentPage,
 		setCurrentPage,
 		PER_PAGE,
@@ -322,8 +344,6 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		loadingCategories,
 		errorCategories,
 		fetchSurveys,
-		addSurvey,
-		updateSurvey,
 		deleteSurvey,
 		deleteSurveys,
 		updateSurveyStatus,

@@ -4,7 +4,7 @@ import { InputsProps } from "@/types/types"
 
 export default function InputTitle({ register, errors }: InputsProps) {
 	return (
-		<div>
+		<div className="flex flex-col gap-1">
 			<Label htmlFor="title" required>
 				Titre
 			</Label>

@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach, Mock } from "vitest"
-import { BrowserRouter } from "react-router-dom"
-import { render, screen } from "@testing-library/react"
 import Footer from "@/components/sections/footer/Footer"
 import Links from "@/components/ui/Links"
-import userEvent from "@testing-library/user-event"
 import { useAuthContext } from "@/hooks/useAuthContext"
+import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
+import { BrowserRouter } from "react-router-dom"
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest"
 
 // Mock ResizeObserver
 class ResizeObserverMock {
@@ -12,6 +12,13 @@ class ResizeObserverMock {
 	unobserve() {}
 	disconnect() {}
 }
+
+vi.mock("@/hooks/survey/useSurveyMutations", () => ({
+	useSurveyMutations: () => ({
+		createSurvey: vi.fn(),
+		reset: vi.fn(),
+	}),
+}))
 
 // Wrapper require in react router
 const FooterWrapper = () => (

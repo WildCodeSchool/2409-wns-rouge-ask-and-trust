@@ -17,11 +17,17 @@ import {
 } from "type-graphql"
 import { Timeout } from "../../../middlewares/timeout-middleware"
 import { Category } from "../../../database/entities/survey/category"
+import { Questions } from "../../../database/entities/survey/questions"
 import { Survey } from "../../../database/entities/survey/survey"
 import { AllSurveysResult } from "../../../database/results/allSurveysResult"
 import { MySurveysResult } from "../../../database/results/mySurveyResult"
+import {
+	checkRateLimit,
+	mutationRateLimiter,
+	searchRateLimiter,
+} from "../../../middlewares/apollo-rate-limiter"
 import { AppError } from "../../../middlewares/error-handler"
-import { Context, Roles } from "../../../types/types"
+import { Context, QuestionTypeEnum, Roles } from "../../../types/types"
 import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-input"
 import { MySurveysQueryInput } from "../../inputs/queries/mySurveys-query-input"
 import { AllSurveysQueryInput } from "../../inputs/queries/surveys-query-input"
@@ -60,8 +66,14 @@ export class SurveysResolver {
 	@Timeout(30000) // 30 seconds for complex searches
 	async surveys(
 		@Arg("filters", () => AllSurveysQueryInput, { nullable: true })
-		filters: AllSurveysQueryInput
+		filters: AllSurveysQueryInput,
+		@Ctx() context: Context
 	): Promise<AllSurveysResult> {
+		// Rate limiting for the search of surveys
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(searchRateLimiter, clientIP, "surveys")
+
 		try {
 			const {
 				search,
@@ -211,6 +223,11 @@ export class SurveysResolver {
 		filters: MySurveysQueryInput,
 		@Ctx() context: Context
 	): Promise<MySurveysResult> {
+		// Rate limiting for the search of my surveys
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(searchRateLimiter, clientIP, "mySurveys")
+
 		try {
 			const user = context.user
 
@@ -302,6 +319,11 @@ export class SurveysResolver {
 		@Arg("data", () => CreateSurveyInput) data: CreateSurveyInput,
 		@Ctx() context: Context
 	): Promise<Survey> {
+		// Rate limiting pour la création de survey
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(mutationRateLimiter, clientIP, "createSurvey")
+
 		try {
 			const user = context.user
 
@@ -321,6 +343,15 @@ export class SurveysResolver {
 			Object.assign(newSurvey, data, { user, category })
 
 			await newSurvey.save()
+
+			// Add a default text question
+			const defaultQuestion = new Questions()
+			defaultQuestion.type = QuestionTypeEnum.text
+			defaultQuestion.survey = newSurvey
+			defaultQuestion.title = "Nouvelle question"
+			const results = await defaultQuestion.save()
+			console.log("results", results)
+
 			return newSurvey
 		} catch (error) {
 			throw new AppError(
@@ -350,6 +381,11 @@ export class SurveysResolver {
 		@Arg("data", () => UpdateSurveyInput) data: UpdateSurveyInput,
 		@Ctx() context: Context
 	): Promise<Survey | null> {
+		// Rate limiting for the update of a survey
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(mutationRateLimiter, clientIP, "updateSurvey")
+
 		try {
 			const user = context.user
 
@@ -423,6 +459,11 @@ export class SurveysResolver {
 		@Arg("id", () => ID) id: number,
 		@Ctx() context: Context
 	): Promise<Survey | null> {
+		// Rate limiting for the deletion of a survey
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(mutationRateLimiter, clientIP, "deleteSurvey")
+
 		try {
 			const user = context.user
 

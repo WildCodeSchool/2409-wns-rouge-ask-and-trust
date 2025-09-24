@@ -1,15 +1,15 @@
+import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
+import { HEADER_LINKS } from "@/components/sections/header/Header"
 import { Button } from "@/components/ui/Button"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useHeightVariable } from "@/hooks/useHeightVariable"
 import { useResponsivity } from "@/hooks/useResponsivity"
+import { useSurvey } from "@/hooks/useSurvey"
 import { cn, slugify } from "@/lib/utils"
 import { SurveyCategoryType } from "@/types/types"
 import { useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
-import NavAndAuthButtons from "@/components/sections/auth/NavAndAuthButtons"
 import logoFooter from "/logos/logo-footer.svg"
-import { useSurvey } from "@/hooks/useSurvey"
-import { HEADER_LINKS } from "@/components/sections/header/Header"
 
 export default function Header({ isInSurveys = false }) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
