@@ -15,7 +15,6 @@ import { AnswersResolver } from "./graphql/resolvers/survey/answers-resolver"
 import { CategoryResolver } from "./graphql/resolvers/survey/category-resolver"
 import { QuestionsResolver } from "./graphql/resolvers/survey/questions-resolver"
 import { SurveyResponsesResolver } from "./graphql/resolvers/survey/survey-responses-resolver"
-import { whoami } from "./services/auth-service"
 
 dotenv.config() // Load environment variables from .env file
 
@@ -100,15 +99,7 @@ if (!process.env.APP_PORT) {
 					keys: [process.env.COOKIE_SECRET || "default-secret"],
 				})
 
-				let user = null
-
-				try {
-					user = await whoami(cookies)
-				} catch (error) {
-					console.error("User none authentified", error)
-				}
-
-				return { cookies, user }
+				return { cookies }
 			},
 		})
 
