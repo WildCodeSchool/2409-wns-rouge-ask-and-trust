@@ -143,11 +143,10 @@ export default function AuthButtons({
 		return (
 			<div className="flex items-center justify-center gap-6">
 				<Button
-					onClick={onCreateSurveyAndNavigate}
+					to="/register"
 					variant="tertiary"
-					role="button"
-					ariaLabel="Créer une enquête"
-					className="max-sm:hidden"
+					role="link"
+					ariaLabel="S'inscrire"
 				>
 					S'inscrire
 				</Button>
