@@ -28,7 +28,7 @@ import {
 import {
 	createQuestionInstance,
 	validateAndNormalizeAnswers,
-} from "../../utils/questions.services"
+} from "../../utils/questions-services"
 
 /**
  * QuestionsResolver

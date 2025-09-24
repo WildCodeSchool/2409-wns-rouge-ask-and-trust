@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button"
+import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
 import { useAuthContext } from "@/hooks/useAuthContext"
-import { useSurveyMutations } from "@/hooks/useSurveyMutations"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { AuthButtonsProps } from "@/types/types"
@@ -12,12 +12,8 @@ export default function AuthButtons({
 	isInFooter,
 }: AuthButtonsProps) {
 	const { user, logout } = useAuthContext()
-	const {
-		createSurvey,
-		createSurveyError,
-		isCreatingSurvey,
-		resetCreateSurveyError,
-	} = useSurveyMutations()
+	const { createSurvey, createSurveyError, resetCreateSurveyError } =
+		useSurveyMutations()
 	const navigate = useNavigate()
 	const location = useLocation()
 	const { showToast } = useToast()
@@ -143,7 +139,6 @@ export default function AuthButtons({
 			<div className="flex items-center justify-center gap-6">
 				<Button
 					onClick={onCreateSurveyAndNavigate}
-					loadingSpinner={isCreatingSurvey}
 					variant="tertiary"
 					role="button"
 					ariaLabel="Créer une enquête"
@@ -212,7 +207,6 @@ export default function AuthButtons({
 				onClick={onCreateSurveyAndNavigate}
 				variant="tertiary"
 				role="button"
-				loadingSpinner={isCreatingSurvey}
 				ariaLabel="Créer une enquête"
 				className="max-lg:hidden"
 			>

@@ -13,7 +13,7 @@ import {
 	UpdateSurveyInput,
 } from "@/types/types"
 import { useMutation } from "@apollo/client"
-import { useToast } from "./useToast"
+import { useToast } from "../useToast"
 /**
  * Hook providing all survey-related GraphQL mutations.
  *

@@ -44,7 +44,7 @@ export function useCategoriesData() {
 	const { data, loading, error } = useQuery<GetCategoriesQuery>(
 		GET_CATEGORIES,
 		{
-			fetchPolicy: "cache-first",
+			fetchPolicy: "cache-first", // @TODO check this because cache-first is already in client.tsx. If deleted here, check in SurveyCreatorHeader if it works.
 		}
 	)
 
