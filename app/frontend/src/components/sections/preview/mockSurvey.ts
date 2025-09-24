@@ -28,6 +28,7 @@ export const mockSurvey: SurveyPreview = {
 				{ value: "Recommandation d'un ami" },
 				{ value: "Autre" },
 			],
+			survey: { id: 1 },
 		},
 		// 🔢 ÉVALUATION (Boolean)
 		{
@@ -35,13 +36,14 @@ export const mockSurvey: SurveyPreview = {
 			title: "Recommanderiez-vous nos services à un proche ?",
 			type: "boolean",
 			answers: [],
+			survey: { id: 1 },
 		},
 
 		// ✅ CHOIX MULTIPLES
 		{
 			id: 3,
 			title: "Quels aspects de notre service appréciez-vous le plus ? (Plusieurs choix possibles)",
-			type: "multiple_choice",
+			type: "checkbox",
 			answers: [
 				{ value: "Rapidité de réponse" },
 				{ value: "Qualité du service client" },
@@ -50,6 +52,7 @@ export const mockSurvey: SurveyPreview = {
 				{ value: "Fiabilité" },
 				{ value: "Innovation" },
 			],
+			survey: { id: 1 },
 		},
 		// 🎯 ÉVALUATION DÉTAILLÉE
 		{
@@ -63,6 +66,7 @@ export const mockSurvey: SurveyPreview = {
 				{ value: "⭐⭐⭐⭐ Satisfait" },
 				{ value: "⭐⭐⭐⭐⭐ Très satisfait" },
 			],
+			survey: { id: 1 },
 		},
 		// 💼 PROFIL CLIENT
 		{
@@ -79,6 +83,7 @@ export const mockSurvey: SurveyPreview = {
 				{ value: "Services" },
 				{ value: "Autre" },
 			],
+			survey: { id: 1 },
 		},
 		// 📝 INFORMATIONS PERSONNELLES
 		{
@@ -86,6 +91,7 @@ export const mockSurvey: SurveyPreview = {
 			title: "Votre nom d'entreprise (optionnel) :",
 			type: "text",
 			answers: [],
+			survey: { id: 1 },
 		},
 		// 💬 FEEDBACK DÉTAILLÉ
 		{
@@ -93,12 +99,13 @@ export const mockSurvey: SurveyPreview = {
 			title: "Quelles améliorations suggéreriez-vous ? (Décrivez en détail)",
 			type: "text",
 			answers: [],
+			survey: { id: 1 },
 		},
 		// 🔧 BESOINS SPÉCIFIQUES
 		{
 			id: 8,
 			title: "Quels services supplémentaires souhaiteriez-vous ? (Plusieurs choix possibles)",
-			type: "multiple_choice",
+			type: "checkbox",
 			answers: [
 				{ value: "Formation / Tutoriels" },
 				{ value: "Support technique 24/7" },
@@ -107,6 +114,7 @@ export const mockSurvey: SurveyPreview = {
 				{ value: "Application mobile" },
 				{ value: "Consultation personnalisée" },
 			],
+			survey: { id: 1 },
 		},
 		// 📊 USAGE
 		{
@@ -121,6 +129,7 @@ export const mockSurvey: SurveyPreview = {
 				{ value: "Occasionnellement" },
 				{ value: "Première utilisation" },
 			],
+			survey: { id: 1 },
 		},
 		// 🎯 PRIORITÉS
 		{
@@ -128,6 +137,7 @@ export const mockSurvey: SurveyPreview = {
 			title: "Êtes-vous intéressé par nos futures mises à jour ?",
 			type: "boolean",
 			answers: [],
+			survey: { id: 1 },
 		},
 		// 📱 CONTACT
 		{
@@ -135,6 +145,7 @@ export const mockSurvey: SurveyPreview = {
 			title: "Email de contact (pour le suivi) :",
 			type: "text",
 			answers: [],
+			survey: { id: 1 },
 		},
 		// 🌟 ÉVALUATION FINALE
 		{
@@ -153,6 +164,7 @@ export const mockSurvey: SurveyPreview = {
 				{ value: "9 - Excellent" },
 				{ value: "10 - Parfait" },
 			],
+			survey: { id: 1 },
 		},
 	],
 }

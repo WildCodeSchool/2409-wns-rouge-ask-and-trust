@@ -1,6 +1,6 @@
 import profilePicture from "../../../../../public/img/profile/profile-picture.png"
-import { Button } from "@/components/ui/Button.tsx"
-import { UserDetails } from "@/types/types.ts"
+import { Button } from "@/components/ui/Button"
+import { UserDetails } from "@/types/types"
 
 export function UserDetailsPart({
 	user,

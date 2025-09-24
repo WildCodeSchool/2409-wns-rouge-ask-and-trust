@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/Label.tsx"
-import { Input } from "@/components/ui/Input.tsx"
+import { Label } from "@/components/ui/Label"
+import { Input } from "@/components/ui/Input"
 
 type InputResetPasswordProps = {
 	id: string
