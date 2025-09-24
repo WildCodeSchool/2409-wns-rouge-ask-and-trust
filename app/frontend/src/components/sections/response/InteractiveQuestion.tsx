@@ -8,7 +8,9 @@ import { UseFormRegister, Control } from "react-hook-form"
 import { TextInput } from "@/components/sections/response/ui/TextInput"
 import { SelectInput } from "@/components/sections/response/ui/SelectInput"
 import { BooleanInput } from "@/components/sections/response/ui/BooleanInput"
-import { MultipleChoiceInput } from "@/components/sections/response/ui/MultipleChoiceInput"
+import { CheckboxInput } from "@/components/sections/response/ui/CheckboxInput"
+import { TextareaInput } from "@/components/sections/response/ui/TextareaInput"
+import { RadioInput } from "@/components/sections/response/ui/RadioInput"
 
 type InteractiveQuestionProps = {
 	question: Question
@@ -73,9 +75,9 @@ export default function InteractiveQuestion({
 				)
 			}
 
-			case TypesOfQuestion.Multiple_Choice:
+			case TypesOfQuestion.Checkbox:
 				return (
-					<MultipleChoiceInput
+					<CheckboxInput
 						name={fieldName}
 						register={register}
 						options={[
@@ -84,6 +86,32 @@ export default function InteractiveQuestion({
 						error={error}
 						value={Array.isArray(currentValue) ? currentValue : []}
 						onChange={value => setValue?.(fieldName, value)}
+					/>
+				)
+
+			case TypesOfQuestion.TextArea:
+				return (
+					<TextareaInput
+						name={fieldName}
+						register={register}
+						placeholder="Votre réponse..."
+						error={error}
+					/>
+				)
+
+			case TypesOfQuestion.Radio:
+				return (
+					<RadioInput
+						name={fieldName}
+						register={register}
+						options={[
+							...new Set(question.answers.map(a => a.value)),
+						]}
+						error={error}
+						value={
+							typeof currentValue === "string" ? currentValue : ""
+						}
+						onChange={val => setValue?.(fieldName, val)}
 					/>
 				)
 

@@ -61,13 +61,15 @@ export default function SurveyResponseForm({
 				case "boolean":
 					value = answer.content === "Oui"
 					break
-				case "multiple_choice":
+				case "checkbox":
 					value = answer.content.includes(", ")
 						? answer.content.split(", ")
 						: [answer.content]
 					break
 				case "select":
 				case "text":
+				case "textarea":
+				case "radio":
 				default:
 					value = answer.content
 					break
