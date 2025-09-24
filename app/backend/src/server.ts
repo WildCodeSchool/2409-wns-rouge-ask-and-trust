@@ -85,6 +85,17 @@ if (!process.env.APP_PORT) {
 					}
 				}
 
+				// Handle rate limiting errors
+				if (formattedError.extensions?.code === "RATE_LIMIT_EXCEEDED") {
+					return {
+						message: formattedError.message,
+						extensions: {
+							...formattedError.extensions,
+							statusCode: 429,
+						},
+					}
+				}
+
 				// For other errors, you can handle them differently
 				return formattedError
 			},
@@ -99,7 +110,12 @@ if (!process.env.APP_PORT) {
 					keys: [process.env.COOKIE_SECRET || "default-secret"],
 				})
 
-				return { cookies }
+				// Ajouter req et res au context pour le rate limiting
+				return {
+					cookies,
+					req,
+					res,
+				}
 			},
 		})
 
