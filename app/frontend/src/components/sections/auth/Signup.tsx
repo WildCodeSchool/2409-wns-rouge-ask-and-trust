@@ -2,11 +2,10 @@ import { REGISTER, WHOAMI } from "@/graphql/auth"
 import { useToast } from "@/hooks/useToast"
 import { UserSignUp } from "@/types/types"
 import { ApolloError, useMutation } from "@apollo/client"
-import { SubmitHandler, useForm } from "react-hook-form"
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
 import FormButtonSubmit from "./form/FormButtonSubmit"
 import FormTitle from "./form/FormTitle"
 import FormWrapper from "./form/FormWrapper"
-import { FormProvider } from "react-hook-form"
 import InputEmail from "./form/InputEmail"
 import InputFirstname from "./form/InputFirstname"
 import InputLastname from "./form/InputLastname"
@@ -63,7 +62,6 @@ export default function Signup() {
 
 			// Handle GraphQL errors : invalid formats, email already used...
 			if (err instanceof ApolloError) {
-				console.log("err.graphQLErrors", err.graphQLErrors)
 				const emailError = err.graphQLErrors.find(e =>
 					e.message.includes("Email already exists")
 				)

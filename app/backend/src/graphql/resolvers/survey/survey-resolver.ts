@@ -344,8 +344,7 @@ export class SurveysResolver {
 			defaultQuestion.type = QuestionTypeEnum.text
 			defaultQuestion.survey = newSurvey
 			defaultQuestion.title = "Nouvelle question"
-			const results = await defaultQuestion.save()
-			console.log("results", results)
+			await defaultQuestion.save()
 
 			return newSurvey
 		} catch (error) {
