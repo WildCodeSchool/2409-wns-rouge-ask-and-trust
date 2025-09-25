@@ -48,7 +48,7 @@ export function ContactInfo() {
 					{supportOptions.map((option, index) => (
 						<div
 							key={index}
-							className="flex items-center justify-between rounded-lg border p-3"
+							className="flex items-center justify-between rounded-lg border p-3 max-xl:flex-wrap max-xl:gap-2.5"
 						>
 							<div className="flex items-center space-x-3">
 								<option.icon className="text-primary h-5 w-5" />

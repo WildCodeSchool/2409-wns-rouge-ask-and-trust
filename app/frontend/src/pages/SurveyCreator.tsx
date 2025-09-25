@@ -4,10 +4,10 @@ import { SurveyCreatorHeader } from "@/components/sections/surveys/buildSurvey/q
 import { SurveyCreatorSkeleton } from "@/components/sections/surveys/buildSurvey/question/SurveyCreatorSkeleton"
 import { Toolbox } from "@/components/sections/Toolbox/Toolbox"
 import { Button } from "@/components/ui/Button"
+import { useSurveyData } from "@/hooks/survey/useSurveyData"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useQuestions } from "@/hooks/useQuestions"
 import { useScreenDetector } from "@/hooks/useScreenDetector"
-import { useSurveyData } from "@/hooks/survey/useSurveyData"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { cn } from "@/lib/utils"
@@ -87,10 +87,6 @@ function SurveyCreator() {
 	const surveyUser = survey?.user.id
 	const connectedUser = user?.id
 	const isOwner = surveyUser === connectedUser
-
-	console.log("connectedUser", connectedUser)
-	console.log("isOwner", isOwner)
-	console.log("suervey", survey?.user)
 
 	return (
 		<div

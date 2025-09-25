@@ -155,7 +155,7 @@ export function SurveyResponsesList({
 									</div>
 								</div>
 
-								<div className="flex items-center gap-3">
+								<div className="flex-wrap items-center gap-3">
 									{getCompletionStatusBadge(
 										response.completionStatus
 									)}

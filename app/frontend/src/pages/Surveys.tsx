@@ -1,20 +1,40 @@
 import { withSEO } from "@/components/hoc/withSEO"
 import SurveyCard from "@/components/sections/surveys/SurveyCard"
 import SurveyDurationFilter from "@/components/sections/surveys/ui/SurveyDurationFilter"
+import SurveyPageSkeleton from "@/components/sections/surveys/ui/SurveyPageSkeleton"
 import { Button } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination"
+import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
+import { useAuthContext } from "@/hooks/useAuthContext"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { useSurvey } from "@/hooks/useSurvey"
+import { useToast } from "@/hooks/useToast"
+import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { cn } from "@/lib/utils"
 import { SurveyCardType, SurveyStatus } from "@/types/types"
+import { PlusCircle } from "lucide-react"
 import { useEffect } from "react"
-import { useAuthContext } from "@/hooks/useAuthContext"
+import { useNavigate } from "react-router-dom"
 import img from "/img/dev.webp"
-import SurveyPageSkeleton from "@/components/sections/surveys/ui/SurveyPageSkeleton"
 
 function Surveys() {
 	const { user: owner } = useAuthContext()
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
+	const {
+		createSurvey,
+		createSurveyError,
+		isCreatingSurvey,
+		resetCreateSurveyError,
+	} = useSurveyMutations()
+	useToastOnChange({
+		trigger: createSurveyError,
+		resetTrigger: resetCreateSurveyError,
+		type: "error",
+		title: "Erreur pour créer l'enquête",
+		description: "Nous n'avons pas réussi à créer l'enquête",
+	})
+	const navigate = useNavigate()
+	const { showToast } = useToast()
 
 	useEffect(() => {
 		if (isHorizontalCompact) {
@@ -68,6 +88,32 @@ function Surveys() {
 			survey => survey.status === SurveyStatus.Published
 		) ?? []
 
+	const onCreateSurveyAndNavigate = async () => {
+		try {
+			const newSurvey = await createSurvey({
+				title: "Nouvelle enquête",
+				description: "",
+				public: false,
+				category: "",
+			})
+
+			if (!newSurvey?.id) {
+				throw new Error(
+					"Impossible de récupérer l'ID de la nouvelle enquête"
+				)
+			}
+
+			navigate(`/surveys/build/${newSurvey.id}`)
+		} catch (error) {
+			console.error(error)
+			showToast({
+				type: "error",
+				title: "Erreur",
+				description: "La création de l'enquête a échoué",
+			})
+		}
+	}
+
 	return isFetching ? (
 		<SurveyPageSkeleton />
 	) : (
@@ -117,10 +163,13 @@ function Surveys() {
 			{!isHorizontalCompact && (
 				<div className="mt-10 flex items-center justify-center">
 					<Button
+						icon={PlusCircle}
+						loadingSpinner={isCreatingSurvey}
+						onClick={onCreateSurveyAndNavigate}
 						variant="primary"
-						ariaLabel="Création d'une enquête"
+						role="button"
+						ariaLabel="Créer une enquête"
 						children="Créer une enquête"
-						to="/surveys/create"
 					/>
 				</div>
 			)}
