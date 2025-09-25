@@ -21,7 +21,4 @@ COPY public ./public
 # COPY the src and components directories
 COPY src ./src
 
-# Expose port
-EXPOSE 5173
-
 CMD ["npm", "run", "dev", "--host"]
