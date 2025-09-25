@@ -142,6 +142,7 @@ export const STATIC_PAGES_SEO: Record<string, SEOMetadata> = {
 		ogType: "website",
 		twitterCard: "summary",
 	},
+
 	landing: {
 		title: "Accueil | Ask&Trust",
 		description:
@@ -203,27 +204,6 @@ export const STATIC_PAGES_SEO: Record<string, SEOMetadata> = {
 		robots: "noindex, nofollow",
 		ogTitle: "Mon profil | Ask&Trust",
 		ogDescription: "Gérez votre profil et vos informations personnelles",
-		ogType: "website",
-		twitterCard: "summary",
-	},
-
-	surveyCreate: {
-		title: "Créer une enquête | Ask&Trust",
-		description: "Créez votre propre enquête personnalisée avec Ask&Trust",
-		robots: "noindex, nofollow",
-		ogTitle: "Créer une enquête | Ask&Trust",
-		ogDescription:
-			"Créez votre propre enquête personnalisée avec Ask&Trust",
-		ogType: "website",
-		twitterCard: "summary",
-	},
-
-	surveyUpdate: {
-		title: "Modifier l'enquête | Ask&Trust",
-		description: "Modifiez votre enquête existante",
-		robots: "noindex, nofollow",
-		ogTitle: "Modifier l'enquête | Ask&Trust",
-		ogDescription: "Modifiez votre enquête existante",
 		ogType: "website",
 		twitterCard: "summary",
 	},

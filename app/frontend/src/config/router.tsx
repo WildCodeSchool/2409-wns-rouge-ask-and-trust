@@ -28,10 +28,8 @@ const TermsOfUse = lazy(() => import("@/pages/TermsOfUse"))
 const Payment = lazy(() => import("@/pages/Payment"))
 const PaymentConfirmation = lazy(() => import("@/pages/PaymentConfirmation"))
 const SurveyCreator = lazy(() => import("@/pages/SurveyCreator"))
-const SurveyCreate = lazy(() => import("@/pages/SurveyCreate"))
 const PreviewSurveyPage = lazy(() => import("@/pages/PreviewSurvey"))
 const Contact = lazy(() => import("@/pages/Contact"))
-const SurveyUpdate = lazy(() => import("@/pages/SurveyUpdate"))
 const UserProfile = lazy(() => import("@/pages/UserProfile"))
 const SurveyResponse = lazy(() => import("@/pages/SurveyResponse"))
 const SurveyResponses = lazy(() => import("@/pages/SurveyResponses"))
@@ -152,26 +150,6 @@ const router = createBrowserRouter([
 					<Suspense fallback={<SurveyCreatorSkeleton />}>
 						<ProtectedRoute>
 							<SurveyCreator />
-						</ProtectedRoute>
-					</Suspense>
-				),
-			},
-			{
-				path: "surveys/create",
-				element: (
-					<Suspense fallback={<Loader />}>
-						<ProtectedRoute>
-							<SurveyCreate />
-						</ProtectedRoute>
-					</Suspense>
-				),
-			},
-			{
-				path: "surveys/update/:id",
-				element: (
-					<Suspense fallback={<Loader />}>
-						<ProtectedRoute>
-							<SurveyUpdate />
 						</ProtectedRoute>
 					</Suspense>
 				),
