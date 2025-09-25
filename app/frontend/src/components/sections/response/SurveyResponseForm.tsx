@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button"
 import { useToast } from "@/hooks/useToast"
 import { useAnswers, type ExistingAnswer } from "@/hooks/useAnswers"
 import { useState, useEffect, useMemo } from "react"
-import InteractiveQuestion from "./InteractiveQuestion"
+import InteractiveQuestion from "@/components/sections/response/InteractiveQuestion"
 
 type SurveyResponseFormProps = {
 	surveyId: number
@@ -61,13 +61,15 @@ export default function SurveyResponseForm({
 				case "boolean":
 					value = answer.content === "Oui"
 					break
-				case "multiple_choice":
+				case "checkbox":
 					value = answer.content.includes(", ")
 						? answer.content.split(", ")
 						: [answer.content]
 					break
 				case "select":
 				case "text":
+				case "textarea":
+				case "radio":
 				default:
 					value = answer.content
 					break
@@ -175,7 +177,7 @@ export default function SurveyResponseForm({
 				</div>
 			)}
 
-			<div className="flex justify-center border-t pt-6">
+			<div className="flex justify-center border-t pt-8">
 				<Button
 					type="submit"
 					disabled={isSubmitting || isCreatingAnswer}

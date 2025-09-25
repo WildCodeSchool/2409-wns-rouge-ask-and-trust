@@ -1,10 +1,10 @@
-import { User } from "@/types/types.ts"
+import { User } from "@/types/types"
 import { useQuery } from "@apollo/client"
-import { WHOAMI } from "@/graphql/auth.ts"
-import { useSurvey } from "@/hooks/useSurvey.ts"
+import { WHOAMI } from "@/graphql/auth"
+import { useSurvey } from "@/hooks/useSurvey"
 import { useState } from "react"
-import { UserDetailsPart } from "@/components/sections/profile/parts/UserDetailsPart.tsx"
-import { ResetPasswordPart } from "@/components/sections/profile/parts/ResetPasswordPart.tsx"
+import { UserDetailsPart } from "@/components/sections/profile/parts/UserDetailsPart"
+import { ResetPasswordPart } from "@/components/sections/profile/parts/ResetPasswordPart"
 
 export default function UserInformations() {
 	const [showResetForm, setShowResetForm] = useState<boolean>(false)
@@ -19,18 +19,12 @@ export default function UserInformations() {
 	const user: User = data?.whoami
 
 	return (
-		<section
-			className={`transition-all duration-200 ease-in-out ${
-				showResetForm
-					? "lg:min-w-[850px]"
-					: "sm:max-w-[331px] lg:min-w-[428px]"
-			}`}
-		>
+		<section className="max-md:w-full">
 			<div className="shadow-component rounded-md bg-white">
-				<div className="bg-primary-default rounded-t-md p-2 text-center text-white">
-					<h4 className="text-2xl font-semibold">
+				<div className="bg-primary-default rounded-t-md p-2.5 text-center">
+					<h1 className="text-2xl font-semibold text-white">
 						Informations de l'utilisateur
-					</h4>
+					</h1>
 				</div>
 
 				<div className="flex flex-col md:flex-row">

@@ -4,7 +4,7 @@ import { InputsProps } from "@/types/types"
 
 export default function InputDescription({ register, errors }: InputsProps) {
 	return (
-		<div>
+		<div className="flex h-[9.25rem] flex-col gap-1">
 			<Label htmlFor="description" required>
 				Description
 			</Label>

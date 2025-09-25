@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/Button"
-import { useToast } from "@/hooks/useToast"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
 import { useAuthContext } from "@/hooks/useAuthContext"
+import { useToast } from "@/hooks/useToast"
+import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { AuthButtonsProps } from "@/types/types"
+import { PlusCircle } from "lucide-react"
+import { useLocation, useNavigate } from "react-router-dom"
 
 export default function AuthButtons({
 	isHorizontalCompact = false,
@@ -10,9 +13,23 @@ export default function AuthButtons({
 	isInFooter,
 }: AuthButtonsProps) {
 	const { user, logout } = useAuthContext()
+	const {
+		createSurvey,
+		createSurveyError,
+		isCreatingSurvey,
+		resetCreateSurveyError,
+	} = useSurveyMutations()
 	const navigate = useNavigate()
 	const location = useLocation()
 	const { showToast } = useToast()
+
+	useToastOnChange({
+		trigger: createSurveyError,
+		resetTrigger: resetCreateSurveyError,
+		type: "error",
+		title: "Erreur pour créer l'enquête",
+		description: "Nous n'avons pas réussi à créer l'enquête",
+	})
 
 	const pathname = location.pathname
 	const isOnLanding = pathname === "/"
@@ -30,6 +47,32 @@ export default function AuthButtons({
 			title: "Déconnexion réussie !",
 			description: "À bientôt sur Ask&Trust !",
 		})
+	}
+
+	const onCreateSurveyAndNavigate = async () => {
+		try {
+			const newSurvey = await createSurvey({
+				title: "Nouvelle enquête",
+				description: "",
+				public: false,
+				category: "",
+			})
+
+			if (!newSurvey?.id) {
+				throw new Error(
+					"Impossible de récupérer l'ID de la nouvelle enquête"
+				)
+			}
+
+			navigate(`/surveys/build/${newSurvey.id}`)
+		} catch (error) {
+			console.error(error)
+			showToast({
+				type: "error",
+				title: "Erreur",
+				description: "La création de l'enquête a échoué",
+			})
+		}
 	}
 
 	if (shouldHideButtonsInHeader) {
@@ -100,19 +143,19 @@ export default function AuthButtons({
 		return (
 			<div className="flex items-center justify-center gap-6">
 				<Button
-					to="/surveys/create"
+					to="/register"
 					variant="tertiary"
 					role="link"
-					ariaLabel="Créer une enquête"
-					className="max-sm:hidden"
+					ariaLabel="S'inscrire"
 				>
-					Créer une enquête
+					S'inscrire
 				</Button>
 				<Button
 					to="/connexion"
 					variant="transparent"
 					role="link"
 					ariaLabel="Se connecter"
+					className="max-lg:hidden"
 				>
 					Se connecter
 				</Button>
@@ -122,9 +165,9 @@ export default function AuthButtons({
 
 	// === CASE: LOGGED IN ===
 
-	// Pages "profile" or "admin" → logout button
-	if (isOnProfile || isOnAdmin) {
-		return (
+	// "Secondary" button depends on the page and role
+	const secondaryButton =
+		isOnProfile || isOnAdmin ? (
 			<Button
 				variant="destructive"
 				ariaLabel="Se déconnecter d'Ask&Trust"
@@ -132,12 +175,7 @@ export default function AuthButtons({
 			>
 				Se déconnecter
 			</Button>
-		)
-	}
-
-	// "Secondary" button depends on the role
-	const secondaryButton =
-		user?.role === "admin" ? (
+		) : user?.role === "admin" ? (
 			<Button
 				to="/admin"
 				variant="transparent"
@@ -170,11 +208,13 @@ export default function AuthButtons({
 	return (
 		<div className="flex items-center justify-center gap-6">
 			<Button
-				to="/surveys/create"
+				onClick={onCreateSurveyAndNavigate}
+				icon={PlusCircle}
+				loadingSpinner={isCreatingSurvey}
 				variant="tertiary"
-				role="link"
+				role="button"
 				ariaLabel="Créer une enquête"
-				className="max-sm:hidden"
+				className="max-lg:hidden"
 			>
 				Créer une enquête
 			</Button>

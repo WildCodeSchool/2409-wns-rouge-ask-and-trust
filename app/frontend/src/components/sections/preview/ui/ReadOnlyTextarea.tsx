@@ -14,7 +14,7 @@ export function ReadOnlyTextarea({
 			disabled
 			readOnly
 			className="resize-none"
-			errorMessage={"No text provided"}
+			errorMessage=""
 		/>
 	)
 }

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button.tsx"
+import { Button } from "@/components/ui/Button"
 import imgPresentation from "/public/img/landing/illustration-presentation.svg"
 
 const Hero = () => {

@@ -4,14 +4,16 @@
  */
 
 import App from "@/App"
-import ProtectedRoute from "@/components/hoc/ProtectedRoute"
 import AdminRoute from "@/components/hoc/AdminRoute"
+import ProtectedRoute from "@/components/hoc/ProtectedRoute"
 import PublicRoute from "@/components/hoc/PublicRoute"
+import { SurveyCreatorSkeleton } from "@/components/sections/surveys/buildSurvey/question/SurveyCreatorSkeleton"
 import ErrorElement from "@/components/ui/ErrorElement"
 import Loader from "@/components/ui/Loader"
-import { SurveyCreatorSkeleton } from "@/pages/SurveyCreator"
 import { lazy, Suspense } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import SurveyPageSkeleton from "@/components/sections/surveys/ui/SurveyPageSkeleton"
+import SurveyRoute from "@/components/hoc/SurveyRoute"
 
 /**
  *  Using lazy loading for pages
@@ -32,6 +34,7 @@ const Contact = lazy(() => import("@/pages/Contact"))
 const SurveyUpdate = lazy(() => import("@/pages/SurveyUpdate"))
 const UserProfile = lazy(() => import("@/pages/UserProfile"))
 const SurveyResponse = lazy(() => import("@/pages/SurveyResponse"))
+const SurveyResponses = lazy(() => import("@/pages/SurveyResponses"))
 const Admin = lazy(() => import("@/pages/Admin"))
 
 /**
@@ -96,7 +99,7 @@ const router = createBrowserRouter([
 			{
 				path: "surveys",
 				element: (
-					<Suspense fallback={<Loader />}>
+					<Suspense fallback={<SurveyPageSkeleton />}>
 						<Surveys />
 					</Suspense>
 				),
@@ -198,7 +201,19 @@ const router = createBrowserRouter([
 				element: (
 					<Suspense fallback={<Loader />}>
 						<ProtectedRoute>
-							<SurveyResponse />
+							<SurveyRoute>
+								<SurveyResponse />
+							</SurveyRoute>
+						</ProtectedRoute>
+					</Suspense>
+				),
+			},
+			{
+				path: "surveys/responses/:surveyId",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<ProtectedRoute>
+							<SurveyResponses />
 						</ProtectedRoute>
 					</Suspense>
 				),
