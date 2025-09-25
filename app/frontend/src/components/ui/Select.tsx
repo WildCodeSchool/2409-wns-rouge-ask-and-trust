@@ -1,13 +1,13 @@
 import {
+	ItemIndicator,
+	ItemText,
+	Portal,
+	Root as Select,
 	Content as SelectContentBase,
 	Group as SelectGroup,
 	Icon as SelectIcon,
 	Item as SelectItemBase,
-	ItemIndicator,
-	ItemText,
 	Label as SelectLabelBase,
-	Portal,
-	Root as Select,
 	ScrollDownButton as SelectScrollDownButtonBase,
 	ScrollUpButton as SelectScrollUpButtonBase,
 	Separator as SelectSeparatorBase,
@@ -30,7 +30,8 @@ const SelectTrigger = forwardRef<
 	<SelectTriggerBase
 		ref={ref}
 		className={cn(
-			"border-black-100 ring-offset-background data-[placeholder]:text-muted-foreground focus:ring-focus group flex h-10 w-full cursor-pointer items-center justify-between rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+			"border-black-100 ring-offset-background data-[placeholder]:text-muted-foreground group flex h-10 w-full cursor-pointer items-center justify-between rounded-lg border bg-transparent px-3 py-1 text-sm whitespace-nowrap focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+			"focus-visible:border-primary-700 focus-visible:ring-primary-700 focus-visible:ring-1",
 			className
 		)}
 		{...props}
@@ -90,7 +91,7 @@ const SelectContent = forwardRef<
 		<SelectContentBase
 			ref={ref}
 			className={cn(
-				"text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 border-black-100 shadow-default relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem] origin-[--radix-select-content-transform-origin] overflow-x-hidden overflow-y-auto rounded-md border bg-white",
+				"text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 border-black-100 shadow-default relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem] origin-[--radix-select-content-transform-origin] overflow-x-hidden overflow-y-auto rounded-lg border bg-white",
 				position === "popper" &&
 					"data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
 				className
@@ -135,7 +136,7 @@ const SelectItem = forwardRef<
 	<SelectItemBase
 		ref={ref}
 		className={cn(
-			"focus:bg-focus relative flex w-full cursor-pointer items-center rounded-sm py-1.5 pr-8 pl-2 text-sm outline-none select-none focus:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			"focus:bg-focus relative flex w-full cursor-pointer items-center rounded-md py-1.5 pr-8 pl-2 text-sm outline-none select-none focus:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
 			className
 		)}
 		{...props}

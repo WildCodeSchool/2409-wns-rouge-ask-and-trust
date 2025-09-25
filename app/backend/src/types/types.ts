@@ -1,9 +1,12 @@
 import Cookies from "cookies"
+import { registerEnumType } from "type-graphql"
 import { User } from "../database/entities/user"
 
 export type Context = {
 	cookies: Cookies
 	user: User | null | undefined
+	req?: any // Request object from Apollo Server standalone
+	res?: any // Response object from Apollo Server standalone
 }
 
 export const Roles = {
@@ -40,6 +43,22 @@ export function isMultipleAnswerType(
 
 export type QuestionType =
 	(typeof TypesOfQuestion)[keyof typeof TypesOfQuestion]
+
+// Enum GraphQL
+export enum QuestionTypeEnum {
+	text = "text",
+	textarea = "textarea",
+	checkbox = "checkbox",
+	radio = "radio",
+	boolean = "boolean",
+	select = "select",
+}
+
+// To document the enum in GraphQL schema
+registerEnumType(QuestionTypeEnum, {
+	name: "QuestionType",
+	description: "The type of the survey's question",
+})
 
 export const SurveyStatus = {
 	Draft: "draft",

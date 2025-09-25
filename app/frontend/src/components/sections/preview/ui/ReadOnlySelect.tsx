@@ -4,7 +4,6 @@ import {
 	SelectContent,
 	SelectItem,
 } from "@/components/ui/Select"
-import { Callout } from "@/components/ui/Callout"
 
 export function ReadOnlySelect({
 	options,
@@ -19,19 +18,12 @@ export function ReadOnlySelect({
 				<SelectTrigger className="w-full" />
 				<SelectContent>
 					{options.map(opt => (
-						<SelectItem key={opt} value={opt}>
+						<SelectItem key={opt} value={opt} disabled>
 							{opt}
 						</SelectItem>
 					))}
 				</SelectContent>
 			</Select>
-			<Callout type="question" title="Choix possibles">
-				<ul className="list-disc pl-6 text-sm">
-					{options.map(opt => (
-						<li key={opt}>{opt}</li>
-					))}
-				</ul>
-			</Callout>
 		</div>
 	)
 }

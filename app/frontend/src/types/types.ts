@@ -29,6 +29,7 @@ export interface LinksType {
 	ariaLabel: string
 	mobileFooter?: boolean
 	Icon?: LucideIcon
+	bgBlue?: boolean
 }
 
 export interface UserAuth {
@@ -87,16 +88,16 @@ export interface SurveyCardType {
 	isOwner?: boolean
 }
 
-export type AllSurveysResult = {
-	allSurveys: SurveyCardType[]
+export type AllSurveysResult<T> = {
+	allSurveys: T[]
 	totalCount: number
 	totalCountAll: number
 	page: number
 	limit: number
 }
 
-export type AllSurveysHome = {
-	surveys: AllSurveysResult
+export type AllSurveysType<T> = {
+	surveys: AllSurveysResult<T>
 }
 
 export type Package = {
@@ -132,11 +133,13 @@ export interface Survey {
 	title: string
 	description: string
 	public: boolean
-	category: number | string
+	category: { id: number; name: string }
 	status: SurveyStatusType
 	questions: Question[]
 	user: User
 }
+
+export type SurveyWithoutQuestions = Omit<Survey, "questions">
 
 export const SurveyStatus = {
 	Draft: "draft",
@@ -147,9 +150,16 @@ export const SurveyStatus = {
 
 export type SurveyStatusType = (typeof SurveyStatus)[keyof typeof SurveyStatus]
 
-export type CreateSurveyInput = Survey
+export type SurveyFormValues = {
+	title: string
+	description: string
+	public: boolean
+	category: string
+}
 
-export type UpdateSurveyInput = Survey
+export type CreateSurveyInput = SurveyFormValues
+
+export type UpdateSurveyInput = SurveyFormValues
 
 export type Question = {
 	id: number
@@ -235,7 +245,7 @@ export type PaginationProps = {
 export type SurveyTableType = {
 	id: number
 	title: string
-	status: SurveyStatus
+	status: SurveyStatusType
 	createdAt: string
 	updatedAt: string
 }
@@ -251,8 +261,6 @@ export type MySurveysResult = {
 export type SurveysDashboardQuery = {
 	mySurveys: MySurveysResult
 }
-
-export type SurveyStatus = "draft" | "published" | "archived" | "censored"
 
 export type SurveyTableProps = {
 	isHeaderChecked: CheckedState
@@ -281,7 +289,7 @@ export type SurveyTableHeadProps = Pick<
 
 export type SurveyTableActionsProps = {
 	surveyId: number
-	status: string
+	status: SurveyStatusType
 }
 
 export type SurveyTableNavProps = {
@@ -334,6 +342,74 @@ export interface SurveyResponseFormData {
 	[key: string]: string | string[] | boolean
 }
 
+// Survey Response Types
+export enum ResponseCompletionStatus {
+	Complete = "complete",
+	Partial = "partial",
+	Incomplete = "incomplete",
+}
+
+export enum ResponseSortField {
+	SubmittedAt = "submittedAt",
+	UserEmail = "userEmail",
+	CompletionStatus = "completionStatus",
+}
+
+export enum SortDirection {
+	Asc = "asc",
+	Desc = "desc",
+}
+
+export interface ResponseAnswer {
+	questionId: number
+	questionTitle: string
+	questionType: string
+	content: string
+	submittedAt: string
+}
+
+export interface SurveyResponse {
+	responseId: string
+	user: User
+	answers: ResponseAnswer[]
+	submittedAt: string
+	completionStatus: ResponseCompletionStatus
+	totalQuestions: number
+	answeredQuestions: number
+	completionPercentage: number
+}
+
+export interface SurveyResponsesResult {
+	responses: SurveyResponse[]
+	totalCount: number
+	page: number
+	limit: number
+	totalPages: number
+	hasNextPage: boolean
+	hasPreviousPage: boolean
+}
+
+export interface SurveyResponseStats {
+	totalResponses: number
+	completeResponses: number
+	partialResponses: number
+	incompleteResponses: number
+	completionRate: number
+	firstResponseAt?: string
+	lastResponseAt?: string
+}
+
+export interface SurveyResponsesQueryInput {
+	keyword?: string
+	dateFrom?: string
+	dateTo?: string
+	completionStatus?: ResponseCompletionStatus
+	sortBy?: ResponseSortField
+	sortDirection?: SortDirection
+	page?: number
+	limit?: number
+}
+
 export type SurveyWithCategory = {
 	id: number
 	title: string
@@ -359,4 +435,31 @@ export type RawUser = {
 	createdAt?: string
 	updatedAt?: string
 	surveys?: { id: number | string }[]
+}
+
+export type UseSurveyOptions = {
+	surveyId?: string
+	mode?: "admin" | "profile" | "home"
+}
+
+export type PublishedRequiredType = {
+	survey: Pick<Survey, "status">
+}
+
+type SurveyPreviewWithCategory = Omit<
+	Survey,
+	"public" | "status" | "user" | "category"
+> & {
+	category: SurveyCategoryType
+}
+
+export type SurveyPreviewType = {
+	isOwner?: boolean
+	id?: string | undefined
+	survey: SurveyPreviewWithCategory
+}
+
+export type SurveyResponseType = SurveyPreviewType & {
+	onClickCopy?: () => void
+	questions?: boolean
 }

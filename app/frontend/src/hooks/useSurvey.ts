@@ -9,19 +9,21 @@ import {
 	UPDATE_SURVEY_STATUS,
 } from "@/graphql/survey/survey"
 import {
-	AllSurveysHome,
+	AllSurveysType,
 	CreateSurveyInput,
 	DateSortFilter,
+	Survey,
 	SurveysDashboardQuery,
-	SurveyStatus,
 	SurveyStatusType,
 	SurveyTableType,
 	UpdateSurveyInput,
+	UseSurveyOptions,
 } from "@/types/types"
 import { NetworkStatus, useMutation, useQuery } from "@apollo/client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { useToast } from "./useToast"
+import { useDebounce } from "./useDebounce"
 
 const statusLabelMap: Record<SurveyTableType["status"], string> = {
 	draft: "Brouillon",
@@ -35,17 +37,35 @@ const DATE_SORT_FILTERS = ["Plus récente", "Plus ancienne"] as const
 /**
  * Hook for the survey management.
  */
-export function useSurvey(surveyId?: string) {
+export function useSurvey<T>(options: UseSurveyOptions = {}) {
+	const { surveyId, mode } = options
+
 	const [searchParams] = useSearchParams()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [sortTimeOption, setSortTimeOption] = useState<string>("")
 	const [filters, setFilters] = useState<string[]>([])
-	const [debouncedSearch, setDebouncedSearch] = useState("")
-	const PER_PAGE = {
-		all: 12,
-		mine: 5,
-	}
+	const [searchValue, setSearchValue] = useState(
+		searchParams.get("search") || ""
+	)
+	const debouncedSearch = useDebounce(searchValue, 300)
 	const { showToast } = useToast()
+
+	useEffect(() => {
+		setSearchValue(searchParams.get("search") || "")
+	}, [searchParams])
+
+	const PER_PAGE = {
+		home: 12,
+		admin: 5,
+		profile: 5,
+	}
+
+	const getLimit = () => {
+		if (!mode || mode === "home") return PER_PAGE.home
+		if (mode === "admin") return PER_PAGE.admin
+		if (mode === "profile") return PER_PAGE.profile
+		return PER_PAGE.home
+	}
 
 	const categoryId = searchParams.get("categoryId")
 
@@ -62,38 +82,46 @@ export function useSurvey(surveyId?: string) {
 
 	const { sortBy, order } = getSortParams(sortTimeOption)
 
+	const selectedStatuses = filters.filter(f =>
+		Object.values(statusLabelMap).includes(f)
+	)
+
 	// Apollo hooks
 	const {
 		data: allSurveysData,
 		loading: isFetching,
+		error: allSurveysError,
 		refetch,
-	} = useQuery<AllSurveysHome>(GET_SURVEYS, {
+	} = useQuery<AllSurveysType<T>>(GET_SURVEYS, {
 		variables: {
 			filters: {
 				page: currentPage,
-				limit: PER_PAGE.all,
+				limit: getLimit(),
 				search: searchParams.get("search") || "",
 				categoryIds: categoryId ? [parseInt(categoryId, 10)] : [],
+				status: selectedStatuses.map(
+					label =>
+						Object.entries(statusLabelMap).find(
+							([, v]) => v === label
+						)?.[0]
+				) as SurveyStatusType[],
 				sortBy,
 				order,
 			},
 		},
 	})
-	const allSurveys = allSurveysData?.surveys.allSurveys || []
+	const surveys = allSurveysData?.surveys || null
 
 	const {
 		data: surveyData,
 		loading: surveyLoading,
 		error: surveyError,
-	} = useQuery(GET_SURVEY, {
+		refetch: refetchSurvey,
+	} = useQuery<{ survey: Survey }>(GET_SURVEY, {
 		variables: { surveyId: surveyId },
 		skip: !surveyId,
 	})
 	const survey = surveyData?.survey
-
-	const selectedStatuses = filters.filter(f =>
-		Object.values(statusLabelMap).includes(f)
-	)
 
 	const selectedSort = filters.find((f): f is DateSortFilter =>
 		DATE_SORT_FILTERS.includes(f as DateSortFilter)
@@ -107,14 +135,14 @@ export function useSurvey(surveyId?: string) {
 		variables: {
 			filters: {
 				page: currentPage,
-				limit: PER_PAGE.mine,
+				limit: getLimit(),
 				search: debouncedSearch,
 				status: selectedStatuses.map(
 					label =>
 						Object.entries(statusLabelMap).find(
 							([, v]) => v === label
 						)?.[0]
-				) as SurveyStatus[],
+				) as SurveyStatusType[],
 				sortBy: "createdAt",
 				order: selectedSort === "Plus ancienne" ? "ASC" : "DESC",
 			},
@@ -125,24 +153,37 @@ export function useSurvey(surveyId?: string) {
 
 	const isRefetching = networkStatus === NetworkStatus.refetch
 	const isInitialLoading = loading && !mySurveysData
-
 	const totalCount = allSurveysData?.surveys.totalCount ?? 0
 
 	const {
 		data: categoriesData,
 		loading: loadingCategories,
 		error: errorCategories,
-	} = useQuery(GET_CATEGORIES)
+	} = useQuery(GET_CATEGORIES, {
+		fetchPolicy: "cache-first", // try to get cache before re-fetch
+	})
 
-	const [createSurvey, { loading: isCreating, error: createError }] =
-		useMutation(CREATE_SURVEY, {
-			refetchQueries: [{ query: GET_SURVEYS }],
-		})
+	const [
+		createSurvey,
+		{
+			loading: isCreating,
+			error: createError,
+			reset: resetCreateSurveyError,
+		},
+	] = useMutation(CREATE_SURVEY, {
+		refetchQueries: [{ query: GET_SURVEYS }],
+	})
 
-	const [updateSurveyMutation, { loading: isUpdating, error: updateError }] =
-		useMutation(UPDATE_SURVEY, {
-			refetchQueries: [{ query: GET_SURVEYS }],
-		})
+	const [
+		updateSurveyMutation,
+		{
+			loading: isUpdating,
+			error: updateError,
+			reset: resetUpdateSurveyError,
+		},
+	] = useMutation(UPDATE_SURVEY, {
+		refetchQueries: [{ query: GET_SURVEYS }],
+	})
 
 	const [
 		updateSurveyStatusMutation,
@@ -157,6 +198,7 @@ export function useSurvey(surveyId?: string) {
 		refetchQueries: [GET_MY_SURVEYS],
 	})
 
+	// @TODO refetch() is already a refetch function. why fetchSurveys ?
 	const fetchSurveys = async () => {
 		await refetch()
 	}
@@ -170,10 +212,7 @@ export function useSurvey(surveyId?: string) {
 		return result.data?.createSurvey
 	}
 
-	const updateSurvey = async (
-		id: string,
-		survey: Partial<UpdateSurveyInput>
-	) => {
+	const updateSurvey = async (id: string, survey: UpdateSurveyInput) => {
 		const result = await updateSurveyMutation({
 			variables: {
 				data: {
@@ -269,22 +308,32 @@ export function useSurvey(surveyId?: string) {
 	}
 
 	return {
-		allSurveys,
+		surveys,
 		isFetching,
+		allSurveysError,
 		survey,
 		surveyLoading,
 		surveyError,
-		isCreating,
+		refetchSurvey,
 		isUpdating,
+
+		addSurvey,
 		createError,
+		isCreating,
+		resetCreateSurveyError,
+
+		updateSurvey,
 		updateError,
+		resetUpdateSurveyError,
+
 		currentPage,
 		setCurrentPage,
 		PER_PAGE,
 		sortTimeOption,
 		setSortTimeOption,
 		totalCount,
-		setDebouncedSearch,
+		setDebouncedSearch: setSearchValue,
+		debouncedSearch,
 		mySurveys,
 		isRefetching,
 		isInitialLoading,
@@ -295,11 +344,8 @@ export function useSurvey(surveyId?: string) {
 		loadingCategories,
 		errorCategories,
 		fetchSurveys,
-		addSurvey,
-		updateSurvey,
 		deleteSurvey,
 		deleteSurveys,
-
 		updateSurveyStatus,
 		isStatusUpdating,
 		isStatusUpdateError,

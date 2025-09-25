@@ -1,51 +1,56 @@
 import FormWrapper from "@/components/sections/auth/form/FormWrapper"
-import InputTitle from "@/components/sections/surveys/form/InputTitle"
 import InputDescription from "@/components/sections/surveys/form/InputDescription"
-import { useForm } from "react-hook-form"
-import { useToast } from "@/hooks/useToast"
-import { useNavigate, useParams } from "react-router-dom"
+import InputTitle from "@/components/sections/surveys/form/InputTitle"
+import SwitchPublic from "@/components/sections/surveys/form/SwitchPublic"
 import { Button } from "@/components/ui/Button"
 import { Label } from "@/components/ui/Label"
-import { CategoryOption, CreateSurveyInput, Question } from "@/types/types"
-import { useSurvey } from "@/hooks/useSurvey"
+import { Skeleton } from "@/components/ui/Skeleton"
 import TypeSelect from "@/components/ui/TypeSelect"
-import SwitchPublic from "@/components/sections/surveys/form/SwitchPublic"
+import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
+import { useCategoriesData } from "@/hooks/category/useCategoriesData"
+import { useScreenDetector } from "@/hooks/useScreenDetector"
+import { useToast } from "@/hooks/useToast"
+import { useToastOnChange } from "@/hooks/useToastOnChange"
+import {
+	CategoryOption,
+	CreateSurveyInput,
+	SurveyWithoutQuestions,
+} from "@/types/types"
 import { useEffect } from "react"
+import { useForm } from "react-hook-form"
 
-export default function SurveyForm() {
-	const { id: surveyId } = useParams()
+export default function SurveyForm({
+	survey,
+}: {
+	survey: SurveyWithoutQuestions
+}) {
 	const {
-		addSurvey,
 		updateSurvey,
-		categoriesData,
-		loadingCategories,
-		errorCategories,
-		survey,
-		surveyLoading,
-		surveyError,
-	} = useSurvey(surveyId)
-	const navigate = useNavigate()
+		isUpdatingSurvey,
+		updateSurveyError,
+		resetUpdateSurveyError,
+	} = useSurveyMutations()
+	const { categoriesData, isLoadingCategories, errorCategories } =
+		useCategoriesData()
+
 	const { showToast } = useToast()
-
-	const form = useForm<CreateSurveyInput>({
-		defaultValues: {
-			title: "",
-			description: "",
-			public: true,
-			category: "",
-			questions: [] as Question[],
-		},
-	})
-
+	const { isMobile } = useScreenDetector()
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting },
+		control,
+		formState: { errors, isDirty },
 		setError,
 		clearErrors,
-		control,
 		reset,
-	} = form
+	} = useForm<CreateSurveyInput>({
+		defaultValues: {
+			title: survey?.title || "",
+			description: survey?.description || "",
+			public: survey?.public ?? true,
+			category: survey?.category.id.toString() || "",
+		},
+	})
 
 	useEffect(() => {
 		if (survey) {
@@ -54,113 +59,49 @@ export default function SurveyForm() {
 				description: survey.description,
 				public: survey.public,
 				category: survey.category.id.toString(),
-				questions: [] as Question[],
 			})
 		}
 	}, [survey, categoriesData, reset])
 
-	if (surveyId && surveyLoading) {
-		return (
-			<div className="flex items-center justify-center">
-				<div>Chargement de l'enquête...</div>
-			</div>
-		)
-	}
-
-	if (surveyId) {
-		if (!survey && surveyError) {
-			const isNotFoundError = surveyError.graphQLErrors.some(error =>
-				error.message.includes("Failed to fetch survey")
-			)
-
-			if (isNotFoundError) {
-				throw new Response("Survey not found", { status: 404 })
-			}
-
-			// Pour les autres erreurs GraphQL
-			throw new Response("Error loading survey", { status: 500 })
-		}
-
-		if (!surveyLoading && !survey) {
-			throw new Response("Survey not found", { status: 404 })
-		}
-	}
-
-	if (errorCategories) {
-		const isNotFoundError = errorCategories.graphQLErrors.some(error =>
-			error.message.includes("Categories not found")
-		)
-
-		if (isNotFoundError) {
-			throw new Response("Categories not found", { status: 404 })
-		}
-
-		// Pour les autres erreurs GraphQL
-		throw new Response("Error loading categories", { status: 500 })
-	}
-
-	if (!loadingCategories && !categoriesData) {
-		throw new Response("Categories not found", { status: 404 })
-	}
+	useToastOnChange({
+		trigger: updateSurveyError,
+		resetTrigger: resetUpdateSurveyError,
+		type: "error",
+		title: "Erreur lors de la modification de l’enquête",
+		description: updateSurveyError?.message ?? "Une erreur est survenue",
+	})
 
 	const onFormSubmit = async (form: CreateSurveyInput) => {
 		clearErrors()
 		try {
-			let result
-
-			if (survey) {
-				result = await updateSurvey(survey.id, {
-					...form,
-					category: Number(form.category),
-					questions: [] as Question[],
-				})
-
-				showToast({
-					type: "success",
-					title: "Enquête modifiée",
-					description: "Votre enquête a bien été mise à jour.",
-				})
-			} else {
-				result = await addSurvey({
-					...form,
-					category: Number(form.category),
-					questions: form.questions ?? [],
-				})
-
-				showToast({
-					type: "success",
-					title: "Enquête créée",
-					description: "Votre enquête a bien été enregistrée.",
-				})
-			}
-
-			if (result && result.id) {
-				navigate(`/surveys/build/${result.id}`)
-			}
-		} catch (err) {
-			const msg =
-				err instanceof Error
-					? err.message
-					: "Erreur lors de la soumission de l'enquête."
-
-			setError("root", { message: msg })
+			const payload = { ...form, category: form.category }
+			await updateSurvey(String(survey.id), payload)
 
 			showToast({
-				type: "error",
-				title: "Erreur",
-				description: msg,
+				type: "success",
+				title: "Enquête modifiée",
+				description: "Votre enquête a bien été mise à jour",
+			})
+		} catch (err) {
+			setError("root", {
+				message:
+					err instanceof Error
+						? err.message
+						: "Erreur inattendue lors de la soumission",
 			})
 		}
 	}
 
-	const isEdit = Boolean(surveyId)
-	const label = isSubmitting
-		? isEdit
-			? "Modification..."
-			: "Création..."
-		: isEdit
-			? "Modifier l'enquête"
-			: "Créer l'enquête"
+	if (isLoadingCategories || !survey || !categoriesData) {
+		return (
+			<div className="p-4">
+				<Skeleton className="mb-4 h-8 w-1/3" />
+				<Skeleton className="mb-2 h-4 w-full" />
+				<Skeleton className="mb-2 h-4 w-3/4" />
+				<Skeleton className="mt-4 h-10 w-32" />
+			</div>
+		)
+	}
 
 	const categoryOptions: CategoryOption[] =
 		categoriesData?.categories?.map(
@@ -171,39 +112,94 @@ export default function SurveyForm() {
 		) ?? []
 
 	return (
-		<FormWrapper onSubmit={handleSubmit(onFormSubmit)}>
-			<h1 className="text-center text-2xl font-bold">
-				{surveyId ? "Modifier l'enquête" : "Créer une enquête"}
-			</h1>
-			<InputTitle register={register} errors={errors} />
-			<InputDescription register={register} errors={errors} />
-			<div>
-				<Label htmlFor="category" required>
-					Catégorie
-				</Label>
-				<TypeSelect
-					control={control}
-					name="category"
-					message="La catégorie est requise"
-					selectSomething="Sélectionner une catégorie"
-					options={categoryOptions}
-					disabled={loadingCategories}
-				/>
-				{errors.category && (
-					<p className="text-destructive-medium-dark text-sm font-medium">
-						{errors.category.message}
-					</p>
-				)}
+		<FormWrapper
+			onSubmit={handleSubmit(onFormSubmit)}
+			className="w-full flex-col border-none !p-0 pt-4 shadow-none md:max-w-full"
+		>
+			<div className="flex flex-col gap-4 lg:flex-row">
+				<div className="flex flex-col gap-4 lg:w-[50%]">
+					<InputTitle register={register} errors={errors} />
+					<div className="flex flex-col gap-1">
+						<Label htmlFor="category" required>
+							Catégorie
+						</Label>
+						<TypeSelect
+							control={control}
+							name="category"
+							message="La catégorie est requise"
+							selectSomething="Sélectionner une catégorie"
+							options={categoryOptions}
+							disabled={
+								isLoadingCategories ||
+								!!errorCategories ||
+								!categoryOptions.length
+							}
+						/>
+						<FieldErrorMessage
+							errorMessage={
+								errorCategories
+									? "Impossible de charger les catégories. Veuillez réessayer plus tard."
+									: errors.category?.message
+							}
+							isLoading={isLoadingCategories}
+							hasData={!!categoryOptions.length}
+							emptyMessage={
+								!errorCategories && !categoryOptions.length
+									? "Aucune catégorie disponible."
+									: undefined
+							}
+						/>
+					</div>
+				</div>
+				<div className="flex flex-col gap-8 lg:w-[50%]">
+					<InputDescription register={register} errors={errors} />
+				</div>
 			</div>
-			<SwitchPublic control={control} errors={errors} />
-			<Button
-				type="submit"
-				disabled={isSubmitting}
-				fullWidth
-				ariaLabel={label}
-			>
-				{label}
-			</Button>
+			<div className="flex w-full flex-col gap-5 md:flex-row md:items-end md:justify-between">
+				<SwitchPublic control={control} errors={errors} />
+				<Button
+					type="submit"
+					disabled={isUpdatingSurvey || !isDirty}
+					ariaLabel="Modifier l'enquête"
+					fullWidth={isMobile}
+					loadingSpinner={isUpdatingSurvey}
+					variant={isDirty ? "primary" : "disabled"}
+				>
+					Modifier l'enquête
+				</Button>
+			</div>
 		</FormWrapper>
 	)
+}
+
+type FieldErrorMessageProps = {
+	errorMessage?: string
+	isLoading?: boolean
+	hasData?: boolean
+	emptyMessage?: string
+}
+
+export function FieldErrorMessage({
+	errorMessage,
+	isLoading,
+	hasData,
+	emptyMessage,
+}: FieldErrorMessageProps) {
+	if (errorMessage) {
+		return (
+			<p className="mt-1 text-sm font-medium text-red-600">
+				{errorMessage}
+			</p>
+		)
+	}
+
+	if (!isLoading && !hasData && emptyMessage) {
+		return (
+			<p className="mt-1 text-sm font-medium text-gray-600">
+				{emptyMessage}
+			</p>
+		)
+	}
+
+	return null
 }

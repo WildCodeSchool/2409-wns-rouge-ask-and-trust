@@ -16,12 +16,19 @@ import {
 	Resolver,
 } from "type-graphql"
 import { Questions } from "../../../database/entities/survey/questions"
-import { Survey } from "../../../database/entities/survey/survey"
 import { AppError } from "../../../middlewares/error-handler"
-import { Context, Roles, TypesOfQuestion } from "../../../types/types"
+import { Context, Roles } from "../../../types/types"
 import { CreateQuestionsInput } from "../../inputs/create/survey/create-questions-input"
 import { UpdateQuestionInput } from "../../inputs/update/survey/update-question-input"
-import { isOwnerOrAdmin } from "../../utils/authorizations"
+import {
+	getAuthorizedQuestion,
+	getAuthorizedSurvey,
+	getUserFromContext,
+} from "../../utils/authorizations"
+import {
+	createQuestionInstance,
+	validateAndNormalizeAnswers,
+} from "../../utils/questions-services"
 
 /**
  * QuestionsResolver
@@ -115,49 +122,28 @@ export class QuestionsResolver {
 		data: CreateQuestionsInput,
 		@Ctx() context: Context
 	): Promise<Questions> {
+		const user = getUserFromContext(context.user)
+
+		// Maybe useless after class-validator check but keep it for security
+		if (!data.surveyId) {
+			throw new AppError(
+				"SurveyId is required to create a question",
+				400,
+				"BadRequestError"
+			)
+		}
+
 		try {
-			const user = context.user
-			if (!user) {
-				throw new AppError("User not found", 404, "NotFoundError")
-			}
+			const survey = await getAuthorizedSurvey(data.surveyId, user)
 
-			if (!Object.values(TypesOfQuestion).includes(data.type)) {
-				throw new AppError(
-					"Invalid question type",
-					400,
-					"BadRequestError"
-				)
-			}
+			const newQuestion = createQuestionInstance({
+				title: data.title,
+				type: data.type,
+				answers: validateAndNormalizeAnswers(data.type, data.answers),
+				survey,
+			})
 
-			const newQuestion = new Questions()
-
-			newQuestion.title = data.title
-			newQuestion.answers = data.answers
-			newQuestion.type = data.type
-
-			if (data.surveyId) {
-				const survey = await Survey.findOne({
-					where: { id: data.surveyId },
-					relations: { user: true }, // get survey and its user
-				})
-
-				if (!survey) {
-					throw new AppError("Survey not found", 404, "NotFoundError")
-				}
-
-				if (!isOwnerOrAdmin(survey.user.id, user)) {
-					throw new AppError(
-						"Not authorized to add a question in this survey",
-						403,
-						"ForbiddenError"
-					)
-				}
-
-				newQuestion.survey = survey
-			}
-
-			await newQuestion.save()
-			return newQuestion
+			return await newQuestion.save()
 		} catch (error) {
 			if (error instanceof AppError) {
 				throw error
@@ -189,48 +175,17 @@ export class QuestionsResolver {
 		@Ctx() context: Context
 	): Promise<Questions | null> {
 		try {
-			const user = context.user
+			const user = getUserFromContext(context.user)
 
-			if (!user) {
-				throw new AppError("User not found", 404, "NotFoundError")
-			}
+			const questionToUpdate = await getAuthorizedQuestion(data.id, user)
 
-			const questionToUpdate = await Questions.findOne({
-				where: { id: data.id },
-				relations: {
-					survey: { user: true }, // get survey and its user
-				},
-			})
-
-			if (!questionToUpdate) {
-				throw new AppError("Question not found", 404, "NotFoundError")
-			}
-
-			if (!isOwnerOrAdmin(questionToUpdate.survey.user.id, user)) {
-				throw new AppError(
-					"Not authorized to update this question",
-					403,
-					"ForbiddenError"
-				)
-			}
-
-			// @TODO add answers validation and questionToUpdate in a function
 			const { id, ...dataWithoutId } = data
+			void id
 
-			const isTypeBoolean = data.type === TypesOfQuestion.Boolean
-
-			if (isTypeBoolean && data.answers && data.answers?.length > 2) {
-				throw new AppError(
-					"A Boolean question can only have up to 2 answers",
-					400,
-					"ValidationError"
-				)
-			}
-
-			// If type is changed to text, clean answers
-			if (data.type === TypesOfQuestion.Text) {
-				dataWithoutId.answers = []
-			}
+			dataWithoutId.answers = validateAndNormalizeAnswers(
+				data.type || questionToUpdate.type,
+				data.answers ?? questionToUpdate.answers
+			)
 
 			Object.assign(questionToUpdate, dataWithoutId)
 
@@ -267,29 +222,9 @@ export class QuestionsResolver {
 		@Ctx() context: Context
 	): Promise<Questions | null> {
 		try {
-			const user = context.user
+			const user = getUserFromContext(context.user)
 
-			if (!user) {
-				throw new AppError("User not found", 404, "NotFoundError")
-			}
-			const questionToDelete = await Questions.findOne({
-				where: { id },
-				relations: {
-					survey: { user: true }, // get survey and its user
-				},
-			})
-
-			if (!questionToDelete) {
-				throw new AppError("Question not found", 404, "NotFoundError")
-			}
-
-			if (!isOwnerOrAdmin(questionToDelete.survey.user.id, user)) {
-				throw new AppError(
-					"Not authorized to update this question",
-					403,
-					"ForbiddenError"
-				)
-			}
+			const questionToDelete = await getAuthorizedQuestion(id, user)
 
 			await questionToDelete.remove()
 			questionToDelete.id = id

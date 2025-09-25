@@ -13,7 +13,7 @@ function AdminPage() {
 	]
 
 	return (
-		<section className="flex flex-col items-center gap-9 p-5 lg:px-19">
+		<section className="flex min-h-[calc(100vh_-_var(--header-height))] flex-col items-center gap-9 p-5 lg:px-20 lg:py-10">
 			<h1 className="text-2xl font-semibold">Administration</h1>
 			<TabSwitch
 				options={tabOptions}
@@ -23,7 +23,7 @@ function AdminPage() {
 			/>
 			<div className="flex w-full flex-col gap-12">
 				{tab === "surveys" ? (
-					<SurveyTableContainer />
+					<SurveyTableContainer mode="admin" />
 				) : (
 					<UserTableContainer />
 				)}

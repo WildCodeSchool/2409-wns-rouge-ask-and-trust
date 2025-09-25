@@ -1,5 +1,5 @@
-import { Label } from "@/components/ui/Label.tsx"
-import { Input } from "@/components/ui/Input.tsx"
+import { Label } from "@/components/ui/Label"
+import { Input } from "@/components/ui/Input"
 
 type InputResetPasswordProps = {
 	id: string
@@ -18,7 +18,7 @@ export default function InputResetPassword({
 		<div className="flex flex-col gap-2">
 			<Label htmlFor={id}>{label}</Label>
 			<Input
-				id="confirmPassword"
+				id={id}
 				type="password"
 				placeholder={placeholder}
 				errorMessage={errorsMessage}

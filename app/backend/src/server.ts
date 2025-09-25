@@ -14,6 +14,7 @@ import { SurveysResolver } from "./graphql/resolvers/survey/survey-resolver"
 import { AnswersResolver } from "./graphql/resolvers/survey/answers-resolver"
 import { CategoryResolver } from "./graphql/resolvers/survey/category-resolver"
 import { QuestionsResolver } from "./graphql/resolvers/survey/questions-resolver"
+import { SurveyResponsesResolver } from "./graphql/resolvers/survey/survey-responses-resolver"
 
 dotenv.config() // Load environment variables from .env file
 
@@ -45,6 +46,7 @@ if (!process.env.APP_PORT) {
 				AnswersResolver,
 				CategoryResolver,
 				QuestionsResolver,
+				SurveyResponsesResolver,
 				/* your resolvers here */
 			],
 			validate: true, // Activate validation for input fields
@@ -83,6 +85,17 @@ if (!process.env.APP_PORT) {
 					}
 				}
 
+				// Handle rate limiting errors
+				if (formattedError.extensions?.code === "RATE_LIMIT_EXCEEDED") {
+					return {
+						message: formattedError.message,
+						extensions: {
+							...formattedError.extensions,
+							statusCode: 429,
+						},
+					}
+				}
+
 				// For other errors, you can handle them differently
 				return formattedError
 			},
@@ -97,7 +110,12 @@ if (!process.env.APP_PORT) {
 					keys: [process.env.COOKIE_SECRET || "default-secret"],
 				})
 
-				return { cookies }
+				// Ajouter req et res au context pour le rate limiting
+				return {
+					cookies,
+					req,
+					res,
+				}
 			},
 		})
 
