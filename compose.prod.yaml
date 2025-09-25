@@ -28,7 +28,6 @@ services:
             db:
                 condition: service_healthy
         networks:
-            - frontend_network_prod
             - backend_network_prod
 
         # Unused options, but useful in other cases

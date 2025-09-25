@@ -28,7 +28,6 @@ services:
             db:
                 condition: service_healthy
         networks:
-            - frontend_network_staging
             - backend_network_staging
 
         # Unused options, but useful in other cases
