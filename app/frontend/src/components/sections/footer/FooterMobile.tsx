@@ -12,10 +12,58 @@ import {
 	MessageCircleMore,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/Button"
+import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
+import { useToastOnChange } from "@/hooks/useToastOnChange"
+import { useNavigate } from "react-router-dom"
+import { useToast } from "@/hooks/useToast"
 
 export default function FooterMobile({ bgBlue }: { bgBlue?: boolean }) {
 	const { user } = useAuthContext()
 	const footerRef = useRef<HTMLElement>(null)
+
+	const {
+		createSurvey,
+		createSurveyError,
+		isCreatingSurvey,
+		resetCreateSurveyError,
+	} = useSurveyMutations()
+
+	useToastOnChange({
+		trigger: createSurveyError,
+		resetTrigger: resetCreateSurveyError,
+		type: "error",
+		title: "Erreur pour créer l'enquête",
+		description: "Nous n'avons pas réussi à créer l'enquête",
+	})
+	const navigate = useNavigate()
+	const { showToast } = useToast()
+
+	const onCreateSurveyAndNavigate = async () => {
+		try {
+			const newSurvey = await createSurvey({
+				title: "Nouvelle enquête",
+				description: "",
+				public: false,
+				category: "",
+			})
+
+			if (!newSurvey?.id) {
+				throw new Error(
+					"Impossible de récupérer l'ID de la nouvelle enquête"
+				)
+			}
+
+			navigate(`/surveys/build/${newSurvey.id}`)
+		} catch (error) {
+			console.error(error)
+			showToast({
+				type: "error",
+				title: "Erreur",
+				description: "La création de l'enquête a échoué",
+			})
+		}
+	}
 
 	useHeightVariable(footerRef, "--footer-height")
 
@@ -26,13 +74,6 @@ export default function FooterMobile({ bgBlue }: { bgBlue?: boolean }) {
 			category: "Accueil",
 			ariaLabel: "Retourner sur la page d'accueil",
 			Icon: House,
-		},
-		{
-			href: "/surveys/create",
-			label: "Créer",
-			category: "Création",
-			ariaLabel: "Créer une enquête",
-			Icon: SquarePlus,
 		},
 		{
 			href: "/payment",
@@ -80,6 +121,16 @@ export default function FooterMobile({ bgBlue }: { bgBlue?: boolean }) {
 			)}
 			ref={footerRef}
 		>
+			<Button
+				icon={SquarePlus}
+				loadingSpinner={isCreatingSurvey}
+				onClick={onCreateSurveyAndNavigate}
+				variant="footerMobile"
+				size="xs"
+				role="button"
+				ariaLabel="Créer une enquête"
+				children="Créer"
+			/>
 			{FOOTER_LINKS.map(link => (
 				<Links
 					key={link.href}

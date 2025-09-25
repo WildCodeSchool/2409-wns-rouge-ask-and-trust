@@ -18,14 +18,16 @@ import { useNavigate } from "react-router-dom"
 import img from "/img/dev.webp"
 
 function Surveys() {
-	const { user: owner } = useAuthContext()
+	const { user } = useAuthContext()
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
+
 	const {
 		createSurvey,
 		createSurveyError,
 		isCreatingSurvey,
 		resetCreateSurveyError,
 	} = useSurveyMutations()
+
 	useToastOnChange({
 		trigger: createSurveyError,
 		resetTrigger: resetCreateSurveyError,
@@ -33,6 +35,7 @@ function Surveys() {
 		title: "Erreur pour créer l'enquête",
 		description: "Nous n'avons pas réussi à créer l'enquête",
 	})
+
 	const navigate = useNavigate()
 	const { showToast } = useToast()
 
@@ -80,7 +83,7 @@ function Surveys() {
 	const allSurveys =
 		surveys?.allSurveys?.map(survey => ({
 			...survey,
-			isOwner: !!(owner && survey.user && owner.id === survey.user.id),
+			isOwner: !!(user && survey.user && user.id === survey.user.id),
 		})) ?? []
 
 	const publishedSurveys =
@@ -160,7 +163,7 @@ function Surveys() {
 				perPage={PER_PAGE.home}
 				onPageChange={setCurrentPage}
 			/>
-			{!isHorizontalCompact && (
+			{!isHorizontalCompact && user && (
 				<div className="mt-10 flex items-center justify-center">
 					<Button
 						icon={PlusCircle}
