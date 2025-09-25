@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm"
 
-export class SurveyTitleNotUnique1758806557246 implements MigrationInterface {
-	name = "SurveyTitleNotUnique1758806557246"
+export class SurveyTitleNotUnique1758809876804 implements MigrationInterface {
+	name = "SurveyTitleNotUnique1758809876804"
 
 	public async up(queryRunner: QueryRunner): Promise<void> {
 		await queryRunner.query(
