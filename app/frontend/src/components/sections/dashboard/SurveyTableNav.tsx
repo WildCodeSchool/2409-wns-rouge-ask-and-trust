@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button"
 import Pagination from "@/components/ui/Pagination"
 import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
+import { useSurveysMutations } from "@/hooks/survey/useSurveysMutations"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
@@ -24,8 +25,9 @@ export default function SurveyTableNav({
 		createSurveyError,
 		isCreatingSurvey,
 		resetCreateSurveyError,
-		deleteSurveys,
 	} = useSurveyMutations()
+
+	const { deleteSurveys } = useSurveysMutations()
 
 	useToastOnChange({
 		trigger: createSurveyError,

@@ -167,33 +167,6 @@ export function useSurveyMutations() {
 		}
 	}
 
-	const deleteSurveys = async (selectedSurveyIds: number[]) => {
-		try {
-			await Promise.all(
-				selectedSurveyIds.map(id =>
-					deleteSurveyMutation({
-						variables: { surveyId: id.toString() },
-					})
-				)
-			)
-
-			showToast({
-				type: "success",
-				title: "Les enquêtes ont bien été supprimées !",
-				description:
-					"Vous pouvez poursuivre votre lecture du tableau de bord.",
-			})
-		} catch (error) {
-			console.error("Erreur lors de la suppression :", error)
-
-			showToast({
-				type: "error",
-				title: "Un problème est survenu pendant la suppression des enquêtes...",
-				description: "Veuillez réessayer dans quelques instants.",
-			})
-		}
-	}
-
 	return {
 		// create
 		createSurvey: addSurvey,
@@ -215,7 +188,6 @@ export function useSurveyMutations() {
 
 		// delete
 		deleteSurvey,
-		deleteSurveys,
 		isDeletingSurvey,
 		deleteSurveyError,
 		resetDeleteSurveyError,
