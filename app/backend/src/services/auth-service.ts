@@ -104,6 +104,15 @@ export const login = async (
 			cookieSet: true,
 		}
 	} catch (error) {
+		// If it's already an AppError, re-throw it
+		if (error instanceof AppError) {
+			throw error
+		}
+
+		// Log the actual error for debugging
+		console.error("Login error details:", error)
+
+		// For other errors, provide a more specific message
 		throw new AppError(
 			"Failed to log in the user.",
 			500,
