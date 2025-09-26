@@ -86,6 +86,16 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 		Object.values(statusLabelMap).includes(f)
 	)
 
+	const statusForSurveys: SurveyStatusType[] =
+		mode === "home"
+			? (["published"] as SurveyStatusType[])
+			: (selectedStatuses.map(
+					label =>
+						Object.entries(statusLabelMap).find(
+							([, v]) => v === label
+						)?.[0]
+				) as SurveyStatusType[])
+
 	// Apollo hooks
 	const {
 		data: allSurveysData,
@@ -99,12 +109,7 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 				limit: getLimit(),
 				search: searchParams.get("search") || "",
 				categoryIds: categoryId ? [parseInt(categoryId, 10)] : [],
-				status: selectedStatuses.map(
-					label =>
-						Object.entries(statusLabelMap).find(
-							([, v]) => v === label
-						)?.[0]
-				) as SurveyStatusType[],
+				status: statusForSurveys,
 				sortBy,
 				order,
 			},
@@ -137,12 +142,7 @@ export function useSurvey<T>(options: UseSurveyOptions = {}) {
 				page: currentPage,
 				limit: getLimit(),
 				search: debouncedSearch,
-				status: selectedStatuses.map(
-					label =>
-						Object.entries(statusLabelMap).find(
-							([, v]) => v === label
-						)?.[0]
-				) as SurveyStatusType[],
+				status: statusForSurveys,
 				sortBy: "createdAt",
 				order: selectedSort === "Plus ancienne" ? "ASC" : "DESC",
 			},

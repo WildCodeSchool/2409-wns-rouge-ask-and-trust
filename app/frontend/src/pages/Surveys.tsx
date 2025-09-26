@@ -11,7 +11,7 @@ import { useSurvey } from "@/hooks/useSurvey"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { cn } from "@/lib/utils"
-import { SurveyCardType, SurveyStatus } from "@/types/types"
+import { SurveyCardType } from "@/types/types"
 import { PlusCircle } from "lucide-react"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
@@ -86,11 +86,6 @@ function Surveys() {
 			isOwner: !!(user && survey.user && user.id === survey.user.id),
 		})) ?? []
 
-	const publishedSurveys =
-		allSurveys?.filter(
-			survey => survey.status === SurveyStatus.Published
-		) ?? []
-
 	const onCreateSurveyAndNavigate = async () => {
 		try {
 			const newSurvey = await createSurvey({
@@ -133,9 +128,9 @@ function Surveys() {
 				sortTimeOption={sortTimeOption}
 				setSortTimeOption={setSortTimeOption}
 			/>
-			{publishedSurveys.length > 0 ? (
+			{allSurveys.length > 0 ? (
 				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
-					{publishedSurveys.map(survey => (
+					{allSurveys.map(survey => (
 						<SurveyCard
 							key={survey.id}
 							id={survey.id}
