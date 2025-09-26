@@ -49,44 +49,44 @@ export const GET_USERS = gql`
 	}
 `
 
-export const DELETE_MY_ACCOUNT = gql`
-	mutation DeleteMyAccount($data: DeleteAccountInput!) {
-		deleteMyAccount(data: $data)
-	}
-`
+// export const DELETE_MY_ACCOUNT = gql`
+// 	mutation DeleteMyAccount($data: DeleteAccountInput!) {
+// 		deleteMyAccount(data: $data)
+// 	}
+// `
 
-export const EXPORT_MY_DATA = gql`
-	query ExportMyData {
-		exportMyData
-	}
-`
+// export const EXPORT_MY_DATA = gql`
+// 	query ExportMyData {
+// 		exportMyData
+// 	}
+// `
 
-export const GENERATE_RECOVERY_CODES = gql`
-	mutation GenerateRecoveryCodes {
-		generateRecoveryCodes
-	}
-`
+// export const GENERATE_RECOVERY_CODES = gql`
+// 	mutation GenerateRecoveryCodes {
+// 		generateRecoveryCodes
+// 	}
+// `
 
-export const USE_RECOVERY_CODE = gql`
-	mutation UseRecoveryCode($data: UseRecoveryCodeInput!) {
-		useRecoveryCode(data: $data)
-	}
-`
+// export const USE_RECOVERY_CODE = gql`
+// 	mutation UseRecoveryCode($data: UseRecoveryCodeInput!) {
+// 		useRecoveryCode(data: $data)
+// 	}
+// `
 
-export const HAS_RECOVERY_CODES = gql`
-	query HasRecoveryCodes {
-		hasRecoveryCodes
-	}
-`
+// export const HAS_RECOVERY_CODES = gql`
+// 	query HasRecoveryCodes {
+// 		hasRecoveryCodes
+// 	}
+// `
 
-export const REMAINING_RECOVERY_CODES = gql`
-	query RemainingRecoveryCodes {
-		remainingRecoveryCodes
-	}
-`
+// export const REMAINING_RECOVERY_CODES = gql`
+// 	query RemainingRecoveryCodes {
+// 		remainingRecoveryCodes
+// 	}
+// `
 
-export const CHANGE_PASSWORD = gql`
-	mutation ChangePassword($data: ChangePasswordInput!) {
+export const UPDATE_PASSWORD = gql`
+	mutation ChangePassword($data: UpdatePasswordInput!) {
 		changePassword(data: $data)
 	}
 `
