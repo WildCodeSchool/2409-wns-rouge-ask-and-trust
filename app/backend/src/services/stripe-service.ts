@@ -11,6 +11,7 @@ import dataSource from "../database/config/datasource"
 import { Payment } from "../database/entities/payment"
 import { User } from "../database/entities/user"
 import { AppError } from "../middlewares/error-handler"
+import { createUserSnapshot } from "./user-management-service"
 
 /**
  * Stripe service configuration
@@ -56,6 +57,9 @@ export const createPaymentIntent = async (
 			throw new AppError("User not found", 404, "UserNotFoundError")
 		}
 
+		// Create user snapshot for legal/accounting compliance
+		const userSnapshot = await createUserSnapshot(user)
+
 		// Create a payment intent with Stripe
 		const paymentIntent = await stripe.paymentIntents.create({
 			amount,
@@ -65,6 +69,7 @@ export const createPaymentIntent = async (
 			metadata: {
 				userId: userId.toString(),
 				surveyCount: surveyCount.toString(),
+				userSnapshotId: userSnapshot.id.toString(),
 			},
 		})
 
@@ -79,6 +84,7 @@ export const createPaymentIntent = async (
 			description,
 			surveyCount,
 			userId,
+			userSnapshotId: userSnapshot.id,
 		})
 
 		await payment.save()

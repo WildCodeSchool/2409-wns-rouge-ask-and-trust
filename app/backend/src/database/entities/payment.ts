@@ -15,6 +15,7 @@ import {
 	PrimaryGeneratedColumn,
 } from "typeorm"
 import { User } from "./user"
+import { UserSnapshot } from "./user-snapshot"
 
 /**
  * Payment Entity
@@ -129,10 +130,34 @@ export class Payment extends BaseEntity {
 	 * @description
 	 * The user who made this payment.
 	 * This is a many-to-one relationship with the User entity.
+	 * Note: Can be null if user account has been deleted
 	 */
-	@Field(() => User)
-	@ManyToOne(() => User, { onDelete: "CASCADE" })
-	user!: User
+	@Field(() => User, { nullable: true })
+	@ManyToOne(() => User, { onDelete: "SET NULL" })
+	user?: User
+
+	/**
+	 * ID of the user snapshot for this payment
+	 * @description
+	 * References the user snapshot that contains user data at time of payment.
+	 * This ensures we maintain payment records for legal/accounting purposes
+	 * even after user account deletion (GDPR compliance).
+	 */
+	@Field()
+	@Column()
+	userSnapshotId!: number
+
+	/**
+	 * Relation to the UserSnapshot entity
+	 * @description
+	 * The user snapshot containing user data at time of payment.
+	 * This is immutable and preserved for legal/accounting requirements.
+	 */
+	@Field(() => UserSnapshot)
+	@ManyToOne(() => UserSnapshot, userSnapshot => userSnapshot.payments, {
+		onDelete: "RESTRICT", // Never delete snapshots to maintain audit trail
+	})
+	userSnapshot!: UserSnapshot
 
 	/**
 	 * Timestamp of when the payment was created
