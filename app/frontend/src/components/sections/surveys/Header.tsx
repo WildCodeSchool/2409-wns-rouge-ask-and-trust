@@ -4,20 +4,23 @@ import { Button } from "@/components/ui/Button"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useHeightVariable } from "@/hooks/useHeightVariable"
 import { useResponsivity } from "@/hooks/useResponsivity"
-import { useSurvey } from "@/hooks/useSurvey"
 import { cn, slugify } from "@/lib/utils"
 import { SurveyCategoryType } from "@/types/types"
 import { useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import logoFooter from "/logos/logo-footer.svg"
+import { useCategoriesData } from "@/hooks/category/useCategoriesData"
 
 export default function Header({ isInSurveys = false }) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const [searchParams, setSearchParams] = useSearchParams()
-	const { categoriesData, loadingCategories, errorCategories } = useSurvey()
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(
 		null
 	)
+
+	const { categoriesData, isLoadingCategories, errorCategories } =
+		useCategoriesData()
+
 	const { user } = useAuthContext()
 
 	// Update header's height variable if change
@@ -69,7 +72,7 @@ export default function Header({ isInSurveys = false }) {
 			</div>
 			{isInSurveys && (
 				<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3 pl-1">
-					{loadingCategories && (
+					{isLoadingCategories && (
 						<p className="text-white">
 							Chargement des catégories...
 						</p>

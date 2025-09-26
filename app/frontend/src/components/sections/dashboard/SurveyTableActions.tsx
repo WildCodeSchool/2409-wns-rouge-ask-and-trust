@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/Button"
-import { useSurvey } from "@/hooks/useSurvey"
+import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
 import { SurveyTableActionsProps } from "@/types/types"
 import { BarChart3, Eye, Pencil, Trash2 } from "lucide-react"
 
@@ -7,7 +7,7 @@ export const SurveyTableActions = ({
 	surveyId,
 	status,
 }: SurveyTableActionsProps) => {
-	const { deleteSurvey } = useSurvey()
+	const { deleteSurvey } = useSurveyMutations()
 	const isEditable = status === "draft" || status === "published"
 	const isPublished = status === "published"
 

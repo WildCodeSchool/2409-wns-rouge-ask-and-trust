@@ -1,9 +1,9 @@
 import { useDynamicSEO, withSEO } from "@/components/hoc/withSEO"
 import ContentResponse from "@/components/sections/surveys/response/ContentResponse"
 import HeaderResponse from "@/components/sections/surveys/response/HeaderResponse"
+import { useSurveyData } from "@/hooks/survey/useSurveyData"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useCopyClipboard } from "@/hooks/useCopyClipboard"
-import { useSurvey } from "@/hooks/useSurvey"
 import { useParams } from "react-router-dom"
 
 function SurveyResponse() {
@@ -11,9 +11,7 @@ function SurveyResponse() {
 	const { user } = useAuthContext()
 	const { copyToClipboard } = useCopyClipboard()
 
-	const { survey, surveyLoading, surveyError } = useSurvey({
-		surveyId: surveyId,
-	})
+	const { survey, isLoadingSurvey, surveyError } = useSurveyData(surveyId)
 
 	const isOwner = user && survey && user.id === survey.user.id
 
@@ -25,7 +23,7 @@ function SurveyResponse() {
 			: undefined
 	)
 
-	if (surveyLoading) {
+	if (isLoadingSurvey) {
 		return (
 			<div className="flex min-h-screen items-center justify-center">
 				<div>Chargement de l'enquête...</div>

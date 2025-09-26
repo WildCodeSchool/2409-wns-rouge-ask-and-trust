@@ -1,18 +1,18 @@
 import { withSEO } from "@/components/hoc/withSEO"
-import { useSurvey } from "@/hooks/useSurvey"
 import { useParams } from "react-router-dom"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import HeaderPreview from "@/components/sections/surveys/preview/HeaderPreview"
 import ContentPreview from "@/components/sections/surveys/preview/ContentPreview"
+import { useSurveyData } from "@/hooks/survey/useSurveyData"
 
 function PreviewSurveyPage() {
 	const { id } = useParams<{ id: string }>()
 	const { user } = useAuthContext()
 
-	const { survey, surveyLoading, surveyError } = useSurvey({ surveyId: id })
+	const { survey, isLoadingSurvey, surveyError } = useSurveyData(id)
 	const isOwner = user && survey && user.id === survey.user.id
 
-	if (surveyLoading) {
+	if (isLoadingSurvey) {
 		return (
 			<div className="flex min-h-screen items-center justify-center">
 				<div>Chargement de l'enquête...</div>
@@ -34,7 +34,7 @@ function PreviewSurveyPage() {
 			throw new Response("Error loading survey", { status: 500 })
 		}
 
-		if (!surveyLoading && !survey) {
+		if (!isLoadingSurvey && !survey) {
 			throw new Response("Survey not found", { status: 404 })
 		}
 	}
