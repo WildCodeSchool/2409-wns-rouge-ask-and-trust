@@ -85,6 +85,15 @@ export class User extends BaseEntity {
 		onUpdate: "CURRENT_TIMESTAMP",
 	})
 	updatedAt!: Date
+
+	/**
+	 * Recovery codes for password reset (hashed)
+	 * @description
+	 * Array of hashed recovery codes that can be used once each for password reset
+	 * Generated when user requests them and stored as JSON array
+	 */
+	@Column({ type: "json", nullable: true })
+	recoveryCodes?: string[]
 }
 
 @ObjectType()

@@ -140,3 +140,61 @@ export const whoami = async (cookies: Cookies): Promise<User | null> => {
 		throw new AppError("Invalid token", 401, "UnauthorizedError")
 	}
 }
+
+/**
+ * Changes user password after verifying current password
+ * @param userId - ID of the user
+ * @param currentPassword - Current password to verify
+ * @param newPassword - New password to set
+ * @returns Promise<string> - Success message
+ */
+export const changePassword = async (
+	userId: number,
+	currentPassword: string,
+	newPassword: string
+): Promise<string> => {
+	const userRepository = dataSource.getRepository(User)
+
+	// Find the user
+	const user = await userRepository.findOne({ where: { id: userId } })
+
+	if (!user) {
+		throw new AppError("Utilisateur non trouvé", 404, "UserNotFoundError")
+	}
+
+	try {
+		// Verify current password
+		const isCurrentPasswordValid = await argon2.verify(
+			user.hashedPassword,
+			currentPassword
+		)
+
+		if (!isCurrentPasswordValid) {
+			throw new AppError(
+				"Mot de passe actuel incorrect",
+				401,
+				"InvalidCurrentPasswordError"
+			)
+		}
+
+		// Hash new password
+		const hashedNewPassword = await argon2.hash(newPassword)
+
+		// Update password
+		user.hashedPassword = hashedNewPassword
+		await userRepository.save(user)
+
+		return "Mot de passe modifié avec succès"
+	} catch (error) {
+		if (error instanceof AppError) {
+			throw error
+		}
+
+		throw new AppError(
+			"Erreur lors de la modification du mot de passe",
+			500,
+			"InternalServerError",
+			error instanceof Error ? error.message : undefined
+		)
+	}
+}

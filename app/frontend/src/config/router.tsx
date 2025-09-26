@@ -35,6 +35,8 @@ const SurveyUpdate = lazy(() => import("@/pages/SurveyUpdate"))
 const UserProfile = lazy(() => import("@/pages/UserProfile"))
 const SurveyResponse = lazy(() => import("@/pages/SurveyResponse"))
 const SurveyResponses = lazy(() => import("@/pages/SurveyResponses"))
+const PasswordReset = lazy(() => import("@/pages/PasswordReset"))
+const RecoveryCodeReset = lazy(() => import("@/pages/RecoveryCodeReset"))
 const Admin = lazy(() => import("@/pages/Admin"))
 
 /**
@@ -93,6 +95,26 @@ const router = createBrowserRouter([
 				element: (
 					<Suspense fallback={<Loader />}>
 						<TermsOfUse />
+					</Suspense>
+				),
+			},
+			{
+				path: "mot-de-passe-oublie",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<PublicRoute>
+							<PasswordReset />
+						</PublicRoute>
+					</Suspense>
+				),
+			},
+			{
+				path: "code-de-recuperation",
+				element: (
+					<Suspense fallback={<Loader />}>
+						<PublicRoute>
+							<RecoveryCodeReset />
+						</PublicRoute>
 					</Suspense>
 				),
 			},
