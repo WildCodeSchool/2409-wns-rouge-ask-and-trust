@@ -7,6 +7,8 @@ import { buildSchema } from "type-graphql"
 import dataSource from "./database/config/datasource"
 import { AuthResolver } from "./graphql/resolvers/auth-resolver"
 import { PaymentResolver } from "./graphql/resolvers/payment-resolver"
+import { UserManagementResolver } from "./graphql/resolvers/user-management-resolver"
+import { RecoveryCodesResolver } from "./graphql/resolvers/recovery-codes-resolver"
 import { customAuthChecker } from "./middlewares/auth-checker"
 import { AppError } from "./middlewares/error-handler"
 import { createAdmin } from "./scripts/create-admin"
@@ -42,6 +44,8 @@ if (!process.env.APP_PORT) {
 			resolvers: [
 				AuthResolver,
 				PaymentResolver,
+				UserManagementResolver,
+				RecoveryCodesResolver,
 				SurveysResolver,
 				AnswersResolver,
 				CategoryResolver,

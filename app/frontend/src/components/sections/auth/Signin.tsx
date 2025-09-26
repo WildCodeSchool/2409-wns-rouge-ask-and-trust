@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/useToast"
 import { UserSignIn } from "@/types/types"
 import { ApolloError, useMutation } from "@apollo/client"
 import { SubmitHandler, useForm } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import FormButtonSubmit from "./form/FormButtonSubmit"
 import FormTitle from "./form/FormTitle"
 import FormWrapper from "./form/FormWrapper"
@@ -84,6 +84,14 @@ export default function Signin() {
 			<InputEmail<UserSignIn> register={register} errors={errors} />
 			<InputPassword<UserSignIn> register={register} errors={errors} />
 			<FormButtonSubmit type="sign-in" />
+			<div className="mt-4 text-center">
+				<Link
+					to="/mot-de-passe-oublie"
+					className="text-primary-600 hover:text-primary-500 text-sm hover:underline"
+				>
+					Mot de passe oublié ?
+				</Link>
+			</div>
 		</FormWrapper>
 	)
 }
