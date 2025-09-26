@@ -10,7 +10,7 @@ import {
 } from "../../services/auth-service"
 import { Context, Roles } from "../../types/types"
 import { LogUserInput } from "./../inputs/create/create-auth-input"
-import { ChangePasswordInput } from "../inputs/change-password-input"
+import { UpdatePasswordInput } from "../inputs/update/update-password-input"
 import {
 	checkRateLimit,
 	authRateLimiter,
@@ -185,7 +185,7 @@ export class AuthResolver {
 	@Authorized()
 	@Mutation(() => String)
 	async changePassword(
-		@Arg("data") data: ChangePasswordInput,
+		@Arg("data") data: UpdatePasswordInput,
 		@Ctx() context: Context
 	): Promise<string> {
 		// Rate limiting for password changes

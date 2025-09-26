@@ -92,8 +92,8 @@ export class User extends BaseEntity {
 	 * Array of hashed recovery codes that can be used once each for password reset
 	 * Generated when user requests them and stored as JSON array
 	 */
-	@Column({ type: "json", nullable: true })
-	recoveryCodes?: string[]
+	// @Column({ type: "json", nullable: true })
+	// recoveryCodes?: string[]
 }
 
 @ObjectType()

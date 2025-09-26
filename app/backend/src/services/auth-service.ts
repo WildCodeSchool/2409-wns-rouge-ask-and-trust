@@ -159,7 +159,7 @@ export const changePassword = async (
 	const user = await userRepository.findOne({ where: { id: userId } })
 
 	if (!user) {
-		throw new AppError("Utilisateur non trouvé", 404, "UserNotFoundError")
+		throw new AppError("User not found", 404, "UserNotFoundError")
 	}
 
 	try {
@@ -171,7 +171,7 @@ export const changePassword = async (
 
 		if (!isCurrentPasswordValid) {
 			throw new AppError(
-				"Mot de passe actuel incorrect",
+				"Current password is incorrect",
 				401,
 				"InvalidCurrentPasswordError"
 			)
@@ -184,14 +184,14 @@ export const changePassword = async (
 		user.hashedPassword = hashedNewPassword
 		await userRepository.save(user)
 
-		return "Mot de passe modifié avec succès"
+		return "Password updated successfully"
 	} catch (error) {
 		if (error instanceof AppError) {
 			throw error
 		}
 
 		throw new AppError(
-			"Erreur lors de la modification du mot de passe",
+			"Error updating password",
 			500,
 			"InternalServerError",
 			error instanceof Error ? error.message : undefined

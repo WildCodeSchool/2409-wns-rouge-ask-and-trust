@@ -1,24 +1,22 @@
 import { useMutation } from "@apollo/client"
-import { useForm, SubmitHandler } from "react-hook-form"
-import { CHANGE_PASSWORD } from "@/graphql/auth"
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form"
+import { UPDATE_PASSWORD } from "@/graphql/auth"
 import { useToast } from "@/hooks/useToast"
 import { Button } from "@/components/ui/Button"
+import { Input } from "@/components/ui/Input"
+import { Label } from "@/components/ui/Label"
+import FormWrapper from "@/components/sections/auth/form/FormWrapper"
+import styles from "@/components/sections/auth/form/FormInput.module.css"
 
-interface ChangePasswordForm {
+interface UpdatePasswordForm {
 	currentPassword: string
 	newPassword: string
 	confirmPassword: string
 }
 
 export function ResetPasswordPart() {
-	const { showToast } = useToast()
-
-	// Mutation pour changer le mot de passe
-	const [changePassword, { loading: isChanging }] =
-		useMutation(CHANGE_PASSWORD)
-
-	// Formulaire
-	const form = useForm<ChangePasswordForm>({
+	const methods = useForm<UpdatePasswordForm>({
+		mode: "onBlur",
 		defaultValues: {
 			currentPassword: "",
 			newPassword: "",
@@ -26,7 +24,18 @@ export function ResetPasswordPart() {
 		},
 	})
 
-	const onSubmit: SubmitHandler<ChangePasswordForm> = async data => {
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = methods
+
+	const [updatePassword, { loading: isChanging }] =
+		useMutation(UPDATE_PASSWORD)
+	const { showToast } = useToast()
+
+	const onSubmit: SubmitHandler<UpdatePasswordForm> = async data => {
 		if (data.newPassword !== data.confirmPassword) {
 			showToast({
 				type: "error",
@@ -36,18 +45,8 @@ export function ResetPasswordPart() {
 			return
 		}
 
-		if (data.newPassword.length < 8) {
-			showToast({
-				type: "error",
-				title: "Erreur",
-				description:
-					"Le nouveau mot de passe doit contenir au moins 8 caractères.",
-			})
-			return
-		}
-
 		try {
-			await changePassword({
+			await updatePassword({
 				variables: {
 					data: {
 						currentPassword: data.currentPassword,
@@ -56,7 +55,7 @@ export function ResetPasswordPart() {
 				},
 			})
 
-			form.reset()
+			reset()
 			showToast({
 				type: "success",
 				title: "Mot de passe modifié",
@@ -76,79 +75,87 @@ export function ResetPasswordPart() {
 	}
 
 	return (
-		<div className="flex w-full flex-col gap-4 p-4">
-			<h2 className="text-lg font-semibold">Modifier le mot de passe</h2>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex flex-col gap-4"
-			>
-				<div className="flex flex-col gap-2">
-					<label
-						htmlFor="currentPassword"
-						className="text-sm font-medium"
-					>
-						Ancien mot de passe
-					</label>
-					<input
-						{...form.register("currentPassword", {
-							required: true,
-						})}
+		<FormProvider {...methods}>
+			<FormWrapper onSubmit={handleSubmit(onSubmit)}>
+				<h2 className="mb-4 text-center text-xl font-semibold">
+					Modifier mon mot de passe
+				</h2>
+
+				<div className={styles.inputFormSign}>
+					<Label htmlFor="currentPassword" required>
+						Mot de passe actuel
+					</Label>
+					<Input
+						id="currentPassword"
 						type="password"
-						required
-						className="rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-						placeholder="Ancien mot de passe"
+						placeholder="Votre mot de passe actuel"
+						aria-required
+						{...register("currentPassword", {
+							required: "Le mot de passe actuel est requis",
+						})}
+						aria-invalid={
+							errors?.currentPassword ? "true" : "false"
+						}
+						errorMessage={errors?.currentPassword?.message}
 					/>
 				</div>
 
-				<div className="flex flex-col gap-2">
-					<label
-						htmlFor="newPassword"
-						className="text-sm font-medium"
-					>
+				<div className={styles.inputFormSign}>
+					<Label htmlFor="newPassword" required>
 						Nouveau mot de passe
-					</label>
-					<input
-						{...form.register("newPassword", {
-							required: true,
-							minLength: 8,
-						})}
+					</Label>
+					<Input
+						id="newPassword"
 						type="password"
-						required
-						className="rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-						placeholder="Nouveau mot de passe (min. 8 caractères)"
+						placeholder="Votre nouveau mot de passe"
+						aria-required
+						{...register("newPassword", {
+							required: "Le nouveau mot de passe est requis",
+							minLength: {
+								value: 8,
+								message: "Doit contenir au moins 8 caractères",
+							},
+							pattern: {
+								value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,255}$/,
+								message:
+									"Doit contenir 1 minuscule, 1 majuscule, 1 chiffre et 1 symbole",
+							},
+						})}
+						aria-invalid={errors?.newPassword ? "true" : "false"}
+						errorMessage={errors?.newPassword?.message}
 					/>
 				</div>
 
-				<div className="flex flex-col gap-2">
-					<label
-						htmlFor="confirmPassword"
-						className="text-sm font-medium"
-					>
+				<div className={styles.inputFormSign}>
+					<Label htmlFor="confirmPassword" required>
 						Confirmer le nouveau mot de passe
-					</label>
-					<input
-						{...form.register("confirmPassword", {
-							required: true,
-						})}
+					</Label>
+					<Input
+						id="confirmPassword"
 						type="password"
-						required
-						className="rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-						placeholder="Confirmer le nouveau mot de passe"
+						placeholder="Confirmez votre nouveau mot de passe"
+						aria-required
+						{...register("confirmPassword", {
+							required:
+								"La confirmation du mot de passe est requise",
+						})}
+						aria-invalid={
+							errors?.confirmPassword ? "true" : "false"
+						}
+						errorMessage={errors?.confirmPassword?.message}
 					/>
 				</div>
 
-				<div className="flex justify-end">
-					<Button
-						type="submit"
-						variant="primary"
-						disabled={isChanging}
-						ariaLabel="Confirmer le changement de mot de passe"
-						className="h-9 rounded-md px-4 text-base"
-					>
-						{isChanging ? "Modification..." : "Confirmer"}
-					</Button>
-				</div>
-			</form>
-		</div>
+				<Button
+					type="submit"
+					variant="primary"
+					disabled={isChanging}
+					ariaLabel="Confirmer le changement de mot de passe"
+					className="h-9 rounded-md px-4 text-base"
+				>
+					{isChanging ? "Modification..." : "Confirmer"}
+				</Button>
+			</FormWrapper>
+		</FormProvider>
 	)
 }
