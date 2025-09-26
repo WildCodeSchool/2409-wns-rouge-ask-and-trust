@@ -76,7 +76,10 @@ export function ResetPasswordPart() {
 
 	return (
 		<FormProvider {...methods}>
-			<FormWrapper onSubmit={handleSubmit(onSubmit)}>
+			<FormWrapper
+				onSubmit={handleSubmit(onSubmit)}
+				className="border-none p-0 shadow-none"
+			>
 				<h2 className="mb-4 text-center text-xl font-semibold">
 					Modifier mon mot de passe
 				</h2>
