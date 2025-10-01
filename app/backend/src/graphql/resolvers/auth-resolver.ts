@@ -7,10 +7,12 @@ import {
 	register,
 	whoami,
 	changePassword,
+	deleteAccount,
 } from "../../services/auth-service"
 import { Context, Roles } from "../../types/types"
 import { LogUserInput } from "./../inputs/create/create-auth-input"
 import { UpdatePasswordInput } from "../inputs/update/update-password-input"
+import { DeleteAccountInput } from "../inputs/delete/delete-account-input"
 import {
 	checkRateLimit,
 	authRateLimiter,
@@ -205,12 +207,55 @@ export class AuthResolver {
 				newPassword
 			)
 		} catch (err) {
-			console.error("Password change error:", err)
-			throw new AppError(
-				"Erreur lors de la modification du mot de passe",
-				500,
-				"InternalError"
+			if (err instanceof AppError) {
+				throw err
+			}
+
+			throw new AppError("Error updating password", 500, "InternalError")
+		}
+	}
+
+	/**
+	 * Mutation for deleting user account (RGPD Right to be Forgotten)
+	 * @param data - Input containing password and confirmation text
+	 * @param context - Context object for authentication, rate limiting, and session management
+	 * @returns Promise<string> - Success message
+	 */
+	@Authorized()
+	@Mutation(() => String)
+	async deleteMyAccount(
+		@Arg("data") data: DeleteAccountInput,
+		@Ctx() context: Context
+	): Promise<string> {
+		// Rate limiting for account deletion
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(authRateLimiter, clientIP, "account-deletion")
+
+		if (!context.user) {
+			throw new AppError("Non authentifié", 401, "UnauthorizedError")
+		}
+
+		try {
+			const { password, confirmationText } = data
+			const result = await deleteAccount(
+				context.user.id,
+				password,
+				confirmationText
 			)
+
+			// Clear authentication cookie after successful deletion
+			const { cookies } = context
+			cookies.set("token", "", { maxAge: -1 })
+
+			return result
+		} catch (err) {
+			// Re-throw AppError with original message
+			if (err instanceof AppError) {
+				throw err
+			}
+
+			throw new AppError("Error deleting account", 500, "InternalError")
 		}
 	}
 }
