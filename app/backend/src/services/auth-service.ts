@@ -207,3 +207,72 @@ export const changePassword = async (
 		)
 	}
 }
+
+/**
+ * Deletes user account and all associated data (RGPD Right to be Forgotten)
+ * @param userId - ID of the user to delete
+ * @param password - Current password for verification
+ * @param confirmationText - Text that must match "SUPPRIMER MON COMPTE"
+ * @returns Promise<string> - Success message
+ * @description
+ * Scénario d'attaque :
+ * - Un attaquant vole le cookie de session (XSS, network sniffing)
+ * - Il peut maintenant utiliser l'API comme l'utilisateur
+ * - MAIS il ne connaît pas le mot de passe
+ * → Impossible de supprimer le compte
+ */
+export const deleteAccount = async (
+	userId: number,
+	password: string,
+	confirmationText: string
+): Promise<string> => {
+	const userRepository = dataSource.getRepository(User)
+
+	// Find the user with all relationships
+	const user = await userRepository.findOne({
+		where: { id: userId },
+		relations: ["surveys", "categories"],
+	})
+
+	if (!user) {
+		throw new AppError("User not found", 404, "UserNotFoundError")
+	}
+
+	try {
+		// Verify password
+		const isPasswordValid = await argon2.verify(
+			user.hashedPassword,
+			password
+		)
+
+		if (!isPasswordValid) {
+			throw new AppError("Invalid password", 401, "InvalidPasswordError")
+		}
+
+		// Verify confirmation text
+		if (confirmationText !== "SUPPRIMER MON COMPTE") {
+			throw new AppError(
+				"Confirmation text does not match",
+				400,
+				"InvalidConfirmationError"
+			)
+		}
+
+		// Delete user (CASCADE will handle related payments)
+		// Surveys and Categories need explicit deletion due to missing CASCADE
+		await userRepository.remove(user)
+
+		return "Account deleted successfully"
+	} catch (error) {
+		if (error instanceof AppError) {
+			throw error
+		}
+
+		throw new AppError(
+			"Error deleting account",
+			500,
+			"InternalServerError",
+			error instanceof Error ? error.message : undefined
+		)
+	}
+}
