@@ -104,6 +104,15 @@ export const login = async (
 			cookieSet: true,
 		}
 	} catch (error) {
+		// If it's already an AppError, re-throw it
+		if (error instanceof AppError) {
+			throw error
+		}
+
+		// Log the actual error for debugging
+		console.error("Login error details:", error)
+
+		// For other errors, provide a more specific message
 		throw new AppError(
 			"Failed to log in the user.",
 			500,
@@ -138,5 +147,63 @@ export const whoami = async (cookies: Cookies): Promise<User | null> => {
 		return user
 	} catch {
 		throw new AppError("Invalid token", 401, "UnauthorizedError")
+	}
+}
+
+/**
+ * Changes user password after verifying current password
+ * @param userId - ID of the user
+ * @param currentPassword - Current password to verify
+ * @param newPassword - New password to set
+ * @returns Promise<string> - Success message
+ */
+export const changePassword = async (
+	userId: number,
+	currentPassword: string,
+	newPassword: string
+): Promise<string> => {
+	const userRepository = dataSource.getRepository(User)
+
+	// Find the user
+	const user = await userRepository.findOne({ where: { id: userId } })
+
+	if (!user) {
+		throw new AppError("User not found", 404, "UserNotFoundError")
+	}
+
+	try {
+		// Verify current password
+		const isCurrentPasswordValid = await argon2.verify(
+			user.hashedPassword,
+			currentPassword
+		)
+
+		if (!isCurrentPasswordValid) {
+			throw new AppError(
+				"Current password is incorrect",
+				401,
+				"InvalidCurrentPasswordError"
+			)
+		}
+
+		// Hash new password
+		const hashedNewPassword = await argon2.hash(newPassword)
+
+		// Update password
+		user.hashedPassword = hashedNewPassword
+		await userRepository.save(user)
+
+		return "Password updated successfully"
+	} catch (error) {
+		if (error instanceof AppError) {
+			throw error
+		}
+
+		throw new AppError(
+			"Error updating password",
+			500,
+			"InternalServerError",
+			error instanceof Error ? error.message : undefined
+		)
 	}
 }

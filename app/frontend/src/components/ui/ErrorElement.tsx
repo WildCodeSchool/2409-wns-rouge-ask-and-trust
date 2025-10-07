@@ -61,7 +61,7 @@ interface ErrorWithDetails {
  * Technical details component for development mode
  */
 const TechnicalDetails = ({ error }: { error: unknown }) => {
-	if (!import.meta.env.DEV) return null
+	if (import.meta.env.VITE_NODE_ENV !== "development") return null
 
 	const errorWithDetails = error as ErrorWithDetails
 

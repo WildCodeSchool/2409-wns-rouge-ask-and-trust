@@ -2,9 +2,15 @@ import { Arg, Ctx, Mutation, Query, Resolver, Authorized } from "type-graphql"
 import { LogInResponse, User } from "../../database/entities/user"
 import { CreateUserInput } from "../../graphql/inputs/create/create-auth-input"
 import { AppError } from "../../middlewares/error-handler"
-import { login, register, whoami } from "../../services/auth-service"
+import {
+	login,
+	register,
+	whoami,
+	changePassword,
+} from "../../services/auth-service"
 import { Context, Roles } from "../../types/types"
 import { LogUserInput } from "./../inputs/create/create-auth-input"
+import { UpdatePasswordInput } from "../inputs/update/update-password-input"
 import {
 	checkRateLimit,
 	authRateLimiter,
@@ -167,6 +173,44 @@ export class AuthResolver {
 			return users
 		} else {
 			return "Error to get users"
+		}
+	}
+
+	/**
+	 * Mutation for changing user password
+	 * @param data - Input containing current and new passwords
+	 * @param context - Context object for authentication and rate limiting
+	 * @returns Promise<string> - Success message
+	 */
+	@Authorized()
+	@Mutation(() => String)
+	async changePassword(
+		@Arg("data") data: UpdatePasswordInput,
+		@Ctx() context: Context
+	): Promise<string> {
+		// Rate limiting for password changes
+		const clientIP =
+			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
+		checkRateLimit(authRateLimiter, clientIP, "password-change")
+
+		if (!context.user) {
+			throw new AppError("Non authentifié", 401, "UnauthorizedError")
+		}
+
+		try {
+			const { currentPassword, newPassword } = data
+			return await changePassword(
+				context.user.id,
+				currentPassword,
+				newPassword
+			)
+		} catch (err) {
+			console.error("Password change error:", err)
+			throw new AppError(
+				"Erreur lors de la modification du mot de passe",
+				500,
+				"InternalError"
+			)
 		}
 	}
 }
