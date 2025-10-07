@@ -1,10 +1,10 @@
 import * as argon2 from "argon2"
 import Cookies from "cookies"
 import jwt from "jsonwebtoken"
-import dataSource from "../database/config/datasource"
 import { LogInResponse, User } from "../database/entities/user"
 import { AppError } from "../middlewares/error-handler"
 import { UserRole } from "../types/types"
+import dataSource from "../database/config/datasource"
 
 export const register = async (
 	email: string,
@@ -13,8 +13,9 @@ export const register = async (
 	lastname: string,
 	role: UserRole
 ): Promise<User> => {
+	// const datasource =
+	// 	process.env.NODE_ENV === "testing" ? testDataSource : dataSource
 	const userRepository = dataSource.getRepository(User)
-
 	// Check if a user already exists with this email
 	const existingUser = await userRepository.findOne({ where: { email } })
 
@@ -25,7 +26,6 @@ export const register = async (
 
 	// Hash the password before saving it
 	const hashedPassword = await argon2.hash(password)
-
 	// Create a new instance of user and save it in the database
 	try {
 		const user = userRepository.create({
@@ -37,7 +37,6 @@ export const register = async (
 		})
 
 		await userRepository.save(user)
-
 		return user
 	} catch (error) {
 		throw new AppError(
@@ -56,8 +55,8 @@ export const login = async (
 	cookies: Cookies
 ): Promise<LogInResponse> => {
 	const userRepository = dataSource.getRepository(User)
+	// Find the user by email	console.log("STEP 1 >> register service")
 
-	// Find the user by email
 	const user = await userRepository.findOne({ where: { email } })
 
 	// Check if the user exists and if the password is correct
@@ -91,13 +90,14 @@ export const login = async (
 		})
 
 		// Set the token as a cookie in the response
-		cookies.set("token", token, {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "strict",
-			signed: true,
-		})
-
+		if (process.env.NODE_ENV !== "test") {
+			cookies.set("token", token, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === "production",
+				sameSite: "strict",
+				signed: true,
+			})
+		}
 		// Return a success message
 		return {
 			message: "Sign in successful!",

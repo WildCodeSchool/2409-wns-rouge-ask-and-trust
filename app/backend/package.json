@@ -11,7 +11,9 @@
 		"migration:run": "typeorm-ts-node-commonjs migration:run -d ./src/database/config/datasource.ts",
 		"migration:create": "typeorm-ts-node-commonjs migration:create -d ./src/database/config/datasource.ts",
 		"migration:revert": "typeorm-ts-node-commonjs migration:revert -d ./src/database/config/datasource.ts",
-		"migration:show": "typeorm-ts-node-commonjs migration:show -d ./src/database/config/datasource.ts"
+		"migration:show": "typeorm-ts-node-commonjs migration:show -d ./src/database/config/datasource.ts",
+		"pomme": "docker rm --force db_test || true docker volume rm pgtest_data || true docker-compose -f ../../compose.test.yaml up -d && npx jest src/__tests__/index.spec.ts --runInBand",
+		"test:postgresql": "docker-compose -f ../../compose.test.yaml down -v && docker-compose -f ../../compose.test.yaml up -d && npx jest src/__tests__/setup.test.ts --runInBand"
 	},
 	"devDependencies": {
 		"@types/cookies": "^0.9.0",
@@ -35,6 +37,7 @@
 		"cookies": "^0.9.1",
 		"dotenv": "^16.4.7",
 		"graphql": "^16.10.0",
+		"graphql-scalars": "^1.23.0",
 		"jsonwebtoken": "^9.0.2",
 		"pg": "^8.13.3",
 		"reflect-metadata": "^0.2.2",

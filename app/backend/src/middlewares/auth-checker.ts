@@ -16,6 +16,11 @@ export const customAuthChecker: AuthChecker<Context> = async (
 		if (user) {
 			context.user = user
 		}
+		//  if (!user && process.env.NODE_ENV !== "test") {
+		//     user = await whoami(context.cookies);
+		//     if (user) context.user = user;
+		//   }
+		// NODE_ENV=testing
 
 		// Check if the user is an admin
 		if (roles.length === 0) {
