@@ -1,8 +1,8 @@
 import { useParams, Navigate } from "react-router-dom"
 import { SurveyResponsesContainer } from "../components/sections/survey-responses/SurveyResponsesContainer"
 import { useAuthContext } from "../hooks/useAuthContext"
-import { useSurvey } from "../hooks/useSurvey"
 import { withSEO } from "@/components/hoc/withSEO"
+import { useSurveyData } from "@/hooks/survey/useSurveyData"
 
 /**
  * Page for viewing survey responses
@@ -16,11 +16,9 @@ function SurveyResponses() {
 	const parsedSurveyId = surveyId ? parseInt(surveyId, 10) : null
 
 	// Get survey data to check ownership
-	const {
-		survey,
-		surveyLoading: isLoadingSurvey,
-		surveyError,
-	} = useSurvey({ surveyId: parsedSurveyId?.toString() || "0" })
+	const { survey, isLoadingSurvey, surveyError } = useSurveyData(
+		parsedSurveyId?.toString()
+	)
 
 	// Show loading state
 	if (isLoadingSurvey) {

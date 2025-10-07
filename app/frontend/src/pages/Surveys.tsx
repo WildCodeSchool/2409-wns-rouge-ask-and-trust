@@ -7,7 +7,6 @@ import Pagination from "@/components/ui/Pagination"
 import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useResponsivity } from "@/hooks/useResponsivity"
-import { useSurvey } from "@/hooks/useSurvey"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { cn } from "@/lib/utils"
@@ -16,6 +15,7 @@ import { PlusCircle } from "lucide-react"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import img from "/img/dev.webp"
+import { useSurveysData } from "@/hooks/survey/useSurveysData"
 
 function Surveys() {
 	const { user } = useAuthContext()
@@ -53,18 +53,18 @@ function Surveys() {
 
 	const {
 		surveys,
-		isFetching,
-		allSurveysError,
+		isLoadingSurveys,
+		surveysError,
 		currentPage,
 		PER_PAGE,
 		setCurrentPage,
 		sortTimeOption,
 		setSortTimeOption,
 		totalCount,
-	} = useSurvey<SurveyCardType>({ mode: "home" })
+	} = useSurveysData<SurveyCardType>({ mode: "home" })
 
-	if (!surveys && allSurveysError) {
-		const isNotFoundError = allSurveysError.graphQLErrors.some(error =>
+	if (!surveys && surveysError) {
+		const isNotFoundError = surveysError.graphQLErrors.some(error =>
 			error.message.includes("Failed to fetch surveys")
 		)
 
@@ -76,7 +76,7 @@ function Surveys() {
 		throw new Response("Error loading surveys", { status: 500 })
 	}
 
-	if (!isFetching && !surveys) {
+	if (!isLoadingSurveys && !surveys) {
 		throw new Response("Survey nots found", { status: 404 })
 	}
 
@@ -112,7 +112,7 @@ function Surveys() {
 		}
 	}
 
-	return isFetching ? (
+	return isLoadingSurveys ? (
 		<SurveyPageSkeleton />
 	) : (
 		<section
