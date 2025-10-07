@@ -5,7 +5,7 @@ import { ButtonHTMLAttributes, forwardRef, Ref } from "react"
 import { Link } from "react-router-dom"
 
 const buttonVariants = cva(
-	"inline-flex items-center gap-2 w-fit justify-center rounded-lg transition-colors duration-200 ease-in-out font-bold focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer border-2",
+	"inline-flex items-center gap-2 w-fit justify-center rounded-lg transition-colors duration-200 ease-in-out font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 cursor-pointer border-2",
 	{
 		variants: {
 			variant: {
@@ -14,15 +14,15 @@ const buttonVariants = cva(
 				secondary:
 					"bg-primary-default border-primary-default text-white hover:bg-white hover:text-primary-default focus:ring-primary-default",
 				tertiary:
-					"bg-white border-white text-primary-700 hover:bg-primary-700 hover:border-primary-700 hover:text-white focus:ring-primary-700",
+					"bg-white border-white text-primary-700 hover:bg-primary-700 hover:text-white focus-visible:ring-primary-700 focus-visible:border-primary-700",
 				navbar_btn:
-					"bg-primary-default text-white hover:bg-white font-semibold hover:text-primary-700 focus:ring-primary-700 border-none rounded-md",
+					"bg-primary-default text-white border-none rounded-md font-semibold hover:bg-white hover:text-primary-700 hover:border-primary-700 focus-visible:ring-primary-default focus-visible:border-transparent",
 				pagination_btn:
 					"bg-transparent text-fg border-none hover:bg-fg hover:text-white focus:ring-primary-700 rounded-md",
 				outline:
 					"border-primary-700 text-primary-700 hover:bg-primary-700 hover:text-white focus:ring-primary-700",
 				transparent:
-					"bg-transparent border-white text-white hover:bg-primary-700 hover:text-white focus:ring-primary-700 hover:border-transparent",
+					"bg-transparent border-white text-white hover:bg-primary-700 hover:text-white focus-visible:ring-offset-primary-600 focus-visible:ring-white focus-visible:border-white",
 				destructive:
 					"bg-destructive-medium border-destructive-medium text-white hover:bg-white hover:text-destructive-medium focus:ring-destructive-medium",
 				disabled:
@@ -30,8 +30,11 @@ const buttonVariants = cva(
 				ghost: "bg-transparent border-none text-primary-700 hover:underline focus:ring-primary-700",
 				ghost_destructive:
 					"bg-transparent border-none text-destructive-medium hover:underline focus:ring-primary-700 active:outline-none hover:bg-destructive-medium hover:text-white active:bg-transparent",
+				footerMobile:
+					"bg-transparent border-none text-primary-700 focus:ring-primary-700 group flex-col gap-1 font-medium [&_svg]:transition-transform [&_svg]:duration-200 [&_svg]:ease-in-out [&_svg]:group-hover:scale-105",
 			},
 			size: {
+				xs: "p-0 text-xs",
 				sm: "px-3 py-1 text-sm",
 				md: "px-5 py-2 text-base",
 				lg: "px-6 py-3 text-lg",

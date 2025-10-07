@@ -135,7 +135,7 @@ export interface Survey {
 	title: string
 	description: string
 	public: boolean
-	category: { id: number; name: string }
+	category: { id: string; name: string }
 	status: SurveyStatusType
 	questions: Question[]
 	user: User
@@ -439,9 +439,8 @@ export type RawUser = {
 	surveys?: { id: number | string }[]
 }
 
-export type UseSurveyOptions = {
-	surveyId?: string
-	mode?: "admin" | "profile" | "home"
+export type UseSurveysMode = {
+	mode: "admin" | "profile" | "home"
 }
 
 export type PublishedRequiredType = {
@@ -456,7 +455,7 @@ type SurveyPreviewWithCategory = Omit<
 }
 
 export type SurveyPreviewType = {
-	isOwner?: boolean
+	isOwner?: boolean | null
 	id?: string | undefined
 	survey: SurveyPreviewWithCategory
 }
@@ -464,4 +463,8 @@ export type SurveyPreviewType = {
 export type SurveyResponseType = SurveyPreviewType & {
 	onClickCopy?: () => void
 	questions?: boolean
+}
+
+export interface SurveyTableContainerProps {
+	mode: "admin" | "profile"
 }

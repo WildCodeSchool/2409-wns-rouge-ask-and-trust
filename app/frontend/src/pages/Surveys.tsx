@@ -7,25 +7,27 @@ import Pagination from "@/components/ui/Pagination"
 import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useResponsivity } from "@/hooks/useResponsivity"
-import { useSurvey } from "@/hooks/useSurvey"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
 import { cn } from "@/lib/utils"
-import { SurveyCardType, SurveyStatus } from "@/types/types"
+import { SurveyCardType } from "@/types/types"
 import { PlusCircle } from "lucide-react"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import img from "/img/dev.webp"
+import { useSurveysData } from "@/hooks/survey/useSurveysData"
 
 function Surveys() {
-	const { user: owner } = useAuthContext()
+	const { user } = useAuthContext()
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
+
 	const {
 		createSurvey,
 		createSurveyError,
 		isCreatingSurvey,
 		resetCreateSurveyError,
 	} = useSurveyMutations()
+
 	useToastOnChange({
 		trigger: createSurveyError,
 		resetTrigger: resetCreateSurveyError,
@@ -33,6 +35,7 @@ function Surveys() {
 		title: "Erreur pour créer l'enquête",
 		description: "Nous n'avons pas réussi à créer l'enquête",
 	})
+
 	const navigate = useNavigate()
 	const { showToast } = useToast()
 
@@ -50,18 +53,18 @@ function Surveys() {
 
 	const {
 		surveys,
-		isFetching,
-		allSurveysError,
+		isLoadingSurveys,
+		surveysError,
 		currentPage,
 		PER_PAGE,
 		setCurrentPage,
 		sortTimeOption,
 		setSortTimeOption,
 		totalCount,
-	} = useSurvey<SurveyCardType>({ mode: "home" })
+	} = useSurveysData<SurveyCardType>({ mode: "home" })
 
-	if (!surveys && allSurveysError) {
-		const isNotFoundError = allSurveysError.graphQLErrors.some(error =>
+	if (!surveys && surveysError) {
+		const isNotFoundError = surveysError.graphQLErrors.some(error =>
 			error.message.includes("Failed to fetch surveys")
 		)
 
@@ -73,20 +76,15 @@ function Surveys() {
 		throw new Response("Error loading surveys", { status: 500 })
 	}
 
-	if (!isFetching && !surveys) {
+	if (!isLoadingSurveys && !surveys) {
 		throw new Response("Survey nots found", { status: 404 })
 	}
 
 	const allSurveys =
 		surveys?.allSurveys?.map(survey => ({
 			...survey,
-			isOwner: !!(owner && survey.user && owner.id === survey.user.id),
+			isOwner: !!(user && survey.user && user.id === survey.user.id),
 		})) ?? []
-
-	const publishedSurveys =
-		allSurveys?.filter(
-			survey => survey.status === SurveyStatus.Published
-		) ?? []
 
 	const onCreateSurveyAndNavigate = async () => {
 		try {
@@ -114,7 +112,7 @@ function Surveys() {
 		}
 	}
 
-	return isFetching ? (
+	return isLoadingSurveys ? (
 		<SurveyPageSkeleton />
 	) : (
 		<section
@@ -130,9 +128,9 @@ function Surveys() {
 				sortTimeOption={sortTimeOption}
 				setSortTimeOption={setSortTimeOption}
 			/>
-			{publishedSurveys.length > 0 ? (
+			{allSurveys.length > 0 ? (
 				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
-					{publishedSurveys.map(survey => (
+					{allSurveys.map(survey => (
 						<SurveyCard
 							key={survey.id}
 							id={survey.id}
@@ -160,7 +158,7 @@ function Surveys() {
 				perPage={PER_PAGE.home}
 				onPageChange={setCurrentPage}
 			/>
-			{!isHorizontalCompact && (
+			{!isHorizontalCompact && user && (
 				<div className="mt-10 flex items-center justify-center">
 					<Button
 						icon={PlusCircle}

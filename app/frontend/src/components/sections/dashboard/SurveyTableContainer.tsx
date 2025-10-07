@@ -1,6 +1,7 @@
 import {
 	AllSurveysResult,
 	MySurveysResult,
+	SurveyTableContainerProps,
 	SurveyTableType,
 } from "@/types/types"
 import { CheckedState } from "@radix-ui/react-checkbox"
@@ -9,11 +10,7 @@ import SurveyTable from "@/components/sections/dashboard/SurveyTable"
 import SurveyTableNav from "@/components/sections/dashboard/SurveyTableNav"
 import SurveyTableFilter from "@/components/sections/dashboard/SurveyTableFilter"
 import SurveyTableSearch from "@/components/sections/dashboard/SurveyTableSearch"
-import { useSurvey } from "@/hooks/useSurvey"
-
-interface SurveyTableContainerProps {
-	mode: "admin" | "profile"
-}
+import { useSurveysData } from "@/hooks/survey/useSurveysData"
 
 export default function SurveyTableContainer({
 	mode,
@@ -25,18 +22,18 @@ export default function SurveyTableContainer({
 	>(null)
 
 	const {
-		currentPage,
-		setCurrentPage,
-		isRefetching,
 		surveys,
-		setDebouncedSearch,
 		mySurveys,
-		isInitialLoading,
+		currentPage,
+		PER_PAGE,
+		setCurrentPage,
+		setDebouncedSearch,
 		filters,
 		setFilters,
 		statusLabelMap,
-		PER_PAGE,
-	} = useSurvey<SurveyTableType>({ mode })
+		isRefetchingMySurveys,
+		isInitialLoadingMySurveys,
+	} = useSurveysData<SurveyTableType>({ mode })
 
 	const handleSearch = useCallback(
 		(query: string) => {
@@ -50,10 +47,10 @@ export default function SurveyTableContainer({
 	const currentModeData = mode === "profile" ? mySurveys : surveys
 
 	useEffect(() => {
-		if (currentModeData && !isRefetching) {
+		if (currentModeData && !isRefetchingMySurveys) {
 			setPreviousData(currentModeData)
 		}
-	}, [currentModeData, isRefetching])
+	}, [currentModeData, isRefetchingMySurveys])
 
 	const currentData = currentModeData || previousData
 
@@ -62,6 +59,7 @@ export default function SurveyTableContainer({
 			? currentData.surveys
 			: currentData.allSurveys
 		: []
+
 	const totalCount = currentData?.totalCount ?? 0
 	const totalCountAll = currentData?.totalCountAll ?? 0
 	const paginatedSurveys = surveysData
@@ -106,7 +104,7 @@ export default function SurveyTableContainer({
 		setSelectedSurveyIds([])
 	}, [currentPage])
 
-	if (isInitialLoading && !previousData) {
+	if (isInitialLoadingMySurveys && !previousData) {
 		return (
 			<div className="flex h-full w-full items-center justify-center">
 				<p className="text-black-default text-xl font-medium">
@@ -116,7 +114,7 @@ export default function SurveyTableContainer({
 		)
 	}
 
-	if (totalCountAll === 0 && !isRefetching && currentData) {
+	if (totalCountAll === 0 && !isRefetchingMySurveys && currentData) {
 		const noDataMessage =
 			mode === "profile"
 				? "Vous n'avez pas encore créé d'enquête..."
@@ -140,7 +138,7 @@ export default function SurveyTableContainer({
 				<SurveyTableFilter filters={filters} setFilters={setFilters} />
 				<SurveyTableSearch onSearch={handleSearch} />
 			</div>
-			{isRefetching && (
+			{isRefetchingMySurveys && (
 				<div className="flex items-center justify-center py-4">
 					<p className="text-lg text-gray-600">
 						Chargement des résultats...

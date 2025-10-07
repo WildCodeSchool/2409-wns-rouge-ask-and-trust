@@ -7,6 +7,7 @@
  */
 
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql"
+import { Timeout } from "../../middlewares/timeout-middleware"
 import { Context, Roles } from "../../types/types"
 import { Payment } from "../../database/entities/payment"
 import {
@@ -51,6 +52,7 @@ export class PaymentResolver {
 	 */
 	@Mutation(() => String)
 	@Authorized()
+	@Timeout(30000) // 30 seconds for payment creation (Stripe API)
 	async createPaymentIntent(
 		@Arg("input") input: CreatePaymentInput,
 		@Ctx() context: Context
@@ -101,6 +103,7 @@ export class PaymentResolver {
 	 */
 	@Mutation(() => Payment)
 	@Authorized()
+	@Timeout(30000) // 30 seconds for payment update
 	async updatePayment(
 		@Arg("input") input: UpdatePaymentInput,
 		@Ctx() context: Context
@@ -148,6 +151,7 @@ export class PaymentResolver {
 	 */
 	@Query(() => Payment)
 	@Authorized()
+	@Timeout(30000) // 30 seconds for payment retrieval
 	async payment(
 		@Arg("id") id: number,
 		@Ctx() { user }: Context
@@ -188,6 +192,7 @@ export class PaymentResolver {
 	 */
 	@Query(() => [Payment])
 	@Authorized()
+	@Timeout(30000) // 30 seconds for payment list
 	async myPayments(@Ctx() { user }: Context): Promise<Payment[]> {
 		if (!user) {
 			throw new AppError(

@@ -7,6 +7,7 @@
  */
 
 import { Arg, Authorized, Ctx, ID, Query, Resolver } from "type-graphql"
+import { Timeout } from "../../../middlewares/timeout-middleware"
 import { Context, Roles } from "../../../types/types"
 import { AppError } from "../../../middlewares/error-handler"
 import { SurveyResponsesQueryInput } from "../../inputs/queries/survey-responses-query-input"
@@ -40,6 +41,7 @@ export class SurveyResponsesResolver {
 	 */
 	@Authorized(Roles.User, Roles.Admin)
 	@Query(() => SurveyResponsesResult)
+	@Timeout(30000) // 30 seconds for responses with filters
 	async surveyResponses(
 		@Arg("surveyId", () => ID) surveyId: number,
 		@Arg("filters", () => SurveyResponsesQueryInput, { nullable: true })
@@ -78,6 +80,7 @@ export class SurveyResponsesResolver {
 	 */
 	@Authorized(Roles.User, Roles.Admin)
 	@Query(() => SurveyResponse, { nullable: true })
+	@Timeout(30000) // 30 seconds for a single response
 	async surveyResponse(
 		@Arg("surveyId", () => ID) surveyId: number,
 		@Arg("userId", () => ID) userId: number,
@@ -114,6 +117,7 @@ export class SurveyResponsesResolver {
 	 */
 	@Authorized(Roles.User, Roles.Admin)
 	@Query(() => SurveyResponseStats)
+	@Timeout(30000) // 30 seconds for statistics (aggregation calculations)
 	async surveyResponseStats(
 		@Arg("surveyId", () => ID) surveyId: number,
 		@Ctx() context: Context
