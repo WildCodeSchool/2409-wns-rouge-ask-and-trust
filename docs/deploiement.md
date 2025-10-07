@@ -50,11 +50,10 @@ Les images sont hébergées sur Docker Hub :
 ```bash
 # .env
 # Application Configuration
-# Application Configuration
 APP_PORT=YOUR_PORT
 APP_PORT_FRONTEND=YOUR_PORT_FRONTEND
 VITE_PORT=5173
-VITE_NODE_ENV=development
+NODE_ENV=development
 IS_DEV=DEV_MODE_TRUE_OR_FALSE
 
 # Database
