@@ -17,7 +17,7 @@ function SurveyResponses() {
 
 	// Get survey data to check ownership
 	const { survey, isLoadingSurvey, surveyError } = useSurveyData(
-		parsedSurveyId?.toString() || "0"
+		parsedSurveyId?.toString()
 	)
 
 	// Show loading state
