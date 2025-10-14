@@ -138,21 +138,41 @@ jobs:
           if [ ! -d "node_modules" ]; then 
             npm install --force
           fi
+
+      # - name: Run backend tests with PostgreSQL
+      #   run: |
+      #     cd app/backend
+      #     docker rm --force pgtest || true
+      #     docker run -d -p 5434:5432 --name pgtest \
+      #       -e POSTGRES_USER=postgres \
+      #       -e POSTGRES_PASSWORD=secret \
+      #       -e POSTGRES_DB=ask_and_trust_test \
+      #       postgres
+      #     POSTGRES_PORT=5434 \
+      #     POSTGRES_HOST=localhost \
+      #     POSTGRES_USER=postgres \
+      #     POSTGRES_PASSWORD=secret \
+      #     JWT_SECRET_KEY=supersecret \
+      #     NODE_ENV=testing \
+      #     npx jest
+      #     docker rm --force pgtest
       - name: Run backend tests with PostgreSQL
+        env:
+          POSTGRES_PORT: 5434
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: ask_and_trust_test
+          JWT_SECRET_KEY: supersecret
+          NODE_ENV: testing
         run: |
           cd app/backend
           docker rm --force pgtest || true
           docker run -d -p 5434:5432 --name pgtest \
-            -e POSTGRES_USER=postgres \
-            -e POSTGRES_PASSWORD=secret \
-            -e POSTGRES_DB=ask_and_trust_test \
+            -e POSTGRES_USER=${POSTGRES_USER} \
+            -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+            -e POSTGRES_DB=${POSTGRES_DB} \
             postgres
-          POSTGRES_PORT=5434 \
-          POSTGRES_HOST=localhost \
-          POSTGRES_USER=postgres \
-          POSTGRES_PASSWORD=secret \
-          JWT_SECRET_KEY=supersecret \
-          NODE_ENV=testing \
           npx jest
           docker rm --force pgtest
 
