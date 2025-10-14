@@ -158,10 +158,10 @@ jobs:
       #     docker rm --force pgtest
       - name: Run backend tests with PostgreSQL
         env:
-          POSTGRES_PORT: 5434
-          POSTGRES_HOST: localhost
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: secret
+          DB_PORT: 5434
+          DB_HOST: localhost
+          POSTGRES_USER: ask_and_trust
+          POSTGRES_PASSWORD: SuperPassword!2025
           POSTGRES_DB: ask_and_trust_test
           JWT_SECRET_KEY: supersecret
           NODE_ENV: testing
