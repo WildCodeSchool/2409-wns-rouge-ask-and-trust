@@ -1,6 +1,5 @@
 import { ApolloServer, BaseContext } from "@apollo/server"
 import { DataSource } from "typeorm"
-// import dataSource from "../database/config/datasource";
 import { buildSchema } from "type-graphql"
 import { AuthResolver } from "../graphql/resolvers/auth-resolver"
 import { customAuthChecker } from "../middlewares/auth-checker"
@@ -14,8 +13,37 @@ import dataSource from "../database/config/datasource"
 import { SurveyResolverTest } from "./resolvers/SurveyResolverTest"
 import { createAdmin } from "../scripts/create-admin"
 import { User } from "../database/entities/user"
-// import Cookies from "cookies"
+import Cookies from "cookies"
+import { CustomAuthTest } from "./resolvers/CustomAuthTest"
 
+/**
+ * index.spec.ts
+ *
+ * Main integration test suite for the backend GraphQL API.
+ *
+ * Purpose:
+ *  - Initialize the test database and clean existing data before tests.
+ *  - Create a default admin user for testing.
+ *  - Build GraphQL schema with all resolvers and custom authentication checker.
+ *  - Run integration tests for users, surveys, and custom authentication logic.
+ *
+ * Methodology:
+ *  - Uses ApolloServer's `executeOperation` to test GraphQL queries and mutations.
+ *  - Uses Jest for mocking, assertions, and lifecycle management (`beforeAll`, `afterAll`, `beforeEach`).
+ *  - Provides a reusable `testArgs` object containing the server, database, and created users.
+ *
+ * Steps:
+ *  1. Initialize test database connection.
+ *  2. Clean all tables to start with a fresh state.
+ *  3. Create an admin user in the database for testing.
+ *  4. Build GraphQL schema with resolvers and `customAuthChecker`.
+ *  5. Instantiate ApolloServer with the schema.
+ *  6. Run integration tests for:
+ *     - Users resolver (registration, login, validation)
+ *     - Custom authentication checker
+ *     - Surveys resolver (create category, create survey, permissions)
+ *  7. Destroy the database connection after all tests.
+ */
 export type TestArgsType = {
 	server: ApolloServer<BaseContext>
 	datasource: DataSource
@@ -34,6 +62,9 @@ jest.mock("cookies", () => {
 	}))
 })
 
+/**
+ * Build GraphQL schema with all resolvers and authentication checker.
+ */
 async function getSchema() {
 	const schema = await buildSchema({
 		resolvers: [
@@ -53,8 +84,24 @@ async function getSchema() {
 	return schema
 }
 
+/**
+ * Assert helper function.
+ * @param expr Expression to assert
+ * @param msg Optional error message
+ */
 export function assert(expr: unknown, msg?: string): asserts expr {
 	if (!expr) throw new Error(msg)
+}
+
+/**
+ * Generate a fake context for testing GraphQL resolvers.
+ * @returns Context object containing fake request, response, and cookies
+ */
+export function getTestContext() {
+	const fakeReq = { headers: {} } as any
+	const fakeRes = {} as any
+	const cookies = new Cookies(fakeReq, fakeRes, { keys: ["test-secret"] })
+	return { req: fakeReq, res: fakeRes, cookies }
 }
 
 const testArgs = {} as TestArgsType
@@ -83,6 +130,7 @@ beforeAll(async () => {
 		schema,
 	})
 
+	// 6. Prepare shared test arguments
 	testArgs.datasource = dataSource
 	testArgs.server = testServer
 
@@ -93,22 +141,40 @@ beforeAll(async () => {
 	})
 })
 
+/**
+ * Basic environment validation.
+ */
 describe("Backend Setup", () => {
 	test("should validate environment", () => {
 		expect(process).toBeDefined()
 		expect(typeof process.env).toBe("object")
 	})
 })
+
+/**
+ * Run Users resolver integration tests.
+ */
 describe("Users resolver", () => {
-	console.log("enter describe user")
 	UsersResolverTest(testArgs)
 })
 
+/**
+ * Run custom authentication checker unit tests.
+ */
+describe("customAuthChecker", () => {
+	CustomAuthTest()
+})
+
+/**
+ * Run Surveys resolver integration tests.
+ */
 describe("Surveys resolver", () => {
-	console.log("enter describe survey")
 	SurveyResolverTest(testArgs)
 })
 
+/**
+ * Close database connection after all tests.
+ */
 afterAll(async () => {
 	await dataSource.destroy()
 })

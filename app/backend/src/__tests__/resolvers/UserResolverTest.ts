@@ -1,17 +1,35 @@
-// import { User } from "../../src/entities/User";
-// import { mutationCreateUser } from "../api/createUser";
-// import { mutationSignin } from "../api/signin";
-// import { queryWhoami } from "../api/whoiam";
 import { LogInResponse, User } from "../../database/entities/user"
 import { Roles } from "../../types/types"
 import { LOGIN, REGISTER } from "../api/createUser"
-import { assert, TestArgsType } from "../setup.test"
-// import { setMock } from "../index.spec"
+import { assert, getTestContext, TestArgsType } from "../setup.test"
 
+/**
+ * UsersResolverTest.ts
+ *
+ * Integration test suite for user-related GraphQL resolvers including registration,
+ * login, and fetching the admin user.
+ *
+ * Purpose:
+ *  - Ensure that user creation validates email, password, and name fields.
+ *  - Verify that only valid users are created and stored securely in the database.
+ *  - Test login functionality, including setting cookies and returning success messages.
+ *
+ * Methodology:
+ *  - Execute GraphQL operations via `ApolloServer.executeOperation`.
+ *  - Assert API responses and validate database entries.
+ *  - Track created users for use in subsequent tests (admin and normal user).
+ *
+ * Scenarios tested:
+ *  1. Verify that the pre-created admin exists in the database.
+ *  2. Attempt to register users with invalid email, password, or firstname → should fail.
+ *  3. Register a valid user → should succeed and persist in the database.
+ *  4. Log in as the newly created user → should succeed with cookie set.
+ *  5. Log in as admin → should succeed with cookie set.
+ *
+ * @param testArgs - Shared test arguments including Apollo server, test database, and pre-created users.
+ */
 export function UsersResolverTest(testArgs: TestArgsType) {
 	it("should get an admin", async () => {
-		console.log("run it should get admin")
-
 		const adminInDb = await User.findOne({
 			where: { email: "admin@test.com" },
 		})
@@ -24,7 +42,7 @@ export function UsersResolverTest(testArgs: TestArgsType) {
 		testArgs.data.admin = adminInDb
 	})
 
-	it("should not create a user with an invalid email", async () => {
+	it("should NOT create a user with an invalid email", async () => {
 		const response = await testArgs.server.executeOperation<{
 			register: User
 		}>({
@@ -44,7 +62,7 @@ export function UsersResolverTest(testArgs: TestArgsType) {
 		expect(response.body.singleResult.data).toBeNull()
 	})
 
-	it("should not create a user with an invalid password", async () => {
+	it("should NOT create a user with an invalid password", async () => {
 		const response = await testArgs.server.executeOperation<{
 			register: User
 		}>({
@@ -64,7 +82,7 @@ export function UsersResolverTest(testArgs: TestArgsType) {
 		expect(response.body.singleResult.data).toBeNull()
 	})
 
-	it("should not create a user with an invalid firstname", async () => {
+	it("should NOT create a user with an invalid firstname", async () => {
 		const response = await testArgs.server.executeOperation<{
 			register: User
 		}>({
@@ -117,25 +135,27 @@ export function UsersResolverTest(testArgs: TestArgsType) {
 		testArgs.data.user = userFromDb
 	})
 
-	// test signin resolver
 	it("should sign me in", async () => {
 		const response = await testArgs.server.executeOperation<{
 			login: LogInResponse
-		}>({
-			query: LOGIN,
-			variables: {
-				data: {
-					email: "test@email.fr",
-					password: "SuperSecret!2025",
+		}>(
+			{
+				query: LOGIN,
+				variables: {
+					data: {
+						email: "test@email.fr",
+						password: "SuperSecret!2025",
+					},
 				},
 			},
-		})
+			{ contextValue: getTestContext() }
+		)
 
 		// check API response
 		assert(response.body.kind === "single")
 
 		expect(response.body.singleResult.errors).toBeUndefined()
-		// expect(response.body.singleResult.data?.signin?.id).toBeDefined()
+
 		const result = response.body.singleResult.data?.login
 		expect(result).toBeDefined()
 		expect(result?.message).toBe("Sign in successful!")
@@ -145,15 +165,18 @@ export function UsersResolverTest(testArgs: TestArgsType) {
 	it("should sign admin in", async () => {
 		const response = await testArgs.server.executeOperation<{
 			login: LogInResponse
-		}>({
-			query: LOGIN,
-			variables: {
-				data: {
-					email: "admin@test.com",
-					password: "SuperSecret!2025",
+		}>(
+			{
+				query: LOGIN,
+				variables: {
+					data: {
+						email: "admin@test.com",
+						password: "SuperSecret!2025",
+					},
 				},
 			},
-		})
+			{ contextValue: getTestContext() }
+		)
 
 		// check API response
 		assert(response.body.kind === "single")
