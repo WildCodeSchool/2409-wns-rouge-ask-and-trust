@@ -163,7 +163,7 @@ jobs:
           POSTGRES_USER: ask_and_trust
           POSTGRES_PASSWORD: SuperPassword!2025
           POSTGRES_DB: ask_and_trust_test
-          JWT_SECRET_KEY: supersecret
+          JWT_SECRET: supersecret
           ADMIN_EMAIL: admin@test.com
           ADMIN_PASSWORD: SuperSecret!2025
           ADMIN_FIRSTNAME: Admin
