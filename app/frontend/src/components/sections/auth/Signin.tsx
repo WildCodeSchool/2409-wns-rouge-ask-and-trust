@@ -24,6 +24,7 @@ export default function Signin() {
 		},
 	})
 	const navigate = useNavigate()
+	const { showToast } = useToast()
 	const [Login, { loading }] = useMutation(LOGIN, {
 		refetchQueries: [WHOAMI],
 		onCompleted: data => {
@@ -102,7 +103,6 @@ export default function Signin() {
 			})
 		},
 	})
-	const { showToast } = useToast()
 
 	const onSubmit: SubmitHandler<UserSignIn> = async formData => {
 		if (loading) return
@@ -121,7 +121,7 @@ export default function Signin() {
 			<FormTitle isSignUp={false} />
 			<InputEmail<UserSignIn> register={register} errors={errors} />
 			<InputPassword<UserSignIn> register={register} errors={errors} />
-			<FormButtonSubmit type="sign-in" />
+			<FormButtonSubmit type="sign-in" loading={loading} />
 		</FormWrapper>
 	)
 }
