@@ -10,10 +10,4 @@ module.exports = {
 	collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts"],
 	moduleFileExtensions: ["ts", "js", "json"],
 	verbose: true,
-
-	globals: {
-		"ts-jest": {
-			diagnostics: true, //Jest check TS errors
-		},
-	},
 }
