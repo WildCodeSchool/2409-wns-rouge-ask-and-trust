@@ -24,22 +24,9 @@ export default function Signin() {
 		},
 	})
 	const navigate = useNavigate()
-	const [Login] = useMutation(LOGIN, {
+	const [Login, { loading }] = useMutation(LOGIN, {
 		refetchQueries: [WHOAMI],
-	})
-	const { showToast } = useToast()
-
-	const onSubmit: SubmitHandler<UserSignIn> = async formData => {
-		try {
-			const { data } = await Login({
-				variables: {
-					data: {
-						email: formData.email,
-						password: formData.password,
-					},
-				},
-			})
-
+		onCompleted: data => {
 			// If login successful, show success toast and navigate
 			if (data?.login) {
 				reset()
@@ -53,7 +40,8 @@ export default function Signin() {
 					navigate("/surveys")
 				}, 1000)
 			}
-		} catch (err) {
+		},
+		onError: err => {
 			console.error("Login error:", err)
 
 			// Handle ApolloError with specific GraphQL errors
@@ -112,7 +100,20 @@ export default function Signin() {
 				description:
 					"Impossible de se connecter au serveur. Vérifiez votre connexion internet.",
 			})
-		}
+		},
+	})
+	const { showToast } = useToast()
+
+	const onSubmit: SubmitHandler<UserSignIn> = async formData => {
+		if (loading) return
+		await Login({
+			variables: {
+				data: {
+					email: formData.email,
+					password: formData.password,
+				},
+			},
+		})
 	}
 
 	return (
