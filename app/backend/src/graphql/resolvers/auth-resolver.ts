@@ -104,7 +104,7 @@ export class AuthResolver {
 			const { cookies } = context
 
 			// Check if the cookies are available
-			if (!cookies && process.env.NODE_ENV !== "test") {
+			if (!cookies) {
 				throw new AppError(
 					"Cookies context not available",
 					500,
