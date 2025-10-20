@@ -1,18 +1,3 @@
-// import { register } from "../../services/auth-service"
-
-// mutation {
-//   register(data: {
-//     email: "testuser@example.com",
-//     password: "StrongPassw0rd!",
-//     firstname: "Jean",
-//     lastname: "Dupont"
-//   }) {
-//     id
-//     email
-//     role
-//   }
-// }
-
 import { gql } from "@apollo/client"
 
 export const REGISTER = gql`
