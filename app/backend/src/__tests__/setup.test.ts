@@ -15,6 +15,7 @@ import { createAdmin } from "../scripts/create-admin"
 import { User } from "../database/entities/user"
 import Cookies from "cookies"
 import { CustomAuthTest } from "./resolvers/CustomAuthTest"
+import { MySurveysResolverTest } from "./resolvers/MySurveysResolverTest"
 
 /**
  * index.spec.ts
@@ -170,6 +171,10 @@ describe("customAuthChecker", () => {
  */
 describe("Surveys resolver", () => {
 	SurveyResolverTest(testArgs)
+})
+
+describe("MySurveys filters", () => {
+	MySurveysResolverTest(testArgs)
 })
 
 /**
