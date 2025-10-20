@@ -28,7 +28,7 @@ import { Survey } from "./survey"
  *
  * This class defines the structure of the survey questions in the database:
  * - `id`: unique identifier for the question.
- * - `content`: the text of the question (must be unique).
+ * - `title`: the text of the question.
  * - `type`: the expected type of answer (e.g. `text`, `radio`, `checkbox`), based on `TypeOfQuestion` enum.
  * - `answers`: optional predefined choices for the question, stored as a JSON array.
  * - `survey`: the survey to which this question belongs (relation to the `Survey` entity).
@@ -65,10 +65,10 @@ export class Questions extends BaseEntity {
 	/**
 	 * Title of the question
 	 * @description
-	 * The actual text/content of the question (must be unique).
+	 * The actual text/content of the question.
 	 */
 	@Field()
-	@Column({ length: 1000 /*, unique: true*/ }) // @todo check type
+	@Column({ length: 1000 })
 	title!: string
 
 	/**
@@ -113,9 +113,13 @@ export class Questions extends BaseEntity {
 	 * The survey to which this question belongs
 	 * @description
 	 * Many-to-one relationship with the Survey entity.
+	 * When a survey is deleted, delete its questions.
 	 */
-	@ManyToOne(() => Survey, survey => survey.questions)
-	@Field(() => Survey, { nullable: true })
+	@ManyToOne(() => Survey, survey => survey.questions, {
+		nullable: false,
+		onDelete: "CASCADE",
+	})
+	@Field(() => Survey)
 	survey!: Survey
 
 	/**
