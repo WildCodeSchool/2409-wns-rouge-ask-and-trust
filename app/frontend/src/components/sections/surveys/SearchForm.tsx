@@ -55,7 +55,7 @@ export default function SearchForm() {
 				placeholder="Rechercher une enquête..."
 				errorMessage=""
 				{...register("search")}
-				className="h-10 w-full bg-white py-2 pr-10 pl-2 text-ellipsis whitespace-nowrap"
+				className="h-10 w-full bg-white py-2 pr-10 pl-2 text-ellipsis whitespace-nowrap ring-0 transition-shadow duration-150 focus-visible:border-2 focus-visible:shadow-[0_0_0_4px_rgba(250,250,250,0.4)] focus-visible:ring-0"
 			/>
 			<Button
 				type="submit"
