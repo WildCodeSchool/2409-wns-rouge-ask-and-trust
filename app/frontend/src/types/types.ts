@@ -44,7 +44,9 @@ export type UserDetails = {
 	user: User
 	userSurveys: MySurveysResult | null
 	showResetForm: boolean
+	showDeleteForm: boolean
 	onToggleResetForm: () => void
+	onToggleDeleteForm: () => void
 }
 
 export type UserSignUp = UserAuth

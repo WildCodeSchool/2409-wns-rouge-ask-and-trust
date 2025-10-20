@@ -49,11 +49,11 @@ export const GET_USERS = gql`
 	}
 `
 
-// export const DELETE_MY_ACCOUNT = gql`
-// 	mutation DeleteMyAccount($data: DeleteAccountInput!) {
-// 		deleteMyAccount(data: $data)
-// 	}
-// `
+export const DELETE_MY_ACCOUNT = gql`
+	mutation DeleteMyAccount($data: DeleteAccountInput!) {
+		deleteMyAccount(data: $data)
+	}
+`
 
 export const UPDATE_PASSWORD = gql`
 	mutation ChangePassword($data: UpdatePasswordInput!) {

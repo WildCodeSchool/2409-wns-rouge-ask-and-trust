@@ -116,8 +116,9 @@ export class Survey extends BaseEntity {
 	 * The user who created the survey
 	 * @description
 	 * Many-to-one relationship with the User entity.
+	 * CASCADE delete: when user is deleted, surveys are also deleted (RGPD compliance).
 	 */
-	@ManyToOne(() => User, user => user.surveys)
+	@ManyToOne(() => User, user => user.surveys, { onDelete: "CASCADE" })
 	@Field(() => User)
 	user!: User
 

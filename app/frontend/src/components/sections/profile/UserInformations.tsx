@@ -1,11 +1,13 @@
 import { useState } from "react"
 import { UserDetailsPart } from "@/components/sections/profile/parts/UserDetailsPart"
 import { ResetPasswordPart } from "@/components/sections/profile/parts/ResetPasswordPart"
+import { DeleteAccountPart } from "@/components/sections/profile/parts/DeleteAccountPart"
 import { useSurveysData } from "@/hooks/survey/useSurveysData"
 import { useAuthContext } from "@/hooks/useAuthContext"
 
 export default function UserInformations() {
 	const [showResetForm, setShowResetForm] = useState<boolean>(false)
+	const [showDeleteForm, setShowDeleteForm] = useState<boolean>(false)
 	const { user } = useAuthContext()
 
 	const { mySurveys, isRefetchingMySurveys, mySurveysError } = useSurveysData(
@@ -40,11 +42,18 @@ export default function UserInformations() {
 						user={user}
 						userSurveys={mySurveys}
 						showResetForm={showResetForm}
-						onToggleResetForm={() =>
+						showDeleteForm={showDeleteForm}
+						onToggleResetForm={() => {
 							setShowResetForm((prev: boolean) => !prev)
-						}
+							setShowDeleteForm(false)
+						}}
+						onToggleDeleteForm={() => {
+							setShowDeleteForm((prev: boolean) => !prev)
+							setShowResetForm(false)
+						}}
 					/>
 					{showResetForm && <ResetPasswordPart />}
+					{showDeleteForm && <DeleteAccountPart />}
 				</div>
 			</div>
 		</section>
