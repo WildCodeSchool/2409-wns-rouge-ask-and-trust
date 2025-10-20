@@ -6,6 +6,7 @@ const Hero = () => {
 		<section
 			className="section-landing"
 			role="hero"
+			data-first-section
 			aria-label="Premiere section"
 		>
 			<div className="pb-6 lg:m-4 lg:max-w-[45rem]" aria-hidden="true">

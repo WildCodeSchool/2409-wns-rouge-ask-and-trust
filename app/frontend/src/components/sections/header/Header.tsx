@@ -57,7 +57,7 @@ export default function Header() {
 	return (
 		<header
 			lang="fr"
-			className="bg-bg mb-20 flex items-center justify-between gap-10 px-5 pt-4"
+			className="bg-bg flex items-center justify-between gap-10 px-5 py-4"
 			role="contentinfo"
 			aria-label="En-tête de page"
 			ref={rootRef}
