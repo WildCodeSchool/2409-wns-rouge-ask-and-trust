@@ -13,8 +13,6 @@ export const register = async (
 	lastname: string,
 	role: UserRole
 ): Promise<User> => {
-	// const datasource =
-	// 	process.env.NODE_ENV === "testing" ? testDataSource : dataSource
 	const userRepository = dataSource.getRepository(User)
 	// Check if a user already exists with this email
 	const existingUser = await userRepository.findOne({ where: { email } })
@@ -55,8 +53,6 @@ export const login = async (
 	cookies: Cookies
 ): Promise<LogInResponse> => {
 	const userRepository = dataSource.getRepository(User)
-	// Find the user by email	console.log("STEP 1 >> register service")
-
 	const user = await userRepository.findOne({ where: { email } })
 
 	// Check if the user exists and if the password is correct
@@ -141,7 +137,7 @@ export const whoami = async (cookies: Cookies): Promise<User | null> => {
 
 		// Return null if the user is not found instead of throwing an error
 		if (!user) {
-			return null // Utilisateur non trouvé, retourner null
+			return null
 		}
 
 		return user
