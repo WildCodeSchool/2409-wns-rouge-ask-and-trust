@@ -55,8 +55,6 @@ export class AuthResolver {
 				Roles.User // Always create a user with the role "user"
 			) // Call register method from AuthService
 
-			// console.log('results', results.)
-
 			return results
 		} catch (error) {
 			// If email already used
