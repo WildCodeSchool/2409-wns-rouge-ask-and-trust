@@ -121,7 +121,7 @@ function Surveys() {
 			)}
 			ref={rootRef}
 		>
-			<h1 className="text-fg mb-10 text-center text-3xl font-bold max-lg:text-xl">
+			<h1 className="text-fg mb-5 text-center text-3xl font-bold max-lg:text-xl">
 				Liste des enquêtes disponibles
 			</h1>
 			<SurveyDurationFilter
@@ -129,7 +129,8 @@ function Surveys() {
 				setSortTimeOption={setSortTimeOption}
 			/>
 			{allSurveys.length > 0 ? (
-				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
+				// <div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
+				<div className="grid w-full justify-between gap-10 md:grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] md:gap-16">
 					{allSurveys.map(survey => (
 						<SurveyCard
 							key={survey.id}
