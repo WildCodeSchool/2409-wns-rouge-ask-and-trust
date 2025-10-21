@@ -25,10 +25,13 @@ import * as authService from "../../services/auth-service"
  *  1. Create a text question → should succeed.
  *  2. Create a radio question with answers → should succeed.
  *  3. Create a checkbox question with multiple answers → should succeed.
- *  4. Attempt to create question with empty title → should fail.
- *  5. Attempt to create question with title too long → should fail.
- *  6. Attempt to create question with invalid type → should fail.
- *  7. Attempt to create question for non-existent survey → should fail.
+ *  4. Create a textarea question → should succeed.
+ *  5. Create a boolean question → should succeed.
+ *  6. Create a select question with options → should succeed.
+ *  7. Attempt to create question with empty title → should fail.
+ *  8. Attempt to create question with title too long → should fail.
+ *  9. Attempt to create question with invalid type → should fail.
+ *  10. Attempt to create question for non-existent survey → should fail.
  *
  * @param testArgs - Shared test arguments including Apollo server, database, and test users.
  */
