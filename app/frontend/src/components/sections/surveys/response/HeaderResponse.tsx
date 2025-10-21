@@ -13,6 +13,17 @@ export default function HeaderResponse({
 }: SurveyResponseType) {
 	const navigate = useNavigate()
 
+	const handleBack = () => {
+		if (
+			window.history.length > 1 &&
+			document.referrer.includes(window.location.origin)
+		) {
+			navigate(-1)
+		} else {
+			navigate("/surveys")
+		}
+	}
+
 	return (
 		<section className="bg-white shadow-sm">
 			<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
@@ -20,9 +31,9 @@ export default function HeaderResponse({
 					<Button
 						variant="ghost"
 						size="sm"
-						onClick={() => navigate(-1)}
+						onClick={handleBack}
 						icon={ArrowLeft}
-						ariaLabel="Retour sur la page d'accueil"
+						ariaLabel="Retour sur la page précédente"
 					>
 						Retour
 					</Button>
