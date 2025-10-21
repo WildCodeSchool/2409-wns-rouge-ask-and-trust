@@ -49,7 +49,7 @@ export default function Header({ isInSurveys = false }) {
 			lang="fr"
 			className={cn(
 				"bg-primary-600 shadow-default flex flex-col gap-6 px-6 py-5 pb-1",
-				!isHorizontalCompact && "sticky top-0"
+				!isHorizontalCompact && "sticky top-0 z-50"
 			)}
 			role="contentinfo"
 			aria-label="En-tête de page"
