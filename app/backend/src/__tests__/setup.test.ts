@@ -15,6 +15,7 @@ import { createAdmin } from "../scripts/create-admin"
 import { User } from "../database/entities/user"
 import Cookies from "cookies"
 import { CustomAuthTest } from "./resolvers/CustomAuthTest"
+import { MySurveysResolverTest } from "./resolvers/MySurveysResolverTest"
 
 /**
  * index.spec.ts
@@ -42,6 +43,7 @@ import { CustomAuthTest } from "./resolvers/CustomAuthTest"
  *     - Users resolver (registration, login, validation)
  *     - Custom authentication checker
  *     - Surveys resolver (create category, create survey, permissions)
+ *     - My surveys resolver (filters)
  *  7. Destroy the database connection after all tests.
  */
 export type TestArgsType = {
@@ -170,6 +172,13 @@ describe("customAuthChecker", () => {
  */
 describe("Surveys resolver", () => {
 	SurveyResolverTest(testArgs)
+})
+
+/**
+ * Run My surveys resolver integration tests.
+ */
+describe("My surveys resolver", () => {
+	MySurveysResolverTest(testArgs)
 })
 
 /**
