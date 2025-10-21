@@ -129,7 +129,6 @@ function Surveys() {
 				setSortTimeOption={setSortTimeOption}
 			/>
 			{allSurveys.length > 0 ? (
-				// <div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
 				<div className="grid w-full justify-between gap-10 md:grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] md:gap-16">
 					{allSurveys.map(survey => (
 						<SurveyCard
