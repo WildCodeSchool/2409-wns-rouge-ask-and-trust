@@ -47,7 +47,10 @@ export default function Header({ isInSurveys = false }) {
 	return (
 		<header
 			lang="fr"
-			className={"bg-primary-600 flex flex-col gap-9 px-6 py-5"}
+			className={cn(
+				"bg-primary-600 shadow-default flex flex-col gap-6 px-6 py-5 pb-1",
+				!isHorizontalCompact && "sticky top-0"
+			)}
 			role="contentinfo"
 			aria-label="En-tête de page"
 			ref={rootRef}
@@ -71,7 +74,7 @@ export default function Header({ isInSurveys = false }) {
 				/>
 			</div>
 			{isInSurveys && (
-				<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3 pl-1">
+				<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3">
 					{isLoadingCategories && (
 						<p className="text-white">
 							Chargement des catégories...
