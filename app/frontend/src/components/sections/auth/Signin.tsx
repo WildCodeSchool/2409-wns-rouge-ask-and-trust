@@ -120,7 +120,11 @@ export default function Signin() {
 		<FormWrapper onSubmit={handleSubmit(onSubmit)}>
 			<FormTitle isSignUp={false} />
 			<InputEmail<UserSignIn> register={register} errors={errors} />
-			<InputPassword<UserSignIn> register={register} errors={errors} />
+			<InputPassword<UserSignIn>
+				register={register}
+				errors={errors}
+				mode="signin"
+			/>
 			<FormButtonSubmit type="sign-in" loading={loading} />
 		</FormWrapper>
 	)
