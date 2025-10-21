@@ -136,8 +136,10 @@ export class Survey extends BaseEntity {
 	 * @description
 	 * One-to-many relationship with the Questions entity.
 	 */
-	@OneToMany(() => Questions, question => question.survey)
-	@Field(() => [Questions])
+	@OneToMany(() => Questions, question => question.survey, {
+		cascade: true,
+	})
+	@Field(() => [Questions], { nullable: true })
 	questions!: Questions[]
 
 	/**
