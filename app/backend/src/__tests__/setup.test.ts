@@ -181,7 +181,9 @@ describe("Surveys resolver", () => {
 describe("My surveys resolver", () => {
 	MySurveysResolverTest(testArgs)
 })
-
+/**
+ * Run Questions resolver integration tests.
+ */
 describe("Questions resolver", () => {
 	QuestionResolverTest(testArgs)
 })
