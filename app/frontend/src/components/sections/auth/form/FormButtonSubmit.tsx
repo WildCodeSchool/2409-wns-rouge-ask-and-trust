@@ -11,9 +11,8 @@ export default function FormButtonSubmit({
 	loading,
 }: FormButttonSubmitProps) {
 	const { formState } = useFormContext?.() ?? { formState: undefined }
-	const isDisabled = Boolean(
-		formState && (!formState.isValid || formState.isSubmitting)
-	)
+
+	const isDisabled = formState && formState.isSubmitting
 	const buttonText = type === "sign-in" ? "Se connecter" : "S'inscrire"
 	const ariaLabel =
 		type === "sign-in" ? "Se connecter au compte" : "Créer un compte"
