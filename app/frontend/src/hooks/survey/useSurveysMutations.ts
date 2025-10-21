@@ -1,4 +1,8 @@
-import { DELETE_SURVEY, GET_MY_SURVEYS } from "@/graphql/survey/survey"
+import {
+	DELETE_SURVEY,
+	GET_MY_SURVEYS,
+	GET_SURVEYS,
+} from "@/graphql/survey/survey"
 import { useMutation } from "@apollo/client"
 import { useToast } from "../useToast"
 /**
@@ -24,7 +28,7 @@ import { useToast } from "../useToast"
  * ```
  */
 
-export function useSurveysMutations() {
+export function useSurveysMutations(mode?: "profile" | "admin") {
 	const { showToast } = useToast()
 
 	// ************************ DELETE ************************
@@ -35,7 +39,9 @@ export function useSurveysMutations() {
 			error: deleteSurveysError,
 			reset: resetDeleteSurveysError,
 		},
-	] = useMutation(DELETE_SURVEY, { refetchQueries: [GET_MY_SURVEYS] })
+	] = useMutation(DELETE_SURVEY, {
+		refetchQueries: mode === "admin" ? [GET_SURVEYS] : [GET_MY_SURVEYS],
+	})
 
 	const deleteSurveys = async (selectedSurveyIds: number[]) => {
 		try {
