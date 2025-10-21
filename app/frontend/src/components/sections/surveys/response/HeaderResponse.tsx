@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/Button"
 import { Callout } from "@/components/ui/Callout"
 import { SurveyResponseType } from "@/types/types"
 import { ArrowLeft, BarChart3 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 export default function HeaderResponse({
 	onClickCopy,
@@ -10,6 +11,8 @@ export default function HeaderResponse({
 	isOwner,
 	id,
 }: SurveyResponseType) {
+	const navigate = useNavigate()
+
 	return (
 		<section className="bg-white shadow-sm">
 			<div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
@@ -17,7 +20,7 @@ export default function HeaderResponse({
 					<Button
 						variant="ghost"
 						size="sm"
-						to="/surveys"
+						onClick={() => navigate(-1)}
 						icon={ArrowLeft}
 						ariaLabel="Retour sur la page d'accueil"
 					>
