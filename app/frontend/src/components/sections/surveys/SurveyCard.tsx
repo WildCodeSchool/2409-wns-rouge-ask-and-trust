@@ -32,7 +32,7 @@ export default function SurveyCard({
 	return (
 		<Link
 			to={href}
-			className="shadow-default hover:shadow-primary-default/50 flex w-full flex-col justify-between gap-5 overflow-hidden rounded-xl bg-white transition-shadow duration-200 ease-in-out hover:shadow-lg md:w-80"
+			className="shadow-default hover:shadow-primary-default/50 flex w-full flex-col justify-between gap-5 overflow-hidden rounded-xl bg-white transition-shadow duration-200 ease-in-out hover:shadow-lg"
 			// Indicates to assistive technologies the current page
 			aria-current={
 				href === window.location.pathname ? "page" : undefined
