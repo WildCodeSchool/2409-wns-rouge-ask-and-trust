@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button"
 import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
+import { useAuthContext } from "@/hooks/useAuthContext"
 import { SurveyTableActionsProps } from "@/types/types"
 import { BarChart3, Eye, Pencil, Trash2 } from "lucide-react"
 
@@ -7,7 +8,9 @@ export const SurveyTableActions = ({
 	surveyId,
 	status,
 }: SurveyTableActionsProps) => {
-	const { deleteSurvey } = useSurveyMutations()
+	const { user } = useAuthContext()
+	const mode = user?.role === "admin" ? "admin" : "profile"
+	const { deleteSurvey } = useSurveyMutations(mode)
 	const isEditable = status === "draft" || status === "published"
 	const isPublished = status === "published"
 
