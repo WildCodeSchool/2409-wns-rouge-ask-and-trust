@@ -116,8 +116,8 @@ export default function FooterMobile({ bgBlue }: { bgBlue?: boolean }) {
 	return (
 		<footer
 			className={cn(
-				"bg-bg border-primary-700 fixed bottom-0 flex w-full justify-between border-t px-5 py-2.5 sm:justify-around",
-				bgBlue && "bg-primary-700 border-none"
+				"bg-bg border-primary-700 text-primary-700 fixed bottom-0 flex w-full justify-between border-t px-5 py-2.5 sm:justify-around",
+				bgBlue && "bg-primary-700 text-primary-50 border-none"
 			)}
 			ref={footerRef}
 		>

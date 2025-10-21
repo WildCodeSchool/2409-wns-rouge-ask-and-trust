@@ -38,7 +38,7 @@ export default function NavAndAuthButtons({
 			role="navigation"
 			aria-label="Navigation du site"
 		>
-			{links && !isInSurveys && (
+			{links && !isInSurveys && !isHorizontalCompact && (
 				<div className="flex w-full flex-1 items-center justify-center gap-10">
 					<ul className={listLayoutClass} role="list">
 						{links.map(link => (
