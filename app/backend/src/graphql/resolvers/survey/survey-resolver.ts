@@ -32,6 +32,8 @@ import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-inpu
 import { MySurveysQueryInput } from "../../inputs/queries/mySurveys-query-input"
 import { AllSurveysQueryInput } from "../../inputs/queries/surveys-query-input"
 import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
+import { getUserFromContext } from "../../utils/authorizations"
+import { getCategory } from "../../utils/categories-services"
 
 /**
  * Survey Resolver
@@ -323,36 +325,28 @@ export class SurveysResolver {
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(mutationRateLimiter, clientIP, "createSurvey")
+		const user = getUserFromContext(context.user)
 
 		try {
-			const user = context.user
+			const category = await getCategory(data.category)
 
-			if (!user) {
-				throw new AppError("User not found", 404, "NotFoundError")
-			}
-
-			const category = await Category.findOne({
-				where: { id: data.category },
+			const newSurvey = Survey.create({
+				...data,
+				user,
+				category,
+				questions: [
+					Questions.create({
+						title: "Nouvelle question",
+						type: QuestionTypeEnum.text,
+					}),
+				],
 			})
-
-			if (!category) {
-				throw new AppError("Category not found", 404, "NotFoundError")
-			}
-
-			const newSurvey = new Survey()
-			Object.assign(newSurvey, data, { user, category })
-
+			// Start a transaction to create a survey and a default question.
+			// Rollback if error.
 			await newSurvey.save()
-
-			// Add a default text question
-			const defaultQuestion = new Questions()
-			defaultQuestion.type = QuestionTypeEnum.text
-			defaultQuestion.survey = newSurvey
-			defaultQuestion.title = "Nouvelle question"
-			await defaultQuestion.save()
-
 			return newSurvey
 		} catch (error) {
+			if (error instanceof AppError) throw error
 			throw new AppError(
 				"Failed to create survey",
 				500,
