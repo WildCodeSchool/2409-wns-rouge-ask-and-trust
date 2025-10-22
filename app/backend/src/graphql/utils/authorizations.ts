@@ -3,6 +3,7 @@ import { Survey } from "../../database/entities/survey/survey"
 import { User } from "../../database/entities/user"
 import { AppError } from "../../middlewares/error-handler"
 import { Context, Roles } from "../../types/types"
+import { UpdateSurveyInput } from "../inputs/update/survey/update-survey-input"
 
 /**
  * Checks if the current user is either the owner of the survey or has admin role.
@@ -32,10 +33,15 @@ export async function getAuthorizedSurvey(
 	surveyId: number,
 	user: User
 ): Promise<Survey> {
-	const survey = await Survey.findOne({
-		where: { id: surveyId },
-		relations: { user: true },
-	})
+	const survey = await Survey.createQueryBuilder("survey")
+		.leftJoinAndSelect("survey.user", "user")
+		.leftJoinAndSelect("survey.questions", "questions")
+		.loadRelationCountAndMap(
+			"questions.answersCount",
+			"questions.answersReceived"
+		)
+		.where("survey.id = :surveyId", { surveyId })
+		.getOne()
 
 	if (!survey) {
 		throw new AppError("Survey not found", 404, "NotFoundError")
@@ -49,7 +55,29 @@ export async function getAuthorizedSurvey(
 		)
 	}
 
+	const hasAnswers = survey.questions?.some(q => (q as any).answersCount > 0)
+	survey.hasAnswers = !!hasAnswers
+
 	return survey
+}
+
+export function checkAllowedUpdateFields(
+	hasAnswers: boolean,
+	updateData: Omit<UpdateSurveyInput, "id">
+) {
+	if (hasAnswers) {
+		const allowedKeys = ["public", "category"]
+		const invalidKeys = Object.keys(updateData).filter(
+			key => !allowedKeys.includes(key)
+		)
+		if (invalidKeys.length > 0) {
+			throw new AppError(
+				"Cette enquête possède déjà des réponses. Seules la catégorie et la visibilité sont encore modifiables.",
+				400,
+				"SurveyLockedError"
+			)
+		}
+	}
 }
 
 export async function getAuthorizedQuestion(

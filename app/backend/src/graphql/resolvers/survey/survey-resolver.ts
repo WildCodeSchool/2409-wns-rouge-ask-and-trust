@@ -16,7 +16,6 @@ import {
 	Resolver,
 } from "type-graphql"
 import { Timeout } from "../../../middlewares/timeout-middleware"
-import { Category } from "../../../database/entities/survey/category"
 import { Questions } from "../../../database/entities/survey/questions"
 import { Survey } from "../../../database/entities/survey/survey"
 import { AllSurveysResult } from "../../../database/results/allSurveysResult"
@@ -32,7 +31,11 @@ import { CreateSurveyInput } from "../../inputs/create/survey/create-survey-inpu
 import { MySurveysQueryInput } from "../../inputs/queries/mySurveys-query-input"
 import { AllSurveysQueryInput } from "../../inputs/queries/surveys-query-input"
 import { UpdateSurveyInput } from "../../inputs/update/survey/update-survey-input"
-import { getUserFromContext } from "../../utils/authorizations"
+import {
+	checkAllowedUpdateFields,
+	getAuthorizedSurvey,
+	getUserFromContext,
+} from "../../utils/authorizations"
 import { getCategory } from "../../utils/categories-services"
 
 /**
@@ -146,6 +149,9 @@ export class SurveysResolver {
 				limit,
 			}
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
 			throw new AppError(
 				"Failed to fetch surveys",
 				500,
@@ -167,25 +173,32 @@ export class SurveysResolver {
 	@Timeout(20000) // 20 seconds for a simple read
 	async survey(@Arg("id", () => ID) id: number): Promise<Survey | null> {
 		try {
-			const survey = await Survey.findOne({
-				where: { id },
-				relations: {
-					user: true,
-					category: true,
-					questions: true,
-				},
-				order: {
-					questions: {
-						id: "ASC",
-					},
-				},
-			})
+			const survey = await Survey.createQueryBuilder("survey")
+				.leftJoinAndSelect("survey.user", "user")
+				.leftJoinAndSelect("survey.category", "category")
+				.leftJoinAndSelect("survey.questions", "questions")
+				.loadRelationCountAndMap(
+					"questions.answersCount",
+					"questions.answersReceived"
+				)
+				.where("survey.id = :id", { id })
+				.orderBy("questions.id", "ASC")
+				.getOne()
+
 			if (!survey) {
 				throw new AppError("Survey not found", 404, "NotFoundError")
 			}
 
+			survey.hasAnswers =
+				survey.questions?.some(
+					question => (question.answersCount ?? 0) > 0
+				) ?? false
+
 			return survey
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw Error
+			}
 			throw new AppError(
 				"Failed to fetch survey",
 				500,
@@ -378,46 +391,17 @@ export class SurveysResolver {
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(mutationRateLimiter, clientIP, "updateSurvey")
+		const user = getUserFromContext(context.user)
 
 		try {
-			const user = context.user
-
-			if (!user) {
-				throw new AppError("User not found", 404, "NotFoundError")
-			}
-
-			const whereCreatedBy =
-				user.role === "admin" ? undefined : { id: user.id }
-
-			const survey = await Survey.findOne({
-				where: { id: data.id, user: whereCreatedBy },
-				relations: {
-					user: true,
-					category: true,
-				},
-			})
-
-			if (!survey) {
-				throw new AppError(
-					"Survey not found",
-					404,
-					"SurveyNotFoundError"
-				)
-			}
-
 			const { id, category, ...updateData } = data
+			void id
+			const survey = await getAuthorizedSurvey(id, user)
+
+			checkAllowedUpdateFields(Boolean(survey.hasAnswers), updateData)
 
 			if (category) {
-				const categorySurvey = await Category.findOne({
-					where: { id: category },
-				})
-				if (!categorySurvey) {
-					throw new AppError(
-						"Category not found",
-						404,
-						"NotFoundError"
-					)
-				}
+				const categorySurvey = await getCategory(category)
 				survey.category = categorySurvey
 			}
 
@@ -426,6 +410,9 @@ export class SurveysResolver {
 			await survey.save()
 			return survey
 		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
 			throw new AppError(
 				"Failed to update survey",
 				500,
@@ -456,7 +443,6 @@ export class SurveysResolver {
 		const clientIP =
 			context.req?.ip || context.req?.socket?.remoteAddress || "unknown"
 		checkRateLimit(mutationRateLimiter, clientIP, "deleteSurvey")
-
 		try {
 			const user = context.user
 
