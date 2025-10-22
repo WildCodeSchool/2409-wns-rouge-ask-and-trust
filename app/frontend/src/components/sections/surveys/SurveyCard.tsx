@@ -32,7 +32,7 @@ export default function SurveyCard({
 	return (
 		<Link
 			to={href}
-			className="shadow-default hover:shadow-primary-default/50 flex w-full flex-col justify-between gap-5 overflow-hidden rounded-xl bg-white transition-shadow duration-200 ease-in-out hover:shadow-lg"
+			className="border-black-100 shadow-default hover:shadow-primary-default/50 flex w-full flex-col justify-between gap-5 overflow-hidden rounded-xl border bg-white transition-shadow duration-200 ease-in-out hover:shadow-lg"
 			// Indicates to assistive technologies the current page
 			aria-current={
 				href === window.location.pathname ? "page" : undefined
@@ -47,7 +47,7 @@ export default function SurveyCard({
 			// data attribute for analytics tracking
 			data-category="Enquête"
 		>
-			<div className="h-52 w-full">
+			<div className="border-black-100 h-52 w-full border-b">
 				<img
 					src={picture}
 					alt="Représentation de l'enquête"
