@@ -1,5 +1,6 @@
 import { withSEO } from "@/components/hoc/withSEO"
 import SurveyCard from "@/components/sections/surveys/SurveyCard"
+import SurveyCardPlaceholder from "@/components/sections/surveys/ui/SurveyCardPlaceholder"
 import SurveyDurationFilter from "@/components/sections/surveys/ui/SurveyDurationFilter"
 import SurveyPageSkeleton from "@/components/sections/surveys/ui/SurveyPageSkeleton"
 import { Button } from "@/components/ui/Button"
@@ -86,6 +87,14 @@ function Surveys() {
 			isOwner: !!(user && survey.user && user.id === survey.user.id),
 		})) ?? []
 
+	// Calculate how many placeholder cards to show to reach a minimum of 4 cards
+	const minCardsToShow = 4
+	const placeholdersCount = Math.max(0, minCardsToShow - allSurveys.length)
+	const placeholders = Array.from(
+		{ length: placeholdersCount },
+		(_, index) => index
+	)
+
 	const onCreateSurveyAndNavigate = async () => {
 		try {
 			const newSurvey = await createSurvey({
@@ -117,7 +126,7 @@ function Surveys() {
 	) : (
 		<section
 			className={cn(
-				"px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:min-h-[calc(100vh_-_var(--header-height))] md:px-10 md:pb-10"
+				"larger-screen:w-4/5 larger-screen:mx-auto px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:min-h-[calc(100vh_-_var(--header-height))] md:px-10 md:pb-10"
 			)}
 			ref={rootRef}
 		>
@@ -129,7 +138,7 @@ function Surveys() {
 				setSortTimeOption={setSortTimeOption}
 			/>
 			{allSurveys.length > 0 ? (
-				<div className="grid w-full justify-between gap-10 md:grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] md:gap-16">
+				<div className="grid w-full justify-between gap-20 max-md:grid-cols-2 max-md:gap-10 max-sm:grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(18rem,1fr))]">
 					{allSurveys.map(survey => (
 						<SurveyCard
 							key={survey.id}
@@ -142,6 +151,9 @@ function Surveys() {
 							availableDuration={survey.availableDuration}
 							isOwner={survey.isOwner}
 						/>
+					))}
+					{placeholders.map(index => (
+						<SurveyCardPlaceholder key={`placeholder-${index}`} />
 					))}
 				</div>
 			) : (

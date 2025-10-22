@@ -18,6 +18,7 @@ export default function SurveyTableNav({
 	surveysPerPage,
 	setCurrentPage,
 	selectedSurveyIds,
+	onDeleteSuccess,
 }: SurveyTableNavProps) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 
@@ -79,6 +80,7 @@ export default function SurveyTableNav({
 				loadingSpinner={isCreatingSurvey}
 				onClick={onCreateSurveyAndNavigate}
 				variant="secondary"
+				fullWidth={isHorizontalCompact}
 				role="button"
 				ariaLabel="Créer une enquête"
 				children="Créer une enquête"
@@ -95,7 +97,9 @@ export default function SurveyTableNav({
 				ariaLabel="Supprimer des enquêtes"
 				variant="destructive"
 				fullWidth={isHorizontalCompact}
-				onClick={() => deleteSurveys(selectedSurveyIds)}
+				onClick={() =>
+					deleteSurveys(selectedSurveyIds, onDeleteSuccess)
+				}
 				className={cn(
 					"transition-all duration-200 ease-in-out max-lg:order-3 md:w-1/2 lg:w-auto",
 					showDeleteButton

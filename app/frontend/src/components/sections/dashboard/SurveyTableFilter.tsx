@@ -57,6 +57,7 @@ export default function SurveyTableFilter({
 				value=""
 				onChange={addFilter}
 				options={availableOptions}
+				ariaLabel="Ajouter un filtre sur votre tableau d'enquêtes"
 			/>
 			<div className="flex flex-wrap items-center gap-2.5">
 				{filters.map(filter => (

@@ -52,7 +52,6 @@ export default function Header({ isInSurveys = false }) {
 				!isHorizontalCompact && "sticky top-0 z-50",
 				isInSurveys && "pb-1"
 			)}
-			role="contentinfo"
 			aria-label="En-tête de page"
 			ref={rootRef}
 		>
