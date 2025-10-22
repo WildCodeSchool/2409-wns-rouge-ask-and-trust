@@ -97,7 +97,7 @@ export function AdaptiveToolbox({
 	return (
 		<div
 			className={cn(
-				"border-black-50 transition-width shadow-default z-10 flex h-full w-fit flex-shrink-0 flex-col overflow-hidden rounded-xl border-1 bg-white duration-300 ease-in-out",
+				"border-black-100 transition-width shadow-default z-10 flex h-full w-fit flex-shrink-0 flex-col overflow-hidden rounded-xl border-1 bg-white duration-300 ease-in-out",
 				"w-fit overflow-hidden",
 				isTablet && "w-14 p-2"
 			)}
