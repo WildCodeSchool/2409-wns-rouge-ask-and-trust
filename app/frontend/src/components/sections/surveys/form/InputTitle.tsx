@@ -2,19 +2,20 @@ import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
 import { InputsProps } from "@/types/types"
 
-export default function InputTitle({ register, errors }: InputsProps) {
+export default function InputTitle({
+	register,
+	errors,
+	disabled,
+}: InputsProps) {
 	return (
 		<div className="flex flex-col gap-1">
-			<Label htmlFor="title" required>
-				Titre
-			</Label>
+			<Label htmlFor="title">Titre</Label>
 			<Input
 				id="title"
 				type="text"
+				disabled={disabled}
 				placeholder="Saisissez un titre pour votre enquête"
-				aria-required
 				{...register("title", {
-					required: "Le titre est requis",
 					minLength: {
 						value: 1,
 						message:

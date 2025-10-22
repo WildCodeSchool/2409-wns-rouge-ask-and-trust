@@ -11,12 +11,10 @@ export default function SwitchPublic({ control, errors }: SwitchProps) {
 				name="public"
 				render={({ field }) => (
 					<div className="flex items-center gap-4">
-						<Label htmlFor="public" required>
-							Enquête publique
-						</Label>
+						<Label htmlFor="public">Enquête publique</Label>
 						<Switch
 							id="public"
-							checked={field.value}
+							checked={field.value ?? false}
 							onCheckedChange={field.onChange}
 						/>
 					</div>
