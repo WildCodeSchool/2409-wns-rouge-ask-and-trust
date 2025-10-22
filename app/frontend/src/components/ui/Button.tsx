@@ -31,7 +31,7 @@ const buttonVariants = cva(
 				ghost_destructive:
 					"bg-transparent border-none text-destructive-medium hover:underline focus:ring-primary-700 active:outline-none hover:bg-destructive-medium hover:text-white active:bg-transparent",
 				footerMobile:
-					"bg-transparent border-none text-primary-50 focus:ring-primary-700 group flex-col gap-1 font-medium [&_svg]:transition-transform [&_svg]:duration-200 [&_svg]:ease-in-out [&_svg]:group-hover:scale-105",
+					"bg-transparent border-none focus:ring-primary-700 group flex-col gap-1 font-medium [&_svg]:transition-transform [&_svg]:duration-200 [&_svg]:ease-in-out [&_svg]:group-hover:scale-105",
 			},
 			size: {
 				xs: "p-0 text-xs",

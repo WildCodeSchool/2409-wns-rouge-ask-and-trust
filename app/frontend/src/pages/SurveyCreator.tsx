@@ -86,7 +86,7 @@ function SurveyCreator() {
 
 	const surveyUser = survey?.user.id
 	const connectedUser = user?.id
-	const isOwner = surveyUser === connectedUser
+	const isOwner = surveyUser === connectedUser || user?.role === "admin"
 
 	return (
 		<div

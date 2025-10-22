@@ -82,12 +82,12 @@ export default function Header() {
 					>
 						{showMenu ? (
 							<X
-								className="text-primary-default h-6 w-6 cursor-pointer"
+								className="text-primary-700 h-6 w-6 cursor-pointer"
 								aria-hidden
 							/>
 						) : (
 							<Menu
-								className="text-primary-default h-12 w-12 cursor-pointer"
+								className="text-primary-700 h-12 w-12 cursor-pointer"
 								aria-hidden
 							/>
 						)}

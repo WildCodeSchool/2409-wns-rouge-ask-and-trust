@@ -60,7 +60,7 @@ export default function SearchForm() {
 			<Button
 				type="submit"
 				ariaLabel="Rechercher une enquête"
-				className="group absolute right-1 aspect-square h-8 rounded-md p-1.5"
+				className="group absolute right-1 h-8 w-8 rounded-md p-1.5"
 			>
 				<Search className="group-hover:text-primary-700 text-white transition-colors duration-200 ease-in-out" />
 			</Button>

@@ -301,6 +301,7 @@ export type SurveyTableNavProps = {
 	totalCount: number
 	surveysPerPage: number
 	selectedSurveyIds: number[]
+	onDeleteSuccess?: () => void
 }
 
 type FilterOption = {
@@ -314,6 +315,7 @@ export type SelectFilterProps = {
 	options: FilterOption[]
 	placeholder?: string
 	disabled?: boolean
+	ariaLabel?: string
 }
 
 export type SurveyTableFilterProps = {

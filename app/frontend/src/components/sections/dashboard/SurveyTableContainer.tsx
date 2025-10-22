@@ -99,6 +99,11 @@ export default function SurveyTableContainer({
 
 	const atLeastTwoSelected = selectedSurveyIds.length >= 2
 
+	const handleDeleteSuccess = useCallback(() => {
+		setIsHeaderChecked(false)
+		setSelectedSurveyIds([])
+	}, [])
+
 	useEffect(() => {
 		setIsHeaderChecked(false)
 		setSelectedSurveyIds([])
@@ -170,6 +175,7 @@ export default function SurveyTableContainer({
 				totalCount={totalCount}
 				surveysPerPage={surveysPerPage}
 				selectedSurveyIds={selectedSurveyIds}
+				onDeleteSuccess={handleDeleteSuccess}
 			/>
 		</div>
 	)
