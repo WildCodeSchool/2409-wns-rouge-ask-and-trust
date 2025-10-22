@@ -139,6 +139,7 @@ export interface Survey {
 	status: SurveyStatusType
 	questions: Question[]
 	user: User
+	hasAnswers: boolean
 }
 
 export type SurveyWithoutQuestions = Omit<Survey, "questions">
@@ -161,7 +162,7 @@ export type SurveyFormValues = {
 
 export type CreateSurveyInput = SurveyFormValues
 
-export type UpdateSurveyInput = SurveyFormValues
+export type UpdateSurveyInput = Partial<SurveyFormValues>
 
 export type Question = {
 	id: number
@@ -222,13 +223,14 @@ export function isMultipleAnswerType(
 }
 
 export type InputsProps = {
-	register: UseFormRegister<CreateSurveyInput>
-	errors: FieldErrors<CreateSurveyInput>
+	register: UseFormRegister<UpdateSurveyInput>
+	errors: FieldErrors<UpdateSurveyInput>
+	disabled?: boolean
 }
 
 export type SwitchProps = {
-	errors: FieldErrors<CreateSurveyInput>
-	control: Control<CreateSurveyInput>
+	errors: FieldErrors<UpdateSurveyInput>
+	control: Control<UpdateSurveyInput>
 }
 
 export type CategoryOption = {

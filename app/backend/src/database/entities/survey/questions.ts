@@ -14,10 +14,12 @@ import {
 	Column,
 	Entity,
 	ManyToOne,
+	OneToMany,
 	PrimaryGeneratedColumn,
 } from "typeorm"
 import { AnswerObject } from "../../../graphql/inputs/create/survey/create-questions-input"
 import { Survey } from "./survey"
+import { Answers } from "./answers"
 
 /**
  * Questions Entity
@@ -85,7 +87,7 @@ export class Questions extends BaseEntity {
 	type!: QuestionTypeEnum
 
 	/**
-	 * Answers to the question
+	 * Possible answers to the question
 	 * @description
 	 * Stored as a single JSON array in PostgreSQL (`jsonb`).
 	 * Why `jsonb`:
@@ -107,7 +109,14 @@ export class Questions extends BaseEntity {
 	})
 	answers!: AnswerObject[]
 
-	// relation Answers
+	/**
+	 * Answers provided by participants
+	 * @description
+	 * One-to-many relationship with the Answer entity.
+	 *
+	 */
+	@OneToMany(() => Answers, answer => answer.question)
+	answersReceived!: Answers[]
 
 	/**
 	 * The survey to which this question belongs
@@ -121,6 +130,15 @@ export class Questions extends BaseEntity {
 	})
 	@Field(() => Survey)
 	survey!: Survey
+
+	/**
+	 * The number of answers provided by participants.
+	 * @description
+	 * Value not stored in database.
+	 */
+
+	@Field(() => Number, { nullable: true })
+	answersCount?: number
 
 	/**
 	 * User who created the question

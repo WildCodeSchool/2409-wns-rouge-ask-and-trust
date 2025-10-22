@@ -4,6 +4,7 @@ import { SurveyCreatorHeader } from "@/components/sections/surveys/buildSurvey/q
 import { SurveyCreatorSkeleton } from "@/components/sections/surveys/buildSurvey/question/SurveyCreatorSkeleton"
 import { Toolbox } from "@/components/sections/Toolbox/Toolbox"
 import { Button } from "@/components/ui/Button"
+import { InfoBox } from "@/components/ui/InfoBox"
 import { useSurveyData } from "@/hooks/survey/useSurveyData"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useQuestions } from "@/hooks/useQuestions"
@@ -108,12 +109,32 @@ function SurveyCreator() {
 			) : (
 				<>
 					{surveyWithoutQuestions && (
-						<SurveyCreatorHeader
-							survey={surveyWithoutQuestions}
-							hasQuestions={!!questions.length}
-						/>
+						<>
+							{survey.hasAnswers && (
+								<InfoBox
+									className="m-4 mb-0"
+									variant="warning"
+									title={
+										"Des personnes ont déjà répondu à votre enquête"
+									}
+									children={
+										"Pour garantir l'intégrité des réponses, seules la catégorie et la visibilité de l'enquête sont désormais modifiables."
+									}
+								/>
+							)}
+							<SurveyCreatorHeader
+								survey={surveyWithoutQuestions}
+								hasQuestions={!!questions.length}
+							/>
+						</>
 					)}
-					<section className="md box-border flex h-full w-full flex-row gap-4 overflow-hidden bg-gray-50 px-0 pt-0 pb-0 md:px-4 md:pt-2 md:pb-4 lg:gap-4">
+					<section
+						className={cn(
+							"md box-border flex h-full w-full flex-row gap-4 overflow-hidden bg-gray-50 px-0 pt-0 pb-0 md:px-4 md:pt-2 md:pb-4 lg:gap-4",
+							survey.hasAnswers &&
+								"cursor-not-allowed opacity-50 [&>*]:pointer-events-none"
+						)}
+					>
 						{!isMobile && (
 							<Toolbox onAddQuestion={handleAddQuestion} />
 						)}

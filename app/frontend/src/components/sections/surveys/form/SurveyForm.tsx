@@ -13,8 +13,8 @@ import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
 import {
 	CategoryOption,
-	CreateSurveyInput,
 	SurveyWithoutQuestions,
+	UpdateSurveyInput,
 } from "@/types/types"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
@@ -39,11 +39,12 @@ export default function SurveyForm({
 		register,
 		handleSubmit,
 		control,
-		formState: { errors, isDirty },
+		getValues,
+		formState: { errors, isDirty, dirtyFields },
 		setError,
 		clearErrors,
 		reset,
-	} = useForm<CreateSurveyInput>({
+	} = useForm<UpdateSurveyInput>({
 		defaultValues: {
 			title: survey?.title || "",
 			description: survey?.description || "",
@@ -71,17 +72,27 @@ export default function SurveyForm({
 		description: updateSurveyError?.message ?? "Une erreur est survenue",
 	})
 
-	const onFormSubmit = async (form: CreateSurveyInput) => {
+	const onFormSubmit = async () => {
 		clearErrors()
 		try {
-			const payload = { ...form, category: form.category }
-			await updateSurvey(String(survey.id), payload)
+			const test = Object.fromEntries(
+				Object.keys(dirtyFields).map(key => [
+					key,
+					getValues(key as keyof UpdateSurveyInput),
+				])
+			)
 
-			showToast({
-				type: "success",
-				title: "Enquête modifiée",
-				description: "Votre enquête a bien été mise à jour",
-			})
+			const payload = { ...test }
+
+			const results = await updateSurvey(String(survey.id), payload)
+
+			if (results) {
+				showToast({
+					type: "success",
+					title: "Enquête modifiée",
+					description: "Votre enquête a bien été mise à jour",
+				})
+			}
 		} catch (err) {
 			setError("root", {
 				message:
@@ -111,6 +122,8 @@ export default function SurveyForm({
 			})
 		) ?? []
 
+	const hasAnswers = survey.hasAnswers
+
 	return (
 		<FormWrapper
 			onSubmit={handleSubmit(onFormSubmit)}
@@ -118,11 +131,13 @@ export default function SurveyForm({
 		>
 			<div className="flex flex-col gap-4 lg:flex-row">
 				<div className="flex flex-col gap-4 lg:w-[50%]">
-					<InputTitle register={register} errors={errors} />
+					<InputTitle
+						register={register}
+						errors={errors}
+						disabled={hasAnswers}
+					/>
 					<div className="flex flex-col gap-1">
-						<Label htmlFor="category" required>
-							Catégorie
-						</Label>
+						<Label htmlFor="category">Catégorie</Label>
 						<TypeSelect
 							control={control}
 							name="category"
@@ -152,7 +167,11 @@ export default function SurveyForm({
 					</div>
 				</div>
 				<div className="flex flex-col gap-8 lg:w-[50%]">
-					<InputDescription register={register} errors={errors} />
+					<InputDescription
+						register={register}
+						errors={errors}
+						disabled={hasAnswers}
+					/>
 				</div>
 			</div>
 			<div className="flex w-full flex-col gap-5 md:flex-row md:items-end md:justify-between">
