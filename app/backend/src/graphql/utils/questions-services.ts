@@ -26,7 +26,7 @@ export function createQuestionInstance(
  * @throws AppError if validation fails
  */
 export function validateAndNormalizeAnswers(
-	type: string,
+	type: QuestionType,
 	answers: AnswerObject[] | undefined
 ): AnswerObject[] {
 	if (!answers || answers.length === 0) {

@@ -135,6 +135,8 @@ export class Questions extends BaseEntity {
 	 * The number of answers provided by participants.
 	 * @description
 	 * Value not stored in database.
+	 * Is only calculated in updateQuestion resolver when user is authorized to update the question$
+	 * Is not calculated in public  resolver (get question, get survey)
 	 */
 
 	@Field(() => Number, { nullable: true })
