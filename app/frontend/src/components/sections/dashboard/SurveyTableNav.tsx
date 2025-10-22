@@ -71,7 +71,7 @@ export default function SurveyTableNav({
 
 	return (
 		<div
-			className="flex items-center justify-between max-lg:flex-wrap max-lg:justify-center max-lg:gap-x-10 max-lg:gap-y-5"
+			className="flex items-center justify-between max-lg:flex-wrap max-lg:justify-center max-lg:gap-x-10 max-lg:gap-y-5 max-md:pb-[calc(var(--footer-height)+10px)]"
 			ref={rootRef}
 		>
 			<Button
