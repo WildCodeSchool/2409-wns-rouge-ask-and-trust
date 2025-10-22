@@ -53,6 +53,7 @@ export const GET_SURVEY = gql`
 					value
 				}
 			}
+			hasAnswers
 			createdAt
 			updatedAt
 		}
