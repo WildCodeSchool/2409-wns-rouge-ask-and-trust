@@ -48,10 +48,10 @@ export default function Header({ isInSurveys = false }) {
 		<header
 			lang="fr"
 			className={cn(
-				"bg-primary-600 shadow-default flex flex-col gap-6 px-6 py-5 pb-1",
-				!isHorizontalCompact && "sticky top-0"
+				"bg-primary-600 shadow-default flex flex-col gap-6 px-6 py-5",
+				!isHorizontalCompact && "sticky top-0 z-50",
+				isInSurveys && "pb-1"
 			)}
-			role="contentinfo"
 			aria-label="En-tête de page"
 			ref={rootRef}
 		>

@@ -43,7 +43,10 @@ export function useSurveysMutations(mode?: "profile" | "admin") {
 		refetchQueries: mode === "admin" ? [GET_SURVEYS] : [GET_MY_SURVEYS],
 	})
 
-	const deleteSurveys = async (selectedSurveyIds: number[]) => {
+	const deleteSurveys = async (
+		selectedSurveyIds: number[],
+		onSuccess?: () => void
+	) => {
 		try {
 			await Promise.all(
 				selectedSurveyIds.map(id =>
@@ -59,6 +62,9 @@ export function useSurveysMutations(mode?: "profile" | "admin") {
 				description:
 					"Vous pouvez poursuivre votre lecture du tableau de bord.",
 			})
+
+			// Call success callback if provided
+			onSuccess?.()
 		} catch (error) {
 			console.error("Erreur lors de la suppression :", error)
 

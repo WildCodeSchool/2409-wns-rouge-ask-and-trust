@@ -14,6 +14,7 @@ export function SelectFilter({
 	options,
 	placeholder = "Ajouter un filtre",
 	disabled = false,
+	ariaLabel,
 }: SelectFilterProps) {
 	const availableOptions = options.filter(opt => opt.value !== value)
 
@@ -24,6 +25,7 @@ export function SelectFilter({
 				icon={
 					<ListFilter className="text-button-line-border h-4 w-4" />
 				}
+				aria-label={ariaLabel || placeholder}
 			>
 				<SelectValue placeholder={placeholder} />
 			</SelectTrigger>
