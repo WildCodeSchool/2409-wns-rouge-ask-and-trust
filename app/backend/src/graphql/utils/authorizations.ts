@@ -35,6 +35,7 @@ export async function getAuthorizedSurvey(
 ): Promise<Survey> {
 	const survey = await Survey.createQueryBuilder("survey")
 		.leftJoinAndSelect("survey.user", "user")
+		.leftJoinAndSelect("survey.category", "category")
 		.leftJoinAndSelect("survey.questions", "questions")
 		.loadRelationCountAndMap(
 			"questions.answersCount",
@@ -56,6 +57,7 @@ export async function getAuthorizedSurvey(
 	}
 
 	const hasAnswers = survey.questions?.some(q => (q as any).answersCount > 0)
+
 	survey.hasAnswers = !!hasAnswers
 
 	return survey
