@@ -56,8 +56,9 @@ export async function getAuthorizedSurvey(
 		)
 	}
 
-	const hasAnswers = survey.questions?.some(q => (q as any).answersCount > 0)
-
+	const hasAnswers = survey.questions?.some(
+		question => question.answersCount && question.answersCount > 0
+	)
 	survey.hasAnswers = !!hasAnswers
 
 	return survey
@@ -74,9 +75,9 @@ export function checkAllowedUpdateFields(
 		)
 		if (invalidKeys.length > 0) {
 			throw new AppError(
-				"Cette enquête possède déjà des réponses. Seules la catégorie et la visibilité sont encore modifiables.",
-				400,
-				"SurveyLockedError"
+				"This survey already has participants. You can modify category or/and public status only.",
+				403,
+				"ForbiddenError"
 			)
 		}
 	}
@@ -86,12 +87,15 @@ export async function getAuthorizedQuestion(
 	questionId: number,
 	user: User
 ): Promise<Questions> {
-	const question = await Questions.findOne({
-		where: { id: questionId },
-		relations: {
-			survey: { user: true }, // get survey and its user
-		},
-	})
+	const question = await Questions.createQueryBuilder("question")
+		.leftJoinAndSelect("question.survey", "survey")
+		.leftJoinAndSelect("survey.user", "user")
+		.loadRelationCountAndMap(
+			"question.answersCount",
+			"question.answersReceived"
+		)
+		.where("question.id = :questionId", { questionId })
+		.getOne()
 
 	if (!question) {
 		throw new AppError("Question not found", 404, "NotFoundError")
@@ -100,6 +104,16 @@ export async function getAuthorizedQuestion(
 	if (!isOwnerOrAdmin(question.survey.user.id, user)) {
 		throw new AppError(
 			"Not authorized to modify or delete this question",
+			403,
+			"ForbiddenError"
+		)
+	}
+
+	question.answersCount = question.answersCount ?? 0
+
+	if (question.answersCount > 0) {
+		throw new AppError(
+			"Cannot update question that already has users answers",
 			403,
 			"ForbiddenError"
 		)
