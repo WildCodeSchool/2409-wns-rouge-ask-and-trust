@@ -16,6 +16,7 @@ import { User } from "../database/entities/user"
 import Cookies from "cookies"
 import { CustomAuthTest } from "./resolvers/CustomAuthTest"
 import { MySurveysResolverTest } from "./resolvers/MySurveysResolverTest"
+import { QuestionResolverTest } from "./resolvers/QuestionResolverTest"
 
 /**
  * index.spec.ts
@@ -179,6 +180,12 @@ describe("Surveys resolver", () => {
  */
 describe("My surveys resolver", () => {
 	MySurveysResolverTest(testArgs)
+})
+/**
+ * Run Questions resolver integration tests.
+ */
+describe("Questions resolver", () => {
+	QuestionResolverTest(testArgs)
 })
 
 /**
