@@ -4,6 +4,16 @@ import { TypesOfQuestion } from "../../types/types"
 import { CREATE_QUESTION } from "../api/question"
 import { assert, getTestContext, TestArgsType } from "../setup.test"
 import * as authService from "../../services/auth-service"
+import { User } from "../../database/entities/user"
+
+/**
+ * Helper Function to mock authenticated user for testing
+ * @param user - User to authenticate in the test context
+ */
+function mockAuthUser(user: User) {
+	assert(user, "User must exist before mocking whoami")
+	jest.spyOn(authService, "whoami").mockResolvedValue(user)
+}
 
 /**
  * QuestionResolverTest.ts
@@ -50,7 +60,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 		)
 
 		testSurvey = await Survey.create({
-			title: "Test Survey for Questions",
+			title: "Create survey test for questions",
 			description: "Survey used for testing questions",
 			status: "draft",
 			public: true,
@@ -62,10 +72,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a text question", async () => {
-		assert(testArgs.data.user, "User must exist before mocking whoami")
-
-		// Simulate authenticated user
-		jest.spyOn(authService, "whoami").mockResolvedValue(testArgs.data.user)
+		mockAuthUser(testArgs.data.user!)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -95,7 +102,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 		expect(question?.type).toBe(TypesOfQuestion.Text)
 		expect(question?.answers).toEqual([])
 		expect(question?.survey.id).toBe(String(testSurvey.id))
-		expect(question?.survey.title).toBe("Test Survey for Questions")
+		expect(question?.survey.title).toBe("Create survey test for questions")
 
 		// Verify in database
 		const questionFromDb = await Questions.findOne({
@@ -110,10 +117,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a radio question with answers", async () => {
-		assert(testArgs.data.user, "User must exist before mocking whoami")
-
-		// Simulate authenticated user
-		jest.spyOn(authService, "whoami").mockResolvedValue(testArgs.data.user)
+		mockAuthUser(testArgs.data.user!)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -160,10 +164,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a checkbox question with multiple answers", async () => {
-		assert(testArgs.data.user, "User must exist before mocking whoami")
-
-		// Simulate authenticated user
-		jest.spyOn(authService, "whoami").mockResolvedValue(testArgs.data.user)
+		mockAuthUser(testArgs.data.user!)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -172,13 +173,13 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 				query: CREATE_QUESTION,
 				variables: {
 					data: {
-						title: "Which programming languages do you know?",
+						title: "What is the name of Gandalf's horse?",
 						type: TypesOfQuestion.Checkbox,
 						answers: [
-							{ value: "JavaScript" },
-							{ value: "TypeScript" },
-							{ value: "Python" },
-							{ value: "Java" },
+							{ value: "Shadowfax" },
+							{ value: "Brego" },
+							{ value: "Hasufel" },
+							{ value: "Bill" },
 						],
 						surveyId: testSurvey.id,
 					},
@@ -193,7 +194,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 		const question = response.body.singleResult.data?.createQuestion
 		expect(question).toBeDefined()
 		expect(question?.id).toBeDefined()
-		expect(question?.title).toBe("Which programming languages do you know?")
+		expect(question?.title).toBe("What is the name of Gandalf's horse?")
 		expect(question?.type).toBe(TypesOfQuestion.Checkbox)
 		expect(question?.answers).toHaveLength(4)
 
@@ -208,10 +209,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a textarea question", async () => {
-		assert(testArgs.data.user, "User must exist before mocking whoami")
-
-		// Simulate authenticated user
-		jest.spyOn(authService, "whoami").mockResolvedValue(testArgs.data.user)
+		mockAuthUser(testArgs.data.user!)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -240,10 +238,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a boolean question", async () => {
-		assert(testArgs.data.user, "User must exist before mocking whoami")
-
-		// Simulate authenticated user
-		jest.spyOn(authService, "whoami").mockResolvedValue(testArgs.data.user)
+		mockAuthUser(testArgs.data.user!)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -272,10 +267,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a select question with options", async () => {
-		assert(testArgs.data.user, "User must exist before mocking whoami")
-
-		// Simulate authenticated user
-		jest.spyOn(authService, "whoami").mockResolvedValue(testArgs.data.user)
+		mockAuthUser(testArgs.data.user!)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -310,10 +302,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should NOT create a question with empty title", async () => {
-		assert(testArgs.data.user, "User must exist before mocking whoami")
-
-		// Simulate authenticated user
-		jest.spyOn(authService, "whoami").mockResolvedValue(testArgs.data.user)
+		mockAuthUser(testArgs.data.user!)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -337,10 +326,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should NOT create a question with title too long", async () => {
-		assert(testArgs.data.user, "User must exist before mocking whoami")
-
-		// Simulate authenticated user
-		jest.spyOn(authService, "whoami").mockResolvedValue(testArgs.data.user)
+		mockAuthUser(testArgs.data.user!)
 
 		const longTitle = "a".repeat(1001) // Exceeds 1000 char limit
 
@@ -366,10 +352,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should NOT create a question with invalid type", async () => {
-		assert(testArgs.data.user, "User must exist before mocking whoami")
-
-		// Simulate authenticated user
-		jest.spyOn(authService, "whoami").mockResolvedValue(testArgs.data.user)
+		mockAuthUser(testArgs.data.user!)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -393,10 +376,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should NOT create a question for non-existent survey", async () => {
-		assert(testArgs.data.user, "User must exist before mocking whoami")
-
-		// Simulate authenticated user
-		jest.spyOn(authService, "whoami").mockResolvedValue(testArgs.data.user)
+		mockAuthUser(testArgs.data.user!)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
