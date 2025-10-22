@@ -186,6 +186,9 @@ export class Survey extends BaseEntity {
 	@Field()
 	@Column({ type: "int", default: 30 })
 	availableDuration!: number
+
+	@Field()
+	hasAnswers?: boolean
 }
 
 @InputType()

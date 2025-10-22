@@ -86,11 +86,15 @@ export function useSurveyMutations(mode?: "profile" | "admin") {
 			error: updateSurveyError,
 			reset: resetUpdateSurveyError,
 		},
-	] = useMutation(UPDATE_SURVEY, { refetchQueries: [{ query: GET_SURVEYS }] })
+	] = useMutation(UPDATE_SURVEY)
 
 	const updateSurvey = async (id: string, survey: UpdateSurveyInput) => {
 		const result = await updateSurveyMutation({
 			variables: { data: { ...survey, id } },
+			refetchQueries: [
+				{ query: GET_SURVEY, variables: { surveyId: id } },
+				{ query: GET_SURVEYS },
+			],
 		})
 		return result.data?.updateSurvey
 	}
