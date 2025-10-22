@@ -5,12 +5,13 @@ import { CREATE_QUESTION } from "../api/question"
 import { assert, getTestContext, TestArgsType } from "../setup.test"
 import * as authService from "../../services/auth-service"
 import { User } from "../../database/entities/user"
+import { Category } from "../../database/entities/survey/category"
 
 /**
  * Helper Function to mock authenticated user for testing
  * @param user - User to authenticate in the test context
  */
-function mockAuthUser(user: User) {
+function mockAuthUser(user: User | undefined) {
 	assert(user, "User must exist before mocking whoami")
 	jest.spyOn(authService, "whoami").mockResolvedValue(user)
 }
@@ -55,24 +56,24 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	// Setup: Create a test survey before running question tests
 	beforeAll(async () => {
 		// Create a category for the test survey
-		const category = await testArgs.datasource.query(
-			`INSERT INTO category (name) VALUES ('Test Category Questions') RETURNING id`
-		)
+		const category = await Category.create({
+			name: "Test category questions",
+		}).save()
 
 		testSurvey = await Survey.create({
 			title: "Create survey test for questions",
 			description: "Survey used for testing questions",
 			status: "draft",
 			public: true,
-			user: testArgs.data.user!,
-			category: { id: category[0].id },
+			user: testArgs.data.user,
+			category: category,
 			estimatedDuration: 10,
 			availableDuration: 30,
 		}).save()
 	})
 
 	it("should create a text question", async () => {
-		mockAuthUser(testArgs.data.user!)
+		mockAuthUser(testArgs.data.user)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -117,7 +118,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a radio question with answers", async () => {
-		mockAuthUser(testArgs.data.user!)
+		mockAuthUser(testArgs.data.user)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -164,7 +165,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a checkbox question with multiple answers", async () => {
-		mockAuthUser(testArgs.data.user!)
+		mockAuthUser(testArgs.data.user)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -209,7 +210,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a textarea question", async () => {
-		mockAuthUser(testArgs.data.user!)
+		mockAuthUser(testArgs.data.user)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -238,7 +239,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a boolean question", async () => {
-		mockAuthUser(testArgs.data.user!)
+		mockAuthUser(testArgs.data.user)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -267,7 +268,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should create a select question with options", async () => {
-		mockAuthUser(testArgs.data.user!)
+		mockAuthUser(testArgs.data.user)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -302,7 +303,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should NOT create a question with empty title", async () => {
-		mockAuthUser(testArgs.data.user!)
+		mockAuthUser(testArgs.data.user)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -326,7 +327,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should NOT create a question with title too long", async () => {
-		mockAuthUser(testArgs.data.user!)
+		mockAuthUser(testArgs.data.user)
 
 		const longTitle = "a".repeat(1001) // Exceeds 1000 char limit
 
@@ -352,7 +353,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should NOT create a question with invalid type", async () => {
-		mockAuthUser(testArgs.data.user!)
+		mockAuthUser(testArgs.data.user)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
@@ -376,7 +377,7 @@ export function QuestionResolverTest(testArgs: TestArgsType) {
 	})
 
 	it("should NOT create a question for non-existent survey", async () => {
-		mockAuthUser(testArgs.data.user!)
+		mockAuthUser(testArgs.data.user)
 
 		const response = await testArgs.server.executeOperation<{
 			createQuestion: Questions
