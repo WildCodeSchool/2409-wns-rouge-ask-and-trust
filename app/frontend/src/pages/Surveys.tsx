@@ -10,12 +10,11 @@ import { useAuthContext } from "@/hooks/useAuthContext"
 import { useResponsivity } from "@/hooks/useResponsivity"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
-import { cn } from "@/lib/utils"
+import { cn, getCategoryImage } from "@/lib/utils"
 import { SurveyCardType } from "@/types/types"
 import { PlusCircle } from "lucide-react"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import img from "/img/dev.webp"
 import { useSurveysData } from "@/hooks/survey/useSurveysData"
 
 function Surveys() {
@@ -143,7 +142,7 @@ function Surveys() {
 						<SurveyCard
 							key={survey.id}
 							id={survey.id}
-							picture={img}
+							picture={getCategoryImage(survey.category.name)}
 							title={survey.title}
 							description={survey.description}
 							category={survey.category}
