@@ -14,7 +14,4 @@ COPY tsconfig.json nodemon.json ./
 # COPY the entire src directory
 COPY src ./src
 
-# Expose port
-EXPOSE 3310
-
 CMD ["npm", "start"]

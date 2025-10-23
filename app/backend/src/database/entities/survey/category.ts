@@ -85,8 +85,9 @@ export class Category extends BaseEntity {
 	 * User who created the category
 	 * @description
 	 * Many relation to the `User` entity.
+	 * CASCADE delete: when user is deleted, custom categories are also deleted (RGPD compliance).
 	 */
-	@ManyToOne(() => User, { nullable: true })
+	@ManyToOne(() => User, { nullable: true, onDelete: "CASCADE" })
 	@Field(() => User, { nullable: true })
 	createdBy?: User
 

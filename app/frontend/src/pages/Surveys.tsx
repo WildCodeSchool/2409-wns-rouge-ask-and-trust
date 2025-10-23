@@ -1,5 +1,6 @@
 import { withSEO } from "@/components/hoc/withSEO"
 import SurveyCard from "@/components/sections/surveys/SurveyCard"
+import SurveyCardPlaceholder from "@/components/sections/surveys/ui/SurveyCardPlaceholder"
 import SurveyDurationFilter from "@/components/sections/surveys/ui/SurveyDurationFilter"
 import SurveyPageSkeleton from "@/components/sections/surveys/ui/SurveyPageSkeleton"
 import { Button } from "@/components/ui/Button"
@@ -7,25 +8,26 @@ import Pagination from "@/components/ui/Pagination"
 import { useSurveyMutations } from "@/hooks/survey/useSurveyMutations"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useResponsivity } from "@/hooks/useResponsivity"
-import { useSurvey } from "@/hooks/useSurvey"
 import { useToast } from "@/hooks/useToast"
 import { useToastOnChange } from "@/hooks/useToastOnChange"
-import { cn } from "@/lib/utils"
-import { SurveyCardType, SurveyStatus } from "@/types/types"
+import { cn, getCategoryImage } from "@/lib/utils"
+import { SurveyCardType } from "@/types/types"
 import { PlusCircle } from "lucide-react"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import img from "/img/dev.webp"
+import { useSurveysData } from "@/hooks/survey/useSurveysData"
 
 function Surveys() {
-	const { user: owner } = useAuthContext()
+	const { user } = useAuthContext()
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
+
 	const {
 		createSurvey,
 		createSurveyError,
 		isCreatingSurvey,
 		resetCreateSurveyError,
 	} = useSurveyMutations()
+
 	useToastOnChange({
 		trigger: createSurveyError,
 		resetTrigger: resetCreateSurveyError,
@@ -33,6 +35,7 @@ function Surveys() {
 		title: "Erreur pour créer l'enquête",
 		description: "Nous n'avons pas réussi à créer l'enquête",
 	})
+
 	const navigate = useNavigate()
 	const { showToast } = useToast()
 
@@ -50,18 +53,18 @@ function Surveys() {
 
 	const {
 		surveys,
-		isFetching,
-		allSurveysError,
+		isLoadingSurveys,
+		surveysError,
 		currentPage,
 		PER_PAGE,
 		setCurrentPage,
 		sortTimeOption,
 		setSortTimeOption,
 		totalCount,
-	} = useSurvey<SurveyCardType>({ mode: "home" })
+	} = useSurveysData<SurveyCardType>({ mode: "home" })
 
-	if (!surveys && allSurveysError) {
-		const isNotFoundError = allSurveysError.graphQLErrors.some(error =>
+	if (!surveys && surveysError) {
+		const isNotFoundError = surveysError.graphQLErrors.some(error =>
 			error.message.includes("Failed to fetch surveys")
 		)
 
@@ -73,20 +76,23 @@ function Surveys() {
 		throw new Response("Error loading surveys", { status: 500 })
 	}
 
-	if (!isFetching && !surveys) {
+	if (!isLoadingSurveys && !surveys) {
 		throw new Response("Survey nots found", { status: 404 })
 	}
 
 	const allSurveys =
 		surveys?.allSurveys?.map(survey => ({
 			...survey,
-			isOwner: !!(owner && survey.user && owner.id === survey.user.id),
+			isOwner: !!(user && survey.user && user.id === survey.user.id),
 		})) ?? []
 
-	const publishedSurveys =
-		allSurveys?.filter(
-			survey => survey.status === SurveyStatus.Published
-		) ?? []
+	// Calculate how many placeholder cards to show to reach a minimum of 4 cards
+	const minCardsToShow = 4
+	const placeholdersCount = Math.max(0, minCardsToShow - allSurveys.length)
+	const placeholders = Array.from(
+		{ length: placeholdersCount },
+		(_, index) => index
+	)
 
 	const onCreateSurveyAndNavigate = async () => {
 		try {
@@ -114,29 +120,29 @@ function Surveys() {
 		}
 	}
 
-	return isFetching ? (
+	return isLoadingSurveys ? (
 		<SurveyPageSkeleton />
 	) : (
 		<section
 			className={cn(
-				"px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:min-h-[calc(100vh_-_var(--header-height))] md:px-10 md:pb-10"
+				"larger-screen:w-4/5 larger-screen:mx-auto px-5 py-10 pb-[calc(var(--footer-height)+40px)] md:min-h-[calc(100vh_-_var(--header-height))] md:px-10 md:pb-10"
 			)}
 			ref={rootRef}
 		>
-			<h1 className="text-fg mb-10 text-center text-3xl font-bold max-lg:text-xl">
+			<h1 className="text-fg mb-5 text-center text-3xl font-bold max-lg:text-xl">
 				Liste des enquêtes disponibles
 			</h1>
 			<SurveyDurationFilter
 				sortTimeOption={sortTimeOption}
 				setSortTimeOption={setSortTimeOption}
 			/>
-			{publishedSurveys.length > 0 ? (
-				<div className="flex flex-col gap-10 md:grid md:grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] md:justify-items-center md:gap-20">
-					{publishedSurveys.map(survey => (
+			{allSurveys.length > 0 ? (
+				<div className="grid w-full justify-between gap-20 max-md:grid-cols-2 max-md:gap-10 max-sm:grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(18rem,1fr))]">
+					{allSurveys.map(survey => (
 						<SurveyCard
 							key={survey.id}
 							id={survey.id}
-							picture={img}
+							picture={getCategoryImage(survey.category.name)}
 							title={survey.title}
 							description={survey.description}
 							category={survey.category}
@@ -144,6 +150,9 @@ function Surveys() {
 							availableDuration={survey.availableDuration}
 							isOwner={survey.isOwner}
 						/>
+					))}
+					{placeholders.map(index => (
+						<SurveyCardPlaceholder key={`placeholder-${index}`} />
 					))}
 				</div>
 			) : (
@@ -160,7 +169,7 @@ function Surveys() {
 				perPage={PER_PAGE.home}
 				onPageChange={setCurrentPage}
 			/>
-			{!isHorizontalCompact && (
+			{!isHorizontalCompact && user && (
 				<div className="mt-10 flex items-center justify-center">
 					<Button
 						icon={PlusCircle}

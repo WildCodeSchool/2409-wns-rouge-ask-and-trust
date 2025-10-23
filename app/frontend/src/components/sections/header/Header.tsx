@@ -57,7 +57,7 @@ export default function Header() {
 	return (
 		<header
 			lang="fr"
-			className="bg-bg mb-20 flex items-center justify-between gap-10 px-5 pt-4"
+			className="bg-bg flex items-center justify-between gap-10 px-5 py-4"
 			role="contentinfo"
 			aria-label="En-tête de page"
 			ref={rootRef}
@@ -82,12 +82,12 @@ export default function Header() {
 					>
 						{showMenu ? (
 							<X
-								className="text-primary-default h-6 w-6 cursor-pointer"
+								className="text-primary-700 h-6 w-6 cursor-pointer"
 								aria-hidden
 							/>
 						) : (
 							<Menu
-								className="text-primary-default h-12 w-12 cursor-pointer"
+								className="text-primary-700 h-12 w-12 cursor-pointer"
 								aria-hidden
 							/>
 						)}

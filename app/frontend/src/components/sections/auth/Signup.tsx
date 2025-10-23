@@ -96,6 +96,7 @@ export default function Signup() {
 				<InputPassword<UserSignUp>
 					register={register}
 					errors={errors}
+					mode="signup"
 				/>
 				<FormButtonSubmit type="sign-up" />
 			</FormWrapper>

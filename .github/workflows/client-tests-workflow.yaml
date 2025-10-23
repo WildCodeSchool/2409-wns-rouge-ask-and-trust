@@ -9,6 +9,7 @@ jobs:
   prepare:
     name: Prepare Environment
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -106,6 +107,7 @@ jobs:
     name: Backend Tests
     runs-on: ubuntu-latest
     needs: prepare
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -137,7 +139,27 @@ jobs:
             npm install --force
           fi
 
-      - name: Run backend tests
+      - name: Run backend tests with PostgreSQL
+        env:
+          DB_PORT: 5434
+          DB_HOST: localhost
+          POSTGRES_USER: ask_and_trust
+          POSTGRES_PASSWORD: SuperPassword!2025
+          POSTGRES_DB: ask_and_trust_test
+          JWT_SECRET: supersecret
+          ADMIN_EMAIL: admin@test.com
+          ADMIN_PASSWORD: SuperSecret!2025
+          ADMIN_FIRSTNAME: Admin
+          ADMIN_LASTNAME: Test
+          NODE_ENV: testing
         run: |
-          cd ./app/backend
-          npm run test
+          cd app/backend
+          docker rm --force pgtest || true
+          docker run -d -p 5434:5432 --name pgtest \
+            -e POSTGRES_USER=${POSTGRES_USER} \
+            -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+            -e POSTGRES_DB=${POSTGRES_DB} \
+            postgres
+          npx jest
+          docker rm --force pgtest
+

@@ -36,6 +36,7 @@ export default function SurveyDurationFilter({
 				onChange={handleSortChange}
 				options={sortOptions}
 				placeholder="Trier par durée"
+				ariaLabel="Filtrer les enquêtes par durée"
 			/>
 			{sortTimeOption && (
 				<div className="flex flex-wrap items-center gap-2.5">

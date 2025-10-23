@@ -55,14 +55,14 @@ export default function SearchForm() {
 				placeholder="Rechercher une enquête..."
 				errorMessage=""
 				{...register("search")}
-				className="h-11 w-full bg-white py-2 pr-10 pl-2 text-ellipsis whitespace-nowrap"
+				className="h-10 w-full bg-white py-2 pr-10 pl-2 text-ellipsis whitespace-nowrap ring-0 transition-shadow duration-150 focus-visible:border-2 focus-visible:shadow-[0_0_0_4px_rgba(250,250,250,0.4)] focus-visible:ring-0"
 			/>
 			<Button
 				type="submit"
 				ariaLabel="Rechercher une enquête"
-				className="group absolute right-1.5 p-2"
+				className="group absolute right-1 h-8 w-8 rounded-md p-1.5"
 			>
-				<Search className="group-hover:text-primary-700 h-4 w-4 text-white transition-colors duration-200 ease-in-out" />
+				<Search className="group-hover:text-primary-700 text-white transition-colors duration-200 ease-in-out" />
 			</Button>
 		</form>
 	)

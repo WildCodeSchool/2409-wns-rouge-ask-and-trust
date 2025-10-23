@@ -1,0 +1,33 @@
+services:
+    db_test:
+        image: postgres:15
+        restart: always
+        ports:
+            - "5434:5432"
+        environment:
+            POSTGRES_DB: ask_and_trust_test
+            POSTGRES_USER: ask_and_trust
+            POSTGRES_PASSWORD: SuperPassword!2025
+        volumes:
+            - pgtest_data:/var/lib/postgresql/data
+        networks:
+            - backend_network
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    "pg_isready -U ask_and_trust -d ask_and_trust_test -h localhost",
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+            start_period: 5s
+
+networks:
+    backend_network:
+        driver: bridge
+
+volumes:
+    pgtest_data:
+        driver: local
+# lancer db : docker-compose -f docker-compose.test.yml up -d

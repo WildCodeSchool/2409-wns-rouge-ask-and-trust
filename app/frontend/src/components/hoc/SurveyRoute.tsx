@@ -4,9 +4,9 @@
  */
 
 import Loader from "@/components/ui/Loader"
-import { useSurvey } from "@/hooks/useSurvey"
 import { useParams } from "react-router-dom"
 import PublishedRequired from "@/components/sections/surveys/PublishedRequired"
+import { useSurveyData } from "@/hooks/survey/useSurveyData"
 
 /**
  * SurveyRoute Component
@@ -25,10 +25,10 @@ import PublishedRequired from "@/components/sections/surveys/PublishedRequired"
  */
 const SurveyRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const { id } = useParams<{ id: string }>()
-	const { survey, surveyLoading, surveyError } = useSurvey({ surveyId: id })
+	const { survey, isLoadingSurvey, surveyError } = useSurveyData(id)
 
 	// If the survey state is still loading, show the loader
-	if (id && surveyLoading) {
+	if (id && isLoadingSurvey) {
 		return <Loader />
 	}
 
@@ -48,9 +48,13 @@ const SurveyRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 		}
 
 		// If survey is not loading but doesn't exist, throw 404
-		if (!surveyLoading && !survey) {
+		if (!isLoadingSurvey && !survey) {
 			throw new Response("Survey not found", { status: 404 })
 		}
+	}
+
+	if (!survey) {
+		throw new Response("Survey not found", { status: 404 })
 	}
 
 	// If survey exists but is not published, show the PublishedRequired component
