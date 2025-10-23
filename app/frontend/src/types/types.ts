@@ -44,7 +44,9 @@ export type UserDetails = {
 	user: User
 	userSurveys: MySurveysResult | null
 	showResetForm: boolean
+	showDeleteForm: boolean
 	onToggleResetForm: () => void
+	onToggleDeleteForm: () => void
 }
 
 export type UserSignUp = UserAuth
@@ -133,10 +135,11 @@ export interface Survey {
 	title: string
 	description: string
 	public: boolean
-	category: { id: number; name: string }
+	category: { id: string; name: string }
 	status: SurveyStatusType
 	questions: Question[]
 	user: User
+	hasAnswers: boolean
 }
 
 export type SurveyWithoutQuestions = Omit<Survey, "questions">
@@ -159,7 +162,7 @@ export type SurveyFormValues = {
 
 export type CreateSurveyInput = SurveyFormValues
 
-export type UpdateSurveyInput = SurveyFormValues
+export type UpdateSurveyInput = Partial<SurveyFormValues>
 
 export type Question = {
 	id: number
@@ -220,13 +223,14 @@ export function isMultipleAnswerType(
 }
 
 export type InputsProps = {
-	register: UseFormRegister<CreateSurveyInput>
-	errors: FieldErrors<CreateSurveyInput>
+	register: UseFormRegister<UpdateSurveyInput>
+	errors: FieldErrors<UpdateSurveyInput>
+	disabled?: boolean
 }
 
 export type SwitchProps = {
-	errors: FieldErrors<CreateSurveyInput>
-	control: Control<CreateSurveyInput>
+	errors: FieldErrors<UpdateSurveyInput>
+	control: Control<UpdateSurveyInput>
 }
 
 export type CategoryOption = {
@@ -299,6 +303,7 @@ export type SurveyTableNavProps = {
 	totalCount: number
 	surveysPerPage: number
 	selectedSurveyIds: number[]
+	onDeleteSuccess?: () => void
 }
 
 type FilterOption = {
@@ -312,6 +317,7 @@ export type SelectFilterProps = {
 	options: FilterOption[]
 	placeholder?: string
 	disabled?: boolean
+	ariaLabel?: string
 }
 
 export type SurveyTableFilterProps = {
@@ -437,9 +443,8 @@ export type RawUser = {
 	surveys?: { id: number | string }[]
 }
 
-export type UseSurveyOptions = {
-	surveyId?: string
-	mode?: "admin" | "profile" | "home"
+export type UseSurveysMode = {
+	mode: "admin" | "profile" | "home"
 }
 
 export type PublishedRequiredType = {
@@ -454,7 +459,7 @@ type SurveyPreviewWithCategory = Omit<
 }
 
 export type SurveyPreviewType = {
-	isOwner?: boolean
+	isOwner?: boolean | null
 	id?: string | undefined
 	survey: SurveyPreviewWithCategory
 }
@@ -462,4 +467,8 @@ export type SurveyPreviewType = {
 export type SurveyResponseType = SurveyPreviewType & {
 	onClickCopy?: () => void
 	questions?: boolean
+}
+
+export interface SurveyTableContainerProps {
+	mode: "admin" | "profile"
 }

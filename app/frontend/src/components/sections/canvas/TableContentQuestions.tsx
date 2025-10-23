@@ -30,7 +30,7 @@ export const TableContentQuestions = ({
 	return (
 		<aside
 			ref={containerRef}
-			className="border-black-50 shadow-default h-full w-80 overflow-y-auto rounded-xl border bg-white p-3"
+			className="border-black-100 shadow-default h-full w-80 overflow-y-auto rounded-xl border bg-white p-3"
 		>
 			<div className="relative flex flex-col gap-4 align-baseline">
 				{/* Vertical line */}

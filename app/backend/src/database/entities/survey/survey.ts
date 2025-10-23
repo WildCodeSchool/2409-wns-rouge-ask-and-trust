@@ -116,8 +116,9 @@ export class Survey extends BaseEntity {
 	 * The user who created the survey
 	 * @description
 	 * Many-to-one relationship with the User entity.
+	 * CASCADE delete: when user is deleted, surveys are also deleted (RGPD compliance).
 	 */
-	@ManyToOne(() => User, user => user.surveys)
+	@ManyToOne(() => User, user => user.surveys, { onDelete: "CASCADE" })
 	@Field(() => User)
 	user!: User
 
@@ -135,8 +136,10 @@ export class Survey extends BaseEntity {
 	 * @description
 	 * One-to-many relationship with the Questions entity.
 	 */
-	@OneToMany(() => Questions, question => question.survey)
-	@Field(() => [Questions])
+	@OneToMany(() => Questions, question => question.survey, {
+		cascade: true,
+	})
+	@Field(() => [Questions], { nullable: true })
 	questions!: Questions[]
 
 	/**
@@ -183,6 +186,9 @@ export class Survey extends BaseEntity {
 	@Field()
 	@Column({ type: "int", default: 30 })
 	availableDuration!: number
+
+	@Field()
+	hasAnswers?: boolean
 }
 
 @InputType()

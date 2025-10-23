@@ -4,20 +4,23 @@ import { Button } from "@/components/ui/Button"
 import { useAuthContext } from "@/hooks/useAuthContext"
 import { useHeightVariable } from "@/hooks/useHeightVariable"
 import { useResponsivity } from "@/hooks/useResponsivity"
-import { useSurvey } from "@/hooks/useSurvey"
 import { cn, slugify } from "@/lib/utils"
 import { SurveyCategoryType } from "@/types/types"
 import { useState } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import logoFooter from "/logos/logo-footer.svg"
+import { useCategoriesData } from "@/hooks/category/useCategoriesData"
 
 export default function Header({ isInSurveys = false }) {
 	const { rootRef, isHorizontalCompact } = useResponsivity(Infinity, 768)
 	const [searchParams, setSearchParams] = useSearchParams()
-	const { categoriesData, loadingCategories, errorCategories } = useSurvey()
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(
 		null
 	)
+
+	const { categoriesData, isLoadingCategories, errorCategories } =
+		useCategoriesData()
+
 	const { user } = useAuthContext()
 
 	// Update header's height variable if change
@@ -44,8 +47,11 @@ export default function Header({ isInSurveys = false }) {
 	return (
 		<header
 			lang="fr"
-			className={"bg-primary-600 flex flex-col gap-9 px-6 py-5"}
-			role="contentinfo"
+			className={cn(
+				"bg-primary-600 shadow-default flex flex-col gap-6 px-6 py-5",
+				!isHorizontalCompact && "sticky top-0 z-50",
+				isInSurveys && "pb-1"
+			)}
 			aria-label="En-tête de page"
 			ref={rootRef}
 		>
@@ -68,8 +74,8 @@ export default function Header({ isInSurveys = false }) {
 				/>
 			</div>
 			{isInSurveys && (
-				<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3 pl-1">
-					{loadingCategories && (
+				<div className="flex items-center gap-3 overflow-x-scroll pt-1 pb-3">
+					{isLoadingCategories && (
 						<p className="text-white">
 							Chargement des catégories...
 						</p>

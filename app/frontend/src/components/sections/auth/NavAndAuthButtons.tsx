@@ -24,14 +24,6 @@ export default function NavAndAuthButtons({
 		!isHorizontalCompact && "max-sm:flex-col max-sm:gap-5"
 	)
 
-	// LI animation selon le layout
-	const listItemClass = cn(
-		"list-none duration-200 ease-in-out",
-		isHorizontalCompact && isOnLanding
-			? "transition-all hover:pl-5"
-			: "transition-transform hover:scale-105"
-	)
-
 	// Navigation container global
 	const navClass = cn(
 		"flex w-full flex-1 items-center gap-10 max-lg:gap-6",
@@ -46,12 +38,12 @@ export default function NavAndAuthButtons({
 			role="navigation"
 			aria-label="Navigation du site"
 		>
-			{links && !isInSurveys && (
-				<div className="flex w-full flex-1 items-center justify-center gap-10 max-md:hidden">
+			{links && !isInSurveys && (!isHorizontalCompact || isOnLanding) && (
+				<div className="flex w-full flex-1 items-center justify-center gap-10">
 					<ul className={listLayoutClass} role="list">
 						{links.map(link => (
 							<li
-								className={listItemClass}
+								className="transition-transform duration-200 ease-in-out hover:scale-105"
 								key={link.href}
 								role="listitem"
 							>

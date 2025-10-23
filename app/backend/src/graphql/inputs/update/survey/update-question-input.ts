@@ -9,7 +9,7 @@
 import { Type } from "class-transformer"
 import { Length, ValidateNested } from "class-validator"
 import { Field, ID, InputType } from "type-graphql"
-import { QuestionType } from "../../../../types/types"
+import { QuestionTypeEnum } from "../../../../types/types"
 import { AnswerObject } from "../../create/survey/create-questions-input"
 
 /**
@@ -52,8 +52,8 @@ export class UpdateQuestionInput {
 	 * @description
 	 * New type for the question (e.g. text, radio, checkbox).
 	 */
-	@Field(() => String, { nullable: true })
-	type?: QuestionType
+	@Field(() => QuestionTypeEnum, { nullable: true })
+	type?: QuestionTypeEnum
 
 	/**
 	 * Updated predefined answers

@@ -96,9 +96,10 @@ export class Answers extends BaseEntity {
 	 * User associated with this answer
 	 * @description
 	 * Many-to-one link to the user who answered.
+	 * CASCADE delete: when user is deleted, their answers are also deleted (RGPD compliance).
 	 */
 	@Field(() => User)
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, { onDelete: "CASCADE" })
 	@JoinColumn({ name: "userId" })
 	user!: User
 

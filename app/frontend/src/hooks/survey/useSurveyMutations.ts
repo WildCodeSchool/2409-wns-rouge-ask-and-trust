@@ -13,7 +13,7 @@ import {
 	UpdateSurveyInput,
 } from "@/types/types"
 import { useMutation } from "@apollo/client"
-import { useToast } from "../useToast"
+import { useToast } from "@/hooks/useToast"
 /**
  * Hook providing all survey-related GraphQL mutations.
  *
@@ -50,7 +50,7 @@ import { useToast } from "../useToast"
  * ```
  */
 
-export function useSurveyMutations() {
+export function useSurveyMutations(mode?: "profile" | "admin") {
 	const { showToast } = useToast()
 
 	// ************************ CREATE ************************
@@ -86,11 +86,15 @@ export function useSurveyMutations() {
 			error: updateSurveyError,
 			reset: resetUpdateSurveyError,
 		},
-	] = useMutation(UPDATE_SURVEY, { refetchQueries: [{ query: GET_SURVEYS }] })
+	] = useMutation(UPDATE_SURVEY)
 
 	const updateSurvey = async (id: string, survey: UpdateSurveyInput) => {
 		const result = await updateSurveyMutation({
 			variables: { data: { ...survey, id } },
+			refetchQueries: [
+				{ query: GET_SURVEY, variables: { surveyId: id } },
+				{ query: GET_SURVEYS },
+			],
 		})
 		return result.data?.updateSurvey
 	}
@@ -125,7 +129,9 @@ export function useSurveyMutations() {
 			error: deleteSurveyError,
 			reset: resetDeleteSurveyError,
 		},
-	] = useMutation(DELETE_SURVEY, { refetchQueries: [GET_MY_SURVEYS] })
+	] = useMutation(DELETE_SURVEY, {
+		refetchQueries: mode === "admin" ? [GET_SURVEYS] : [GET_MY_SURVEYS],
+	})
 
 	const deleteSurvey = async (surveyId: string) => {
 		try {

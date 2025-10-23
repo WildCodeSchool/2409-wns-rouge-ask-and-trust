@@ -36,7 +36,7 @@ export function SurveyCreatorHeader({
 				)}
 				<div
 					className={cn(
-						"shadow-default border-black-50 flex h-fit max-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height)_-_10vh)] flex-col rounded-xl border bg-white p-4 pb-6 transition-all duration-200 ease-in-out md:max-h-fit",
+						"shadow-default border-black-100 flex h-fit max-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height)_-_10vh)] flex-col rounded-xl border bg-white p-4 pb-6 transition-all duration-200 ease-in-out md:max-h-fit",
 						isExpanded && "gap-4 pb-4",
 						!isExpanded && isTransitionEnded && "gap-0"
 					)}

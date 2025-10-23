@@ -28,7 +28,7 @@ ou
 docker compose exec backend npx typeorm schema:drop -- -d ./src/database/config/datasource.ts
 ```
 
-### Migrations
+### Migrations Creation
 ```bash
 # Exécuter
 docker compose exec backend npm run migration:run
@@ -36,7 +36,7 @@ docker compose exec backend npm run migration:run
 # Voir l'état
 docker compose exec backend npm run migration:show
 
-# Créer nouvelle migration
+# Créer nouvelle migration - WARNING bien utiliser npx pour migration:generate et non npm
 docker compose exec backend npx typeorm-ts-node-commonjs migration:generate src/database/migrations/NomMigration -d ./src/database/config/datasource.ts
 
 # Annuler dernière

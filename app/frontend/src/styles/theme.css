@@ -20,21 +20,23 @@
 		0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 	--shadow-component:
 		0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-	--larger-screen: 1440px;
+
+	/* Breakpoints */
+	--breakpoint-larger-screen: 1920px;
 
 	/* Custom max-width utilities */
-	--max-width-larger: 1440px;
+	--max-width-larger: 1920px;
 
 	/* colors shades */
 	--color-primary-50: #f1f2ff;
-	--color-primary-100: #eeefff;
-	--color-primary-200: #e0e2f9;
-	--color-primary-300: #c1c4f4;
-	--color-primary-400: #a1a7ee;
-	--color-primary-default: #636ce3;
-	--color-primary-600: #3039b0;
-	--color-primary-700: #00067d;
-	--color-primary-800: #000030;
+	--color-primary-100: #f3f3ff;
+	--color-primary-200: #dfe1fa;
+	--color-primary-300: #c2c4f5;
+	--color-primary-400: #a5a7f0;
+	--color-primary-default: #7557f2;
+	--color-primary-600: #5b42d1;
+	--color-primary-700: #3f2a9e;
+	--color-primary-800: #23176a;
 	--color-black-50: #eaeef2;
 	--color-black-100: #cbd5e1;
 	--color-black-200: #aab3be;
