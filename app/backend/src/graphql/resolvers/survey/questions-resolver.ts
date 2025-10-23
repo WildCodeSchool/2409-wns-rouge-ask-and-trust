@@ -165,7 +165,7 @@ export class QuestionsResolver {
 	 * @returns A Promise that resolves to the updated Questions object, or null if the question could not be found or updated.
 	 *
 	 * This mutation allows an admin user to update an existing survey question. Only the admin or the question owner can update questions.
-	 * If the user is not an admin, the mutation will not be executed.
+	 * If question's type or answers are modified, it checks if answers are validated compared to type. Ex : a text question cannot have a predetermined answer. Other ex : a boolean question should have 2 answers.
 	 */
 	@Authorized(Roles.User, Roles.Admin)
 	@Mutation(() => Questions, { nullable: true })
@@ -176,16 +176,16 @@ export class QuestionsResolver {
 	): Promise<Questions | null> {
 		try {
 			const user = getUserFromContext(context.user)
-
-			const questionToUpdate = await getAuthorizedQuestion(data.id, user)
-
 			const { id, ...dataWithoutId } = data
-			void id
 
-			dataWithoutId.answers = validateAndNormalizeAnswers(
-				data.type || questionToUpdate.type,
-				data.answers ?? questionToUpdate.answers
-			)
+			const questionToUpdate = await getAuthorizedQuestion(id, user)
+
+			if (dataWithoutId.type || dataWithoutId.answers?.length) {
+				dataWithoutId.answers = validateAndNormalizeAnswers(
+					dataWithoutId.type || questionToUpdate.type,
+					dataWithoutId.answers ?? questionToUpdate.answers
+				)
+			}
 
 			Object.assign(questionToUpdate, dataWithoutId)
 
