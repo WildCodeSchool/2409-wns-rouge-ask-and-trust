@@ -14,6 +14,7 @@ import { lazy, Suspense } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import SurveyPageSkeleton from "@/components/sections/surveys/ui/SurveyPageSkeleton"
 import SurveyRoute from "@/components/hoc/SurveyRoute"
+import SurveyResponsePageSkeleton from "@/components/sections/response/ui/skeleton/SurveyResponsePageSkeleton"
 
 /**
  *  Using lazy loading for pages
@@ -167,7 +168,11 @@ const router = createBrowserRouter([
 			{
 				path: "surveys/preview/:id",
 				element: (
-					<Suspense fallback={<Loader />}>
+					<Suspense
+						fallback={
+							<SurveyResponsePageSkeleton isPreview={true} />
+						}
+					>
 						<ProtectedRoute>
 							<PreviewSurveyPage />
 						</ProtectedRoute>
@@ -177,7 +182,11 @@ const router = createBrowserRouter([
 			{
 				path: "surveys/respond/:id",
 				element: (
-					<Suspense fallback={<Loader />}>
+					<Suspense
+						fallback={
+							<SurveyResponsePageSkeleton isPreview={false} />
+						}
+					>
 						<ProtectedRoute>
 							<SurveyRoute>
 								<SurveyResponse />
